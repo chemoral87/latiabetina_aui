@@ -1,13 +1,15 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from "vuetify/es5/util/colors"
 
-// let env
+let env
 // let title
 let port_ = 3000
 // let dateStamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
+  env = require("dotenv").config({ path: ".env.production" })
   // env = require('dotenv').config({ path: '.env.production' })
   // title = process.env.APP_NAME
 } else {
+  env = require("dotenv").config({ path: ".env" })
   // env = require('dotenv').config({ path: '.env' })
   // title = process.env.APP_ENVIRONMENT
   port_ = 3001
@@ -18,34 +20,25 @@ export default {
   server: {
     port: port_,
   },
+  env: env.parsed,
   ssr: false,
   telemetry: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - latiabetina_aui',
-    title: 'latiabetina_aui',
+    titleTemplate: "%s - latiabetina_aui",
+    title: "latiabetina_aui",
     htmlAttrs: {
-      lang: 'en',
+      lang: "en",
     },
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' },
-    ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }, { hid: "description", name: "description", content: "" }, { name: "format-detection", content: "telephone=no" }],
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    './plugins/mixins/user.js',
-    './plugins/mixins/utils.js',
-    './plugins/mixins/validation.js',
-    './plugins/filters.js',
-  ],
+  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -53,29 +46,25 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module',
+    "@nuxtjs/eslint-module",
     // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
+    "@nuxtjs/vuetify",
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/auth-next',
-    ['@nuxtjs/dotenv', { filename: '.env.' + process.env.NODE_ENV }],
-  ],
+  modules: ["@nuxtjs/axios", "@nuxtjs/auth-next", ["@nuxtjs/dotenv", { filename: ".env." + process.env.NODE_ENV }]],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: "/",
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ["~/assets/variables.scss"],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
