@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog v-model="dialogValue" persistent content content-class="centered-dialog">
+    <v-dialog :value.sync="value" persistent content content-class="centered-dialog">
       <v-container fill-height>
         <v-layout column justify-center align-center>
           <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>
@@ -21,17 +21,7 @@ export default {
     progressColor: { type: String, default: "white" },
   },
   data: function () {
-    return { dialogValue: this.value }
-  },
-  watch: {
-    // Watch the value prop and update the local state
-    value(val) {
-      this.dialogValue = val
-    },
-    // Watch the local dialog value and emit changes to the parent
-    dialogValue(val) {
-      this.$emit("input", val)
-    },
+    return {}
   },
 }
 </script>
