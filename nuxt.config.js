@@ -38,7 +38,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js"],
+  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js", "./plugins/axios.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -53,11 +53,47 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: ["@nuxtjs/axios", "@nuxtjs/auth-next", ["@nuxtjs/dotenv", { filename: ".env." + process.env.NODE_ENV }]],
-
+  auth: {
+    redirect: {
+      logout: "/login",
+    },
+    strategies: {
+      laravelJWT: {
+        // optional //
+        provider: "laravel/jwt",
+        token: {
+          property: "access_token",
+          maxAge: 60 * 60,
+        },
+        refreshToken: {
+          maxAge: 20160 * 60,
+        },
+        // optional. //
+        url: "/",
+        endpoints: {
+          login: {
+            url: "auth/login",
+            method: "post",
+          },
+          refresh: {
+            url: "auth/refresh",
+            method: "post",
+          },
+          logout: {
+            url: "auth/logout",
+            method: "post",
+          },
+          user: {
+            url: "auth/user",
+            method: "post",
+          },
+        },
+      },
+    },
+  },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: "/",
+    baseURL: process.env.BASE_URL,
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

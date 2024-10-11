@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     async submitLogin() {
-      this.$gtag.event("login", { method: "Google" })
+      // this.$gtag.event("login", { method: "Google" })
       try {
         const credentials = {
           email: this.email,
@@ -66,7 +66,7 @@ export default {
         }
         await this.$auth.loginWith("laravelJWT", { data: credentials })
         this.$router.push({
-          path: this.$route.query.redirect || "/dashboard",
+          path: this.$route.query.redirect || "/",
         })
       } catch (e) {
         // console.log(e)
