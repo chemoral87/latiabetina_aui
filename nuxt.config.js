@@ -2,7 +2,7 @@ import colors from "vuetify/es5/util/colors"
 
 let env
 // let title
-let port_ = 3000
+const port_ = 3001
 // let dateStamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
 if (process.env.NODE_ENV === "production") {
   env = require("dotenv").config({ path: ".env.production" })
@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === "production") {
   env = require("dotenv").config({ path: ".env" })
   // env = require('dotenv').config({ path: '.env' })
   // title = process.env.APP_ENVIRONMENT
-  port_ = 3001
+  // port_ = 3001
 }
 
 export default {
