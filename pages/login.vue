@@ -26,7 +26,7 @@
             </v-col>
             <v-col cols="12">
               <v-btn type="submit" color="primary" class="mr-2 mb-8">Iniciar Sesión</v-btn>
-              <v-btn outlined color="primary" class="mr-2 mb-8" @click="$router.push('/forgot-password')">Recuperar contraseña?</v-btn>
+              <v-btn outlined color="primary" class="mr-2 mb-8" @click="$router.push('/forgot-password')">Recuperar contraseña</v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -65,8 +65,10 @@ export default {
           password: this.password,
         }
         await this.$auth.loginWith("laravelJWT", { data: credentials })
+        // eslint-disable-next-line no-console
+        console.log("entra")
         this.$router.push({
-          path: this.$route.query.redirect || "/",
+          path: this.$route.query.redirect || "/tua",
         })
       } catch (e) {
         // console.log(e)
