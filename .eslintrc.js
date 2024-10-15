@@ -14,5 +14,6 @@ module.exports = {
   rules: {
     "vue/max-attributes-per-line": "off",
     "vue/no-mutating-props": "off",
+    "vue/require-prop-types": "off",
   },
 }

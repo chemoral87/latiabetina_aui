@@ -38,7 +38,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js", "./plugins/axios.js"],
+  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js", "./plugins/axios.js", "./plugins/repository.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
