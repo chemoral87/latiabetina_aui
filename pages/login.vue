@@ -66,9 +66,8 @@ export default {
         }
         await this.$auth.loginWith("laravelJWT", { data: credentials })
         // eslint-disable-next-line no-console
-        console.log("entra")
         this.$router.push({
-          path: this.$route.query.redirect || "/tua",
+          path: this.$route.query.redirect || "/",
         })
       } catch (e) {
         // console.log(e)
