@@ -7,11 +7,13 @@ import ParentRepository from "./ParentRepository"
 // import SkyRegistrationRepository from '../SkyRegistrationRepository'
 
 export default ($axios) => ({
-  Role: CommonRepository($axios)("/roles"),
-  Permission: CommonRepository($axios)("/permissions"),
-  User: UserRepository($axios)("/users"),
-  Profile: ProfileRepository($axios)("/profiles"),
+  Role: CommonRepository($axios)("/role"),
+  Permission: CommonRepository($axios)("/permission"),
+  User: UserRepository($axios)("/user"),
+  Profile: ProfileRepository($axios)("/profile"),
+  Organization: CommonRepository($axios)("/organization"),
   /// ////////Admin Repository////////////////////////
+  Store: CommonRepository($axios)("/store"),
   // Investor: InvestorRepository($axios)("/investor"),
   // InvestorProfile: InvestorProfileRepository($axios)("/investor-profile"),
   // Investment: InvestmentRepository($axios)("/investment"),

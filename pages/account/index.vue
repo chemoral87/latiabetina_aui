@@ -2,12 +2,12 @@
   <v-container>
     <v-row dense>
       <v-col cols="12">
-        <div class="text-h5">
+        <div class="title">
           Nombre: {{ user.name }} {{ user.last_name }}
           {{ user.second_last_name }}
         </div>
-        <div class="text-h6">Email: {{ user.email }}</div>
-        v.2.2.16
+        <div class="subtitle-1">Email: {{ user.email }}</div>
+        <div class="overline">App Version: {{ appVersion() }}</div>
       </v-col>
       <v-col>
         <!-- <v-btn color="primary">Editar Nombre</v-btn> -->
@@ -21,30 +21,32 @@
         </ul>
       </v-col>
     </v-row>
-    <UserDialogPassword v-if="dialogPassword" @close="dialogPassword = false" @save="changePassword($event)">
-    </UserDialogPassword>
+    <UserDialogPassword v-if="dialogPassword" @close="dialogPassword = false" @save="changePassword($event)"></UserDialogPassword>
   </v-container>
 </template>
 
 <script>
 export default {
+  data: () => ({
+    dialogPassword: false,
+    head: {},
+  }),
+
   created() {
-    this.$nuxt.$emit("setNavBar", { title: "Perfil", icon: "account" });
+    this.$nuxt.$emit("setNavBar", { title: "Perfil", icon: "account" })
   },
   methods: {
+    appVersion() {
+      return process.env.APP_VERSION
+      // return this.$store.getters.appVersion
+    },
     async changePassword(payload) {
       await this.$repository.User.change(payload)
-        .then(res => {
-          // me.getUsers();
-          // me.userDialog = false;
-          this.$auth.logout();
+        .then((res) => {
+          this.$auth.logout()
         })
-        .catch(e => {});
-    }
+        .catch((e) => {})
+    },
   },
-
-  data: () => ({
-    dialogPassword: false
-  })
-};
+}
 </script>

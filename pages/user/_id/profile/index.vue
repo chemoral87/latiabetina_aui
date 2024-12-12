@@ -57,7 +57,7 @@
       </v-col>
 
       <v-col cols="12" class="d-flex justify-end">
-        <v-btn color="primary" outlined class="mr-1" @click="$router.push('/users')">Cancelar</v-btn>
+        <v-btn color="primary" outlined class="mr-1" @click="$router.push('/user')">Cancelar</v-btn>
         <v-btn color="primary" @click="saveUserRolesPermissions()">Guardar</v-btn>
       </v-col>
     </v-row>
@@ -105,7 +105,7 @@ export default {
     this.$nuxt.$emit("setNavBar", {
       title: `Perfiles de: ${this.mUser.name} ${this.mUser.last_name}`,
       icon: "account",
-      back: `/users`,
+      back: `/user`,
       show_drawer: false,
     })
   },
@@ -128,10 +128,9 @@ export default {
       })
     },
     editProfile(profile) {
-      this.$router.push(`/users/${this.user_id}/profiles/${profile.id}`)
+      this.$router.push(`/user/${this.user_id}/profile/${profile.id}`)
     },
     newProfile() {
-      // this.$router.push(`/users/${this.user_id}/profiles/new`);
       this.profileDialog = true
     },
     closeProfileDialog() {
@@ -148,7 +147,6 @@ export default {
         this.profileDialog = false
         // add profile to profiles
         this.profiles.push(res.profile)
-        // this.$router.push(`/users/${this.user_id}`);
       })
     },
     async saveUserRolesPermissions() {
@@ -160,7 +158,7 @@ export default {
       }
       await this.$repository.User.children(this.mUser.id, params).then((res) => {
         // this.$auth.fetchUser(); // refresh permissions
-        this.$router.push("/users")
+        this.$router.push("/user")
       })
     },
     confirmDeleteProfile(profile) {
@@ -173,7 +171,6 @@ export default {
     },
     deleteProfile(profile) {
       this.$repository.Profile.delete(this.user_id, profile.id).then((res) => {
-        // remove profile.id from profiles
         this.profiles = this.profiles.filter((x) => x.id !== profile.id)
 
         this.dialogDelete = false

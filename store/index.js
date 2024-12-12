@@ -4,8 +4,9 @@ export const state = () => ({
   snack_id: 0,
   block_loading: false,
   hide_next_loading: false,
-  locale: 'es',
+  locale: "es",
   config: [],
+  app_version: process.env.APP_VERSION,
 })
 
 export const getters = {
@@ -34,6 +35,9 @@ export const getters = {
   getSnackbars(state) {
     return state.snackbars
   },
+  appVersion(state) {
+    return state.app_version
+  },
   showLoading(state) {
     return state.block_loading
   },
@@ -46,8 +50,7 @@ export const getters = {
     if (config == null) return null
 
     // validate if exists the parameter
-    if (!Object.prototype.hasOwnProperty.call(config.keys, parameter))
-      return null
+    if (!Object.prototype.hasOwnProperty.call(config.keys, parameter)) return null
 
     return config.keys[parameter]
   },
@@ -93,12 +96,7 @@ export const actions = {
   validatePermission({ commit, state }, { permission, error }) {
     if (state.auth.user == null) return false
     // error is not a function fix
-    if (
-      !Object.prototype.hasOwnProperty.call(
-        state.auth.user.permissions_org,
-        permission
-      )
-    )
+    if (!Object.prototype.hasOwnProperty.call(state.auth.user.permissions_org, permission))
       error({
         statusCode: 403,
         message: `Permiso requerido <span class="error-message"> ${permission} </span>`,
@@ -111,7 +109,7 @@ export const actions = {
       state.snack_id++
       notify = {
         text: data.success,
-        color: 'primary',
+        color: "primary",
         showing: true,
         display: true,
         // timeout: 3800,
@@ -122,7 +120,7 @@ export const actions = {
       state.snack_id++
       notify = {
         text: data.error,
-        color: 'error',
+        color: "error",
         showing: true,
         display: true,
         id: state.snack_id,
@@ -130,33 +128,33 @@ export const actions = {
     }
     if (notify == null) return
 
-    commit('SET_SNACKBAR', notify)
+    commit("SET_SNACKBAR", notify)
     const notifyTimeOut = 4000
     setTimeout(() => {
-      commit('DELETE_SNACK', notify)
+      commit("DELETE_SNACK", notify)
     }, notifyTimeOut)
   },
   closeSnackbar({ commit }, snackbar) {
-    commit('DELETE_SNACK', snackbar)
+    commit("DELETE_SNACK", snackbar)
   },
   // closeNotify({ commit }) {
   //   commit("CLOSE_SNACKBAR");
   // },
   showLoading({ commit }) {
-    commit('SHOW_LOADING')
+    commit("SHOW_LOADING")
   },
   hideLoading({ commit }) {
-    commit('HIDE_LOADING')
+    commit("HIDE_LOADING")
   },
   hideNextLoading({ commit }) {
-    commit('HIDE_NEXT_LOADING')
+    commit("HIDE_NEXT_LOADING")
   },
   showNextLoading({ commit }) {
-    commit('SHOW_NEXT_LOADING')
+    commit("SHOW_NEXT_LOADING")
   },
   async loadConfig({ commit }, settings) {
     await this.$repository.Config.index({ settings }).then((res) => {
-      commit('SET_CONFIG', res)
+      commit("SET_CONFIG", res)
     })
   },
 }

@@ -72,10 +72,10 @@ export default {
       this.userx = Object.assign({}, item)
     },
     editUserRoles(item) {
-      this.$router.push(`/users/${item.id}`)
+      this.$router.push(`/user/${item.id}`)
     },
     editProfiles(item) {
-      this.$router.push(`/users/${item.id}/profiles`)
+      this.$router.push(`/user/${item.id}/profile`)
     },
     beforeDeleteUser(item) {
       this.userDialogDelete = true

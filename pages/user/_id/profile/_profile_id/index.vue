@@ -21,7 +21,7 @@
 export default {
   props: {},
   async asyncData({ $axios, app, params, store, error }) {
-    const org_ids = await store.dispatch("validatePermission", { permission: "user-update", error })
+    // const org_ids = await store.dispatch("validatePermission", { permission: "user-update", error })
 
     const _mUser = await app.$repository.User.show(params.id).catch((e) => {})
     // const res2 = await app.$repository.Profile.index(params.id).catch(e => {});
@@ -53,7 +53,7 @@ export default {
       this.profile.direct_permissions = permissions
     },
     back() {
-      this.$router.push(`/users/${this.user_id}/profiles`)
+      this.$router.push(`/user/${this.user_id}/profile`)
     },
     async saveProfileRolesPermissions() {
       const roleIds = this.profile.roles.map((x) => x.id)
@@ -64,7 +64,7 @@ export default {
       }
       await this.$repository.Profile.update(this.user_id, this.profile_id, params).then((res) => {
         // this.$auth.fetchUser(); // refresh permissions
-        this.$router.push(`/users/${this.user_id}/profiles`)
+        this.$router.push(`/user/${this.user_id}/profile`)
       })
     },
   },

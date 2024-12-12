@@ -4,33 +4,46 @@ let env
 // let title
 const port_ = 3001
 // let dateStamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+
 if (process.env.NODE_ENV === "production") {
   env = require("dotenv").config({ path: ".env.production" })
   // env = require('dotenv').config({ path: '.env.production' })
   // title = process.env.APP_NAME
 } else {
   env = require("dotenv").config({ path: ".env" })
+  console.log("DEV ENVIRONMENT")
   // env = require('dotenv').config({ path: '.env' })
   // title = process.env.APP_ENVIRONMENT
   // port_ = 3001
 }
+
+const APP_VERSION = "1.0.25"
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   server: {
     port: port_,
   },
-  env: env.parsed,
+  env: {
+    APP_VERSION: APP_VERSION || "1.0.0",
+    ...env.parsed,
+  },
   ssr: false,
   telemetry: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s - latiabetina_aui",
-    title: "latiabetina_aui",
+    titleTemplate: "%s-latiabetina",
+    title: "Admin",
     htmlAttrs: {
       lang: "en",
     },
-    meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }, { hid: "description", name: "description", content: "" }, { name: "format-detection", content: "telephone=no" }],
+    meta: [
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: "" },
+      { name: "format-detection", content: "telephone=no" },
+      { name: "version", content: "1.0.10" },
+    ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
@@ -98,6 +111,7 @@ export default {
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
+    treeShake: true,
     customVariables: ["~/assets/variables.scss"],
     theme: {
       dark: false,
@@ -116,5 +130,12 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    // analyze: process.env.NODE_ENV !== "production",
+    maxChunkSize: 900000,
+    // extractCSS: true,
+    filenames: {
+      chunk: ({ isDev }) => (isDev ? "[name].js" : "[id].[contenthash].js"),
+    },
+  },
 }
