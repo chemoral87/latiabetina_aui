@@ -52,7 +52,7 @@ export default {
 
           // Redirige al dashboard inmediatamente
           const redirectPath = this.$route.query.redirect || "/dashboard"
-          window.location.href = redirectPath
+          this.$router.push(redirectPath)
         } catch (error) {
           if (!error.message.includes("Navigation cancelled")) {
             this.$store.dispatch("notify", { error: "Error al iniciar sesión con Google" })
