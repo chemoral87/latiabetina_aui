@@ -1,10 +1,13 @@
 export class MenuService {
   constructor(authenticated, permissions) {
     this.authenticated = authenticated
-    this.permissions = permissions
+    this.permissions = permissions || {}
   }
 
   hasPermission(permission) {
+    if (!this.permissions || typeof this.permissions !== "object") {
+      return false
+    }
     return Object.prototype.hasOwnProperty.call(this.permissions, permission)
   }
 
@@ -25,6 +28,10 @@ export class MenuService {
 
       if (this.hasPermission("store-index")) {
         menu.push({ icon: "mdi-store", title: "Tiendas", to: "/store" })
+      }
+
+      if (this.hasPermission("expense-ticket-index")) {
+        menu.push({ icon: "mdi-receipt", title: "Ticket de Gastos", to: "/expense-ticket" })
       }
       // menu.push({
       //   icon: "mdi-chart-bar",

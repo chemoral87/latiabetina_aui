@@ -28,6 +28,13 @@
               <v-btn type="submit" color="primary" class="mr-2 mb-8">Iniciar Sesión</v-btn>
               <v-btn outlined color="primary" class="mr-2 mb-8" @click="$router.push('/forgot-password')">Recuperar contraseña</v-btn>
             </v-col>
+            <v-col cols="12">
+              <v-divider class="mb-4"></v-divider>
+              <v-btn outlined color="red darken-1" block class="text-none" @click="loginWithGoogle">
+                <v-icon left>mdi-google</v-icon>
+                Continuar con Google
+              </v-btn>
+            </v-col>
           </v-row>
         </v-form>
       </v-flex>
@@ -55,8 +62,48 @@ export default {
   mounted() {
     this.name_secret = process.env.BASE_URL
     // this.name_secret = process.env.NAME_SECRET;
+
+    // Maneja el callback de Google OAuth
+    this.handleGoogleCallback()
   },
   methods: {
+    loginWithGoogle() {
+      // Redirige directamente sin hacer petición AJAX
+      const baseUrl = process.env.BASE_URL || this.name_secret
+      window.location.href = `${baseUrl}/auth/google/redirect`
+    },
+    async handleGoogleCallback() {
+      // Verifica si hay un token en la URL (cuando Laravel redirige de vuelta)
+      const urlParams = new URLSearchParams(window.location.search)
+      const token = urlParams.get("token")
+      const error = urlParams.get("error")
+
+      if (error) {
+        this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
+        window.history.replaceState({}, document.title, window.location.pathname)
+        return
+      }
+
+      if (token) {
+        try {
+          // Guarda el token y obtiene el usuario
+          this.$auth.setUserToken(token)
+          await this.$auth.fetchUser()
+
+          // Limpia la URL
+          window.history.replaceState({}, document.title, window.location.pathname)
+
+          // Redirige al dashboard o a la ruta solicitada
+          this.$router.push({
+            path: this.$route.query.redirect || "/",
+          })
+        } catch (error) {
+          console.error("Error en el callback de Google:", error)
+          this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
+          window.history.replaceState({}, document.title, window.location.pathname)
+        }
+      }
+    },
     async submitLogin() {
       // this.$gtag.event("login", { method: "Google" })
       try {

@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <span class="text-h6 ml-2">Bienvenido {{ NAME_SECRET }}</span>
+    <span class="text-h6 ml-2">Bienvenidos {{ NAME_SECRET }}</span>
+    <!-- authenticated {{ authenticated }}
+    <div v-if="user">user {{ user.name }}</div>
+    <div v-else>Cargando usuario...</div> -->
 
     <!-- {{permissions}} -->
     <!-- {{user}} -->
@@ -22,9 +25,18 @@ export default {
       title: "Dashboard",
       icon: "view-dashboard",
     })
+
+    // Si está autenticado pero no tiene usuario, intentar obtenerlo
+    if (this.$auth.loggedIn && !this.$auth.user) {
+      console.log("Usuario no cargado, obteniendo del backend...")
+      this.$auth.fetchUser()
+    }
   },
   methods: {
     hasPermission(permission) {
+      if (!this.permissions || typeof this.permissions !== "object") {
+        return false
+      }
       return Object.prototype.hasOwnProperty.call(this.permissions, permission)
     },
   },

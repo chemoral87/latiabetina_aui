@@ -44,6 +44,12 @@ export const getters = {
   hideNextLoading(state) {
     return state.hide_next_loading
   },
+  authTokenGoogle(state) {
+    return state.auth?.token || null
+  },
+  authStrategy(state) {
+    return state.auth?.strategy?.name || null
+  },
   getConfig: (state) => (org, parameter) => {
     if (state.config.length === 0) return null
     const config = state.config.find((c) => c.org_id === org)

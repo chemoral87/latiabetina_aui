@@ -68,7 +68,10 @@ export default {
   modules: ["@nuxtjs/axios", "@nuxtjs/auth-next", ["@nuxtjs/dotenv", { filename: ".env." + process.env.NODE_ENV }]],
   auth: {
     redirect: {
+      login: "/login",
       logout: "/login",
+      home: false,
+      callback: false,
     },
     strategies: {
       laravelJWT: {
@@ -86,6 +89,39 @@ export default {
         endpoints: {
           login: {
             url: "auth/login",
+            method: "post",
+          },
+          refresh: {
+            url: "auth/refresh",
+            method: "post",
+          },
+          logout: {
+            url: "auth/logout",
+            method: "post",
+          },
+          user: {
+            url: "auth/user",
+            method: "post",
+          },
+        },
+      },
+      google: {
+        provider: "laravel/jwt",
+        token: {
+          property: "access_token",
+          maxAge: 60 * 60,
+        },
+        refreshToken: {
+          maxAge: 20160 * 60,
+        },
+        user: {
+          property: false,
+          autoFetch: false,
+        },
+        url: "/",
+        endpoints: {
+          login: {
+            url: "auth/google/validate",
             method: "post",
           },
           refresh: {

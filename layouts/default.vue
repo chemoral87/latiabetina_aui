@@ -170,7 +170,19 @@ export default {
     },
     logout() {
       this.menu = false
-      this.$auth.logout()
+
+      // Para Google, hacer logout local sin llamar al backend
+      if (this.$auth.strategy.name === "google") {
+        // Redirigir inmediatamente
+        this.$router.push("/login")
+        // Limpiar el estado del auth de forma asíncrona después del redirect
+        this.$nextTick(() => {
+          this.$auth.reset()
+        })
+      } else {
+        // Para Laravel, usar logout normal
+        this.$auth.logout()
+      }
     },
   },
 }
