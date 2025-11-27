@@ -21,7 +21,7 @@ export class MenuService {
         to: "/dashboard",
       })
 
-      if (this.hasPermission("organization-index")) menu.push({ icon: "mdi-domain", title: "Iglesias", to: "/organization" })
+      if (this.hasPermission("organization-index")) menu.push({ icon: "mdi-domain", title: "Orgs", to: "/organization" })
       if (this.hasPermission("user-index")) menu.push({ icon: "mdi-account", title: "Usuarios", to: "/user" })
       if (this.hasPermission("role-index")) menu.push({ icon: "mdi-redhat", title: "Roles", to: "/role" })
       if (this.hasPermission("permission-index")) menu.push({ icon: "mdi-key", title: "Permisos", to: "/permission" })

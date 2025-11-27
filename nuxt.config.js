@@ -32,7 +32,7 @@ export default {
   telemetry: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s-latiabetina",
+    titleTemplate: "Admin",
     title: "Admin",
     htmlAttrs: {
       lang: "en",
@@ -44,7 +44,7 @@ export default {
       { name: "format-detection", content: "telephone=no" },
       { name: "version", content: "1.0.10" },
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    // link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
