@@ -3,18 +3,17 @@
     Auditorio: {{ auditorium.name }}
     <v-row>
       <!-- Panel de Control -->
-
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mb-4" @click="saveAuditorium">
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>
-        <v-btn color="primary" block class="mb-2" @click="addSection">
+        <v-btn color="primary" block class="mb-2" @click="addSection(false)">
           <v-icon left>mdi-plus</v-icon>
           Agregar sección
         </v-btn>
 
-        <v-btn color="secondary" block class="mb-2" @click="addLabelSection">
+        <v-btn color="secondary" block class="mb-2" @click="addSection(true)">
           <v-icon left>mdi-label</v-icon>
           Agregar etiqueta sección
         </v-btn>
@@ -33,9 +32,9 @@
           <input ref="fileInput" type="file" accept=".json" style="display: none" @change="importConfiguration" />
         </v-card>
 
-        <v-slider v-model="SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
+        <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
 
-        <v-slider v-model="SEATS_DISTANCE" :min="0" :max="60" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
+        <v-slider v-model="settings.SEATS_DISTANCE" :min="0" :max="60" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
 
         <!-- Lista de Secciones -->
         <v-expansion-panels accordion>
@@ -52,12 +51,12 @@
             </v-expansion-panel-header>
 
             <v-expansion-panel-content v-if="!section.isLabel">
-              <v-btn small block color="secondary" class="mb-2" @click="addSubsection(sIdx)">
+              <v-btn small block color="secondary" class="mb-2" @click="addSubsection(sIdx, false)">
                 <v-icon left small>mdi-plus</v-icon>
                 Agregar subsección
               </v-btn>
 
-              <v-btn small block color="accent" class="mb-2" @click="addSubsectionLabel(sIdx)">
+              <v-btn small block color="accent" class="mb-2" @click="addSubsection(sIdx, true)">
                 <v-icon left small>mdi-label-outline</v-icon>
                 Agregar área
               </v-btn>
@@ -94,11 +93,11 @@
                       <v-select v-model="selectedRow[`${sIdx}-${subIdx}`]" :items="getRowOptions(sub)" label="Seleccionar fila" dense hide-details />
                     </v-col>
                     <v-col cols="6" class="d-flex gap-1">
-                      <v-btn x-small color="primary" :disabled="selectedRow[`${sIdx}-${subIdx}`] === undefined || selectedRow[`${sIdx}-${subIdx}`] === null" @click="addSeatToRow(sIdx, subIdx, 'left')">
+                      <v-btn x-small color="primary" :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'left')">
                         <v-icon x-small>mdi-arrow-left-circle</v-icon>
                         Izq
                       </v-btn>
-                      <v-btn x-small color="primary" :disabled="selectedRow[`${sIdx}-${subIdx}`] === undefined || selectedRow[`${sIdx}-${subIdx}`] === null" @click="addSeatToRow(sIdx, subIdx, 'right')">
+                      <v-btn x-small color="primary" :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'right')">
                         <v-icon x-small>mdi-arrow-right-circle</v-icon>
                         Der
                       </v-btn>
@@ -125,19 +124,9 @@
         <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
           <v-stage :config="stageConfig">
             <v-layer>
-              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(section, sIdx)">
+              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
                 <!-- Fondo de sección (solo si NO es etiqueta) -->
-                <v-rect
-                  v-if="!section.isLabel"
-                  :config="{
-                    width: getSectionWidth(section),
-                    height: getSectionHeight(section),
-                    fill: '#222d3b',
-                    strokeWidth: 1,
-                    stroke: 'lightgrey',
-                    cornerRadius: 5,
-                  }"
-                />
+                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
 
                 <!-- Título de sección -->
                 <v-text :config="getSectionTitleConfig(section)" />
@@ -147,54 +136,17 @@
                   <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
                     <!-- Si la subsección es una etiqueta/área -->
                     <template v-if="sub.isLabel">
-                      <v-rect
-                        :config="{
-                          width: sub.width || 100,
-                          height: getSectionHeight(section) - SECTION_TOP_PADDING - SECTION_BOTTOM_PADDING,
-                          fill: '#424242',
-                          opacity: 0.3,
-                          strokeWidth: 2,
-                          stroke: '#ff9800',
-                          strokeDashArray: [5, 5],
-                        }"
-                      />
-                      <v-text :config="getSubsectionLabelConfig(sub, section)" />
+                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
                     </template>
 
                     <!-- Si la subsección tiene asientos -->
                     <template v-else>
                       <!-- Etiquetas del eje Y (números de fila) -->
-                      <v-text
-                        v-for="(row, rowIdx) in sub.seats"
-                        :key="`row-label-${rowIdx}`"
-                        :config="{
-                          x: -15,
-                          y: rowIdx * seatSpacing + SEAT_SIZE / 2,
-                          text: (rowIdx + 1).toString(),
-                          fontSize: 8,
-                          fill: 'yellow',
-                          fontFamily: 'Arial',
-                          align: 'right',
-                          verticalAlign: 'middle',
-                          offsetY: 3,
-                        }"
-                      />
+                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
 
                       <!-- Etiquetas del eje X (letras de columna) -->
-                      <v-text
-                        v-for="colIdx in getMaxColumns(sub)"
-                        :key="`col-label-${colIdx}`"
-                        :config="{
-                          x: (colIdx - 1) * seatSpacing + SEAT_SIZE / 2,
-                          y: getSubsectionHeight(sub) + 5,
-                          text: String.fromCharCode(64 + colIdx),
-                          fontSize: 8,
-                          fill: 'yellow',
-                          fontFamily: 'Arial',
-                          align: 'center',
-                          offsetX: 3,
-                        }"
-                      />
+                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
 
                       <!-- Fondo de subsección -->
                       <v-rect :config="getSubsectionRectConfig(sub)" />
@@ -203,14 +155,7 @@
                       <v-text :config="getSubsectionTitleConfig(sub)" />
 
                       <!-- Asientos -->
-                      <v-circle
-                        v-for="seat in getSubsectionSeats(sub)"
-                        :key="seat.id"
-                        :config="getSeatConfig(seat)"
-                        @mouseenter="handleSeatHover"
-                        @mouseleave="handleSeatLeave"
-                        @click="handleSeatClick(seat, sIdx, subIdx)"
-                      />
+                      <v-circle v-for="seat in getSubsectionSeats(sub)" :key="seat.id" :config="getSeatConfig(seat)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat)" />
                     </template>
                   </v-group>
                 </template>
@@ -220,22 +165,44 @@
         </v-sheet>
       </v-col>
     </v-row>
+    {{ auditorium.config }}
   </v-container>
 </template>
 
 <script>
-// (Eliminado export default duplicado. El export default correcto está más abajo en el archivo)
 import Vue from "vue"
 import VueKonva from "vue-konva"
 Vue.use(VueKonva)
 
+const DEFAULT_SETTINGS = {
+  SEAT_SIZE: 10,
+  SEATS_DISTANCE: 15,
+  SUBSECTION_PADDING: 30,
+  SECTIONS_MARGIN: 10,
+  SECTION_TOP_PADDING: 40,
+  SECTION_SIDE_PADDING: 20,
+  SECTION_BOTTOM_PADDING: 20,
+}
+
+const COLORS = {
+  SEAT_SELECTED: "#1976d2",
+  SEAT_FREE: "#1b728d",
+  SEAT_RESERVED: "lightgrey",
+  SECTION_BG: "#222d3b",
+  SUBSECTION_BG: "#e0e0e0",
+  LABEL_TEXT: "#ff9800",
+}
+
 export default {
   middleware: ["authenticated"],
+
   async asyncData({ params, app }) {
     let auditorium = {}
     try {
       auditorium = (await app.$repository.Auditorium?.show?.(params.id)) || {}
-    } catch (e) {}
+    } catch (e) {
+      console.error("Error loading auditorium:", e)
+    }
     return { auditorium }
   },
 
@@ -244,151 +211,120 @@ export default {
       stageConfig: { width: 900, height: 700 },
       sections: [],
       selectedRow: {},
-      SEAT_SELECTED_COLOR: "#1976d2",
-      SEAT_SIZE: 10,
-      SEATS_DISTANCE: 15,
-      SUBSECTION_PADDING: 30,
-      SECTIONS_MARGIN: 10,
-      SECTION_TOP_PADDING: 40,
-      SECTION_SIDE_PADDING: 20,
-      SECTION_BOTTOM_PADDING: 20,
+      settings: { ...DEFAULT_SETTINGS },
     }
   },
 
   computed: {
     seatSpacing() {
-      return this.SEAT_SIZE + this.SEATS_DISTANCE
+      return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
+    },
+    configData() {
+      return {
+        version: "1.0",
+        timestamp: new Date().toISOString(),
+        settings: this.settings,
+        sections: this.sections,
+      }
     },
   },
 
   watch: {
-    SEAT_SIZE() {
-      this.$forceUpdate()
-    },
-    SEATS_DISTANCE() {
-      this.$forceUpdate()
-    },
+    "settings.SEAT_SIZE": "forceUpdate",
+    "settings.SEATS_DISTANCE": "forceUpdate",
   },
 
   created() {
     this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater", back: "/auditorium" })
-    // Si el auditorio tiene configuración previa, cargarla desde auditorium.config
-    if (this.auditorium && this.auditorium.config) {
+    this.loadConfiguration()
+  },
+
+  methods: {
+    forceUpdate() {
+      this.$forceUpdate()
+    },
+
+    loadConfiguration() {
+      if (!this.auditorium?.config) return
+
       let config = this.auditorium.config
       if (typeof config === "string") {
         try {
           config = JSON.parse(config)
         } catch (e) {
-          // Si falla el parseo, no cargar nada
+          console.error("Error parsing config:", e)
           return
         }
       }
+
       if (config.settings && config.sections) {
-        this.SEAT_SIZE = config.settings.SEAT_SIZE || 10
-        this.SEATS_DISTANCE = config.settings.SEATS_DISTANCE || 15
-        this.SUBSECTION_PADDING = config.settings.SUBSECTION_PADDING || 30
-        this.SECTIONS_MARGIN = config.settings.SECTIONS_MARGIN || 10
-        this.SECTION_TOP_PADDING = config.settings.SECTION_TOP_PADDING || 40
-        this.SECTION_SIDE_PADDING = config.settings.SECTION_SIDE_PADDING || 20
-        this.SECTION_BOTTOM_PADDING = config.settings.SECTION_BOTTOM_PADDING || 20
+        Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
         this.sections = JSON.parse(JSON.stringify(config.sections))
       }
-    }
-  },
-  methods: {
+    },
+
     async saveAuditorium() {
       try {
-        // Generar el JSON de configuración actualizado
-        const config = {
-          settings: {
-            SEAT_SIZE: this.SEAT_SIZE,
-            SEATS_DISTANCE: this.SEATS_DISTANCE,
-            SUBSECTION_PADDING: this.SUBSECTION_PADDING,
-            SECTIONS_MARGIN: this.SECTIONS_MARGIN,
-            SECTION_TOP_PADDING: this.SECTION_TOP_PADDING,
-            SECTION_SIDE_PADDING: this.SECTION_SIDE_PADDING,
-            SECTION_BOTTOM_PADDING: this.SECTION_BOTTOM_PADDING,
-          },
-          sections: this.sections,
-        }
-        // Asignar a auditorium.config
-        this.auditorium.config = config
-
+        this.auditorium.config = this.configData
         const payload = {
           ...this.auditorium,
           name: this.auditorium.name,
-          config: JSON.stringify(config),
+          config: JSON.stringify(this.configData),
         }
         await this.$repository.Auditorium.update(this.auditorium.id, payload)
-        this.$toast && this.$toast.success("Auditorio guardado")
+        this.$toast?.success("Auditorio guardado")
       } catch (e) {
-        this.$toast && this.$toast.error("Error al guardar")
+        console.error("Error saving:", e)
+        this.$toast?.error("Error al guardar")
       }
     },
-    // ============ OPERACIONES DE SECCIÓN ============
-    addSection() {
-      this.sections.push({
-        name: `Sección ${this.sections.length + 1}`,
-        isLabel: false,
-        subsections: [
-          {
-            name: "Subsección 1",
-            isLabel: false,
-            seats: this.createSeatsGrid(4, 4),
-          },
-        ],
-      })
-    },
 
-    addLabelSection() {
-      this.sections.push({
-        name: `Etiqueta ${this.sections.length + 1}`,
-        isLabel: true,
+    // ============ OPERACIONES DE SECCIÓN ============
+    addSection(isLabel) {
+      const section = {
+        name: `${isLabel ? "Etiqueta" : "Sección"} ${this.sections.length + 1}`,
+        isLabel,
         subsections: [],
-      })
+      }
+
+      if (!isLabel) {
+        section.subsections.push(this.createSubsection("Subsección 1", false, 4, 4))
+      }
+
+      this.sections.push(section)
     },
 
     removeSection(sIdx) {
       this.sections.splice(sIdx, 1)
     },
 
-    addSubsection(sIdx) {
+    addSubsection(sIdx, isLabel) {
       const section = this.sections[sIdx]
-      section.subsections.push({
-        name: `Subsección ${section.subsections.length + 1}`,
-        isLabel: false,
-        seats: this.createSeatsGrid(3, 5),
-        tempRows: 3,
-        tempCols: 5,
-      })
-    },
-
-    addSubsectionLabel(sIdx) {
-      const section = this.sections[sIdx]
-      section.subsections.push({
-        name: `Área ${section.subsections.length + 1}`,
-        isLabel: true,
-        width: 100,
-        seats: [],
-      })
+      const name = `${isLabel ? "Área" : "Subsección"} ${section.subsections.length + 1}`
+      section.subsections.push(this.createSubsection(name, isLabel, 3, 5))
     },
 
     removeSubsection(sIdx, subIdx) {
       this.sections[sIdx].subsections.splice(subIdx, 1)
     },
 
+    createSubsection(name, isLabel, rows = 3, cols = 5) {
+      const sub = { name, isLabel, seats: [] }
+      if (isLabel) {
+        sub.width = 100
+      } else {
+        sub.seats = this.createSeatsGrid(rows, cols)
+        sub.tempRows = rows
+        sub.tempCols = cols
+      }
+      return sub
+    },
+
     setSubsectionGrid(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
-      const rows = parseInt(sub.tempRows) || 3
-      const cols = parseInt(sub.tempCols) || 5
+      const rows = Math.max(1, Math.min(20, parseInt(sub.tempRows) || 3))
+      const cols = Math.max(1, Math.min(30, parseInt(sub.tempCols) || 5))
 
-      // Validar valores
-      if (rows < 1 || rows > 20 || cols < 1 || cols > 30) {
-        alert("Filas: 1-20, Columnas: 1-30")
-        return
-      }
-
-      // Crear nueva grilla
       sub.seats = this.createSeatsGrid(rows, cols)
       this.$forceUpdate()
     },
@@ -401,67 +337,37 @@ export default {
     },
 
     getMaxColumns(sub) {
-      if (!sub.seats?.length) return 0
-      return Math.max(...sub.seats.map((row) => row.length))
+      return sub.seats?.length ? Math.max(...sub.seats.map((row) => row.length)) : 0
+    },
+
+    isRowSelected(sIdx, subIdx) {
+      const key = `${sIdx}-${subIdx}`
+      return this.selectedRow[key] !== undefined && this.selectedRow[key] !== null
     },
 
     addSeatToRow(sIdx, subIdx, side) {
       const sub = this.sections[sIdx].subsections[subIdx]
       const selectedRowIdx = this.selectedRow[`${sIdx}-${subIdx}`]
 
-      if (selectedRowIdx === undefined || selectedRowIdx === null) return
+      if (!this.isRowSelected(sIdx, subIdx)) return
+
+      const selectedRow = sub.seats[selectedRowIdx]
 
       if (side === "left") {
-        const selectedRow = sub.seats[selectedRowIdx]
-        const hasPlaceholder = selectedRow[0] && selectedRow[0].state === "invisible"
-
-        if (hasPlaceholder) {
-          selectedRow[0] = {
-            id: `s${selectedRowIdx}c0-${Date.now().toString(36)}`,
-            row: selectedRowIdx,
-            col: 0,
-            state: "free",
-          }
+        if (selectedRow[0]?.state === "invisible") {
+          selectedRow[0] = this.createSeat(0, selectedRowIdx)
         } else {
           sub.seats.forEach((row, rowIdx) => {
-            if (rowIdx === selectedRowIdx) {
-              const newSeat = {
-                id: `s${rowIdx}c0-${Date.now().toString(36)}`,
-                row: rowIdx,
-                col: 0,
-                state: "free",
-              }
-              row.unshift(newSeat)
-            } else {
-              const placeholder = {
-                id: `p${rowIdx}c0-${Date.now().toString(36)}`,
-                row: rowIdx,
-                col: 0,
-                state: "invisible",
-              }
-              row.unshift(placeholder)
-            }
+            const seat = rowIdx === selectedRowIdx ? this.createSeat(0, rowIdx) : this.createPlaceholder(0, rowIdx)
+            row.unshift(seat)
           })
         }
       } else {
-        const selectedRow = sub.seats[selectedRowIdx]
         const lastIdx = selectedRow.length - 1
-
-        if (selectedRow[lastIdx] && selectedRow[lastIdx].state === "invisible") {
-          selectedRow[lastIdx] = {
-            id: `s${selectedRowIdx}c${lastIdx}-${Date.now().toString(36)}`,
-            row: selectedRowIdx,
-            col: lastIdx,
-            state: "free",
-          }
+        if (selectedRow[lastIdx]?.state === "invisible") {
+          selectedRow[lastIdx] = this.createSeat(lastIdx, selectedRowIdx)
         } else {
-          const newSeat = {
-            id: `s${selectedRowIdx}c${selectedRow.length}-${Date.now().toString(36)}`,
-            row: selectedRowIdx,
-            col: selectedRow.length,
-            state: "free",
-          }
-          selectedRow.push(newSeat)
+          selectedRow.push(this.createSeat(selectedRow.length, selectedRowIdx))
         }
       }
 
@@ -475,82 +381,91 @@ export default {
 
     createSeat(col, row) {
       return {
-        id: `s${row}c${col}-${Date.now().toString(36)}`,
+        id: `s${row}c${col}-${Date.now().toString(36)}${Math.random().toString(36).substr(2, 5)}`,
         row,
         col,
         state: "free",
       }
     },
 
+    createPlaceholder(col, row) {
+      return {
+        id: `p${row}c${col}-${Date.now().toString(36)}`,
+        row,
+        col,
+        state: "invisible",
+      }
+    },
+
     // ============ MANEJO DE EVENTOS ============
-    handleSeatClick(seat, sIdx, subIdx) {
-      if (seat.state === "reserved") return
-      seat.state = seat.state === "selected" ? "free" : "selected"
+    handleSeatClick(seat) {
+      if (seat.state !== "reserved") {
+        seat.state = seat.state === "selected" ? "free" : "selected"
+      }
     },
 
     handleSeatHover(e) {
-      const seat = e.target.attrs
       const container = e.target.getStage().container()
-      container.style.cursor = seat.opacity < 1 ? "not-allowed" : "pointer"
+      container.style.cursor = e.target.attrs.opacity < 1 ? "not-allowed" : "pointer"
     },
 
     handleSeatLeave(e) {
-      const container = e.target.getStage().container()
-      container.style.cursor = "default"
+      e.target.getStage().container().style.cursor = "default"
     },
 
     // ============ CONFIGURACIONES DE KONVA ============
-    getSectionConfig(section, sIdx) {
-      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.SECTIONS_MARGIN, 60)
+    getSectionConfig(sIdx) {
+      const section = this.sections[sIdx]
+      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 60)
 
       return {
-        x: this.getSectionX(section),
+        x: (this.stageConfig.width - this.getSectionWidth(section)) / 2,
         y,
       }
     },
 
+    getSectionBgConfig(section) {
+      return {
+        width: this.getSectionWidth(section),
+        height: this.getSectionHeight(section),
+        fill: COLORS.SECTION_BG,
+        strokeWidth: 1,
+        stroke: "lightgrey",
+        cornerRadius: 5,
+      }
+    },
+
     getSectionTitleConfig(section) {
-      const width = this.getSectionWidth(section)
       return {
         x: 0,
-        y: section.isLabel ? 0 : this.SECTION_TOP_PADDING / 4,
+        y: section.isLabel ? 0 : this.settings.SECTION_TOP_PADDING / 4,
         text: section.name,
         fontSize: section.isLabel ? 24 : 20,
         fill: section.isLabel ? "#1976d2" : "#fff",
         fontStyle: "bold",
         fontFamily: "Arial",
         align: section.isLabel ? "left" : "center",
-        width: section.isLabel ? undefined : width,
+        width: section.isLabel ? undefined : this.getSectionWidth(section),
       }
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x =
-        section.subsections.slice(0, subIdx).reduce((acc, s) => {
-          if (s.isLabel) return acc + (s.width || 100)
-          return acc + this.getSubsectionWidth(s)
-        }, 0) +
-        subIdx * this.SUBSECTION_PADDING +
-        this.SECTION_SIDE_PADDING
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_PADDING + this.settings.SECTION_SIDE_PADDING
 
-      return {
-        x,
-        y: this.SECTION_TOP_PADDING,
-      }
+      return { x, y: this.settings.SECTION_TOP_PADDING }
     },
 
     getSubsectionRectConfig(sub) {
       return {
         width: this.getSubsectionWidth(sub),
         height: this.getSubsectionHeight(sub),
-        fill: "#e0e0e0",
+        fill: COLORS.SUBSECTION_BG,
         stroke: "green",
         strokeWidth: 2,
       }
     },
 
     getSubsectionTitleConfig(sub) {
-      const width = this.getSubsectionWidth(sub)
       return {
         x: 0,
         y: -15,
@@ -559,23 +474,64 @@ export default {
         fill: "#fff",
         fontFamily: "Arial",
         align: "left",
-        width,
+        width: this.getSubsectionWidth(sub),
       }
     },
 
-    getSubsectionLabelConfig(sub, section) {
-      const height = this.getSectionHeight(section) - this.SECTION_TOP_PADDING - this.SECTION_BOTTOM_PADDING
+    getSubsectionLabelBgConfig(sub, section) {
       return {
-        x: (sub.width || 100) / 2,
+        width: sub.width || 100,
+        height: this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - this.settings.SECTION_BOTTOM_PADDING,
+        fill: "#424242",
+        opacity: 0.3,
+        strokeWidth: 2,
+        stroke: COLORS.LABEL_TEXT,
+        strokeDashArray: [5, 5],
+      }
+    },
+
+    getSubsectionLabelTextConfig(sub, section) {
+      const width = sub.width || 100
+      const height = this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - this.settings.SECTION_BOTTOM_PADDING
+
+      return {
+        x: width / 2,
         y: height / 2,
         text: sub.name,
         fontSize: 14,
-        fill: "#ff9800",
+        fill: COLORS.LABEL_TEXT,
         fontStyle: "bold",
         fontFamily: "Arial",
         align: "center",
-        offsetX: (sub.width || 100) / 2 - 5,
+        offsetX: width / 2 - 5,
         offsetY: 7,
+      }
+    },
+
+    getRowLabelConfig(rowIdx) {
+      return {
+        x: -15,
+        y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+        text: (rowIdx + 1).toString(),
+        fontSize: 8,
+        fill: "yellow",
+        fontFamily: "Arial",
+        align: "right",
+        verticalAlign: "middle",
+        offsetY: 3,
+      }
+    },
+
+    getColLabelConfig(colIdx, sub) {
+      return {
+        x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+        y: this.getSubsectionHeight(sub) + 5,
+        text: String.fromCharCode(65 + colIdx),
+        fontSize: 8,
+        fill: "yellow",
+        fontFamily: "Arial",
+        align: "center",
+        offsetX: 3,
       }
     },
 
@@ -586,10 +542,8 @@ export default {
           if (seat.state !== "invisible") {
             allSeats.push({
               ...seat,
-              row: rowIdx,
-              col: colIdx,
-              x: colIdx * this.seatSpacing + this.SEAT_SIZE / 2,
-              y: rowIdx * this.seatSpacing + this.SEAT_SIZE / 2,
+              x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+              y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
             })
           }
         })
@@ -604,18 +558,12 @@ export default {
       return {
         x: seat.x,
         y: seat.y,
-        radius: this.SEAT_SIZE / 2,
-        fill: this.getSeatColor(isReserved, isSelected),
-        stroke: isSelected ? this.SEAT_SELECTED_COLOR : "#757575",
+        radius: this.settings.SEAT_SIZE / 2,
+        fill: isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE,
+        stroke: isSelected ? COLORS.SEAT_SELECTED : "#757575",
         strokeWidth: 1,
         opacity: isReserved ? 0.6 : 1,
       }
-    },
-
-    getSeatColor(isReserved, isSelected) {
-      if (isSelected) return this.SEAT_SELECTED_COLOR
-      if (isReserved) return "lightgrey"
-      return "#1b728d"
     },
 
     // ============ CÁLCULOS DE DIMENSIONES ============
@@ -623,13 +571,13 @@ export default {
       if (sub.isLabel) return sub.width || 100
       if (!sub.seats?.length) return 0
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
-      return maxCols * this.seatSpacing - this.SEATS_DISTANCE
+      return maxCols * this.seatSpacing - this.settings.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
       if (sub.isLabel) return 0
       if (!sub.seats?.length) return 40
-      return sub.seats.length * this.seatSpacing - this.SEATS_DISTANCE
+      return sub.seats.length * this.seatSpacing - this.settings.SEATS_DISTANCE
     },
 
     getSectionWidth(section) {
@@ -637,49 +585,26 @@ export default {
       if (!section.subsections.length) return 0
 
       return (
-        section.subsections.reduce((acc, sub) => {
-          if (sub.isLabel) return acc + (sub.width || 100)
-          return acc + this.getSubsectionWidth(sub)
-        }, 0) +
-        (section.subsections.length - 1) * this.SUBSECTION_PADDING +
-        this.SECTION_SIDE_PADDING * 2
+        section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
+        (section.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
+        this.settings.SECTION_SIDE_PADDING * 2
       )
     },
 
     getSectionHeight(section) {
       if (section.isLabel) return 30
-
-      if (!section.subsections?.length) return this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING
+      if (!section.subsections?.length) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
 
       const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
 
-      if (maxRows === 0) return this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING + 40
+      if (maxRows === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING + 40
 
-      return maxRows * this.seatSpacing - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING
-    },
-
-    getSectionX(section) {
-      return (this.stageConfig.width - this.getSectionWidth(section)) / 2
+      return maxRows * this.seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
     },
 
     // ============ IMPORTAR/EXPORTAR ============
     exportConfiguration() {
-      const config = {
-        version: "1.0",
-        timestamp: new Date().toISOString(),
-        settings: {
-          SEAT_SIZE: this.SEAT_SIZE,
-          SEATS_DISTANCE: this.SEATS_DISTANCE,
-          SUBSECTION_PADDING: this.SUBSECTION_PADDING,
-          SECTIONS_MARGIN: this.SECTIONS_MARGIN,
-          SECTION_TOP_PADDING: this.SECTION_TOP_PADDING,
-          SECTION_SIDE_PADDING: this.SECTION_SIDE_PADDING,
-          SECTION_BOTTOM_PADDING: this.SECTION_BOTTOM_PADDING,
-        },
-        sections: this.sections,
-      }
-
-      const jsonStr = JSON.stringify(config, null, 2)
+      const jsonStr = JSON.stringify(this.configData, null, 2)
       const blob = new Blob([jsonStr], { type: "application/json" })
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
@@ -705,21 +630,10 @@ export default {
             return
           }
 
-          // Actualizar auditorium.config
           this.auditorium.config = config
-
-          this.SEAT_SIZE = config.settings.SEAT_SIZE || 10
-          this.SEATS_DISTANCE = config.settings.SEATS_DISTANCE || 15
-          this.SUBSECTION_PADDING = config.settings.SUBSECTION_PADDING || 30
-          this.SECTIONS_MARGIN = config.settings.SECTIONS_MARGIN || 10
-          this.SECTION_TOP_PADDING = config.settings.SECTION_TOP_PADDING || 40
-          this.SECTION_SIDE_PADDING = config.settings.SECTION_SIDE_PADDING || 20
-          this.SECTION_BOTTOM_PADDING = config.settings.SECTION_BOTTOM_PADDING || 20
-
+          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
           this.sections = config.sections
-
           event.target.value = ""
-
           this.$forceUpdate()
           alert("Configuración importada correctamente")
         } catch (error) {
@@ -733,6 +647,9 @@ export default {
 </script>
 
 <style scoped>
+.gap-1 {
+  gap: 4px;
+}
 .gap-2 {
   gap: 8px;
 }
