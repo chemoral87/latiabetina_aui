@@ -67,27 +67,18 @@
                 <v-slider v-if="sub.isLabel" v-model="sub.width" :min="50" :max="300" :step="10" label="Ancho del área" thumb-label dense hide-details class="mb-2" />
 
                 <template v-if="!sub.isLabel">
-                  <div class="d-flex gap-2 mb-2">
-                    <v-btn x-small color="success" @click="addRow(sIdx, subIdx)">
-                      <v-icon left x-small>mdi-table-row-plus-after</v-icon>
-                      + Fila
-                    </v-btn>
-                    <v-btn x-small color="success" @click="addColumn(sIdx, subIdx)">
-                      <v-icon left x-small>mdi-table-column-plus-after</v-icon>
-                      + Col
-                    </v-btn>
-                  </div>
-
-                  <div class="d-flex gap-2 mb-2">
-                    <v-btn x-small color="warning" @click="removeRow(sIdx, subIdx)">
-                      <v-icon left x-small>mdi-table-row-remove</v-icon>
-                      - Fila
-                    </v-btn>
-                    <v-btn x-small color="warning" @click="removeColumn(sIdx, subIdx)">
-                      <v-icon left x-small>mdi-table-column-remove</v-icon>
-                      - Col
-                    </v-btn>
-                  </div>
+                  <!-- Definir filas y columnas -->
+                  <v-row dense class="mb-2">
+                    <v-col cols="5">
+                      <v-text-field v-model.number="sub.tempRows" label="Filas" type="number" :min="1" :max="20" dense hide-details />
+                    </v-col>
+                    <v-col cols="5">
+                      <v-text-field v-model.number="sub.tempCols" label="Columnas" type="number" :min="1" :max="30" dense hide-details />
+                    </v-col>
+                    <v-col cols="2">
+                      <v-btn small color="primary" @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>
+                    </v-col>
+                  </v-row>
 
                   <!-- Agregar asiento individual por fila -->
                   <v-divider class="my-2" />
@@ -174,12 +165,12 @@
                           x: -15,
                           y: rowIdx * seatSpacing + SEAT_SIZE / 2,
                           text: (rowIdx + 1).toString(),
-                          fontSize: 11,
-                          fill: '#fff',
+                          fontSize: 8,
+                          fill: 'yellow',
                           fontFamily: 'Arial',
                           align: 'right',
                           verticalAlign: 'middle',
-                          offsetY: 5,
+                          offsetY: 3,
                         }"
                       />
 
@@ -191,11 +182,11 @@
                           x: (colIdx - 1) * seatSpacing + SEAT_SIZE / 2,
                           y: getSubsectionHeight(sub) + 5,
                           text: String.fromCharCode(64 + colIdx),
-                          fontSize: 11,
-                          fill: '#fff',
+                          fontSize: 8,
+                          fill: 'yellow',
                           fontFamily: 'Arial',
                           align: 'center',
-                          offsetX: 5,
+                          offsetX: 3,
                         }"
                       />
 
@@ -303,6 +294,8 @@ export default {
         name: `Subsección ${section.subsections.length + 1}`,
         isLabel: false,
         seats: this.createSeatsGrid(3, 5),
+        tempRows: 3,
+        tempCols: 5,
       })
     },
 
@@ -320,32 +313,20 @@ export default {
       this.sections[sIdx].subsections.splice(subIdx, 1)
     },
 
-    addRow(sIdx, subIdx) {
+    setSubsectionGrid(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
-      const cols = sub.seats[0]?.length || 5
-      const newRow = Array.from({ length: cols }, (_, colIdx) => this.createSeat(colIdx, sub.seats.length))
-      sub.seats.push(newRow)
-    },
+      const rows = parseInt(sub.tempRows) || 3
+      const cols = parseInt(sub.tempCols) || 5
 
-    removeRow(sIdx, subIdx) {
-      const sub = this.sections[sIdx].subsections[subIdx]
-      if (sub.seats.length > 1) {
-        sub.seats.pop()
+      // Validar valores
+      if (rows < 1 || rows > 20 || cols < 1 || cols > 30) {
+        alert("Filas: 1-20, Columnas: 1-30")
+        return
       }
-    },
 
-    addColumn(sIdx, subIdx) {
-      const sub = this.sections[sIdx].subsections[subIdx]
-      sub.seats.forEach((row, rowIdx) => {
-        row.push(this.createSeat(row.length, rowIdx))
-      })
-    },
-
-    removeColumn(sIdx, subIdx) {
-      const sub = this.sections[sIdx].subsections[subIdx]
-      if (sub.seats[0]?.length > 1) {
-        sub.seats.forEach((row) => row.pop())
-      }
+      // Crear nueva grilla
+      sub.seats = this.createSeatsGrid(rows, cols)
+      this.$forceUpdate()
     },
 
     getRowOptions(sub) {
