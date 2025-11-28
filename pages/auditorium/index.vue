@@ -32,49 +32,52 @@
           <v-stage :key="SEAT_SIZE + '-' + SEATS_DISTANCE" :config="stageConfig">
             <v-layer>
               <template v-for="(section, sIdx) in sections">
-                <template v-for="(sub, subIdx) in section.subsections">
-                  <v-group
-                    :key="'subg-' + sIdx + '-' + subIdx"
-                    :x="(stageConfig.width - ((sub.seats[0]?.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE)) / 2"
-                    :y="(stageConfig.height - ((sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE)) / 2"
-                  >
-                    <v-rect
-                      :width="(sub.seats[0]?.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE"
-                      :height="(sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE"
-                      :fill="'#e0e0e0'"
-                      :stroke="'black'"
-                      :stroke-width="2"
-                    />
-                    <v-group v-for="(row, rowIdx) in sub.seats" :key="'rownum-' + rowIdx">
-                      <v-group v-for="(seat, colIdx) in row" :key="seat.id">
-                        <v-circle
-                          :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
-                          :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
-                          :radius="SEAT_SIZE / 2"
-                          :fill="getSeatColor(seat.state === 'reserved', seat.state === 'selected')"
-                          :stroke="seat.state === 'selected' ? SEAT_SELECTED_COLOR : '#757575'"
-                          :stroke-width="1"
-                          :opacity="seat.state === 'reserved' ? 0.6 : 1"
-                          @mouseenter.native="onSeatHover($event, seat)"
-                          @mouseleave.native="onSeatLeave($event, seat)"
-                          @click="
-                            () => {
-                              if (seat.state !== 'reserved') toggleSeatState(sIdx, subIdx, rowIdx, colIdx)
-                            }
-                          "
-                        />
-                        <v-text
-                          :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 - 6"
-                          :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 + 5"
-                          :font-size="11"
-                          :fill="seat.state === 'selected' ? '#fff' : '#333'"
-                        >
-                          {{ colIdx + 1 }}
-                        </v-text>
+                <v-group :key="'section-' + sIdx" :x="(stageConfig.width - getSectionWidth(section)) / 2" :y="60 + sIdx * 220">
+                  <v-rect
+                    :width="getSectionWidth(section)"
+                    :height="(section.subsections[0]?.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE + SECTION_TOP_PADDING"
+                    fill="white"
+                    :stroke-width="1"
+                    stroke="lightgrey"
+                    :corner-radius="5"
+                  />
+                  <v-text :x="0" :y="0" :width="getSectionWidth(section)" :height="SECTION_TOP_PADDING" align="center" vertical-align="middle" :font-size="20" :fill="'#333'">
+                    {{ section.name }}
+                  </v-text>
+                  <template v-for="(sub, subIdx) in section.subsections">
+                    <v-group :key="'subg-' + sIdx + '-' + subIdx" :x="section.subsections.slice(0, subIdx).reduce((acc, s) => acc + getSubsectionWidth(s), 0) + subIdx * SUBSECTION_PADDING" :y="SECTION_TOP_PADDING">
+                      <v-rect :width="getSubsectionWidth(sub)" :height="(sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE" :fill="'#e0e0e0'" :stroke="'black'" :stroke-width="2" />
+                      <v-group v-for="(row, rowIdx) in sub.seats" :key="'rownum-' + rowIdx">
+                        <v-group v-for="(seat, colIdx) in row" :key="seat.id">
+                          <v-circle
+                            :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
+                            :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
+                            :radius="SEAT_SIZE / 2"
+                            :fill="getSeatColor(seat.state === 'reserved', seat.state === 'selected')"
+                            :stroke="seat.state === 'selected' ? SEAT_SELECTED_COLOR : '#757575'"
+                            :stroke-width="1"
+                            :opacity="seat.state === 'reserved' ? 0.6 : 1"
+                            @mouseenter.native="onSeatHover($event, seat)"
+                            @mouseleave.native="onSeatLeave($event, seat)"
+                            @click="
+                              () => {
+                                if (seat.state !== 'reserved') toggleSeatState(sIdx, subIdx, rowIdx, colIdx)
+                              }
+                            "
+                          />
+                          <v-text
+                            :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 - 6"
+                            :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 + 5"
+                            :font-size="11"
+                            :fill="seat.state === 'selected' ? '#fff' : '#333'"
+                          >
+                            {{ colIdx + 1 }}
+                          </v-text>
+                        </v-group>
                       </v-group>
                     </v-group>
-                  </v-group>
-                </template>
+                  </template>
+                </v-group>
               </template>
             </v-layer>
           </v-stage>
@@ -88,6 +91,7 @@ import Vue from "vue"
 import VueKonva from "vue-konva"
 Vue.use(VueKonva)
 
+// ...existing code...
 export default {
   middleware: ["authenticated"],
   data() {
@@ -219,6 +223,13 @@ export default {
         if (seat.state === "reserved") return
         seat.state = seat.state === "selected" ? "free" : "selected"
       }
+    },
+    getSubsectionWidth(sub) {
+      return (sub.seats[0]?.length || 1) * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE
+    },
+    getSectionWidth(section) {
+      if (!section.subsections.length) return 0
+      return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING
     },
   },
 }
