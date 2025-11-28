@@ -8,8 +8,8 @@
         <v-list dense>
           <v-list-item v-for="(section, sIdx) in sections" :key="'section-' + sIdx">
             <v-list-item-content>
-              <v-list-item-title>
-                <b>{{ section.name }}</b>
+              <v-list-item-title style="display: flex; align-items: center; gap: 8px">
+                <v-text-field v-model="section.name" dense solo hide-details style="max-width: 140px; font-weight: bold" />
                 <v-btn icon small color="error" @click="removeSection(sIdx)"><v-icon small>mdi-delete</v-icon></v-btn>
               </v-list-item-title>
               <v-btn small @click="addSubsection(sIdx)">Agregar subsección</v-btn>
@@ -38,7 +38,7 @@
                   <!-- Texto de la sección - CORREGIDO -->
                   <v-text
                     :x="getSectionWidth(section) / 2"
-                    :y="SECTION_TOP_PADDING / 2"
+                    :y="SECTION_TOP_PADDING / 4"
                     :text="section.name"
                     :font-size="20"
                     :fill="'#fff'"
@@ -71,13 +71,6 @@
                                 if (seat.state !== 'reserved') toggleSeatState(sIdx, subIdx, rowIdx, colIdx)
                               }
                             "
-                          />
-                          <v-text
-                            :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 - 6"
-                            :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 + 5"
-                            :font-size="11"
-                            :fill="seat.state === 'selected' ? '#fff' : '#333'"
-                            :text="(colIdx + 1).toString()"
                           />
                         </v-group>
                       </v-group>
