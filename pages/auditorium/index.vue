@@ -1,83 +1,93 @@
 <template>
   <v-container fluid>
     <v-row>
+      <!-- Panel de Control -->
       <v-col cols="12" md="3">
-        <v-btn color="primary" @click="addSection">Agregar sección</v-btn>
-        <v-slider v-model="SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" class="mt-4 mb-2" />
-        <v-slider v-model="SEATS_DISTANCE" :min="0" :max="60" :step="1" label="Distancia entre asientos" class="mb-4" />
-        <v-list dense>
-          <v-list-item v-for="(section, sIdx) in sections" :key="'section-' + sIdx">
-            <v-list-item-content>
-              <v-list-item-title style="display: flex; align-items: center; gap: 8px">
-                <v-text-field v-model="section.name" dense solo hide-details style="max-width: 140px; font-weight: bold" />
-                <v-btn icon small color="error" @click="removeSection(sIdx)"><v-icon small>mdi-delete</v-icon></v-btn>
-              </v-list-item-title>
-              <v-btn small @click="addSubsection(sIdx)">Agregar subsección</v-btn>
-              <v-list dense>
-                <v-list-item v-for="(sub, subIdx) in section.subsections" :key="'sub-' + subIdx">
-                  <v-list-item-content>
-                    <v-text-field v-model="sub.name" label="Nombre subsección" dense hide-details />
-                    <v-btn small @click="addRow(sIdx, subIdx)">Agregar fila</v-btn>
-                    <v-btn small @click="addColumn(sIdx, subIdx)">Agregar columna</v-btn>
-                    <v-btn icon small color="error" @click="removeSubsection(sIdx, subIdx)"><v-icon small>mdi-delete</v-icon></v-btn>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <v-btn color="primary" block class="mb-4" @click="addSection">
+          <v-icon left>mdi-plus</v-icon>
+          Agregar sección
+        </v-btn>
+
+        <v-slider v-model="SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
+
+        <v-slider v-model="SEATS_DISTANCE" :min="0" :max="60" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
+
+        <!-- Lista de Secciones -->
+        <v-expansion-panels accordion>
+          <v-expansion-panel v-for="(section, sIdx) in sections" :key="`section-${sIdx}`">
+            <v-expansion-panel-header>
+              <div class="d-flex align-center">
+                <v-text-field v-model="section.name" dense solo hide-details style="max-width: 140px" @click.stop />
+                <v-spacer />
+                <v-btn icon small color="error" @click.stop="removeSection(sIdx)">
+                  <v-icon small>mdi-delete</v-icon>
+                </v-btn>
+              </div>
+            </v-expansion-panel-header>
+
+            <v-expansion-panel-content>
+              <v-btn small block color="secondary" class="mb-2" @click="addSubsection(sIdx)">
+                <v-icon left small>mdi-plus</v-icon>
+                Agregar subsección
+              </v-btn>
+
+              <!-- Subsecciones -->
+              <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2 pa-2">
+                <v-text-field v-model="sub.name" label="Nombre subsección" dense hide-details class="mb-2" />
+
+                <div class="d-flex gap-2">
+                  <v-btn x-small @click="addRow(sIdx, subIdx)">
+                    <v-icon left x-small>mdi-table-row-plus-after</v-icon>
+                    Fila
+                  </v-btn>
+                  <v-btn x-small @click="addColumn(sIdx, subIdx)">
+                    <v-icon left x-small>mdi-table-column-plus-after</v-icon>
+                    Columna
+                  </v-btn>
+                  <v-spacer />
+                  <v-btn icon x-small color="error" @click="removeSubsection(sIdx, subIdx)">
+                    <v-icon x-small>mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+              </v-card>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
+
+      <!-- Canvas de Asientos -->
       <v-col cols="12" md="9">
         <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
-          <v-stage :key="'stage-' + SEAT_SIZE + '-' + SEATS_DISTANCE" :config="stageConfig">
+          <v-stage :config="stageConfig">
             <v-layer>
-              <template v-for="(section, sIdx) in sections">
-                <v-group :key="'section-' + sIdx" :x="getSectionX(section)" :y="60 + sIdx * 220">
-                  <!-- Rectángulo de la sección -->
-                  <v-rect :width="getSectionWidth(section)" :height="getSectionHeight(section)" fill="#222d3b" :stroke-width="1" stroke="lightgrey" :corner-radius="5" />
-                  <!-- Texto de la sección - CORREGIDO -->
-                  <v-text
-                    :x="getSectionWidth(section) / 2"
-                    :y="SECTION_TOP_PADDING / 4"
-                    :text="section.name"
-                    :font-size="20"
-                    :fill="'#fff'"
-                    :font-style="'bold'"
-                    :font-family="'Arial'"
-                    align="center"
-                    vertical-align="middle"
-                  />
-                  <template v-for="(sub, subIdx) in section.subsections">
-                    <v-group :key="'subg-' + sIdx + '-' + subIdx" :x="section.subsections.slice(0, subIdx).reduce((acc, s) => acc + getSubsectionWidth(s), 0) + subIdx * SUBSECTION_PADDING" :y="SECTION_TOP_PADDING">
-                      <!-- Rectángulo de la subsección -->
-                      <v-rect :width="getSubsectionWidth(sub)" :height="(sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE" :fill="'#e0e0e0'" :stroke="'green'" :stroke-width="2" />
-                      <!-- Texto de la subsección - CORREGIDO -->
-                      <v-text :x="getSubsectionWidth(sub) / 2" :y="-15" :text="sub.name" :font-size="14" :fill="'red'" :font-style="'bold'" :font-family="'Arial'" align="center" vertical-align="middle" />
-                      <!-- Asientos -->
-                      <v-group v-for="(row, rowIdx) in sub.seats" :key="'rownum-' + rowIdx">
-                        <v-group v-for="(seat, colIdx) in row" :key="seat.id">
-                          <v-circle
-                            :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
-                            :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
-                            :radius="SEAT_SIZE / 2"
-                            :fill="getSeatColor(seat.state === 'reserved', seat.state === 'selected')"
-                            :stroke="seat.state === 'selected' ? SEAT_SELECTED_COLOR : '#757575'"
-                            :stroke-width="1"
-                            :opacity="seat.state === 'reserved' ? 0.6 : 1"
-                            @mouseenter.native="onSeatHover($event, seat)"
-                            @mouseleave.native="onSeatLeave($event, seat)"
-                            @click="
-                              () => {
-                                if (seat.state !== 'reserved') toggleSeatState(sIdx, subIdx, rowIdx, colIdx)
-                              }
-                            "
-                          />
-                        </v-group>
-                      </v-group>
-                    </v-group>
-                  </template>
+              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(section, sIdx)">
+                <!-- Fondo de sección -->
+                <v-rect
+                  :config="{
+                    width: getSectionWidth(section),
+                    height: getSectionHeight(section),
+                    fill: '#222d3b',
+                    strokeWidth: 1,
+                    stroke: 'lightgrey',
+                    cornerRadius: 5,
+                  }"
+                />
+
+                <!-- Título de sección -->
+                <v-text :config="getSectionTitleConfig(section)" />
+
+                <!-- Subsecciones -->
+                <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
+                  <!-- Fondo de subsección -->
+                  <v-rect :config="getSubsectionRectConfig(sub)" />
+
+                  <!-- Título de subsección -->
+                  <v-text :config="getSubsectionTitleConfig(sub)" />
+
+                  <!-- Asientos -->
+                  <v-circle v-for="seat in getSubsectionSeats(sub)" :key="seat.id" :config="getSeatConfig(seat)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat, sIdx, subIdx)" />
                 </v-group>
-              </template>
+              </v-group>
             </v-layer>
           </v-stage>
         </v-sheet>
@@ -85,17 +95,17 @@
     </v-row>
   </v-container>
 </template>
+
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
 Vue.use(VueKonva)
 
-// ...existing code...
 export default {
   middleware: ["authenticated"],
+
   data() {
     return {
-      stageKey: 0,
       stageConfig: { width: 900, height: 700 },
       sections: [],
       SEAT_SELECTED_COLOR: "#1976d2",
@@ -106,165 +116,230 @@ export default {
       SECTION_TOP_PADDING: 40,
     }
   },
+
+  computed: {
+    // Calcular configuraciones una sola vez
+    seatSpacing() {
+      return this.SEAT_SIZE + this.SEATS_DISTANCE
+    },
+  },
+
   watch: {
+    // Simplificado - Vue ya maneja la reactividad
     SEAT_SIZE() {
-      this.forceStageUpdate()
+      this.$forceUpdate()
     },
     SEATS_DISTANCE() {
-      this.forceStageUpdate()
+      this.$forceUpdate()
     },
   },
 
   created() {
     this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater" })
   },
+
   methods: {
-    forceStageUpdate() {
-      // Forzar la actualización reactiva de las secciones
-      this.sections = [...this.sections]
-    },
-    regenerateSeats() {
-      // Crear una nueva referencia del array para forzar reactividad
-      this.sections = this.sections.map((section) => ({
-        ...section,
-        subsections: section.subsections.map((sub) => ({
-          ...sub,
-          seats: sub.seats && sub.seats.length > 0 ? this.createSeats(sub.seats.length, sub.seats[0].length, 140, 120) : [],
-        })),
-      }))
-    },
-    getSeatColor(isBooked, isSelected) {
-      if (isSelected) return this.SEAT_SELECTED_COLOR
-      if (isBooked) return "lightgrey"
-      return "#1b728d"
-    },
-    onSeatHover(e, seat) {
-      const isBooked = seat.state === "reserved"
-      const container = e.target.getStage().container()
-      container.style.cursor = isBooked ? "not-allowed" : "pointer"
-    },
-    onSeatLeave(e, seat) {
-      const container = e.target.getStage().container()
-      container.style.cursor = ""
-    },
-    removeSection(sIdx) {
-      this.sections.splice(sIdx, 1)
-      this.regenerateSeats()
-    },
-    removeSubsection(sIdx, subIdx) {
-      // Crear una copia completa para forzar reactividad
-      const newSections = JSON.parse(JSON.stringify(this.sections))
-      newSections[sIdx].subsections.splice(subIdx, 1)
-      this.sections = newSections
-    },
+    // ============ OPERACIONES DE SECCIÓN ============
     addSection() {
-      const newSection = {
-        name: "Sección " + (this.sections.length + 1),
+      this.sections.push({
+        name: `Sección ${this.sections.length + 1}`,
         subsections: [
           {
             name: "Subsección 1",
-            seats: this.createSeats(4, 4, 140, 120),
+            seats: this.createSeatsGrid(4, 4),
           },
         ],
-      }
+      })
+    },
 
-      this.sections.push(newSection)
-      this.regenerateSeats()
+    removeSection(sIdx) {
+      this.sections.splice(sIdx, 1)
     },
+
     addSubsection(sIdx) {
-      const newSubsection = {
-        name: "Subsección " + (this.sections[sIdx].subsections.length + 1),
-        seats: this.createSeats(3, 5, 140, 120),
-      }
-      // Crear una copia profunda de las secciones para forzar reactividad
-      const newSections = JSON.parse(JSON.stringify(this.sections))
-      newSections[sIdx].subsections.push(newSubsection)
-      this.sections = newSections
+      const section = this.sections[sIdx]
+      section.subsections.push({
+        name: `Subsección ${section.subsections.length + 1}`,
+        seats: this.createSeatsGrid(3, 5),
+      })
     },
+
+    removeSubsection(sIdx, subIdx) {
+      this.sections[sIdx].subsections.splice(subIdx, 1)
+    },
+
     addRow(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
-      if (sub) {
-        const cols = sub.seats[0]?.length || 5
-        sub.seats.push(this.createSeatRow(cols, sub.seats.length, 140, 120, sub.seats.length, sub.seats.length + 1))
-      }
+      const cols = sub.seats[0]?.length || 5
+      const newRow = Array.from({ length: cols }, (_, colIdx) => this.createSeat(colIdx, sub.seats.length))
+      sub.seats.push(newRow)
     },
+
     addColumn(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
-      if (sub) {
-        for (let r = 0; r < sub.seats.length; r++) {
-          sub.seats[r].push(this.createSeat(sub.seats[r].length, r, 140, 120, r, sub.seats[r].length + 1))
-        }
-      }
+      sub.seats.forEach((row, rowIdx) => {
+        row.push(this.createSeat(row.length, rowIdx))
+      })
     },
-    createSeats(rows, cols, w, h) {
-      const seats = []
-      for (let r = 0; r < rows; r++) {
-        seats.push(this.createSeatRow(cols, r, w, h, r, rows))
-      }
-      return seats
+
+    // ============ CREACIÓN DE ASIENTOS ============
+    createSeatsGrid(rows, cols) {
+      return Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => this.createSeat(c, r)))
     },
-    createSeatRow(cols, rowIdx, w, h, r, totalRows) {
-      const row = []
-      for (let c = 0; c < cols; c++) {
-        row.push(this.createSeat(c, rowIdx, w, h, r, cols))
-      }
-      return row
-    },
-    createSeat(colIdx, rowIdx, w, h, r, totalCols) {
-      // Calcular el área disponible para los asientos
-      const cols = totalCols
-      const rows = r !== undefined ? r + 1 : 1
-      const seatW = this.SEAT_SIZE + this.SEATS_DISTANCE
-      const seatH = this.SEAT_SIZE + this.SEATS_DISTANCE
-      // Centrar los asientos dentro del rectángulo
-      const totalWidth = cols * seatW
-      const totalHeight = rows * seatH
-      const marginX = (w - totalWidth) / 2
-      const marginY = (h - totalHeight) / 2
+
+    createSeat(col, row) {
       return {
-        id: `${rowIdx}-${colIdx}-${Math.random().toString(36).substr(2, 5)}`,
-        x: marginX + colIdx * seatW + this.SEAT_SIZE / 2,
-        y: marginY + rowIdx * seatH + this.SEAT_SIZE / 2,
-        state: "free",
+        id: `seat-${row}-${col}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        row,
+        col,
+        state: "free", // 'free' | 'selected' | 'reserved'
       }
     },
-    toggleSeatState(sIdx, subIdx, rowIdx, colIdx) {
-      const sub = this.sections[sIdx].subsections[subIdx]
-      if (sub) {
-        const seat = sub.seats[rowIdx][colIdx]
-        if (seat.state === "reserved") return
-        seat.state = seat.state === "selected" ? "free" : "selected"
+
+    // ============ MANEJO DE EVENTOS ============
+    handleSeatClick(seat, sIdx, subIdx) {
+      if (seat.state === "reserved") return
+      seat.state = seat.state === "selected" ? "free" : "selected"
+    },
+
+    handleSeatHover(e) {
+      const seat = e.target.attrs
+      const container = e.target.getStage().container()
+      container.style.cursor = seat.opacity < 1 ? "not-allowed" : "pointer"
+    },
+
+    handleSeatLeave(e) {
+      const container = e.target.getStage().container()
+      container.style.cursor = "default"
+    },
+
+    // ============ CONFIGURACIONES DE KONVA ============
+    getSectionConfig(section, sIdx) {
+      // Calcular Y acumulativa basada en alturas previas
+      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.SECTIONS_MARGIN, 60)
+
+      return {
+        x: this.getSectionX(section),
+        y,
       }
     },
+
+    getSectionTitleConfig(section) {
+      const width = this.getSectionWidth(section)
+      return {
+        x: 0,
+        y: this.SECTION_TOP_PADDING / 4,
+        text: section.name,
+        fontSize: 20,
+        fill: "#fff",
+        fontStyle: "bold",
+        fontFamily: "Arial",
+        align: "center",
+        width,
+      }
+    },
+
+    getSubsectionPosition(section, subIdx) {
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + this.getSubsectionWidth(s), 0) + subIdx * this.SUBSECTION_PADDING
+
+      return {
+        x,
+        y: this.SECTION_TOP_PADDING,
+      }
+    },
+
+    getSubsectionRectConfig(sub) {
+      return {
+        width: this.getSubsectionWidth(sub),
+        height: this.getSubsectionHeight(sub),
+        fill: "#e0e0e0",
+        stroke: "green",
+        strokeWidth: 2,
+      }
+    },
+
+    getSubsectionTitleConfig(sub) {
+      const width = this.getSubsectionWidth(sub)
+      return {
+        x: 0,
+        y: -15,
+        text: sub.name,
+        fontSize: 14,
+        fill: "red",
+        fontStyle: "bold",
+        fontFamily: "Arial",
+        align: "left",
+        width,
+      }
+    },
+
+    getSubsectionSeats(sub) {
+      // Aplanar la matriz de asientos con posiciones calculadas
+      return sub.seats.flatMap((row) =>
+        row.map((seat) => ({
+          ...seat,
+          x: seat.col * this.seatSpacing + this.SEAT_SIZE / 2,
+          y: seat.row * this.seatSpacing + this.SEAT_SIZE / 2,
+        }))
+      )
+    },
+
+    getSeatConfig(seat) {
+      const isReserved = seat.state === "reserved"
+      const isSelected = seat.state === "selected"
+
+      return {
+        x: seat.x,
+        y: seat.y,
+        radius: this.SEAT_SIZE / 2,
+        fill: this.getSeatColor(isReserved, isSelected),
+        stroke: isSelected ? this.SEAT_SELECTED_COLOR : "#757575",
+        strokeWidth: 1,
+        opacity: isReserved ? 0.6 : 1,
+      }
+    },
+
+    getSeatColor(isReserved, isSelected) {
+      if (isSelected) return this.SEAT_SELECTED_COLOR
+      if (isReserved) return "lightgrey"
+      return "#1b728d"
+    },
+
+    // ============ CÁLCULOS DE DIMENSIONES ============
     getSubsectionWidth(sub) {
-      if (!sub.seats || sub.seats.length === 0) return 0
-      const cols = sub.seats[0] ? sub.seats[0].length : 0
-      return cols * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE
+      if (!sub.seats?.[0]) return 0
+      return sub.seats[0].length * this.seatSpacing - this.SEATS_DISTANCE
     },
+
+    getSubsectionHeight(sub) {
+      if (!sub.seats?.length) return 40
+      return sub.seats.length * this.seatSpacing - this.SEATS_DISTANCE
+    },
+
     getSectionWidth(section) {
       if (!section.subsections.length) return 0
       return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING
     },
-    getSectionX(section) {
-      // Centra la sección en el escenario
-      return (this.stageConfig.width - this.getSectionWidth(section)) / 2
-    },
+
     getSectionHeight(section) {
-      if (!section.subsections || section.subsections.length === 0) {
-        return this.SECTION_TOP_PADDING
-      }
-      // Encuentra el número máximo de filas en todas las subsecciones
-      const maxRows = Math.max(
-        ...section.subsections.map((sub) => {
-          return sub.seats ? sub.seats.length : 0
-        })
-      )
-      // Si no hay filas, retorna una altura mínima
-      if (maxRows === 0) {
-        return this.SECTION_TOP_PADDING + 40 // Altura mínima
-      }
-      return maxRows * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING
+      if (!section.subsections?.length) return this.SECTION_TOP_PADDING
+
+      const maxRows = Math.max(...section.subsections.map((sub) => sub.seats?.length || 0))
+
+      if (maxRows === 0) return this.SECTION_TOP_PADDING + 40
+
+      return maxRows * this.seatSpacing - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING
+    },
+
+    getSectionX(section) {
+      return (this.stageConfig.width - this.getSectionWidth(section)) / 2
     },
   },
 }
 </script>
+
+<style scoped>
+.gap-2 {
+  gap: 8px;
+}
+</style>
