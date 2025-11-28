@@ -29,10 +29,10 @@
       </v-col>
       <v-col cols="12" md="9">
         <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
-          <v-stage :key="stageKey" :config="stageConfig">
+          <v-stage :key="'stage-' + SEAT_SIZE + '-' + SEATS_DISTANCE" :config="stageConfig">
             <v-layer>
               <template v-for="(section, sIdx) in sections">
-                <v-group :key="'section-' + sIdx" :x="(stageConfig.width - getSectionWidth(section)) / 2" :y="60 + sIdx * 220">
+                <v-group :key="'section-' + sIdx" :x="getSectionX(section)" :y="60 + sIdx * 220">
                   <v-rect :width="getSectionWidth(section)" :height="getSectionHeight(section)" fill="green" :stroke-width="1" stroke="lightgrey" :corner-radius="5" />
                   <v-text :x="0" :y="0" :width="getSectionWidth(section)" :height="SECTION_TOP_PADDING" align="center" vertical-align="middle" :font-size="20" :fill="'#333'">
                     {{ section.name }}
@@ -46,6 +46,8 @@
                             :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
                             :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
                             :radius="SEAT_SIZE / 2"
+                            :width="SEAT_SIZE"
+                            :height="SEAT_SIZE"
                             :fill="getSeatColor(seat.state === 'reserved', seat.state === 'selected')"
                             :stroke="seat.state === 'selected' ? SEAT_SELECTED_COLOR : '#757575'"
                             :stroke-width="1"
@@ -100,21 +102,32 @@ export default {
       SECTION_TOP_PADDING: 40,
     }
   },
+  watch: {
+    SEAT_SIZE() {
+      this.forceStageUpdate()
+    },
+    SEATS_DISTANCE() {
+      this.forceStageUpdate()
+    },
+  },
 
   created() {
     this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater" })
   },
   methods: {
+    forceStageUpdate() {
+      // Forzar la actualización reactiva de las secciones
+      this.sections = [...this.sections]
+    },
     regenerateSeats() {
-      this.sections.forEach((section) => {
-        section.subsections.forEach((sub) => {
-          if (sub.seats && sub.seats.length > 0) {
-            const rows = sub.seats.length
-            const cols = sub.seats[0].length
-            sub.seats = this.createSeats(rows, cols, 140, 120)
-          }
-        })
-      })
+      // Crear una nueva referencia del array para forzar reactividad
+      this.sections = this.sections.map((section) => ({
+        ...section,
+        subsections: section.subsections.map((sub) => ({
+          ...sub,
+          seats: sub.seats && sub.seats.length > 0 ? this.createSeats(sub.seats.length, sub.seats[0].length, 140, 120) : [],
+        })),
+      }))
     },
     getSeatColor(isBooked, isSelected) {
       if (isSelected) return this.SEAT_SELECTED_COLOR
@@ -135,12 +148,10 @@ export default {
       this.regenerateSeats()
     },
     removeSubsection(sIdx, subIdx) {
-      const section = JSON.parse(JSON.stringify(this.sections[sIdx]))
-      section.subsections = section.subsections.filter((_, idx) => idx !== subIdx)
-      const newSections = [...this.sections]
-      newSections[sIdx] = section
+      // Crear una copia completa para forzar reactividad
+      const newSections = JSON.parse(JSON.stringify(this.sections))
+      newSections[sIdx].subsections.splice(subIdx, 1)
       this.sections = newSections
-      this.regenerateSeats()
     },
     addSection() {
       const newSection = {
@@ -161,9 +172,10 @@ export default {
         name: "Subsección " + (this.sections[sIdx].subsections.length + 1),
         seats: this.createSeats(3, 5, 140, 120),
       }
-      this.sections[sIdx].subsections.push(newSubsection)
-      this.stageKey += 1 // Forzar repintado
-      this.regenerateSeats()
+      // Crear una copia profunda de las secciones para forzar reactividad
+      const newSections = JSON.parse(JSON.stringify(this.sections))
+      newSections[sIdx].subsections.push(newSubsection)
+      this.sections = newSections
     },
     addRow(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
@@ -229,14 +241,24 @@ export default {
       if (!section.subsections.length) return 0
       return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING
     },
+    getSectionX(section) {
+      // Centra la sección en el escenario
+      return (this.stageConfig.width - this.getSectionWidth(section)) / 2
+    },
     getSectionHeight(section) {
-      if (!section.subsections || section.subsections.length === 0) return this.SECTION_TOP_PADDING
+      if (!section.subsections || section.subsections.length === 0) {
+        return this.SECTION_TOP_PADDING
+      }
       // Encuentra el número máximo de filas en todas las subsecciones
       const maxRows = Math.max(
         ...section.subsections.map((sub) => {
           return sub.seats ? sub.seats.length : 0
         })
       )
+      // Si no hay filas, retorna una altura mínima
+      if (maxRows === 0) {
+        return this.SECTION_TOP_PADDING + 40 // Altura mínima
+      }
       return maxRows * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING
     },
   },
