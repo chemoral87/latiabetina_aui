@@ -35,14 +35,25 @@
               <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2 pa-2">
                 <v-text-field v-model="sub.name" label="Nombre subsección" dense hide-details class="mb-2" />
 
-                <div class="d-flex gap-2">
-                  <v-btn x-small @click="addRow(sIdx, subIdx)">
+                <div class="d-flex gap-2 mb-2">
+                  <v-btn x-small color="success" @click="addRow(sIdx, subIdx)">
                     <v-icon left x-small>mdi-table-row-plus-after</v-icon>
-                    Fila
+                    + Fila
                   </v-btn>
-                  <v-btn x-small @click="addColumn(sIdx, subIdx)">
+                  <v-btn x-small color="success" @click="addColumn(sIdx, subIdx)">
                     <v-icon left x-small>mdi-table-column-plus-after</v-icon>
-                    Columna
+                    + Col
+                  </v-btn>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <v-btn x-small color="warning" @click="removeRow(sIdx, subIdx)">
+                    <v-icon left x-small>mdi-table-row-remove</v-icon>
+                    - Fila
+                  </v-btn>
+                  <v-btn x-small color="warning" @click="removeColumn(sIdx, subIdx)">
+                    <v-icon left x-small>mdi-table-column-remove</v-icon>
+                    - Col
                   </v-btn>
                   <v-spacer />
                   <v-btn icon x-small color="error" @click="removeSubsection(sIdx, subIdx)">
@@ -210,11 +221,25 @@ export default {
       sub.seats.push(newRow)
     },
 
+    removeRow(sIdx, subIdx) {
+      const sub = this.sections[sIdx].subsections[subIdx]
+      if (sub.seats.length > 1) {
+        sub.seats.pop()
+      }
+    },
+
     addColumn(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
       sub.seats.forEach((row, rowIdx) => {
         row.push(this.createSeat(row.length, rowIdx))
       })
+    },
+
+    removeColumn(sIdx, subIdx) {
+      const sub = this.sections[sIdx].subsections[subIdx]
+      if (sub.seats[0]?.length > 1) {
+        sub.seats.forEach((row) => row.pop())
+      }
     },
 
     // ============ CREACIÓN DE ASIENTOS ============
