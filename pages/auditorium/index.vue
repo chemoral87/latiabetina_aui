@@ -78,6 +78,39 @@
 
                 <!-- Subsecciones -->
                 <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
+                  <!-- Etiquetas del eje Y (números de fila) - ANTES del fondo -->
+                  <v-text
+                    v-for="(row, rowIdx) in sub.seats"
+                    :key="`row-label-${rowIdx}`"
+                    :config="{
+                      x: -15,
+                      y: rowIdx * seatSpacing + SEAT_SIZE / 2,
+                      text: (rowIdx + 1).toString(),
+                      fontSize: 11,
+                      fill: '#fff',
+                      fontFamily: 'Arial',
+                      align: 'right',
+                      verticalAlign: 'middle',
+                      offsetY: 5,
+                    }"
+                  />
+
+                  <!-- Etiquetas del eje X (letras de columna) - ANTES del fondo -->
+                  <v-text
+                    v-for="colIdx in sub.seats[0]?.length || 0"
+                    :key="`col-label-${colIdx}`"
+                    :config="{
+                      x: (colIdx - 1) * seatSpacing + SEAT_SIZE / 2,
+                      y: getSubsectionHeight(sub) + 5,
+                      text: String.fromCharCode(64 + colIdx),
+                      fontSize: 11,
+                      fill: '#fff',
+                      fontFamily: 'Arial',
+                      align: 'center',
+                      offsetX: 5,
+                    }"
+                  />
+
                   <!-- Fondo de subsección -->
                   <v-rect :config="getSubsectionRectConfig(sub)" />
 
@@ -114,6 +147,8 @@ export default {
       SUBSECTION_PADDING: 30,
       SECTIONS_MARGIN: 10,
       SECTION_TOP_PADDING: 40,
+      SECTION_SIDE_PADDING: 20,
+      SECTION_BOTTOM_PADDING: 20,
     }
   },
 
@@ -240,7 +275,7 @@ export default {
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + this.getSubsectionWidth(s), 0) + subIdx * this.SUBSECTION_PADDING
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + this.getSubsectionWidth(s), 0) + subIdx * this.SUBSECTION_PADDING + this.SECTION_SIDE_PADDING
 
       return {
         x,
@@ -318,17 +353,17 @@ export default {
 
     getSectionWidth(section) {
       if (!section.subsections.length) return 0
-      return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING
+      return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING + this.SECTION_SIDE_PADDING * 2
     },
 
     getSectionHeight(section) {
-      if (!section.subsections?.length) return this.SECTION_TOP_PADDING
+      if (!section.subsections?.length) return this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING
 
       const maxRows = Math.max(...section.subsections.map((sub) => sub.seats?.length || 0))
 
-      if (maxRows === 0) return this.SECTION_TOP_PADDING + 40
+      if (maxRows === 0) return this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING + 40
 
-      return maxRows * this.seatSpacing - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING
+      return maxRows * this.seatSpacing - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING + this.SECTION_BOTTOM_PADDING
     },
 
     getSectionX(section) {
