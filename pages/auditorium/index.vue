@@ -33,21 +33,33 @@
             <v-layer>
               <template v-for="(section, sIdx) in sections">
                 <v-group :key="'section-' + sIdx" :x="getSectionX(section)" :y="60 + sIdx * 220">
-                  <v-rect :width="getSectionWidth(section)" :height="getSectionHeight(section)" fill="green" :stroke-width="1" stroke="lightgrey" :corner-radius="5" />
-                  <v-text :x="0" :y="0" :width="getSectionWidth(section)" :height="SECTION_TOP_PADDING" align="center" vertical-align="middle" :font-size="20" :fill="'#333'">
-                    {{ section.name }}
-                  </v-text>
+                  <!-- Rectángulo de la sección -->
+                  <v-rect :width="getSectionWidth(section)" :height="getSectionHeight(section)" fill="#222d3b" :stroke-width="1" stroke="lightgrey" :corner-radius="5" />
+                  <!-- Texto de la sección - CORREGIDO -->
+                  <v-text
+                    :x="getSectionWidth(section) / 2"
+                    :y="SECTION_TOP_PADDING / 2"
+                    :text="section.name"
+                    :font-size="20"
+                    :fill="'#fff'"
+                    :font-style="'bold'"
+                    :font-family="'Arial'"
+                    align="center"
+                    vertical-align="middle"
+                  />
                   <template v-for="(sub, subIdx) in section.subsections">
                     <v-group :key="'subg-' + sIdx + '-' + subIdx" :x="section.subsections.slice(0, subIdx).reduce((acc, s) => acc + getSubsectionWidth(s), 0) + subIdx * SUBSECTION_PADDING" :y="SECTION_TOP_PADDING">
-                      <v-rect :width="getSubsectionWidth(sub)" :height="(sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE" :fill="'#e0e0e0'" :stroke="'black'" :stroke-width="2" />
+                      <!-- Rectángulo de la subsección -->
+                      <v-rect :width="getSubsectionWidth(sub)" :height="(sub.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE" :fill="'#e0e0e0'" :stroke="'green'" :stroke-width="2" />
+                      <!-- Texto de la subsección - CORREGIDO -->
+                      <v-text :x="getSubsectionWidth(sub) / 2" :y="-15" :text="sub.name" :font-size="14" :fill="'red'" :font-style="'bold'" :font-family="'Arial'" align="center" vertical-align="middle" />
+                      <!-- Asientos -->
                       <v-group v-for="(row, rowIdx) in sub.seats" :key="'rownum-' + rowIdx">
                         <v-group v-for="(seat, colIdx) in row" :key="seat.id">
                           <v-circle
                             :x="colIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
                             :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2"
                             :radius="SEAT_SIZE / 2"
-                            :width="SEAT_SIZE"
-                            :height="SEAT_SIZE"
                             :fill="getSeatColor(seat.state === 'reserved', seat.state === 'selected')"
                             :stroke="seat.state === 'selected' ? SEAT_SELECTED_COLOR : '#757575'"
                             :stroke-width="1"
@@ -65,9 +77,8 @@
                             :y="rowIdx * (SEAT_SIZE + SEATS_DISTANCE) + SEAT_SIZE / 2 + 5"
                             :font-size="11"
                             :fill="seat.state === 'selected' ? '#fff' : '#333'"
-                          >
-                            {{ colIdx + 1 }}
-                          </v-text>
+                            :text="(colIdx + 1).toString()"
+                          />
                         </v-group>
                       </v-group>
                     </v-group>
