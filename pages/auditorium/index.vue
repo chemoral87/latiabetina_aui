@@ -3,10 +3,24 @@
     <v-row>
       <!-- Panel de Control -->
       <v-col cols="12" md="3">
-        <v-btn color="primary" block class="mb-4" @click="addSection">
+        <v-btn color="primary" block class="mb-2" @click="addSection">
           <v-icon left>mdi-plus</v-icon>
           Agregar sección
         </v-btn>
+
+        <!-- Botones de Importar/Exportar -->
+        <v-card outlined class="mb-4 pa-2">
+          <div class="text-caption mb-2 font-weight-bold">Configuración</div>
+          <v-btn x-small color="success" block class="mb-2" @click="exportConfiguration">
+            <v-icon left x-small>mdi-download</v-icon>
+            Exportar JSON
+          </v-btn>
+          <v-btn x-small color="info" block @click="$refs.fileInput.click()">
+            <v-icon left x-small>mdi-upload</v-icon>
+            Importar JSON
+          </v-btn>
+          <input ref="fileInput" type="file" accept=".json" style="display: none" @change="importConfiguration" />
+        </v-card>
 
         <v-slider v-model="SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
 
@@ -46,7 +60,7 @@
                   </v-btn>
                 </div>
 
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 mb-2">
                   <v-btn x-small color="warning" @click="removeRow(sIdx, subIdx)">
                     <v-icon left x-small>mdi-table-row-remove</v-icon>
                     - Fila
@@ -55,6 +69,30 @@
                     <v-icon left x-small>mdi-table-column-remove</v-icon>
                     - Col
                   </v-btn>
+                </div>
+
+                <!-- Agregar asiento individual por fila -->
+                <v-divider class="my-2" />
+                <div class="text-caption mb-1">Agregar asiento individual:</div>
+                <v-row dense>
+                  <v-col cols="6">
+                    <v-select v-model="selectedRow[`${sIdx}-${subIdx}`]" :items="getRowOptions(sub)" label="Seleccionar fila" dense hide-details />
+                  </v-col>
+                  <v-col cols="6" class="d-flex gap-1">
+                    <v-btn x-small color="primary" :disabled="selectedRow[`${sIdx}-${subIdx}`] === undefined || selectedRow[`${sIdx}-${subIdx}`] === null" @click="addSeatToRow(sIdx, subIdx, 'left')">
+                      <v-icon x-small>mdi-arrow-left-circle</v-icon>
+                      Izq
+                    </v-btn>
+                    <v-btn x-small color="primary" :disabled="selectedRow[`${sIdx}-${subIdx}`] === undefined || selectedRow[`${sIdx}-${subIdx}`] === null" @click="addSeatToRow(sIdx, subIdx, 'right')">
+                      <v-icon x-small>mdi-arrow-right-circle</v-icon>
+                      Der
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <v-divider class="my-2" />
+
+                <div class="d-flex gap-2">
                   <v-spacer />
                   <v-btn icon x-small color="error" @click="removeSubsection(sIdx, subIdx)">
                     <v-icon x-small>mdi-delete</v-icon>
@@ -108,7 +146,7 @@
 
                   <!-- Etiquetas del eje X (letras de columna) - ANTES del fondo -->
                   <v-text
-                    v-for="colIdx in sub.seats[0]?.length || 0"
+                    v-for="colIdx in getMaxColumns(sub)"
                     :key="`col-label-${colIdx}`"
                     :config="{
                       x: (colIdx - 1) * seatSpacing + SEAT_SIZE / 2,
@@ -152,6 +190,7 @@ export default {
     return {
       stageConfig: { width: 900, height: 700 },
       sections: [],
+      selectedRow: {}, // Para trackear la fila seleccionada por subsección
       SEAT_SELECTED_COLOR: "#1976d2",
       SEAT_SIZE: 10,
       SEATS_DISTANCE: 15,
@@ -242,6 +281,94 @@ export default {
       }
     },
 
+    // Obtener opciones de filas para el dropdown
+    getRowOptions(sub) {
+      return sub.seats.map((_, idx) => ({
+        text: `Fila ${idx + 1}`,
+        value: idx,
+      }))
+    },
+
+    // Obtener el número máximo de columnas en una subsección
+    getMaxColumns(sub) {
+      if (!sub.seats?.length) return 0
+      return Math.max(...sub.seats.map((row) => row.length))
+    },
+
+    // Agregar asiento individual a una fila específica
+    addSeatToRow(sIdx, subIdx, side) {
+      const sub = this.sections[sIdx].subsections[subIdx]
+      const selectedRowIdx = this.selectedRow[`${sIdx}-${subIdx}`]
+
+      if (selectedRowIdx === undefined || selectedRowIdx === null) return
+
+      if (side === "left") {
+        // Primero determinar si necesitamos agregar columna o solo reemplazar placeholder
+        const selectedRow = sub.seats[selectedRowIdx]
+        const hasPlaceholder = selectedRow[0] && selectedRow[0].state === "invisible"
+
+        if (hasPlaceholder) {
+          // Solo reemplazar placeholder en la fila seleccionada, no agregar columna
+          selectedRow[0] = {
+            id: `s${selectedRowIdx}c0-${Date.now().toString(36)}`,
+            row: selectedRowIdx,
+            col: 0,
+            state: "free",
+          }
+        } else {
+          // Agregar nueva columna a TODAS las filas
+          sub.seats.forEach((row, rowIdx) => {
+            if (rowIdx === selectedRowIdx) {
+              // Fila seleccionada: agregar asiento real
+              const newSeat = {
+                id: `s${rowIdx}c0-${Date.now().toString(36)}`,
+                row: rowIdx,
+                col: 0,
+                state: "free",
+              }
+              row.unshift(newSeat)
+            } else {
+              // Otras filas: agregar placeholder invisible
+              const placeholder = {
+                id: `p${rowIdx}c0-${Date.now().toString(36)}`,
+                row: rowIdx,
+                col: 0,
+                state: "invisible",
+              }
+              row.unshift(placeholder)
+            }
+          })
+        }
+      } else {
+        // Botón derecha: solo agregar a la fila seleccionada
+        const selectedRow = sub.seats[selectedRowIdx]
+        const lastIdx = selectedRow.length - 1
+
+        // Verificar si el último elemento es placeholder invisible
+        if (selectedRow[lastIdx] && selectedRow[lastIdx].state === "invisible") {
+          // Reemplazar el placeholder con un asiento real
+          selectedRow[lastIdx] = {
+            id: `s${selectedRowIdx}c${lastIdx}-${Date.now().toString(36)}`,
+            row: selectedRowIdx,
+            col: lastIdx,
+            state: "free",
+          }
+        } else {
+          // Agregar nuevo asiento real al final
+          const newSeat = {
+            id: `s${selectedRowIdx}c${selectedRow.length}-${Date.now().toString(36)}`,
+            row: selectedRowIdx,
+            col: selectedRow.length,
+            state: "free",
+          }
+          selectedRow.push(newSeat)
+        }
+      }
+
+      // Forzar actualización de Vue
+      this.$forceUpdate()
+    },
+
     // ============ CREACIÓN DE ASIENTOS ============
     createSeatsGrid(rows, cols) {
       return Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => this.createSeat(c, r)))
@@ -249,7 +376,7 @@ export default {
 
     createSeat(col, row) {
       return {
-        id: `seat-${row}-${col}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        id: `s${row}c${col}-${Date.now().toString(36)}`,
         row,
         col,
         state: "free", // 'free' | 'selected' | 'reserved'
@@ -335,13 +462,22 @@ export default {
 
     getSubsectionSeats(sub) {
       // Aplanar la matriz de asientos con posiciones calculadas
-      return sub.seats.flatMap((row) =>
-        row.map((seat) => ({
-          ...seat,
-          x: seat.col * this.seatSpacing + this.SEAT_SIZE / 2,
-          y: seat.row * this.seatSpacing + this.SEAT_SIZE / 2,
-        }))
-      )
+      const allSeats = []
+      sub.seats.forEach((row, rowIdx) => {
+        row.forEach((seat, colIdx) => {
+          // Filtrar asientos invisibles aquí
+          if (seat.state !== "invisible") {
+            allSeats.push({
+              ...seat,
+              row: rowIdx,
+              col: colIdx,
+              x: colIdx * this.seatSpacing + this.SEAT_SIZE / 2,
+              y: rowIdx * this.seatSpacing + this.SEAT_SIZE / 2,
+            })
+          }
+        })
+      })
+      return allSeats
     },
 
     getSeatConfig(seat) {
@@ -367,8 +503,9 @@ export default {
 
     // ============ CÁLCULOS DE DIMENSIONES ============
     getSubsectionWidth(sub) {
-      if (!sub.seats?.[0]) return 0
-      return sub.seats[0].length * this.seatSpacing - this.SEATS_DISTANCE
+      if (!sub.seats?.length) return 0
+      const maxCols = Math.max(...sub.seats.map((row) => row.length))
+      return maxCols * this.seatSpacing - this.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
@@ -393,6 +530,74 @@ export default {
 
     getSectionX(section) {
       return (this.stageConfig.width - this.getSectionWidth(section)) / 2
+    },
+
+    // ============ IMPORTAR/EXPORTAR ============
+    exportConfiguration() {
+      const config = {
+        version: "1.0",
+        timestamp: new Date().toISOString(),
+        settings: {
+          SEAT_SIZE: this.SEAT_SIZE,
+          SEATS_DISTANCE: this.SEATS_DISTANCE,
+          SUBSECTION_PADDING: this.SUBSECTION_PADDING,
+          SECTIONS_MARGIN: this.SECTIONS_MARGIN,
+          SECTION_TOP_PADDING: this.SECTION_TOP_PADDING,
+          SECTION_SIDE_PADDING: this.SECTION_SIDE_PADDING,
+          SECTION_BOTTOM_PADDING: this.SECTION_BOTTOM_PADDING,
+        },
+        sections: this.sections,
+      }
+
+      const jsonStr = JSON.stringify(config, null, 2)
+      const blob = new Blob([jsonStr], { type: "application/json" })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `auditorio-config-${Date.now()}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    },
+
+    importConfiguration(event) {
+      const file = event.target.files[0]
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const config = JSON.parse(e.target.result)
+
+          // Validar estructura básica
+          if (!config.sections || !config.settings) {
+            alert("Archivo JSON inválido: falta estructura requerida")
+            return
+          }
+
+          // Importar configuraciones
+          this.SEAT_SIZE = config.settings.SEAT_SIZE || 10
+          this.SEATS_DISTANCE = config.settings.SEATS_DISTANCE || 15
+          this.SUBSECTION_PADDING = config.settings.SUBSECTION_PADDING || 30
+          this.SECTIONS_MARGIN = config.settings.SECTIONS_MARGIN || 10
+          this.SECTION_TOP_PADDING = config.settings.SECTION_TOP_PADDING || 40
+          this.SECTION_SIDE_PADDING = config.settings.SECTION_SIDE_PADDING || 20
+          this.SECTION_BOTTOM_PADDING = config.settings.SECTION_BOTTOM_PADDING || 20
+
+          // Importar secciones
+          this.sections = config.sections
+
+          // Limpiar input para permitir reimportar el mismo archivo
+          event.target.value = ""
+
+          this.$forceUpdate()
+          alert("Configuración importada correctamente")
+        } catch (error) {
+          alert("Error al importar: " + error.message)
+        }
+      }
+      reader.readAsText(file)
     },
   },
 }
