@@ -7,14 +7,8 @@ const port_ = 3001
 
 if (process.env.NODE_ENV === "production") {
   env = require("dotenv").config({ path: ".env.production" })
-  // env = require('dotenv').config({ path: '.env.production' })
-  // title = process.env.APP_NAME
 } else {
   env = require("dotenv").config({ path: ".env" })
-  console.log("DEV ENVIRONMENT")
-  // env = require('dotenv').config({ path: '.env' })
-  // title = process.env.APP_ENVIRONMENT
-  // port_ = 3001
 }
 
 const APP_VERSION = "1.0.25"
@@ -25,6 +19,7 @@ export default {
     port: port_,
   },
   env: {
+    // Cambia aquí el nombre de la app
     APP_VERSION: APP_VERSION || "1.0.0",
     ...env.parsed,
   },

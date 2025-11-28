@@ -4,7 +4,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-action class="mr-2">
-            <v-img class="logo" width="35px" src="/logo.png"></v-img>
+            <v-img class="logo" width="35px" src="/favicon.ico"></v-img>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>

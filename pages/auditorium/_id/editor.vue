@@ -1,8 +1,14 @@
 <template>
   <v-container fluid>
+    Auditorio: {{ auditorium.name }}
     <v-row>
       <!-- Panel de Control -->
+
       <v-col cols="12" md="3">
+        <v-btn color="primary" class="mb-4" @click="saveAuditorium">
+          <v-icon left>mdi-content-save</v-icon>
+          Guardar
+        </v-btn>
         <v-btn color="primary" block class="mb-2" @click="addSection">
           <v-icon left>mdi-plus</v-icon>
           Agregar sección
@@ -218,12 +224,20 @@
 </template>
 
 <script>
+// (Eliminado export default duplicado. El export default correcto está más abajo en el archivo)
 import Vue from "vue"
 import VueKonva from "vue-konva"
 Vue.use(VueKonva)
 
 export default {
   middleware: ["authenticated"],
+  async asyncData({ params, app }) {
+    let auditorium = {}
+    try {
+      auditorium = (await app.$repository.Auditorium?.show?.(params.id)) || {}
+    } catch (e) {}
+    return { auditorium }
+  },
 
   data() {
     return {
@@ -257,10 +271,60 @@ export default {
   },
 
   created() {
-    this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater" })
+    this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater", back: "/auditorium" })
+    // Si el auditorio tiene configuración previa, cargarla desde auditorium.config
+    if (this.auditorium && this.auditorium.config) {
+      let config = this.auditorium.config
+      if (typeof config === "string") {
+        try {
+          config = JSON.parse(config)
+        } catch (e) {
+          // Si falla el parseo, no cargar nada
+          return
+        }
+      }
+      if (config.settings && config.sections) {
+        this.SEAT_SIZE = config.settings.SEAT_SIZE || 10
+        this.SEATS_DISTANCE = config.settings.SEATS_DISTANCE || 15
+        this.SUBSECTION_PADDING = config.settings.SUBSECTION_PADDING || 30
+        this.SECTIONS_MARGIN = config.settings.SECTIONS_MARGIN || 10
+        this.SECTION_TOP_PADDING = config.settings.SECTION_TOP_PADDING || 40
+        this.SECTION_SIDE_PADDING = config.settings.SECTION_SIDE_PADDING || 20
+        this.SECTION_BOTTOM_PADDING = config.settings.SECTION_BOTTOM_PADDING || 20
+        this.sections = JSON.parse(JSON.stringify(config.sections))
+      }
+    }
   },
-
   methods: {
+    async saveAuditorium() {
+      try {
+        // Generar el JSON de configuración actualizado
+        const config = {
+          settings: {
+            SEAT_SIZE: this.SEAT_SIZE,
+            SEATS_DISTANCE: this.SEATS_DISTANCE,
+            SUBSECTION_PADDING: this.SUBSECTION_PADDING,
+            SECTIONS_MARGIN: this.SECTIONS_MARGIN,
+            SECTION_TOP_PADDING: this.SECTION_TOP_PADDING,
+            SECTION_SIDE_PADDING: this.SECTION_SIDE_PADDING,
+            SECTION_BOTTOM_PADDING: this.SECTION_BOTTOM_PADDING,
+          },
+          sections: this.sections,
+        }
+        // Asignar a auditorium.config
+        this.auditorium.config = config
+
+        const payload = {
+          ...this.auditorium,
+          name: this.auditorium.name,
+          config: JSON.stringify(config),
+        }
+        await this.$repository.Auditorium.update(this.auditorium.id, payload)
+        this.$toast && this.$toast.success("Auditorio guardado")
+      } catch (e) {
+        this.$toast && this.$toast.error("Error al guardar")
+      }
+    },
     // ============ OPERACIONES DE SECCIÓN ============
     addSection() {
       this.sections.push({
@@ -510,7 +574,7 @@ export default {
         fontStyle: "bold",
         fontFamily: "Arial",
         align: "center",
-        offsetX: (sub.width || 100) / 2,
+        offsetX: (sub.width || 100) / 2 - 5,
         offsetY: 7,
       }
     },
@@ -640,6 +704,9 @@ export default {
             alert("Archivo JSON inválido: falta estructura requerida")
             return
           }
+
+          // Actualizar auditorium.config
+          this.auditorium.config = config
 
           this.SEAT_SIZE = config.settings.SEAT_SIZE || 10
           this.SEATS_DISTANCE = config.settings.SEATS_DISTANCE || 15
