@@ -1,6 +1,7 @@
 import UserRepository from "../UserRepository"
 
 import ProfileRepository from "../ProfileRepository"
+
 import CommonRepository from "./CommonRepository"
 import ParentRepository from "./ParentRepository"
 
@@ -12,6 +13,7 @@ export default ($axios) => ({
   User: UserRepository($axios)("/user"),
   Profile: ProfileRepository($axios)("/profile"),
   Organization: CommonRepository($axios)("/organization"),
+  Auditorium: CommonRepository($axios)("/auditorium"),
   /// ////////Admin Repository////////////////////////
   Store: CommonRepository($axios)("/store"),
   // Investor: InvestorRepository($axios)("/investor"),
