@@ -29,18 +29,11 @@
       </v-col>
       <v-col cols="12" md="9">
         <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
-          <v-stage :key="SEAT_SIZE + '-' + SEATS_DISTANCE" :config="stageConfig">
+          <v-stage :key="stageKey" :config="stageConfig">
             <v-layer>
               <template v-for="(section, sIdx) in sections">
                 <v-group :key="'section-' + sIdx" :x="(stageConfig.width - getSectionWidth(section)) / 2" :y="60 + sIdx * 220">
-                  <v-rect
-                    :width="getSectionWidth(section)"
-                    :height="(section.subsections[0]?.seats.length || 1) * (SEAT_SIZE + SEATS_DISTANCE) - SEATS_DISTANCE + SECTION_TOP_PADDING"
-                    fill="white"
-                    :stroke-width="1"
-                    stroke="lightgrey"
-                    :corner-radius="5"
-                  />
+                  <v-rect :width="getSectionWidth(section)" :height="getSectionHeight(section)" fill="green" :stroke-width="1" stroke="lightgrey" :corner-radius="5" />
                   <v-text :x="0" :y="0" :width="getSectionWidth(section)" :height="SECTION_TOP_PADDING" align="center" vertical-align="middle" :font-size="20" :fill="'#333'">
                     {{ section.name }}
                   </v-text>
@@ -96,6 +89,7 @@ export default {
   middleware: ["authenticated"],
   data() {
     return {
+      stageKey: 0,
       stageConfig: { width: 900, height: 700 },
       sections: [],
       SEAT_SELECTED_COLOR: "#1976d2",
@@ -106,14 +100,7 @@ export default {
       SECTION_TOP_PADDING: 40,
     }
   },
-  watch: {
-    SEAT_SIZE(val) {
-      this.regenerateSeats()
-    },
-    SEATS_DISTANCE(val) {
-      this.regenerateSeats()
-    },
-  },
+
   created() {
     this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater" })
   },
@@ -145,9 +132,15 @@ export default {
     },
     removeSection(sIdx) {
       this.sections.splice(sIdx, 1)
+      this.regenerateSeats()
     },
     removeSubsection(sIdx, subIdx) {
-      this.sections[sIdx].subsections.splice(subIdx, 1)
+      const section = JSON.parse(JSON.stringify(this.sections[sIdx]))
+      section.subsections = section.subsections.filter((_, idx) => idx !== subIdx)
+      const newSections = [...this.sections]
+      newSections[sIdx] = section
+      this.sections = newSections
+      this.regenerateSeats()
     },
     addSection() {
       const newSection = {
@@ -159,14 +152,18 @@ export default {
           },
         ],
       }
-      console.log("Agregando sección:", newSection)
+
       this.sections.push(newSection)
+      this.regenerateSeats()
     },
     addSubsection(sIdx) {
-      this.sections[sIdx].subsections.push({
+      const newSubsection = {
         name: "Subsección " + (this.sections[sIdx].subsections.length + 1),
         seats: this.createSeats(3, 5, 140, 120),
-      })
+      }
+      this.sections[sIdx].subsections.push(newSubsection)
+      this.stageKey += 1 // Forzar repintado
+      this.regenerateSeats()
     },
     addRow(sIdx, subIdx) {
       const sub = this.sections[sIdx].subsections[subIdx]
@@ -188,7 +185,6 @@ export default {
       for (let r = 0; r < rows; r++) {
         seats.push(this.createSeatRow(cols, r, w, h, r, rows))
       }
-      console.log("createSeats", seats)
       return seats
     },
     createSeatRow(cols, rowIdx, w, h, r, totalRows) {
@@ -225,11 +221,23 @@ export default {
       }
     },
     getSubsectionWidth(sub) {
-      return (sub.seats[0]?.length || 1) * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE
+      if (!sub.seats || sub.seats.length === 0) return 0
+      const cols = sub.seats[0] ? sub.seats[0].length : 0
+      return cols * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE
     },
     getSectionWidth(section) {
       if (!section.subsections.length) return 0
       return section.subsections.reduce((acc, sub) => acc + this.getSubsectionWidth(sub), 0) + (section.subsections.length - 1) * this.SUBSECTION_PADDING
+    },
+    getSectionHeight(section) {
+      if (!section.subsections || section.subsections.length === 0) return this.SECTION_TOP_PADDING
+      // Encuentra el número máximo de filas en todas las subsecciones
+      const maxRows = Math.max(
+        ...section.subsections.map((sub) => {
+          return sub.seats ? sub.seats.length : 0
+        })
+      )
+      return maxRows * (this.SEAT_SIZE + this.SEATS_DISTANCE) - this.SEATS_DISTANCE + this.SECTION_TOP_PADDING
     },
   },
 }
