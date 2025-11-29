@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    Auditorio: {{ auditorium.name }}
+    <span v-if="auditorium && auditorium.name">Auditorio: {{ auditorium.name }}</span>
     <v-row>
       <!-- Panel de Control -->
       <v-col cols="12" md="3">
@@ -196,18 +196,19 @@ const COLORS = {
 export default {
   middleware: ["authenticated"],
 
-  async asyncData({ params, app }) {
+  async asyncData({ params, app, error }) {
     let auditorium = {}
     try {
-      auditorium = (await app.$repository.Auditorium?.show?.(params.id)) || {}
+      auditorium = await app.$repository.Auditorium.show(params.id)
     } catch (e) {
-      console.error("Error loading auditorium:", e)
+      error(app.$handleError(e))
     }
     return { auditorium }
   },
 
   data() {
     return {
+      auditorium: {},
       stageConfig: { width: 900, height: 700 },
       sections: [],
       selectedRow: {},
@@ -259,7 +260,22 @@ export default {
 
       if (config.settings && config.sections) {
         Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-        this.sections = JSON.parse(JSON.stringify(config.sections))
+        // Reasignar IDs consecutivos
+        const cleanSections = JSON.parse(JSON.stringify(config.sections))
+        cleanSections.forEach((section, sIdx) => {
+          section.id = `${sIdx + 1}`
+          section.subsections?.forEach((sub, subIdx) => {
+            sub.id = `${subIdx + 1}`
+            sub.seats?.forEach((row, rowIdx) => {
+              row.forEach((seat, colIdx) => {
+                if ("state" in seat) delete seat.state
+                // Actualizar ID del asiento con nuevos IDs consecutivos
+                seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
+              })
+            })
+          })
+        })
+        this.sections = cleanSections
       }
     },
 
@@ -281,16 +297,17 @@ export default {
 
     // ============ OPERACIONES DE SECCIÓN ============
     addSection(isLabel) {
+      const sectionIdx = this.sections.length
+      const sectionId = `section-${sectionIdx + 1}`
       const section = {
-        name: `${isLabel ? "Etiqueta" : "Sección"} ${this.sections.length + 1}`,
+        id: sectionId,
+        name: `${isLabel ? "Etiqueta" : "Sección"} ${sectionIdx + 1}`,
         isLabel,
         subsections: [],
       }
-
       if (!isLabel) {
-        section.subsections.push(this.createSubsection("Subsección 1", false, 4, 4))
+        section.subsections.push(this.createSubsection("Subsección 1", false, 4, 4, sectionIdx, 0, sectionId))
       }
-
       this.sections.push(section)
     },
 
@@ -300,20 +317,22 @@ export default {
 
     addSubsection(sIdx, isLabel) {
       const section = this.sections[sIdx]
-      const name = `${isLabel ? "Área" : "Subsección"} ${section.subsections.length + 1}`
-      section.subsections.push(this.createSubsection(name, isLabel, 3, 5))
+      const subIdx = section.subsections.length
+      const name = `${isLabel ? "Área" : "Subsección"} ${subIdx + 1}`
+      section.subsections.push(this.createSubsection(name, isLabel, 3, 5, sIdx, subIdx, section.id))
     },
 
     removeSubsection(sIdx, subIdx) {
       this.sections[sIdx].subsections.splice(subIdx, 1)
     },
 
-    createSubsection(name, isLabel, rows = 3, cols = 5) {
-      const sub = { name, isLabel, seats: [] }
+    createSubsection(name, isLabel, rows = 3, cols = 5, sectionIdx = "", subIdx = "", sectionId = "") {
+      const subId = `sub-${sectionId}-${subIdx + 1}`
+      const sub = { id: subId, name, isLabel, seats: [] }
       if (isLabel) {
         sub.width = 100
       } else {
-        sub.seats = this.createSeatsGrid(rows, cols)
+        sub.seats = this.createSeatsGrid(rows, cols, sectionIdx, subIdx, sectionId)
         sub.tempRows = rows
         sub.tempCols = cols
       }
@@ -321,11 +340,11 @@ export default {
     },
 
     setSubsectionGrid(sIdx, subIdx) {
-      const sub = this.sections[sIdx].subsections[subIdx]
+      const section = this.sections[sIdx]
+      const sub = section.subsections[subIdx]
       const rows = Math.max(1, Math.min(20, parseInt(sub.tempRows) || 3))
       const cols = Math.max(1, Math.min(30, parseInt(sub.tempCols) || 5))
-
-      sub.seats = this.createSeatsGrid(rows, cols)
+      sub.seats = this.createSeatsGrid(rows, cols, sIdx, subIdx, section.id)
       this.$forceUpdate()
     },
 
@@ -346,54 +365,30 @@ export default {
     },
 
     addSeatToRow(sIdx, subIdx, side) {
-      const sub = this.sections[sIdx].subsections[subIdx]
+      const section = this.sections[sIdx]
+      const sub = section.subsections[subIdx]
       const selectedRowIdx = this.selectedRow[`${sIdx}-${subIdx}`]
-
       if (!this.isRowSelected(sIdx, subIdx)) return
-
       const selectedRow = sub.seats[selectedRowIdx]
-
       if (side === "left") {
-        if (selectedRow[0]?.state === "invisible") {
-          selectedRow[0] = this.createSeat(0, selectedRowIdx)
-        } else {
-          sub.seats.forEach((row, rowIdx) => {
-            const seat = rowIdx === selectedRowIdx ? this.createSeat(0, rowIdx) : this.createPlaceholder(0, rowIdx)
-            row.unshift(seat)
-          })
-        }
+        selectedRow.unshift(this.createSeat(0, selectedRowIdx, sIdx, subIdx, section.id))
       } else {
-        const lastIdx = selectedRow.length - 1
-        if (selectedRow[lastIdx]?.state === "invisible") {
-          selectedRow[lastIdx] = this.createSeat(lastIdx, selectedRowIdx)
-        } else {
-          selectedRow.push(this.createSeat(selectedRow.length, selectedRowIdx))
-        }
+        selectedRow.push(this.createSeat(selectedRow.length, selectedRowIdx, sIdx, subIdx, section.id))
       }
-
       this.$forceUpdate()
     },
 
     // ============ CREACIÓN DE ASIENTOS ============
-    createSeatsGrid(rows, cols) {
-      return Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => this.createSeat(c, r)))
+    createSeatsGrid(rows, cols, sectionIdx, subIdx, sectionId = "") {
+      return Array.from({ length: rows }, (_, r) => Array.from({ length: cols }, (_, c) => this.createSeat(c, r, sectionIdx, subIdx, sectionId)))
     },
 
-    createSeat(col, row) {
+    createSeat(col, row, sectionIdx = "", subIdx = "", sectionId = "") {
+      // sectionId: 'section-1', subIdx: 0, row: 0, col: 0 => 'section-1-1-1-1'
       return {
-        id: `s${row}c${col}-${Date.now().toString(36)}${Math.random().toString(36).substr(2, 5)}`,
+        id: `${sectionId}-${subIdx + 1}-${row + 1}-${col + 1}`,
         row,
         col,
-        state: "free",
-      }
-    },
-
-    createPlaceholder(col, row) {
-      return {
-        id: `p${row}c${col}-${Date.now().toString(36)}`,
-        row,
-        col,
-        state: "invisible",
       }
     },
 
@@ -632,7 +627,22 @@ export default {
 
           this.auditorium.config = config
           Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-          this.sections = config.sections
+          // Reasignar IDs consecutivos al importar
+          const cleanSections = JSON.parse(JSON.stringify(config.sections))
+          cleanSections.forEach((section, sIdx) => {
+            section.id = `${sIdx + 1}`
+            section.subsections?.forEach((sub, subIdx) => {
+              sub.id = `${section.id}-${subIdx + 1}`
+              sub.seats?.forEach((row, rowIdx) => {
+                row.forEach((seat, colIdx) => {
+                  if ("state" in seat) delete seat.state
+                  // Actualizar ID del asiento con nuevos IDs consecutivos
+                  seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
+                })
+              })
+            })
+          })
+          this.sections = cleanSections
           event.target.value = ""
           this.$forceUpdate()
           alert("Configuración importada correctamente")

@@ -4,13 +4,19 @@
       <v-card-title>
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
+        {{ item.org_id }}
         <v-spacer></v-spacer>
         <v-icon @click.native="close">$delete</v-icon>
       </v-card-title>
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-select v-model="item.org_id" :items="orgs" item-text="name" item-value="id" label="Organización" :disabled="!!item.id" return-object="false" required />
+            <template v-if="item.id">
+              <v-text-field :value="getOrgName()" label="Organización" disabled></v-text-field>
+            </template>
+            <template v-else>
+              <organization-select v-model="item.org_id" :permission="'auditorium-index'" outlined :rules="[$vrules.required]" />
+            </template>
           </v-col>
           <v-col cols="12">
             <v-text-field v-model="item.name" label="Nombre" @keyup.enter="save"></v-text-field>
@@ -51,6 +57,15 @@ export default {
     }
   },
   methods: {
+    getOrgName() {
+      if (!this.item.org_id) return ""
+      if (typeof this.item.org_id === "object" && this.item.org_id.name) return this.item.org_id.name
+      if (this.orgs && Array.isArray(this.orgs)) {
+        const found = this.orgs.find((o) => o.id === this.item.org_id)
+        return found ? found.name : this.item.org_id
+      }
+      return this.item.org_id
+    },
     close() {
       this.$emit("close")
     },

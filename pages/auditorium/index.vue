@@ -98,10 +98,12 @@ export default {
       this.auditoriumDialogDelete = false
     },
     async saveAuditorium(item) {
-      if (item.id) {
-        await this.$repository.Auditorium?.update?.(item.id, item)
+      // Solo enviar el id numérico en org_id
+      const payload = { ...item, org_id: item.org_id && item.org_id.id ? item.org_id.id : item.org_id }
+      if (payload.id) {
+        await this.$repository.Auditorium?.update?.(payload.id, payload)
       } else {
-        await this.$repository.Auditorium?.create?.(item)
+        await this.$repository.Auditorium?.create?.(payload)
       }
       this.getAuditoriums()
       this.auditoriumDialog = false

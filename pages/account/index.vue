@@ -16,8 +16,19 @@
       <v-col cols="12">
         <div class="text-h6">Permisos:</div>
         <ul>
-          <!-- <li v-for="(permission, ix) in permissions" :key="ix">{{ ix }} {{ permission }}</li> -->
-          <li v-for="(permission, ix) in permissions" :key="ix">{{ ix }}</li>
+          <li v-for="(orgIds, perm) in permissions_org" :key="perm">
+            <strong>{{ perm }}</strong>
+            :
+            <span v-if="orgIds && orgIds.length">
+              [
+              <span v-for="(oid, i) in orgIds" :key="oid">
+                {{ getOrgNameById(oid) }}
+                <span v-if="i < orgIds.length - 1">,</span>
+              </span>
+              ]
+            </span>
+            <span v-else>[Sin organización]</span>
+          </li>
         </ul>
       </v-col>
     </v-row>
@@ -31,6 +42,15 @@ export default {
     dialogPassword: false,
     head: {},
   }),
+  computed: {
+    permissions_org() {
+      // permissions_org: { permission: [org_id, ...] }
+      return this.$store.getters.permissions || {}
+    },
+    orgs() {
+      return this.$store.getters.orgs || []
+    },
+  },
 
   created() {
     this.$nuxt.$emit("setNavBar", { title: "Perfil", icon: "account" })
@@ -39,6 +59,10 @@ export default {
     appVersion() {
       return process.env.APP_VERSION
       // return this.$store.getters.appVersion
+    },
+    getOrgNameById(id) {
+      const org = this.orgs.find((o) => o.id === id)
+      return org ? org.name : id
     },
     async changePassword(payload) {
       await this.$repository.User.change(payload)

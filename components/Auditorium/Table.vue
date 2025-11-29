@@ -34,6 +34,7 @@ export default {
       optionsTable: {},
       headers: [
         { text: "Nombre", align: "start", value: "name", width: "7rem" },
+        { text: "Organización", align: "start", value: "org_name", width: "8rem" },
         { text: "Acciones", value: "actions", sortable: false, width: "15rem" },
       ],
       page: 1,
@@ -46,8 +47,13 @@ export default {
       else return 0
     },
     items() {
-      if (this.response) return this.response.data
-      else return []
+      if (this.response) {
+        // Mapear org_name para mostrar el nombre de la organización
+        return this.response.data.map((aud) => ({
+          ...aud,
+          org_name: aud.org_name || (aud.org_id && aud.org_id.name ? aud.org_id.name : ""),
+        }))
+      } else return []
     },
   },
   mounted() {

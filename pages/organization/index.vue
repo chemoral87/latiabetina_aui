@@ -30,7 +30,9 @@ export default {
       sortDesc: [true],
       itemsPerPage: 5,
     }
-    const response = await app.$repository.Organization.index(options).catch((e) => {})
+    const response = await app.$repository.Organization.index(options).catch((e) => {
+      error(app.$handleError(e))
+    })
     return { response, options }
   },
   data() {

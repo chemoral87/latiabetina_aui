@@ -39,7 +39,9 @@ export default {
       itemsPerPage: 10,
     }
     // NOTE Repository https://medium.com/js-dojo/consuming-apis-in-nuxt-using-the-repository-pattern-8a13ea57d520
-    const res = await app.$repository.Permission.index(op).catch((e) => {})
+    const res = await app.$repository.Permission.index(op).catch((e) => {
+      error(app.$handleError(e))
+    })
     return { response: res, options: op }
   },
   data() {
