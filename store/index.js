@@ -1,4 +1,5 @@
 export const strict = false
+
 export const state = () => ({
   snackbars: [],
   snack_id: 0,
@@ -10,52 +11,57 @@ export const state = () => ({
 })
 
 export const getters = {
-  // persistedStates(state) {
-  //   return state.persistedStates;
-  // },
   authenticated(state) {
-    return state.auth.loggedIn
+    return state.auth?.loggedIn ?? false
   },
+
   user(state) {
-    return state.auth.user
+    return state.auth?.user ?? null
   },
+
   permissions(state) {
-    if (state.auth.user == null) return []
-    if (state.auth.user) return state.auth.user.permissions_org
-    else return []
+    return state.auth?.user?.permissions_org ?? []
   },
+
   orgs(state) {
-    if (state.auth.user == null) return []
-    if (state.auth.user) return state.auth.user.orgs
-    else return []
+    return state.auth?.user?.orgs ?? []
   },
+
   snackbar(state) {
     return state.snackbar
   },
+
   getSnackbars(state) {
     return state.snackbars
   },
+
   appVersion(state) {
     return state.app_version
   },
+
   showLoading(state) {
     return state.block_loading
   },
+
   hideNextLoading(state) {
     return state.hide_next_loading
   },
+
   authTokenGoogle(state) {
-    return state.auth?.token || null
+    return state.auth?.token ?? null
   },
+
   authStrategy(state) {
-    return state.auth?.strategy?.name || null
+    return state.auth?.strategy?.name ?? null
   },
+
   getConfig: (state) => (org, parameter) => {
     if (state.config.length === 0) return null
-    const config = state.config.find((c) => c.org_id === org)
-    if (config == null) return null
 
-    // validate if exists the parameter
+    const config = state.config.find((c) => c.org_id === org)
+    if (!config) return null
+
+    // Valida si existe el parámetro
     if (!Object.prototype.hasOwnProperty.call(config.keys, parameter)) return null
 
     return config.keys[parameter]
@@ -66,51 +72,54 @@ export const mutations = {
   SET_SNACKBAR(state, snackbar) {
     state.snackbars = state.snackbars.concat(snackbar)
   },
+
   DELETE_SNACK(state, snackbar) {
     state.snackbars = state.snackbars.filter((snack) => snack.id > snackbar.id)
   },
-  // CLOSE_SNACKBAR(state) {
-  //   if (state.snackbar.display == true) {
-  //     state.snackbar.display = false;
-  //   }
-  // },
+
   SHOW_LOADING(state) {
-    if (state.block_loading === false) {
+    if (!state.block_loading) {
       state.block_loading = true
     }
   },
+
   HIDE_LOADING(state) {
-    if (state.block_loading === true) {
+    if (state.block_loading) {
       state.block_loading = false
     }
   },
+
   HIDE_NEXT_LOADING(state) {
     state.hide_next_loading = true
   },
+
   SHOW_NEXT_LOADING(state) {
     state.hide_next_loading = false
   },
+
   SET_CONFIG(state, payload) {
     state.config = payload
   },
-  // SET_STATE(state, payload) {
-  //   state.persistedState = payload;
-  // }
 }
 
 export const actions = {
-  validatePermission({ commit, state }, { permission, error }) {
-    if (state.auth.user == null) return false
-    // error is not a function fix
-    if (!Object.prototype.hasOwnProperty.call(state.auth.user.permissions_org, permission))
+  validatePermission({ state }, { permission, error }) {
+    if (!state.auth?.user) return false
+
+    if (!Object.prototype.hasOwnProperty.call(state.auth.user.permissions_org, permission)) {
       error({
         statusCode: 403,
-        message: `Permiso requerido <span class="error-message"> ${permission} </span>`,
+        message: `Permiso requerido <span class="error-message">${permission}</span>`,
       })
-    else return state.auth.user.permissions_org[permission] // return the org_ids
+      return false
+    }
+
+    return state.auth.user.permissions_org[permission]
   },
+
   notify({ commit, state }, data) {
     let notify
+
     if (data.success) {
       state.snack_id++
       notify = {
@@ -118,11 +127,9 @@ export const actions = {
         color: "primary",
         showing: true,
         display: true,
-        // timeout: 3800,
         id: state.snack_id,
       }
-    }
-    if (data.error) {
+    } else if (data.error) {
       state.snack_id++
       notify = {
         text: data.error,
@@ -132,35 +139,43 @@ export const actions = {
         id: state.snack_id,
       }
     }
-    if (notify == null) return
+
+    if (!notify) return
 
     commit("SET_SNACKBAR", notify)
+
     const notifyTimeOut = 4000
     setTimeout(() => {
       commit("DELETE_SNACK", notify)
     }, notifyTimeOut)
   },
+
   closeSnackbar({ commit }, snackbar) {
     commit("DELETE_SNACK", snackbar)
   },
-  // closeNotify({ commit }) {
-  //   commit("CLOSE_SNACKBAR");
-  // },
+
   showLoading({ commit }) {
     commit("SHOW_LOADING")
   },
+
   hideLoading({ commit }) {
     commit("HIDE_LOADING")
   },
+
   hideNextLoading({ commit }) {
     commit("HIDE_NEXT_LOADING")
   },
+
   showNextLoading({ commit }) {
     commit("SHOW_NEXT_LOADING")
   },
+
   async loadConfig({ commit }, settings) {
-    await this.$repository.Config.index({ settings }).then((res) => {
+    try {
+      const res = await this.$repository.Config.index({ settings })
       commit("SET_CONFIG", res)
-    })
+    } catch (error) {
+      console.error("Error loading config:", error)
+    }
   },
 }

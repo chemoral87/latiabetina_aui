@@ -1,91 +1,142 @@
-watch: { authenticated(val) { if (val === true && this.autoRedirectDashboard) { this.autoRedirectDashboard = false; this.$router.push("/dashboard") } } },
 <template>
   <v-container style="max-width: 800px">
     <v-card>
       <v-card-title class="text-h4">
-        <v-icon :color="color" size="40">mdi-alert</v-icon>
+        <v-icon :color="iconColor" size="40">mdi-alert</v-icon>
         Ocurrió un problema
       </v-card-title>
+
       <v-card-text>
         <div class="error-yellow-box">
-          <div class="text-h6 text--primary" v-html="errorMessage"></div>
+          <div class="text-h6 text--primary" v-html="errorMessage" />
         </div>
         <div class="text-h6 text--primary mt-12">Presione el siguiente botón para regresar.</div>
       </v-card-text>
-      <v-card-actions v-if="authenticatedReady">
-        <v-btn v-if="authenticated === false" color="primary" @click="goHome">Ir al Inicio</v-btn>
-        <v-btn v-else-if="authenticated === true" color="primary" @click="goDashboard">Ir al Dashboard</v-btn>
-      </v-card-actions>
-      <v-card-actions v-else>
-        <v-skeleton-loader type="button" width="150px" />
+
+      <v-card-actions>
+        <template v-if="isAuthReady && !isRedirecting">
+          <v-btn color="primary" @click="handleRedirect">
+            {{ redirectButtonText }}
+          </v-btn>
+        </template>
+        <v-skeleton-loader v-else type="button" width="150px" />
       </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script>
+const ERROR_MESSAGES = {
+  403: "No tiene los suficientes permisos para ver esta página, verifique con el Administrador del sistema.",
+  404: "Registro No Encontrado.",
+  500: "Registro No Encontrado.",
+  405: "Registro No Encontrado.",
+  default: "Ocurrió un error inesperado.",
+}
+
+const AXIOS_GENERIC_403 = "Request failed with status code 403"
+
 export default {
   layout: "default",
-  props: ["error"],
+
+  props: {
+    error: {
+      type: [Object, String],
+      default: null,
+    },
+  },
+
   data() {
     return {
-      color: "orange",
-      pageNotFound: "404 Not Found",
-      otherError: "An error occurred",
-      autoRedirectDashboard: false,
+      iconColor: "orange",
+      isRedirecting: false,
+      authLoaded: false,
     }
   },
+
   computed: {
-    authenticatedReady() {
-      return typeof this.authenticated === "boolean"
+    isAuthReady() {
+      // Verifica que el módulo auth esté cargado
+      return this.authLoaded && this.$store?.state?.auth && typeof this.authenticated === "boolean"
     },
+
+    statusCode() {
+      return this.error?.statusCode || this.error?.response?.status
+    },
+
     errorMessage() {
-      // Soporta errores lanzados desde catch(e) con distintas estructuras
-      const statusCode = this.error?.statusCode || this.error?.response?.status
-      let message = this.error?.message || this.error?.response?.data?.message || (typeof this.error === "string" ? this.error : "")
+      let message = this.extractErrorMessage()
 
       // Filtra mensaje genérico de axios
-      if (message === "Request failed with status code 403") {
-        message = "No tiene permisos para acceder a esta página."
+      if (message === AXIOS_GENERIC_403) {
+        message = ERROR_MESSAGES[403]
       }
 
-      if (statusCode === 403) {
-        return `No tiene los suficientes permisos para ver esta página, verifique con el Administrador del sistema.<br/><br/>${message}`
-      } else if (statusCode === 404 || statusCode === 500 || statusCode === 405) {
-        if (message) {
-          return `<span class='error-message'>${message}</span>`
-        }
-        return "<span class='error-message'>Registro No Encontrado.</span>"
-      }
-      return message || "Ocurrió un error inesperado."
+      return this.formatErrorMessage(message)
+    },
+
+    redirectButtonText() {
+      return this.authenticated ? "Ir al Dashboard" : "Ir al Inicio"
     },
   },
-  methods: {
-    goHome() {
-      console.log("Redirecting to home")
-      this.$router.push("/login")
-    },
-    goDashboard() {
-      console.log("Redirecting to dashboard")
-      // Marca para redirigir automáticamente cuando authenticated esté listo
-      if (this.authenticated === true) {
-        this.$router.push("/dashboard")
-      } else {
-        this.autoRedirectDashboard = true
+
+  watch: {
+    // Observa cuando el módulo auth se carga
+    "$store.state.auth"(val) {
+      if (val && !this.authLoaded) {
+        this.authLoaded = true
+        this.$forceUpdate()
       }
+    },
+  },
+
+  mounted() {
+    // Verifica inmediatamente si auth ya está cargado
+    if (this.$store.state.auth) {
+      this.authLoaded = true
+    }
+  },
+
+  // Eliminado el watcher automático para permitir ver el mensaje de error
+
+  methods: {
+    extractErrorMessage() {
+      if (typeof this.error === "string") {
+        return this.error
+      }
+
+      return this.error?.message || this.error?.response?.data?.message || ""
+    },
+
+    formatErrorMessage(message) {
+      const code = this.statusCode
+
+      if (code === 403) {
+        return `${ERROR_MESSAGES[403]}<br/><br/>${message}`
+      }
+
+      if ([404, 500, 405].includes(code)) {
+        return message ? `<span class="error-message">${message}</span>` : `<span class="error-message">${ERROR_MESSAGES[code]}</span>`
+      }
+
+      return message || ERROR_MESSAGES.default
+    },
+
+    handleRedirect() {
+      this.isRedirecting = true
+      const destination = this.authenticated ? "/dashboard" : "/login"
+      this.$router.push(destination)
     },
   },
 }
 </script>
 
-<style>
-/* h1 {
-  font-size: 20px;
-} */
+<style scoped>
 .error-message {
   color: red;
   font-weight: bold;
 }
+
 .error-yellow-box {
   background: #fffbe6;
   border: 2px solid #ffe066;
