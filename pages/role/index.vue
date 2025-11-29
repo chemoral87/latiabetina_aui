@@ -65,8 +65,9 @@ export default {
     },
   },
 
-  created() {
-    this.$nuxt.$emit("setNavBar", { title: "Roles", icon: "redhat" })
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", { title: "Roles", icon: "redhat" })
   },
   methods: {
     async getRoles(options) {

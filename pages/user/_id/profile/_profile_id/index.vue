@@ -35,10 +35,10 @@ export default {
       profile_id: this.$route.params.profile_id,
     }
   },
-  mounted() {},
 
-  created() {
-    this.$nuxt.$emit("setNavBar", {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
       title: `Perfilx: ${this.mUser.name} ${this.mUser.last_name}`,
       icon: "account",
       back: this.back,

@@ -56,8 +56,9 @@ export default {
   //   if (store.getters.permissions.includes("organization-index")) return true;
   //   else throw error({ statusCode: 403 });
   // },
-  created() {
-    this.$nuxt.$emit("setNavBar", {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
       title: "Organizaciones",
       icon: "domain",
     })

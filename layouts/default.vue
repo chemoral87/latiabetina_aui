@@ -23,6 +23,7 @@
         <v-spacer />
       </v-list>
     </v-navigation-drawer>
+
     <v-app-bar :clipped-left="clipped" class="elevation-2" fixed app :color="authenticated ? '' : 'banner'">
       <v-app-bar-nav-icon v-if="show_drawer" @click.stop="drawer = !drawer" />
       <v-toolbar-title class="pl-0">
@@ -63,6 +64,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
+
     <v-main>
       <v-container fluid class="pa-0">
         <Nuxt />
@@ -96,13 +98,15 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
 import { MenuService } from "../services/menu-service"
+
 export default {
   data() {
     return {
       clipped: false,
       drawer: false,
-      fixed: false, // footer
+      fixed: false,
       miniVariant: false,
       right: true,
       rightDrawer: false,
@@ -116,66 +120,72 @@ export default {
       show_login: true,
     }
   },
+
   computed: {
-    // snackbar_display: {
-    //   get() {
-    //     return this.snackbar.display;
-    //   },
-    //   set() {
-    //     this.$store.dispatch("closeNotify");
-    //   },
-    // },
-    loading_display() {
-      return this.showLoading
-    },
+    ...mapGetters({
+      authenticated: "authenticated",
+      user: "user",
+      permissions: "permissions",
+      snacks: "getSnackbars",
+      loading_display: "showLoading",
+    }),
+
     items() {
       const menu_ = new MenuService(this.authenticated, this.permissions)
       return menu_.getMenu()
     },
-    snacks() {
-      return this.$store.getters.getSnackbars
-    },
   },
+
   created() {
-    this.$nuxt.$on("setNavBar", ($event) => this.setNavBar($event))
-    // this.$store.dispatch("loadConfig");
+    // Usar el event bus personalizado (con fallback a $nuxt)
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$on("setNavBar", this.setNavBar)
   },
+
+  beforeDestroy() {
+    // Limpiar listener para evitar memory leaks
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$off("setNavBar", this.setNavBar)
+  },
+
   methods: {
     setNavBar(navbar) {
-      const me = this
-      this.title = Object.prototype.hasOwnProperty.call(navbar, "title") ? navbar.title : null
-      this.icon = Object.prototype.hasOwnProperty.call(navbar, "icon") ? navbar.icon : null
-      this.back = Object.prototype.hasOwnProperty.call(navbar, "back") ? navbar.back : null
+      this.title = navbar.title ?? ""
+      this.icon = navbar.icon ?? null
+      this.back = navbar.back ?? null
+
       if (typeof this.back === "function") {
         this.backHandler = navbar.back
       } else if (this.back) {
         this.backHandler = () => {
-          me.$router.push(me.back)
+          this.$router.push(this.back)
         }
       } else {
         this.backHandler = null
       }
 
-      this.show_drawer = Object.prototype.hasOwnProperty.call(navbar, "show_drawer") ? navbar.show_drawer : true
-      this.show_login = Object.prototype.hasOwnProperty.call(navbar, "show_login") ? navbar.show_login : true
+      this.show_drawer = navbar.show_drawer ?? true
+      this.show_login = navbar.show_login ?? true
     },
+
     closeDrawer() {
       this.drawer = false
     },
+
     gotoLogin() {
       this.$router.push("/login")
     },
+
     gotoHome() {
       this.$router.push("/")
     },
+
     logout() {
       this.menu = false
 
       // Para Google, hacer logout local sin llamar al backend
       if (this.$auth.strategy.name === "google") {
-        // Redirigir inmediatamente
         this.$router.push("/login")
-        // Limpiar el estado del auth de forma asíncrona después del redirect
         this.$nextTick(() => {
           this.$auth.reset()
         })
@@ -187,6 +197,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .snackbar-wrapper {
   position: fixed;

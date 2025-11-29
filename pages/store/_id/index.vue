@@ -69,8 +69,9 @@ export default {
       store: {},
     }
   },
-  created() {
-    this.$nuxt.$emit("setNavBar", {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
       title: "Editar Store",
       icon: "human-greeting-variant",
     })

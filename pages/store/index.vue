@@ -47,8 +47,9 @@ export default {
       me.response = await me.$repository.Store.index(op)
     },
   },
-  created() {
-    this.$nuxt.$emit("setNavBar", {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
       title: "Store",
       icon: "human-greeting-variant",
     })

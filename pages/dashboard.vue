@@ -21,10 +21,8 @@ export default {
     }
   },
   mounted() {
-    this.$nuxt.$emit("setNavBar", {
-      title: "Dashboard",
-      icon: "view-dashboard",
-    })
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", { title: "Dashboard", icon: "view-dashboard" })
 
     // Si está autenticado pero no tiene usuario, intentar obtenerlo
     if (this.$auth.loggedIn && !this.$auth.user) {

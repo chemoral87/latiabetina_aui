@@ -27,9 +27,10 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
     const roleName = this.mRole.name || ""
-    this.$nuxt.$emit("setNavBar", {
+    eventBus.$emit("setNavBar", {
       title: "Rol " + roleName,
       icon: "redhat",
       back: "/role",

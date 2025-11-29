@@ -52,8 +52,9 @@ export default {
     },
   },
 
-  created() {
-    this.$nuxt.$emit("setNavBar", { title: "Perfil", icon: "account" })
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", { title: "Perfil", icon: "account" })
   },
   methods: {
     appVersion() {

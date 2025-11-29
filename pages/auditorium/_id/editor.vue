@@ -235,8 +235,19 @@ export default {
     "settings.SEATS_DISTANCE": "forceUpdate",
   },
 
-  created() {
-    this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater", back: "/auditorium" })
+  // created() {
+  //   this.$nuxt.$emit("setNavBar", { title: "Auditorio", icon: "theater", back: "/auditorium" })
+  //   this.loadConfiguration()
+  // },
+
+  mounted() {
+    // Configurar navbar directamente sin mixin
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
+      title: "Auditorios",
+      icon: "theater",
+      back: "/auditorium",
+    })
     this.loadConfiguration()
   },
 

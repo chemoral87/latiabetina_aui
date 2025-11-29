@@ -58,7 +58,16 @@ export default {
   css: [],
 
   // Plugins
-  plugins: ["./plugins/mixins/user.js", "./plugins/mixins/utils.js", "./plugins/mixins/validation.js", "./plugins/filters.js", "./plugins/axios.js", "./plugins/repository.js", "./plugins/handleError.js"],
+  plugins: [
+    "./plugins/mixins/user.js",
+    "./plugins/mixins/utils.js",
+    "./plugins/mixins/validation.js",
+    "./plugins/filters.js",
+    "./plugins/axios.js",
+    "./plugins/repository.js",
+    "./plugins/handleError.js",
+    "./plugins/eventBus.js",
+  ],
 
   // Auto import components
   components: true,

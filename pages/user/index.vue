@@ -59,9 +59,11 @@ export default {
       me.getUsers(op)
     },
   },
-  created() {
-    this.$nuxt.$emit("setNavBar", { title: "Usuarios", icon: "account" })
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", { title: "Usuarios", icon: "account" })
   },
+
   methods: {
     newUser() {
       this.userx = {}

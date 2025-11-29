@@ -52,20 +52,20 @@ export default {
       name_secret: "",
     }
   },
-  created() {
-    this.$nuxt.$emit("setNavBar", {
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", {
       title: `Inicio Sesión`,
       icon: "lock",
       show_login: false,
     })
-  },
-  mounted() {
     this.name_secret = process.env.BASE_URL
     // this.name_secret = process.env.NAME_SECRET;
 
     // Maneja el callback de Google OAuth
     this.handleGoogleCallback()
   },
+
   methods: {
     loginWithGoogle() {
       // Redirige directamente sin hacer petición AJAX

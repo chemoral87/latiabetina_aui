@@ -63,8 +63,9 @@ export default {
     },
   },
 
-  created() {
-    this.$nuxt.$emit("setNavBar", { title: "Permisos", icon: "key" })
+  mounted() {
+    const eventBus = this.$eventBus || this.$nuxt
+    eventBus.$emit("setNavBar", { title: "Permisos", icon: "key" })
   },
   methods: {
     newPermission() {
