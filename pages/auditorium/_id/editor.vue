@@ -74,11 +74,11 @@
                 <template v-if="!sub.isLabel">
                   <!-- Definir filas y columnas -->
                   <v-row dense class="mb-2">
-                    <v-col cols="5">
-                      <v-text-field v-model.number="sub.tempRows" label="Filas" type="number" :min="1" :max="20" dense hide-details />
+                    <v-col cols="3">
+                      <v-text-field v-model.number="sub.tempRows" label="Filas" type="text" dense hide-details />
                     </v-col>
-                    <v-col cols="5">
-                      <v-text-field v-model.number="sub.tempCols" label="Columnas" type="number" :min="1" :max="30" dense hide-details />
+                    <v-col cols="3">
+                      <v-text-field v-model.number="sub.tempCols" label="Columnas" type="text" dense hide-details />
                     </v-col>
                     <v-col cols="2">
                       <v-btn small color="primary" @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>

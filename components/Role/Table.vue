@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total" :loading="loading" :must-sort="true" fixed-header mobile-breakpoint="0" class="elevation-1" striped>
+  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total" :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
     <!-- Columna de permisos -->
     <template #[`item.permissions`]="{ item }">
       <div v-if="hasPermissions(item)" class="d-flex flex-wrap">
@@ -169,7 +169,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .v-chip {
   margin: 2px !important;
 }

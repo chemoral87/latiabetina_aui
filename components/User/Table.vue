@@ -1,7 +1,6 @@
 <template>
   <div>
-    <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1">
-      <!-- https://stackoverflow.com/questions/61344980/v-slot-directive-doesnt-support-any-modifier -->
+    <v-data-table mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1">
       <template #[`item.roles`]="{ item }">
         <v-chip v-for="it in item.roles" :key="it.id" class="ma-2" color="primary">
           {{ it.name }}

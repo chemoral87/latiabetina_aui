@@ -1,6 +1,6 @@
 <template>
   <v-app class="back_white">
-    <v-navigation-drawer v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant" :clipped="clipped" temporary app>
+    <v-navigation-drawer v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant" :clipped="clipped" temporary app touchless>
       <v-list>
         <v-list-item>
           <v-list-item-action class="mr-2">
