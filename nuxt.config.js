@@ -26,6 +26,7 @@ export default {
   },
 
   ssr: false,
+  target: "static",
   telemetry: false,
 
   // Global page headers
@@ -83,7 +84,7 @@ export default {
     redirect: {
       login: "/login",
       logout: "/login",
-      home: false,
+      home: "/dashboard",
       callback: false,
     },
     strategies: {
@@ -132,7 +133,12 @@ export default {
   axios: {
     baseURL: process.env.BASE_URL,
     progress: true, // Muestra barra de progreso
-    retry: { retries: 2 }, // Reintentos en caso de fallo
+    retry: {
+      retries: 2,
+      retryCondition: (error) => {
+        return error.response?.status >= 500
+      },
+    },
     credentials: true, // Envía cookies
   },
 
@@ -218,11 +224,9 @@ export default {
         cacheGroups: {
           // Separa vendors grandes
           vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name(module) {
-              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1]
-              return packageName ? `npm.${packageName.replace("@", "")}` : "vendor"
-            },
+            test: /[\\\\/]node_modules[\\\\/]/,
+            name: "vendor",
+            priority: 10,
           },
           // Vuetify en su propio chunk
           vuetify: {

@@ -165,7 +165,6 @@
         </v-sheet>
       </v-col>
     </v-row>
-    {{ auditorium.config }}
   </v-container>
 </template>
 
@@ -257,7 +256,10 @@ export default {
     },
 
     loadConfiguration() {
-      if (!this.auditorium?.config) return
+      if (!this.auditorium?.config) {
+        console.warn("No se encontró configuración para cargar")
+        return
+      }
 
       let config = this.auditorium.config
       if (typeof config === "string") {
@@ -296,12 +298,13 @@ export default {
         const payload = {
           ...this.auditorium,
           name: this.auditorium.name,
+          org_id: this.auditorium.org_id?.id ?? this.auditorium.org_id,
           config: JSON.stringify(this.configData),
         }
         await this.$repository.Auditorium.update(this.auditorium.id, payload)
         this.$toast?.success("Auditorio guardado")
       } catch (e) {
-        console.error("Error saving:", e)
+        this.$handleError(e)
         this.$toast?.error("Error al guardar")
       }
     },

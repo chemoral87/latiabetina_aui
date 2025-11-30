@@ -3,6 +3,7 @@ export const strict = false
 export const state = () => ({
   snackbars: [],
   snack_id: 0,
+  snackbarTimeout: 4000,
   block_loading: false,
   hide_next_loading: false,
   locale: "es",
@@ -144,10 +145,9 @@ export const actions = {
 
     commit("SET_SNACKBAR", notify)
 
-    const notifyTimeOut = 4000
     setTimeout(() => {
       commit("DELETE_SNACK", notify)
-    }, notifyTimeOut)
+    }, state.snackbarTimeout)
   },
 
   closeSnackbar({ commit }, snackbar) {
