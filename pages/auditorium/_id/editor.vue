@@ -191,7 +191,7 @@ const COLORS = {
   SUBSECTION_BG: "#e0e0e0",
   LABEL_TEXT: "#ff9800",
 }
-
+// reference https://codesandbox.io/p/sandbox/kind-waterfall-483dgv
 export default {
   middleware: ["authenticated"],
 

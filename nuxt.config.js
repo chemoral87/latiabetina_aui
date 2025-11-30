@@ -34,7 +34,7 @@ export default {
     titleTemplate: "Admin",
     title: "Admin",
     htmlAttrs: {
-      lang: "es", // Español basado en tu store locale
+      lang: "es",
     },
     meta: [
       { charset: "utf-8" },
@@ -45,7 +45,6 @@ export default {
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-      // Preconnect al backend para mejorar rendimiento
       ...(process.env.BASE_URL
         ? [
             { rel: "preconnect", href: process.env.BASE_URL },
@@ -130,20 +129,20 @@ export default {
     },
   },
 
-  // Axios configuration mejorada
+  // Axios configuration
   axios: {
     baseURL: process.env.BASE_URL,
-    progress: true, // Muestra barra de progreso
+    progress: true,
     retry: {
       retries: 2,
       retryCondition: (error) => {
         return error.response?.status >= 500
       },
     },
-    credentials: true, // Envía cookies
+    credentials: true,
   },
 
-  // Loading bar personalizada
+  // Loading bar
   loading: {
     color: colors.blue.darken2,
     height: "3px",
@@ -152,7 +151,7 @@ export default {
 
   // Router configuration
   router: {
-    prefetchLinks: true, // Prefetch de páginas enlazadas
+    prefetchLinks: true,
   },
 
   // Vuetify configuration
@@ -171,15 +170,7 @@ export default {
         customProperties: true,
       },
       themes: {
-        light: {
-          // primary: colors.blue.darken2, // #1976D2
-          // accent: colors.grey.darken3, // #424242
-          // secondary: colors.amber.darken3, // #FFA000
-          // info: colors.teal.lighten1, // #26A69A
-          // warning: colors.amber.base, // #FFC107
-          // error: colors.deepOrange.accent4, // #DD2C00
-          // success: colors.green.accent3, // #dfbfbfff
-        },
+        light: {},
         dark: {
           primary: colors.blue.darken2,
           accent: colors.grey.darken3,
@@ -195,7 +186,7 @@ export default {
 
   // Build configuration optimizada
   build: {
-    // Analizar bundle (ejecuta: npm run build -- --analyze)
+    // Analizar bundle
     analyze:
       process.env.ANALYZE === "true"
         ? {
@@ -205,11 +196,26 @@ export default {
           }
         : false,
 
-    // Extrae CSS en producción para mejor caching
-    extractCSS: !isDev,
+    // CORRECCIÓN: extractCSS y parallel no pueden estar activos simultáneamente
+    // En producción: extractCSS activo, parallel desactivado
+    // En desarrollo: extractCSS desactivado, parallel activo
+    extractCSS: !isDev
+      ? {
+          ignoreOrder: true, // Ignora warnings de orden de CSS
+        }
+      : false,
 
-    // Optimiza CSS en producción
+    // Optimiza CSS solo en producción
     optimizeCSS: !isDev,
+
+    // Parallel solo en desarrollo (conflicto con extractCSS)
+    parallel: isDev,
+
+    // Cache para builds más rápidos
+    cache: true,
+
+    // Hard source para cache persistente (solo en producción)
+    hardSource: !isDev,
 
     // Splitting mejorado
     splitChunks: {
@@ -222,18 +228,29 @@ export default {
     optimization: {
       splitChunks: {
         chunks: "all",
+        automaticNameDelimiter: ".",
+        maxSize: 244000,
         cacheGroups: {
           // Separa vendors grandes
           vendor: {
-            test: /[\\\\/]node_modules[\\\\/]/,
+            test: /[\\/]node_modules[\\/]/,
             name: "vendor",
             priority: 10,
+            reuseExistingChunk: true,
           },
           // Vuetify en su propio chunk
           vuetify: {
             test: /[\\/]node_modules[\\/]vuetify[\\/]/,
             name: "vuetify",
             priority: 20,
+            reuseExistingChunk: true,
+          },
+          // Lodash y utilidades
+          utilities: {
+            test: /[\\/]node_modules[\\/](lodash|moment|date-fns)[\\/]/,
+            name: "utilities",
+            priority: 15,
+            reuseExistingChunk: true,
           },
         },
       },
@@ -254,22 +271,44 @@ export default {
     // Babel optimizado
     babel: {
       compact: !isDev,
+      presets({ isServer }) {
+        return [
+          [
+            require.resolve("@nuxt/babel-preset-app"),
+            {
+              buildTarget: isServer ? "server" : "client",
+              corejs: { version: 3 },
+            },
+          ],
+        ]
+      },
     },
 
-    // Cache para builds más rápidos
-    cache: true,
-
-    // Build paralelo en producción
-    parallel: !isDev,
-
-    // Hard source para cache persistente
-    hardSource: !isDev,
+    // Terser para minificación en producción
+    terser: {
+      terserOptions: {
+        compress: {
+          drop_console: !isDev, // Elimina console.log en producción
+          drop_debugger: !isDev,
+          pure_funcs: !isDev ? ["console.log", "console.info", "console.debug"] : [],
+        },
+        output: {
+          comments: false,
+        },
+      },
+    },
 
     // Performance hints
     extend(config, { isDev, isClient }) {
+      // Source maps solo en desarrollo
+      if (isDev) {
+        config.devtool = "eval-source-map"
+      }
+
+      // Performance hints en producción
       if (!isDev && isClient) {
         config.performance = {
-          maxEntrypointSize: 512000,
+          maxEntrypointSize: 512000, // 500kb
           maxAssetSize: 512000,
           hints: "warning",
         }
@@ -287,10 +326,31 @@ export default {
 
     // Static cache
     static: {
-      maxAge: isDev ? 0 : 1000 * 60 * 60 * 24 * 7, // 7 días
+      maxAge: isDev ? 0 : 1000 * 60 * 60 * 24 * 7, // 7 días en producción
     },
+
+    // Headers de seguridad
+    csp: !isDev
+      ? {
+          hashAlgorithm: "sha256",
+          policies: {
+            "default-src": ["'self'"],
+            "script-src": ["'self'", "'unsafe-inline'"],
+            "style-src": ["'self'", "'unsafe-inline'"],
+            "img-src": ["'self'", "data:", "https:"],
+            "font-src": ["'self'", "data:"],
+            "connect-src": ["'self'", process.env.BASE_URL],
+          },
+        }
+      : false,
   },
 
-  // Modo moderno para navegadores actuales (bundles más pequeños)
+  // Modo moderno para navegadores actuales
   modern: !isDev ? "client" : false,
+
+  // Genera sitemap automáticamente
+  generate: {
+    fallback: true,
+    interval: 2000,
+  },
 }
