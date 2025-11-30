@@ -47,7 +47,7 @@ export default {
   mounted() {
     this.$nuxt.$emit("setNavBar", {
       title: "Dashboard",
-      icon: "view-dashboard",
+      icon: "mdi-view-dashboard",
     })
   },
   methods: {

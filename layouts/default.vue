@@ -30,7 +30,7 @@
         <v-btn v-if="backHandler" class="mr-1" outlined fab small elevation="0" @click="backHandler">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
-        <v-icon v-if="icon">mdi-{{ icon }}</v-icon>
+        <v-icon v-if="icon">{{ icon }}</v-icon>
         {{ title }}
       </v-toolbar-title>
       <v-spacer />

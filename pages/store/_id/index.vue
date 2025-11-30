@@ -73,7 +73,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: "Editar Store",
-      icon: "human-greeting-variant",
+      icon: "mdi-human-greeting-variant",
     })
   },
   methods: {

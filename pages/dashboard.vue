@@ -22,7 +22,7 @@ export default {
   },
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Dashboard", icon: "view-dashboard" })
+    eventBus.$emit("setNavBar", { title: "Dashboard", icon: "mdi-view-dashboard" })
 
     // Si está autenticado pero no tiene usuario, intentar obtenerlo
     if (this.$auth.loggedIn && !this.$auth.user) {

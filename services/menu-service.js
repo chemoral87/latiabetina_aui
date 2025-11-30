@@ -25,7 +25,9 @@ export class MenuService {
       if (this.hasPermission("user-index")) menu.push({ icon: "mdi-account", title: "Usuarios", to: "/user" })
       if (this.hasPermission("role-index")) menu.push({ icon: "mdi-redhat", title: "Roles", to: "/role" })
       if (this.hasPermission("permission-index")) menu.push({ icon: "mdi-key", title: "Permisos", to: "/permission" })
-      if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-theater", title: "Auditorio", to: "/auditorium" })
+      if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-seat", title: "Auditorio", to: "/auditorium" })
+
+      if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-theater", title: "Auditorio", to: "/auditorium-event" })
 
       if (this.hasPermission("store-index")) {
         menu.push({ icon: "mdi-store", title: "Tiendas", to: "/store" })

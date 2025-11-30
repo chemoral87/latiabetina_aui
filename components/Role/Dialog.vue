@@ -1,25 +1,25 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog :value="true" persistent max-width="400px">
     <v-card>
-      <v-card-title>
+      <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
-        <v-spacer></v-spacer>
-        <v-icon @click.native="close">$delete</v-icon>
+        <v-spacer />
+        <v-btn icon @click="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-card-text>
-        <v-row dense>
-          <v-col cols="12">
-            <v-text-field v-model="item.name" label="Nombre" :error-messages="errors?.name" @keyup.enter="save"></v-text-field>
-          </v-col>
-        </v-row>
+        <v-form ref="form" @submit.prevent="save">
+          <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required autofocus @keyup.enter="save" />
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" class="mr-1" outlined @click.native="close">Cancelar</v-btn>
-        <v-btn color="primary" @click.native="save">Guardar</v-btn>
+        <v-btn color="primary" text :disabled="loading" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -28,39 +28,80 @@
 <script>
 export default {
   name: "RoleDialog",
-  props: ["value", "role"],
+
+  props: {
+    role: {
+      type: Object,
+      default: () => ({}),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
-      item: {},
+      item: {
+        name: "",
+      },
     }
   },
+
   computed: {
+    isEditMode() {
+      return !!this.item.id
+    },
+
     iconTitle() {
-      if (this.item.id) {
-        return "mdi-pencil"
-      } else {
-        return "mdi-plus"
-      }
+      return this.isEditMode ? "mdi-pencil" : "mdi-plus"
     },
+
     formTitle() {
-      if (this.item.id) {
-        return "Editar Rol"
-      } else {
-        return "Nuevo Rol"
-      }
+      return this.isEditMode ? "Editar Rol" : "Nuevo Rol"
+    },
+
+    errors() {
+      const validationErrors = this.$store.getters["validation/errors"]
+      return validationErrors || {}
+    },
+
+    isValid() {
+      return this.item.name && this.item.name.trim().length > 0
     },
   },
-  mounted() {
-    if (this.role) {
-      this.item = this.role
-    }
+
+  watch: {
+    role: {
+      handler(newValue) {
+        if (newValue && Object.keys(newValue).length > 0) {
+          this.item = Object.assign({}, newValue)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
+
+  mounted() {
+    this.initializeForm()
+  },
+
   methods: {
+    initializeForm() {
+      if (this.role && Object.keys(this.role).length > 0) {
+        this.item = Object.assign({}, this.role)
+      }
+    },
+
     close() {
       this.$emit("close")
     },
+
     save() {
-      this.$emit("save", this.item)
+      if (!this.isValid || this.loading) return
+
+      this.$emit("save", Object.assign({}, this.item))
     },
   },
 }

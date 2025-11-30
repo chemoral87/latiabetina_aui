@@ -56,7 +56,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: `Inicio Sesión`,
-      icon: "lock",
+      icon: "mdi-lock",
       show_login: false,
     })
     this.name_secret = process.env.BASE_URL

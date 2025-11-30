@@ -65,7 +65,7 @@ export default {
 
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Permisos", icon: "key" })
+    eventBus.$emit("setNavBar", { title: "Permisos", icon: "mdi-key" })
   },
   methods: {
     newPermission() {

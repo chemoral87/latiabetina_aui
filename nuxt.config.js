@@ -68,6 +68,7 @@ export default {
     "./plugins/repository.js",
     "./plugins/handleError.js",
     "./plugins/eventBus.js",
+    "./plugins/notify.js",
   ],
 
   // Auto import components

@@ -60,7 +60,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: "Organizaciones",
-      icon: "domain",
+      icon: "mdi-domain",
     })
   },
   methods: {

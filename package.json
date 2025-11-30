@@ -20,6 +20,7 @@
     "blueimp-load-image": "^5.16.0",
     "core-js": "^3.25.3",
     "konva": "^8.4.3",
+    "lodash-es": "^4.17.21",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
     "vue-konva": "^2.1.7",

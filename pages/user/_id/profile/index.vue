@@ -103,7 +103,7 @@ export default {
 
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: `Perfiles de: ${this.mUser.name} ${this.mUser.last_name}`, icon: "account", back: `/user`, show_drawer: false })
+    eventBus.$emit("setNavBar", { title: `Perfiles de: ${this.mUser.name} ${this.mUser.last_name}`, icon: "mdi-account", back: `/user`, show_drawer: false })
   },
   // computed: {
   //   user_id() {

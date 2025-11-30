@@ -88,7 +88,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: "Auditorios",
-      icon: "theater",
+      icon: "mdi-seat",
     })
   },
 

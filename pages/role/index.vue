@@ -2,95 +2,144 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..." dense />
       </v-col>
       <v-col cols="12" md="3">
-        <v-btn color="primary" class="mr-1" @click="newRole()">
-          <v-icon>mdi-plus</v-icon>
+        <v-btn color="primary" class="mr-2" @click="newRole">
+          <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" @click="getRoles()">
-          <v-icon>mdi-reload</v-icon>
+        <v-btn color="primary" :loading="loading" @click="getRoles()">
+          <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <RoleTable :options="options" :response="response" @sorting="getRoles" @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole"></RoleTable>
+        <RoleTable :options="options" :response="response" :loading="loading" @sorting="getRoles" @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
-    <RoleDialog v-if="roleDialog" :role="role" @close="closeDialog" @save="saveRole" />
-    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" @ok="deleteRole" @close="roleDialogDelete = false"></DialogDelete>
-    <!-- <RoleDialogDelete :role="role" v-if="roleDialogDelete" @close="roleDialogDelete = false" @ok="deleteRole" /> -->
+
+    <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
+
+    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole" @close="roleDialogDelete = false" />
   </v-container>
 </template>
+
 <script>
+import { debounce } from "lodash-es"
+
 export default {
   middleware: ["authenticated"],
-  async asyncData({ app, store, error }) {
-    // const orgs_id = await store.dispatch("validatePermission", { permission: "role-index", error })
 
-    const op = {
+  async asyncData({ app, store, error }) {
+    const options = {
       sortBy: ["name"],
       sortDesc: [false],
       itemsPerPage: 10,
     }
-    // NOTE Repository https://medium.com/js-dojo/consuming-apis-in-nuxt-using-the-repository-pattern-8a13ea57d520
-    const res = await app.$repository.Role.index(op).catch((e) => {})
-    return { response: res, options: op }
+
+    try {
+      const response = await app.$repository.Role.index(options)
+      return { response, options }
+    } catch (e) {
+      console.error("Error loading roles:", e)
+      // Opcional: manejar el error con la función error() de Nuxt
+      // error({ statusCode: 500, message: 'Error al cargar roles' })
+      return {
+        response: { data: [] },
+        options,
+      }
+    }
   },
 
   data() {
     return {
       filterRole: "",
       role: {},
-      response: {
-        data: [],
-      },
+      response: { data: [] },
       options: {},
       roleDialog: false,
       roleDialogDelete: false,
       dialogDelete: {},
+      loading: false,
+      saving: false,
+      deleting: false,
     }
   },
-  watch: {
-    async filterRole(value) {
-      const me = this
-      this.$store.dispatch("hideNextLoading")
-      const op = Object.assign(me.options, {
-        filter: value,
-        page: 1,
-        itemsPerPage: 10,
-      })
-      me.response = await me.$repository.Role.index(op)
+
+  computed: {
+    hasRoles() {
+      return this.response?.data?.length > 0
     },
   },
 
-  mounted() {
-    const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Roles", icon: "redhat" })
+  watch: {
+    filterRole: debounce(async function (value) {
+      await this.loadRoles({ filter: value, page: 1 })
+    }, 500),
   },
+
+  mounted() {
+    this.setNavBar()
+  },
+
+  beforeDestroy() {
+    // Limpiar debounce si es necesario
+    if (this.filterRole?.cancel) {
+      this.filterRole.cancel()
+    }
+  },
+
   methods: {
+    setNavBar() {
+      const eventBus = this.$eventBus || this.$nuxt
+      eventBus.$emit("setNavBar", {
+        title: "Roles",
+        icon: "mdi-redhat",
+      })
+    },
+
+    async loadRoles(overrides = {}) {
+      try {
+        this.loading = true
+        this.$store.dispatch("hideNextLoading")
+
+        const op = {
+          ...this.options,
+          ...overrides,
+        }
+
+        this.response = await this.$repository.Role.index(op)
+      } catch (error) {
+        console.error("Error loading roles:", error)
+        this.$notify({ error: "Error al cargar roles" })
+      } finally {
+        this.loading = false
+      }
+    },
+
     async getRoles(options) {
       if (options) {
         this.options = options
       }
-      const op = Object.assign({}, this.options)
-      this.response = await this.$repository.Role.index(op)
+      await this.loadRoles()
     },
 
     newRole() {
       this.role = {}
       this.roleDialog = true
     },
+
     editRole(item) {
-      this.role = Object.assign({}, item)
+      this.role = { ...item }
       this.roleDialog = true
     },
+
     editRolePermissions(item) {
       this.$router.push(`/role/${item.id}`)
     },
+
     beforeDeleteRole(item) {
-      // dialogDelete;
       this.dialogDelete = {
         text: "Desea eliminar el Rol ",
         strong: item.name,
@@ -98,37 +147,53 @@ export default {
       }
       this.roleDialogDelete = true
     },
+
     async deleteRole(item) {
-      await this.$repository.Role.delete(item.id, item)
-        .then((res) => {
-          this.getRoles()
-          this.roleDialogDelete = false
-        })
-        .catch((e) => {})
-    },
-    async saveRole(item) {
-      const me = this
-      if (item.id) {
-        await this.$repository.Role.update(item.id, item)
-          .then((res) => {
-            me.getRoles()
-            me.roleDialog = false
-          })
-          .catch((e) => {})
-      } else {
-        await this.$repository.Role.create(item)
-          .then((res) => {
-            me.getRoles()
-            me.roleDialog = false
-          })
-          .catch((e) => {})
+      try {
+        this.deleting = true
+        await this.$repository.Role.delete(item.id, item)
+
+        await this.getRoles()
+        this.roleDialogDelete = false
+
+        this.$toast?.success("Rol eliminado correctamente")
+      } catch (error) {
+        console.error("Error deleting role:", error)
+        this.$toast?.error("Error al eliminar rol")
+      } finally {
+        this.deleting = false
       }
     },
+
+    async saveRole(item) {
+      try {
+        this.saving = true
+
+        if (item.id) {
+          await this.$repository.Role.update(item.id, item)
+        } else {
+          await this.$repository.Role.create(item)
+        }
+
+        await this.getRoles()
+        this.roleDialog = false
+      } catch (error) {
+        console.error("Error saving role:", error)
+      } finally {
+        this.saving = false
+      }
+    },
+
     closeDialog() {
       this.roleDialog = false
-      this.clearErrors()
-      // this.$store.dispatch("validation/clearErrors");
+      if (this.clearErrors) {
+        this.clearErrors()
+      }
     },
   },
 }
 </script>
+
+<style scoped>
+/* Opcional: estilos específicos */
+</style>

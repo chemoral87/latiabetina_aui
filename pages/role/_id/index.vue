@@ -32,7 +32,7 @@ export default {
     const roleName = this.mRole.name || ""
     eventBus.$emit("setNavBar", {
       title: "Rol " + roleName,
-      icon: "redhat",
+      icon: "mdi-redhat",
       back: "/role",
       show_drawer: false,
     })

@@ -40,7 +40,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: `Perfilx: ${this.mUser.name} ${this.mUser.last_name}`,
-      icon: "account",
+      icon: "mdi-account",
       back: this.back,
       show_drawer: false,
     })

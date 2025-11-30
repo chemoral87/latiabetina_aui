@@ -102,7 +102,7 @@ export default {
   created() {
     this.$nuxt.$emit("setNavBar", {
       title: "Organizacion Configuración",
-      icon: "domain",
+      icon: "mdi-domain",
       back: this.goBack,
     })
   },

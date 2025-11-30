@@ -54,7 +54,7 @@ export default {
 
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Perfil", icon: "account" })
+    eventBus.$emit("setNavBar", { title: "Perfil", icon: "mdi-account" })
   },
   methods: {
     appVersion() {
