@@ -43,8 +43,6 @@ export default {
       return { response, options }
     } catch (e) {
       console.error("Error loading roles:", e)
-      // Opcional: manejar el error con la función error() de Nuxt
-      // error({ statusCode: 500, message: 'Error al cargar roles' })
       return {
         response: { data: [] },
         options,
@@ -69,7 +67,7 @@ export default {
 
   computed: {
     hasRoles() {
-      return this.response?.data?.length > 0
+      return this.response && this.response.data && this.response.data.length > 0
     },
   },
 
@@ -84,8 +82,7 @@ export default {
   },
 
   beforeDestroy() {
-    // Limpiar debounce si es necesario
-    if (this.filterRole?.cancel) {
+    if (this.filterRole && this.filterRole.cancel) {
       this.filterRole.cancel()
     }
   },
@@ -104,9 +101,11 @@ export default {
         this.loading = true
         this.$store.dispatch("hideNextLoading")
 
-        const op = {
-          ...this.options,
-          ...overrides,
+        const op = Object.assign({}, this.options, overrides)
+
+        // Si hay un filtro activo y no se está sobrescribiendo, mantenerlo
+        if (this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+          op.filter = this.filterRole
         }
 
         this.response = await this.$repository.Role.index(op)
@@ -131,7 +130,7 @@ export default {
     },
 
     editRole(item) {
-      this.role = { ...item }
+      this.role = Object.assign({}, item)
       this.roleDialog = true
     },
 
@@ -153,13 +152,10 @@ export default {
         this.deleting = true
         await this.$repository.Role.delete(item.id, item)
 
-        await this.getRoles()
+        this.filterRole = ""
         this.roleDialogDelete = false
-
-        this.$toast?.success("Rol eliminado correctamente")
       } catch (error) {
         console.error("Error deleting role:", error)
-        this.$toast?.error("Error al eliminar rol")
       } finally {
         this.deleting = false
       }
@@ -174,11 +170,12 @@ export default {
         } else {
           await this.$repository.Role.create(item)
         }
+        this.filterRole = item.name
 
-        await this.getRoles()
         this.roleDialog = false
+
+        // Si es un nuevo rol, filtrar por su nombre
       } catch (error) {
-        console.error("Error saving role:", error)
       } finally {
         this.saving = false
       }
@@ -193,7 +190,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-/* Opcional: estilos específicos */
-</style>

@@ -11,11 +11,14 @@ const ERROR_MESSAGES = {
   NETWORK: "Error de conexión, verifique su conexión a Internet.",
 }
 
+// Códigos de estado que manejan errores de autenticación
+const AUTH_ERROR_CODES = [HTTP_STATUS.UNAUTHORIZED]
+
 // Códigos de estado que manejan errores de validación
-const VALIDATION_ERROR_CODES = [HTTP_STATUS.UNAUTHORIZED, HTTP_STATUS.UNPROCESSABLE_ENTITY]
+const VALIDATION_ERROR_CODES = [HTTP_STATUS.UNPROCESSABLE_ENTITY]
 
 // Códigos de estado que muestran mensaje de error
-const MESSAGE_ERROR_CODES = [HTTP_STATUS.NOT_FOUND, HTTP_STATUS.METHOD_NOT_ALLOWED, ...VALIDATION_ERROR_CODES]
+const MESSAGE_ERROR_CODES = [HTTP_STATUS.NOT_FOUND, HTTP_STATUS.METHOD_NOT_ALLOWED, ...AUTH_ERROR_CODES]
 
 export default function ({ $axios, store }) {
   /**
@@ -30,14 +33,24 @@ export default function ({ $axios, store }) {
   }
 
   /**
-   * Maneja errores de validación (401, 422)
+   * Maneja errores de autenticación (401)
    */
-  const handleValidationError = (errorData) => {
+  const handleAuthError = (errorData) => {
     store.dispatch("validation/setErrors", errorData)
 
     if (errorData.message) {
       store.dispatch("notify", { error: errorData.message })
     }
+  }
+
+  /**
+   * Maneja errores de validación (422)
+   */
+  const handleValidationError = (errorData) => {
+    store.dispatch("validation/setErrors", errorData)
+
+    // Para errores de validación, no notificamos el mensaje general,
+    // solo mostramos los errores en los campos
   }
 
   /**
@@ -57,7 +70,9 @@ export default function ({ $axios, store }) {
 
     const { status, data } = error.response
 
-    if (VALIDATION_ERROR_CODES.includes(status)) {
+    if (AUTH_ERROR_CODES.includes(status)) {
+      handleAuthError(data)
+    } else if (VALIDATION_ERROR_CODES.includes(status)) {
       handleValidationError(data)
     } else if (MESSAGE_ERROR_CODES.includes(status)) {
       handleMessageError(data)
@@ -113,8 +128,8 @@ export default function ({ $axios, store }) {
   $axios.onResponse((response) => {
     store.dispatch("hideLoading")
 
-    // Notifica si hay mensaje de éxito
-    if (response.data?.message) {
+    // Notifica si hay mensaje de éxito o error
+    if (response.data && (response.data.success || response.data.error)) {
       store.dispatch("notify", response.data)
     }
 

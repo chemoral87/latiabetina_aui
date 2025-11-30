@@ -92,6 +92,8 @@ export default {
       if (this.role && Object.keys(this.role).length > 0) {
         this.item = Object.assign({}, this.role)
       }
+      // Limpiar errores de validación al inicializar
+      this.$store.dispatch("validation/clearErrors")
     },
 
     close() {
