@@ -26,7 +26,7 @@ export default {
   },
 
   ssr: false,
-  target: "static",
+  target: "server",
   telemetry: false,
 
   // Global page headers
