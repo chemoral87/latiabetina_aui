@@ -196,9 +196,9 @@ export default {
           }
         : false,
 
-    // CORRECCIÓN: extractCSS y parallel no pueden estar activos simultáneamente
-    // En producción: extractCSS activo, parallel desactivado
-    // En desarrollo: extractCSS desactivado, parallel activo
+    // CORRECCIÓN: extractCSS no puede trabajar con parallel ni hardSource
+    // En producción: extractCSS activo, parallel y hardSource desactivados
+    // En desarrollo: parallel activo para velocidad, extractCSS desactivado
     extractCSS: !isDev
       ? {
           ignoreOrder: true, // Ignora warnings de orden de CSS
@@ -208,14 +208,14 @@ export default {
     // Optimiza CSS solo en producción
     optimizeCSS: !isDev,
 
-    // Parallel solo en desarrollo (conflicto con extractCSS)
-    parallel: isDev,
+    // Parallel DESACTIVADO siempre que extractCSS esté activo
+    parallel: false,
 
     // Cache para builds más rápidos
     cache: true,
 
-    // Hard source para cache persistente (solo en producción)
-    hardSource: !isDev,
+    // Hard source DESACTIVADO cuando extractCSS está activo
+    hardSource: false,
 
     // Splitting mejorado
     splitChunks: {
