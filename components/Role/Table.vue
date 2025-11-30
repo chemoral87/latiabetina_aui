@@ -1,90 +1,176 @@
 <template>
-  <div>
-    <v-data-table
-      fixed-header
-      :page.sync="page"
-      dense
-      mobile-breakpoint="0"
-      :must-sort="true"
-      :headers="headers"
-      :items="items"
-      :options.sync="optionsTable"
-      :server-items-length="total"
-      class="elevation-1"
-      @page-count="pageCount = $event"
-    >
-      <!-- https://stackoverflow.com/questions/61344980/v-slot-directive-doesnt-support-any-modifier -->
-      <template #[`item.permissions`]="{ item }">
-        <v-chip v-for="it in item.permissions" :key="it.id" class="ma-2" color="primary">
-          {{ it.name }}
+  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total" :loading="loading" :must-sort="true" fixed-header mobile-breakpoint="0" class="elevation-1" striped>
+    <!-- Columna de permisos -->
+    <template #[`item.permissions`]="{ item }">
+      <div v-if="hasPermissions(item)" class="d-flex flex-wrap">
+        <v-chip v-for="permission in item.permissions" :key="permission.id" class="ma-1" color="primary" small>
+          {{ permission.name }}
         </v-chip>
-      </template>
-      <template #[`item.actions`]="{ item }">
-        <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="editRole(item)">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn title="Permisos" outlined class="mr-1 my-1" color="success" fab small @click="editPermissions(item)">
-          <v-icon>mdi-key</v-icon>
-        </v-btn>
-        <v-btn title="Eliminar" outlined color="error" class="my-1" fab small @click="deleteRole(item)">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </template>
-    </v-data-table>
-  </div>
-  <!-- <v-pagination v-model="page" :length="pageCount"></v-pagination> -->
+      </div>
+      <span v-else class="grey--text text-caption">Sin permisos</span>
+    </template>
+
+    <!-- Columna de acciones -->
+    <template #[`item.actions`]="{ item }">
+      <div class="d-flex flex-nowrap justify-center">
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
+              <v-icon small>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+          <span>Editar</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn outlined color="success" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editPermissions(item)">
+              <v-icon small>mdi-key</v-icon>
+            </v-btn>
+          </template>
+          <span>Permisos</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteRole(item)">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Eliminar</span>
+        </v-tooltip>
+      </div>
+    </template>
+
+    <!-- Estado vacío -->
+    <template #no-data>
+      <div class="text-center pa-4">
+        <v-icon color="grey lighten-1">mdi-redhat</v-icon>
+        <span class="text-body-1 grey--text">No se encontraron roles</span>
+      </div>
+    </template>
+  </v-data-table>
 </template>
+
 <script>
 export default {
   name: "RoleTable",
-  props: ["response", "options"],
+
+  props: {
+    response: {
+      type: Object,
+      default: () => ({ data: [], total: 0 }),
+    },
+    options: {
+      type: Object,
+      required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
       optionsTable: {},
       headers: [
-        { text: "Nombre", align: "start", value: "name", width: "7rem" },
-        { text: "Permisos", value: "permissions", sortable: false, width: "50rem" },
-        { text: "Acciones", value: "actions", sortable: false, width: "11rem" },
-      ],
-      page: 1,
-      pageCount: 1,
-    }
-  },
-  computed: {
-    total() {
-      if (this.response) return this.response.total
-      else return 0
-    },
-    items() {
-      if (this.response) return this.response.data
-      else return []
-    },
-  },
-  mounted() {
-    const me = this
-    me.optionsTable = me.options
-    me.$nextTick(() => {
-      me.options_watch = me.$watch(
-        "optionsTable",
-        function () {
-          me.$emit("sorting", me.optionsTable)
+        {
+          text: "Nombre",
+          align: "start",
+          value: "name",
         },
         {
-          immediate: false,
-        }
-      )
-    })
+          text: "Permisos",
+          value: "permissions",
+          sortable: false,
+        },
+        {
+          text: "Acciones",
+          value: "actions",
+          sortable: false,
+          align: "center",
+          width: "200px",
+        },
+      ],
+      isFirstWatch: true,
+    }
   },
+
+  computed: {
+    total() {
+      return this.response && this.response.total ? this.response.total : 0
+    },
+
+    items() {
+      return this.response && this.response.data ? this.response.data : []
+    },
+  },
+
+  watch: {
+    options: {
+      handler(newOptions) {
+        if (newOptions) {
+          this.optionsTable = Object.assign({}, newOptions)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+
+    optionsTable: {
+      handler(newValue, oldValue) {
+        // Evitar el primer watch (cuando se inicializa)
+        if (this.isFirstWatch) {
+          this.isFirstWatch = false
+          return
+        }
+
+        // Solo emitir si realmente cambió algo relevante
+        if (this.hasOptionsChanged(newValue, oldValue)) {
+          this.$emit("sorting", newValue)
+        }
+      },
+      deep: true,
+    },
+  },
+
   methods: {
+    hasOptionsChanged(newVal, oldVal) {
+      if (!oldVal) return true
+
+      // Comparar solo las propiedades relevantes
+      const relevantProps = ["page", "itemsPerPage", "sortBy", "sortDesc"]
+
+      return relevantProps.some((prop) => {
+        if (Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
+          return JSON.stringify(newVal[prop]) !== JSON.stringify(oldVal[prop])
+        }
+        return newVal[prop] !== oldVal[prop]
+      })
+    },
+
+    hasPermissions(item) {
+      return item.permissions && Array.isArray(item.permissions) && item.permissions.length > 0
+    },
+
     editRole(item) {
       this.$emit("edit", item)
     },
+
     editPermissions(item) {
       this.$emit("editPermissions", item)
     },
+
     deleteRole(item) {
       this.$emit("delete", item)
     },
   },
 }
 </script>
+
+<style>
+.v-chip {
+  margin: 2px !important;
+}
+</style>
