@@ -12,9 +12,35 @@
       </span>
       |
       <span>({{ dBDisplay }} dB)</span>
+      <span v-if="centsDeviation !== null" class="ml-2">
+        |
+        <strong :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
+      </span>
     </h4>
 
-    <div class="text-center mb-3"></div>
+    <!-- Tuning Accuracy Indicator -->
+    <v-row dense class="mb-2">
+      <v-col cols="12">
+        <div class="tuning-meter-container">
+          <div class="tuning-meter-bar">
+            <div class="tuning-meter-center"></div>
+            <div v-if="centsDeviation !== null" class="tuning-meter-needle" :style="{ left: `calc(50% + ${centsDeviation}%)` }">
+              <div class="needle-triangle" :class="tuningAccuracyClass"></div>
+            </div>
+          </div>
+          <div class="tuning-meter-labels">
+            <span>-50</span>
+            <span>0</span>
+            <span>+50</span>
+          </div>
+          <div v-if="centsDeviation !== null" class="text-center mt-1">
+            <v-chip small :color="tuningAccuracyColor" dark>
+              {{ tuningAccuracyText }}
+            </v-chip>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
 
     <v-row align="center" justify="center" dense>
       <v-col cols="auto">
@@ -43,6 +69,13 @@
         <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
       </v-col>
     </v-row>
+    <!-- Spectrogram -->
+    <v-row dense class="mt-2">
+      <v-col cols="12" class="px-0 mx-0">
+        <h5 class="text-center mb-1">Espectrograma en tiempo real</h5>
+        <canvas ref="spectrogram" height="150px" :width="canvasWidth + 'px'" style="display: block; background-color: #1a1a1a" />
+      </v-col>
+    </v-row>
     <!-- Modal Dialog -->
     <v-dialog v-model="settingsDialog" max-width="500px">
       <v-card>
@@ -63,14 +96,10 @@
               <v-switch v-model="showMicrotones" :label="latinNotation ? 'Mostrar microtonos' : 'Show microtones'" hide-details class="mt-0 pt-0"></v-switch>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-slider v-model="sensitivity" :min="0.001" :max="0.3" :step="0.005" label="Sensibilidad" hide-details thumb-label />
+              <v-slider v-model="sensitivity" :min="0.0001" :max="0.01" :step="0.0001" label="Sensibilidad" hide-details thumb-label />
               <div class="text-center font-weight-bold">
                 {{ sensitivity.toFixed(4) }}
               </div>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-slider v-model="noiseThreshold" :min="1.2" :max="3.0" :step="0.1" label="Filtro de Ruido" hide-details thumb-label />
-              <div class="text-center font-weight-bold">{{ noiseThreshold.toFixed(1) }}x</div>
             </v-col>
             <v-col cols="12" sm="6">
               <v-slider v-model="maxHistory" :min="300" :max="800" :step="50" label="Máx Historial" hide-details thumb-label />
@@ -113,21 +142,28 @@ export default {
       freqDisplay: "--",
       noteDisplay: "--",
       dBDisplay: "--",
+      centsDeviation: null,
 
       lastFreq: null,
-      lastDetectionTime: null,
-      isFirstDetection: true,
-      confirmationBuffer: [],
-      confirmationCount: 0,
-
-      pitchWorker: null,
-      workerBusy: false,
+      correlationArray: [],
 
       // Sistema de filtrado de ruido de fondo
       noiseProfile: null,
       noiseCalibrating: false,
       noiseSamples: [],
-      noiseThreshold: 1.5, // Multiplicador sobre el nivel de ruido base
+
+      // Spectrogram
+      spectrogramCtx: null,
+      spectrogramData: [],
+      maxSpectrogramHistory: 100,
+      smoothedSpectrogramData: null, // For temporal smoothing
+      spectrogramSmoothingFactor: 0.3, // Higher = more smoothing
+
+      // Performance optimization
+      lastHistogramDraw: 0,
+      lastSpectrogramUpdate: 0,
+      histogramThrottle: 50, // ms between histogram redraws
+      spectrogramThrottle: 100, // ms between spectrogram updates
     }
   },
   computed: {
@@ -194,6 +230,30 @@ export default {
         return latinIndex >= 0 ? ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"][latinIndex] : "C"
       }
     },
+    tuningAccuracyClass() {
+      if (this.centsDeviation === null) return ""
+      const abs = Math.abs(this.centsDeviation)
+      if (abs <= 5) return "tuning-perfect"
+      if (abs <= 15) return "tuning-good"
+      if (abs <= 30) return "tuning-fair"
+      return "tuning-poor"
+    },
+    tuningAccuracyColor() {
+      if (this.centsDeviation === null) return "grey"
+      const abs = Math.abs(this.centsDeviation)
+      if (abs <= 5) return "green"
+      if (abs <= 15) return "light-green"
+      if (abs <= 30) return "orange"
+      return "red"
+    },
+    tuningAccuracyText() {
+      if (this.centsDeviation === null) return "--"
+      const abs = Math.abs(this.centsDeviation)
+      if (abs <= 5) return "Perfecta afinación"
+      if (abs <= 15) return "Buena afinación"
+      if (abs <= 30) return "Afinación aceptable"
+      return "Desafinado"
+    },
   },
   watch: {
     selectedRootNote() {
@@ -213,13 +273,10 @@ export default {
       willReadFrequently: true,
     })
     this.ctx.lineWidth = 0.5
-    this.buffer = new Float32Array(4096)
+    this.buffer = new Float32Array(2048)
 
-    // Inicializar Web Worker
-    if (typeof Worker !== "undefined") {
-      this.pitchWorker = new Worker("/pitch-worker.js")
-      this.pitchWorker.onmessage = this.handleWorkerMessage
-    }
+    // Inicializar spectrogram canvas
+    this.spectrogramCtx = this.$refs.spectrogram.getContext("2d")
 
     this.updateCanvasSize()
     window.addEventListener("resize", this.debouncedResize)
@@ -228,10 +285,6 @@ export default {
   beforeUnmount() {
     if (this.isMicActive) {
       this.cleanup()
-    }
-    if (this.pitchWorker) {
-      this.pitchWorker.terminate()
-      this.pitchWorker = null
     }
     window.removeEventListener("resize", this.debouncedResize)
   },
@@ -243,12 +296,6 @@ export default {
       this.resizeTimeout = setTimeout(() => {
         this.updateCanvasSize()
       }, 150)
-    },
-    handleWorkerMessage(e) {
-      const { freq: rawFreq, dB } = e.data
-      this.workerBusy = false
-      this.dBDisplay = dB
-      this.processFrequency(rawFreq)
     },
     updateCanvasSize() {
       const container = this.$el.querySelector(".v-container")
@@ -292,28 +339,29 @@ export default {
     resetHistory() {
       this.history = []
       this.lastFreq = null
-      this.lastDetectionTime = null
-      this.isFirstDetection = true
-      this.confirmationBuffer = []
-      this.confirmationCount = 0
+      this.centsDeviation = null
+      this.spectrogramData = []
+      this.smoothedSpectrogramData = null
       const canvas = this.$refs.histogram
       this.ctx.clearRect(0, 0, canvas.width, canvas.height)
       this.drawNoteLines()
+      if (this.spectrogramCtx && this.$refs.spectrogram) {
+        this.spectrogramCtx.clearRect(0, 0, this.$refs.spectrogram.width, this.$refs.spectrogram.height)
+      }
     },
     calibrateNoise() {
       // Verificar que el micrófono esté activo
       if (!this.analyser || !this.isMicActive) {
-        console.warn("El micrófono debe estar activo para calibrar el ruido")
         return
       }
 
-      // Capturar perfil de ruido ambiente durante 2 segundos
+      // Capturar perfil de ruido ambiente durante 3 segundos para mayor precisión
       this.noiseCalibrating = true
       this.noiseSamples = []
 
       const captureNoise = () => {
-        if (this.noiseSamples.length < 120 && this.analyser && this.noiseCalibrating) {
-          // ~2 segundos a 60fps
+        if (this.noiseSamples.length < 180 && this.analyser && this.noiseCalibrating) {
+          // ~3 segundos a 60fps
           this.analyser.getFloatTimeDomainData(this.buffer)
 
           // Calcular RMS del ruido
@@ -326,19 +374,32 @@ export default {
 
           setTimeout(captureNoise, 16) // ~60fps
         } else if (this.noiseSamples.length > 0) {
-          // Calcular promedio del ruido
-          const avgNoise = this.noiseSamples.reduce((a, b) => a + b, 0) / this.noiseSamples.length
-          this.noiseProfile = avgNoise
+          // Ordenar muestras para calcular estadísticas robustas
+          const sortedSamples = [...this.noiseSamples].sort((a, b) => a - b)
+          
+          // Eliminar outliers: usar percentiles 10-90 para mayor robustez
+          const p10Index = Math.floor(sortedSamples.length * 0.1)
+          const p90Index = Math.floor(sortedSamples.length * 0.9)
+          const filteredSamples = sortedSamples.slice(p10Index, p90Index)
+          
+          // Calcular promedio del ruido (excluyendo outliers)
+          const avgNoise = filteredSamples.reduce((a, b) => a + b, 0) / filteredSamples.length
+          
+          // Calcular mediana para mayor robustez ante picos esporádicos
+          const medianIndex = Math.floor(filteredSamples.length / 2)
+          const medianNoise = filteredSamples[medianIndex]
+          
+          // Usar promedio entre media y mediana para balance
+          this.noiseProfile = (avgNoise + medianNoise) / 2
 
           // Ajustar sensibilidad automáticamente basado en el ruido detectado
-          // Sensitivity debe ser mayor al ruido pero no demasiado alto
-          const recommendedSensitivity = Math.max(0.005, Math.min(0.15, avgNoise * 2.5))
+          // Usar factor conservador para evitar falsos positivos
+          const recommendedSensitivity = Math.max(0.003, Math.min(0.12, this.noiseProfile * 3.5))
           this.sensitivity = recommendedSensitivity
 
           this.noiseCalibrating = false
         } else {
           this.noiseCalibrating = false
-          console.warn("No se pudieron capturar muestras de ruido")
         }
       }
 
@@ -357,15 +418,17 @@ export default {
       this.freqDisplay = "--"
       this.noteDisplay = "--"
       this.dBDisplay = "--"
+      this.centsDeviation = null
       this.history = []
       this.lastFreq = null
-      this.lastDetectionTime = null
-      this.isFirstDetection = true
-      this.confirmationBuffer = []
-      this.confirmationCount = 0
+      this.spectrogramData = []
+      this.smoothedSpectrogramData = null
       if (this.ctx && this.$refs.histogram) {
         this.ctx.clearRect(0, 0, this.$refs.histogram.width, this.$refs.histogram.height)
         this.drawNoteLines()
+      }
+      if (this.spectrogramCtx && this.$refs.spectrogram) {
+        this.spectrogramCtx.clearRect(0, 0, this.$refs.spectrogram.width, this.$refs.spectrogram.height)
       }
     },
     async toggleMic() {
@@ -377,7 +440,7 @@ export default {
 
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
           this.analyser = this.audioContext.createAnalyser()
-          this.analyser.fftSize = 4096
+          this.analyser.fftSize = 2048
           this.buffer = new Float32Array(this.analyser.fftSize)
 
           const source = this.audioContext.createMediaStreamSource(this.mediaStream)
@@ -394,9 +457,8 @@ export default {
       }
     },
     smoothFrequency(currentFreq) {
-      if (!this.lastFreq || this.isFirstDetection) {
+      if (!this.lastFreq) {
         this.lastFreq = currentFreq
-        this.isFirstDetection = false
         return currentFreq
       }
 
@@ -407,25 +469,23 @@ export default {
 
       const ratio = currentFreq / this.lastFreq
 
-      // Aplicar correcciones de octava con menos agresividad para preservar glissandos
       if (ratio > OCTAVE_THRESHOLD_LOW && ratio < OCTAVE_THRESHOLD_HIGH) {
-        currentFreq = currentFreq * 0.7 + this.lastFreq * 2 * 0.3 // Menos agresivo
+        currentFreq = (currentFreq + this.lastFreq * 2) * 0.5
       } else if (ratio > HALF_OCTAVE_THRESHOLD_LOW && ratio < HALF_OCTAVE_THRESHOLD_HIGH) {
-        currentFreq = currentFreq * 0.7 + this.lastFreq * 0.5 * 0.3 // Menos agresivo
+        currentFreq = (currentFreq + this.lastFreq * 0.5) * 0.5
       }
 
-      // Factor de suavizado balanceado para glissandos suaves sin cortes
-      const SMOOTHING_FACTOR = 0.2 // Balanceado para glissandos naturales
+      const SMOOTHING_FACTOR = 0.3
       this.lastFreq = this.lastFreq * (1 - SMOOTHING_FACTOR) + currentFreq * SMOOTHING_FACTOR
 
       return this.lastFreq
     },
     autoCorrelate(buf, sampleRate) {
       const SIZE = buf.length
-      const MIN_DB = 25 // Reducido para frecuencias bajas
-      const MIN_SAMPLE_THRESHOLD = 0.008 // Más sensible
-      const PEAK_THRESHOLD_FACTOR = 0.15 // Más sensible para bajas frecuencias
-      const WINDOW_PADDING = 15 // Mayor ventana
+      const MIN_DB = 28
+      const MIN_SAMPLE_THRESHOLD = 0.008
+      const PEAK_THRESHOLD_FACTOR = 0.2
+      const WINDOW_PADDING = 10
 
       let sumSquares = 0
       let maxSample = 0
@@ -440,17 +500,7 @@ export default {
       const dBSPL = 20 * Math.log10(rms / 0.00002)
       this.dBDisplay = Math.max(0, dBSPL).toFixed(1)
 
-      // Filtrar ruido de fondo usando perfil calibrado
-      if (this.noiseProfile && rms < this.noiseProfile * this.noiseThreshold) {
-        this.freqDisplay = "--"
-        this.noteDisplay = "--"
-        return -1
-      }
-
-      // Sensitivity adaptativa: más permisiva para señales con buen volumen
-      const effectiveSensitivity = maxSample > 0.05 ? this.sensitivity * 0.5 : this.sensitivity
-
-      if (dBSPL < MIN_DB || rms < effectiveSensitivity || maxSample < MIN_SAMPLE_THRESHOLD) {
+      if (dBSPL < MIN_DB || rms < this.sensitivity || maxSample < MIN_SAMPLE_THRESHOLD) {
         this.freqDisplay = "--"
         this.noteDisplay = "--"
         return -1
@@ -505,19 +555,19 @@ export default {
 
       if (peakIndex <= 0) return -1
 
-      // Interpolación parabólica para mayor precisión
-      let refinedPeak = peakIndex
+      // Interpolación parabólica para mayor precisión sub-sample
+      let betterPeak = peakIndex
       if (peakIndex > 0 && peakIndex < windowSize - 1) {
         const y1 = this.correlationArray[peakIndex - 1]
         const y2 = this.correlationArray[peakIndex]
         const y3 = this.correlationArray[peakIndex + 1]
-        const offset = (0.5 * (y1 - y3)) / (y1 - 2 * y2 + y3)
-        if (!isNaN(offset) && Math.abs(offset) < 1) {
-          refinedPeak = peakIndex + offset
+        const delta = (y1 - y3) / (2 * (y1 - 2 * y2 + y3))
+        if (!isNaN(delta) && Math.abs(delta) < 1) {
+          betterPeak = peakIndex + delta
         }
       }
 
-      let freq = sampleRate / refinedPeak
+      let freq = sampleRate / betterPeak
 
       const checkHarmonic = (divisor, thresholdRatio) => {
         const subIndex = Math.floor(peakIndex / divisor)
@@ -530,21 +580,11 @@ export default {
         return freq
       }
 
-      // Verificar claridad del pitch (ratio de correlación)
-      const clarity = maxVal / this.correlationArray[0]
-
-      // Ajustado para no corregir frecuencias bajas (80-100Hz)
       if (freq > 0 && freq < 2000) {
-        // Para rango muy bajo, requerir claridad mínima
-        if (freq >= 80 && freq <= 110 && clarity < 0.5) {
-          return -1 // Rechazar si no es claro
-        }
-
-        // Umbrales MUY conservadores para evitar falsas correcciones de armónicos
-        if (freq > 300 && freq < 600) {
-          freq = checkHarmonic(2, 0.95) // Muy conservador
-        } else if (freq > 450 && freq < 900) {
-          freq = checkHarmonic(3, 0.92) // Muy conservador
+        if (freq > 160 && freq < 800) {
+          freq = checkHarmonic(2, 0.8)
+        } else if (freq > 240 && freq < 1200) {
+          freq = checkHarmonic(3, 0.7)
         }
       }
 
@@ -552,94 +592,20 @@ export default {
     },
     update() {
       if (!this.analyser) {
-        console.warn("[Update] No analyser disponible")
-        return
-      }
-
-      // Si el worker está ocupado, esperar al siguiente frame
-      if (this.workerBusy) {
-        if (this.isMicActive) requestAnimationFrame(this.update)
         return
       }
 
       this.analyser.getFloatTimeDomainData(this.buffer)
-      // Log de los primeros samples del buffer
+      const rawFreq = this.autoCorrelate(this.buffer, this.audioContext.sampleRate)
 
-      // Enviar datos al worker si está disponible
-      if (this.pitchWorker) {
-        this.workerBusy = true
-        this.pitchWorker.postMessage({
-          buffer: Array.from(this.buffer),
-          sampleRate: this.audioContext.sampleRate,
-          sensitivity: this.sensitivity,
-          noiseProfile: this.noiseProfile,
-          noiseThreshold: this.noiseThreshold,
-        })
-      } else {
-        // Fallback si no hay worker
-        const rawFreq = this.autoCorrelate(this.buffer, this.audioContext.sampleRate)
-
-        this.processFrequency(rawFreq)
-      }
-
-      if (this.isMicActive) requestAnimationFrame(this.update)
-    },
-    processFrequency(rawFreq) {
       if (rawFreq !== -1) {
-        const currentTime = Date.now()
-
-        // Check if there was a pause (>100ms without detection) or if it's the first detection
-        if (!this.lastDetectionTime || (this.lastDetectionTime && currentTime - this.lastDetectionTime > 100)) {
-          // Clear all state to prevent interpolation after pause
-          this.lastFreq = null
-          this.isFirstDetection = true
-          this.confirmationBuffer = []
-          this.confirmationCount = 0
-        }
-
-        this.lastDetectionTime = currentTime
-
         let correctedFreq = rawFreq
 
-        // Sistema de confirmación para primeras detecciones después de pausa
-        if (this.isFirstDetection || this.confirmationCount < 4) {
-          // Añadir al buffer de confirmación
-          this.confirmationBuffer.push(correctedFreq)
-
-          // Mantener solo las últimas 5 mediciones
-          if (this.confirmationBuffer.length > 5) {
-            this.confirmationBuffer.shift()
-          }
-
-          // Verificar estabilidad del buffer
-          if (this.confirmationBuffer.length >= 4) {
-            const avg = this.confirmationBuffer.reduce((sum, f) => sum + f, 0) / this.confirmationBuffer.length
-            const variance = this.confirmationBuffer.reduce((sum, f) => sum + Math.pow(f - avg, 2), 0) / this.confirmationBuffer.length
-            const stdDev = Math.sqrt(variance)
-
-            // Si la desviación es pequeña (frecuencia estable), confirmar
-            if (stdDev < avg * 0.01) {
-              // 1% de tolerancia más estricta
-              correctedFreq = avg
-              this.confirmationCount++
-
-              if (this.confirmationCount >= 4) {
-                this.isFirstDetection = false
-              }
-            } else {
-              // Si no es estable, no procesar esta detección
-              this.freqDisplay = "--"
-              this.noteDisplay = "--"
-              if (this.isMicActive) requestAnimationFrame(this.update)
-              return
-            }
-          } else {
-            // No hay suficientes mediciones aún, no procesar
-
-            this.freqDisplay = "--"
-            this.noteDisplay = "--"
-            if (this.isMicActive) requestAnimationFrame(this.update)
-            return
+        if (rawFreq > 180 && rawFreq < 220) {
+          const possibleFreq = rawFreq / 2
+          const midi = this.freqToMidi(possibleFreq)
+          if (midi >= 48 && midi <= 84) {
+            correctedFreq = possibleFreq
           }
         }
 
@@ -648,25 +614,32 @@ export default {
         const midi = this.freqToMidi(exactFreq)
         const note = this.getNoteNameNum(midi)
 
+        // Calculate cents deviation from nearest note
+        const nearestMidi = Math.round(midi)
+        const nearestFreq = this.midiToFreq(nearestMidi)
+        this.centsDeviation = Math.round(1200 * Math.log2(exactFreq / nearestFreq))
+
         this.freqDisplay = exactFreq.toString()
         this.noteDisplay = note
 
-        // Only add to history and plot if sound level is above threshold and frequency is confirmed
-        const currentDB = parseFloat(this.dBDisplay)
-        // Umbral de dB reducido para mayor sensibilidad
-        const DB_THRESHOLD = 30
-        if (!isNaN(currentDB) && currentDB >= DB_THRESHOLD && !this.isFirstDetection) {
-          this.history.unshift({ freq: exactFreq, midi })
-          if (this.history.length > this.maxHistory) this.history.pop()
-          this.drawHistogram()
-        } // else if (isNaN(currentDB)) { /* no-op */ }
-        // else if (currentDB < DB_THRESHOLD) { /* no-op */ }
-        // else if (this.isFirstDetection) { /* no-op */ }
+        this.history.unshift({ freq: exactFreq, midi })
+        if (this.history.length > this.maxHistory) this.history.pop()
+        this.drawHistogram()
       } else {
         this.freqDisplay = "--"
         this.noteDisplay = "--"
         this.dBDisplay = "--"
+        this.centsDeviation = null
       }
+
+      // Update spectrogram with throttling
+      const now = Date.now()
+      if (now - this.lastSpectrogramUpdate > this.spectrogramThrottle) {
+        this.updateSpectrogram()
+        this.lastSpectrogramUpdate = now
+      }
+
+      if (this.isMicActive) requestAnimationFrame(this.update)
     },
     drawHistogram() {
       const canvas = this.$refs.histogram
@@ -681,10 +654,10 @@ export default {
       this.drawNoteLines()
 
       const currentData = this.history[0]
-      if (!currentData || !currentData.freq || currentData.freq < 70 || currentData.freq > 1300) {
+      if (!currentData || !currentData.freq || currentData.freq < 20 || currentData.freq > 2000) {
         for (let i = 1; i < len; i++) {
           const { freq, midi } = this.history[i]
-          if (!freq || freq < 70 || freq > 1300) continue
+          if (!freq || freq < 20 || freq > 2000) continue
           this.drawHistoryPoints(i, freq, midi, spacing)
         }
         return
@@ -700,10 +673,6 @@ export default {
 
       for (let octaveOffset = -2; octaveOffset <= 4; octaveOffset++) {
         const shiftedFreq = freq * Math.pow(2, octaveOffset)
-
-        // Only plot frequencies within 70Hz - 1300Hz range
-        if (shiftedFreq < 70 || shiftedFreq > 1300) continue
-
         const shiftedMidi = this.freqToMidi(shiftedFreq)
         const y = height - ((shiftedMidi - MIN_MIDI) / this.totalNotes) * height
         if (y < 0 || y > height) continue
@@ -733,7 +702,7 @@ export default {
 
       for (let i = 1; i < len; i++) {
         const { freq, midi } = this.history[i]
-        if (!freq || freq < 70 || freq > 1300) continue
+        if (!freq || freq < 20 || freq > 2000) continue
         this.drawHistoryPoints(i, freq, midi, spacing)
       }
     },
@@ -824,10 +793,6 @@ export default {
 
       for (let octaveOffset = -2; octaveOffset <= 4; octaveOffset++) {
         const shiftedFreq = baseFreq * Math.pow(2, octaveOffset)
-
-        // Only plot frequencies within 70Hz - 1300Hz range
-        if (shiftedFreq < 70 || shiftedFreq > 1300) continue
-
         const shiftedMidi = this.freqToMidi(shiftedFreq)
         const y = height - ((shiftedMidi - MIN_MIDI) / this.totalNotes) * height
 
@@ -837,8 +802,182 @@ export default {
           const fullIndex = Math.round(shiftedMidi * 2) % 24
           ctx.fillStyle = COLORS[fullIndex]
           ctx.beginPath()
-          ctx.arc(x, y, 1.7, 0, Math.PI * 2)
+          ctx.arc(x, y, 2.0, 0, Math.PI * 2)
           ctx.fill()
+        }
+      }
+    },
+    updateSpectrogram() {
+      if (!this.analyser || !this.spectrogramCtx || !this.$refs.spectrogram) return
+
+      const canvas = this.$refs.spectrogram
+      const ctx = this.spectrogramCtx
+      const width = canvas.width
+      const height = canvas.height
+
+      // Get frequency data
+      const bufferLength = this.analyser.frequencyBinCount
+      const dataArray = new Uint8Array(bufferLength)
+      this.analyser.getByteFrequencyData(dataArray)
+
+      // Initialize smoothed data array if needed
+      if (!this.smoothedSpectrogramData || this.smoothedSpectrogramData.length !== bufferLength) {
+        this.smoothedSpectrogramData = new Float32Array(bufferLength)
+        // Initialize with first frame
+        for (let i = 0; i < bufferLength; i++) {
+          this.smoothedSpectrogramData[i] = dataArray[i]
+        }
+      }
+
+      // Apply temporal smoothing (exponential moving average)
+      const smoothing = this.spectrogramSmoothingFactor
+      for (let i = 0; i < bufferLength; i++) {
+        this.smoothedSpectrogramData[i] = this.smoothedSpectrogramData[i] * smoothing + dataArray[i] * (1 - smoothing)
+      }
+
+      // Create smoothed Uint8Array for storage
+      const smoothedArray = new Uint8Array(bufferLength)
+      for (let i = 0; i < bufferLength; i++) {
+        smoothedArray[i] = Math.round(this.smoothedSpectrogramData[i])
+      }
+
+      // Add to spectrogram history
+      this.spectrogramData.push(smoothedArray)
+      if (this.spectrogramData.length > this.maxSpectrogramHistory) {
+        this.spectrogramData.shift()
+      }
+
+      // Clear canvas once
+      ctx.fillStyle = "#1a1a1a"
+      ctx.fillRect(0, 0, width, height)
+
+      const sampleRate = this.audioContext.sampleRate
+      const nyquist = sampleRate / 2
+
+      // Draw spectrogram with better frequency resolution
+      const sliceWidth = width / this.spectrogramData.length
+      // Reduce binStep to show more detail
+      const binStep = 2
+      const frequencyRange = 5000 // Show up to 5kHz for better note visibility
+      const maxBin = Math.min(bufferLength, Math.floor((frequencyRange / nyquist) * bufferLength))
+      const binHeight = height / maxBin
+
+      for (let i = 0; i < this.spectrogramData.length; i++) {
+        const spectrum = this.spectrogramData[i]
+        const x = i * sliceWidth
+
+        for (let j = 0; j < maxBin; j += binStep) {
+          const value = spectrum[j]
+          if (value < 5) continue // Lower threshold to show more detail
+
+          // Map frequency bins to y position (inverted, with log scale for better note perception)
+          const y = height - (j / maxBin) * height
+
+          // Enhanced color mapping for better visibility
+          const intensity = value / 255
+          let r, g, b
+
+          if (intensity < 0.25) {
+            // Low: dark blue
+            r = 0
+            g = 0
+            b = Math.floor(intensity * 4 * 255)
+          } else if (intensity < 0.5) {
+            // Medium-low: cyan
+            const t = (intensity - 0.25) / 0.25
+            r = 0
+            g = Math.floor(t * 255)
+            b = 255
+          } else if (intensity < 0.75) {
+            // Medium-high: green to yellow
+            const t = (intensity - 0.5) / 0.25
+            r = Math.floor(t * 255)
+            g = 255
+            b = Math.floor((1 - t) * 128)
+          } else {
+            // High: yellow to red
+            const t = (intensity - 0.75) / 0.25
+            r = 255
+            g = Math.floor((1 - t * 0.7) * 255)
+            b = 0
+          }
+
+          ctx.fillStyle = `rgb(${r},${g},${b})`
+          ctx.fillRect(x, y, sliceWidth + 1, binHeight * binStep + 1)
+        }
+      }
+
+      // Draw frequency labels and note markers
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)"
+      ctx.font = "10px sans-serif"
+
+      // Draw common musical note frequencies with more detail in low range
+      const noteFreqs = [
+        { freq: 82.41, name: "E2" },
+        { freq: 87.31, name: "F2" },
+        { freq: 92.5, name: "F#2" },
+        { freq: 98.0, name: "G2" },
+        { freq: 103.83, name: "G#2" },
+        { freq: 110.0, name: "A2" },
+        { freq: 116.54, name: "A#2" },
+        { freq: 123.47, name: "B2" },
+        { freq: 130.81, name: "C3" },
+        { freq: 146.83, name: "D3" },
+        { freq: 164.81, name: "E3" },
+        { freq: 196.0, name: "G3" },
+        { freq: 220.0, name: "A3" },
+        { freq: 246.94, name: "B3" },
+        { freq: 329.63, name: "E4" },
+        { freq: 440.0, name: "A4" },
+        { freq: 659.25, name: "E5" },
+        { freq: 880.0, name: "A5" },
+        { freq: 1318.51, name: "E6" },
+      ]
+
+      noteFreqs.forEach(({ freq, name }) => {
+        if (freq < frequencyRange) {
+          const y = height - (freq / frequencyRange) * height
+          // Draw subtle line with more visibility for low notes
+          const isLowNote = freq < 150
+          ctx.strokeStyle = isLowNote ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.2)"
+          ctx.lineWidth = isLowNote ? 0.8 : 0.5
+          ctx.beginPath()
+          ctx.moveTo(0, y)
+          ctx.lineTo(width, y)
+          ctx.stroke()
+          // Draw label with better visibility for low notes
+          ctx.fillStyle = isLowNote ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.8)"
+          ctx.font = isLowNote ? "bold 10px sans-serif" : "10px sans-serif"
+          ctx.fillText(`${name} (${Math.round(freq)}Hz)`, width - 90, y - 2)
+        }
+      })
+
+      // Highlight current detected frequency if available
+      if (this.freqDisplay !== "--" && this.history.length > 0) {
+        const currentFreq = parseFloat(this.freqDisplay)
+        if (currentFreq > 0 && currentFreq < frequencyRange) {
+          const y = height - (currentFreq / frequencyRange) * height
+
+          // Draw full-width bright line for current note
+          ctx.strokeStyle = "rgba(255, 255, 0, 0.9)"
+          ctx.lineWidth = 2.5
+          ctx.setLineDash([5, 3]) // Dashed line
+          ctx.beginPath()
+          ctx.moveTo(0, y)
+          ctx.lineTo(width, y)
+          ctx.stroke()
+          ctx.setLineDash([]) // Reset line dash
+
+          // Draw frequency marker on the right
+          ctx.fillStyle = "yellow"
+          ctx.beginPath()
+          ctx.arc(width - 5, y, 4, 0, 2 * Math.PI)
+          ctx.fill()
+
+          // Draw frequency label
+          ctx.fillStyle = "yellow"
+          ctx.font = "bold 11px sans-serif"
+          ctx.fillText(`${Math.round(currentFreq)}Hz`, 5, y - 5)
         }
       }
     },
@@ -849,5 +988,89 @@ export default {
 <style scoped>
 h4 {
   font-weight: 600;
+}
+
+.tuning-meter-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.tuning-meter-bar {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to right, #d32f2f 0%, #ff9800 25%, #4caf50 45%, #4caf50 55%, #ff9800 75%, #d32f2f 100%);
+  border-radius: 20px;
+  overflow: visible;
+}
+
+.tuning-meter-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background-color: white;
+  transform: translateX(-50%);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+.tuning-meter-needle {
+  position: absolute;
+  top: -10px;
+  transform: translateX(-50%);
+  transition: left 0.1s ease-out;
+}
+
+.needle-triangle {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 14px solid white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.needle-triangle.tuning-perfect {
+  border-top-color: #4caf50;
+}
+
+.needle-triangle.tuning-good {
+  border-top-color: #8bc34a;
+}
+
+.needle-triangle.tuning-fair {
+  border-top-color: #ff9800;
+}
+
+.needle-triangle.tuning-poor {
+  border-top-color: #d32f2f;
+}
+
+.tuning-meter-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.tuning-perfect {
+  color: #4caf50 !important;
+  font-weight: bold;
+}
+
+.tuning-good {
+  color: #8bc34a !important;
+}
+
+.tuning-fair {
+  color: #ff9800 !important;
+}
+
+.tuning-poor {
+  color: #d32f2f !important;
 }
 </style>
