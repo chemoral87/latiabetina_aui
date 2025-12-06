@@ -12,15 +12,11 @@
       </span>
       |
       <span>({{ dBDisplay }} dB)</span>
-      <span v-if="centsDeviation !== null" class="ml-2">
-        |
-        <strong :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
-      </span>
     </h4>
 
     <!-- Tuning Accuracy Indicator -->
     <v-row dense class="mb-2">
-      <v-col cols="12">
+      <v-col cols="5">
         <div class="tuning-meter-container">
           <div class="tuning-meter-bar">
             <div class="tuning-meter-center"></div>
@@ -33,12 +29,16 @@
             <span>0</span>
             <span>+50</span>
           </div>
-          <div v-if="centsDeviation !== null" class="text-center mt-1">
-            <v-chip small :color="tuningAccuracyColor" dark>
-              {{ tuningAccuracyText }}
-            </v-chip>
-          </div>
+          <div v-if="centsDeviation !== null" class="text-center mt-1"></div>
         </div>
+      </v-col>
+      <v-col cols="7">
+        <span>
+          <strong style="display: inline-block; min-width: 72px" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
+        </span>
+        <v-chip small :color="tuningAccuracyColor" dark>
+          {{ tuningAccuracyText }}
+        </v-chip>
       </v-col>
     </v-row>
 
@@ -992,6 +992,7 @@ h4 {
 
 .tuning-meter-container {
   width: 100%;
+  height: 67px;
   max-width: 600px;
   margin: 0 auto;
   padding: 10px;
@@ -1000,7 +1001,7 @@ h4 {
 .tuning-meter-bar {
   position: relative;
   width: 100%;
-  height: 40px;
+  height: 20px;
   background: linear-gradient(to right, #d32f2f 0%, #ff9800 25%, #4caf50 45%, #4caf50 55%, #ff9800 75%, #d32f2f 100%);
   border-radius: 20px;
   overflow: visible;
