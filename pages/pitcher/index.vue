@@ -376,19 +376,19 @@ export default {
         } else if (this.noiseSamples.length > 0) {
           // Ordenar muestras para calcular estadísticas robustas
           const sortedSamples = [...this.noiseSamples].sort((a, b) => a - b)
-          
+
           // Eliminar outliers: usar percentiles 10-90 para mayor robustez
           const p10Index = Math.floor(sortedSamples.length * 0.1)
           const p90Index = Math.floor(sortedSamples.length * 0.9)
           const filteredSamples = sortedSamples.slice(p10Index, p90Index)
-          
+
           // Calcular promedio del ruido (excluyendo outliers)
           const avgNoise = filteredSamples.reduce((a, b) => a + b, 0) / filteredSamples.length
-          
+
           // Calcular mediana para mayor robustez ante picos esporádicos
           const medianIndex = Math.floor(filteredSamples.length / 2)
           const medianNoise = filteredSamples[medianIndex]
-          
+
           // Usar promedio entre media y mediana para balance
           this.noiseProfile = (avgNoise + medianNoise) / 2
 
