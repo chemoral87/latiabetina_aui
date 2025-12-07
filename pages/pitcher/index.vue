@@ -65,17 +65,15 @@
       </v-col>
     </v-row>
     <v-row dense>
-      <v-col cols="12" class="px-0 mx-0">
+      <v-col cols="6" class="px-0 mx-0">
         <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
+      </v-col>
+      <v-col cols="6" class="px-0 mx-0">
+        <canvas ref="staff" height="500px" width="300" style="display: block; background-color: #f5f5f5" />
       </v-col>
     </v-row>
     <!-- Spectrogram -->
-    <v-row dense class="mt-2">
-      <v-col cols="12" class="px-0 mx-0">
-        <h5 class="text-center mb-1">Espectrograma en tiempo real</h5>
-        <canvas ref="spectrogram" height="150px" :width="canvasWidth + 'px'" style="display: block; background-color: #1a1a1a" />
-      </v-col>
-    </v-row>
+    <!-- Spectrogram removed -->
     <!-- Modal Dialog -->
     <v-dialog v-model="settingsDialog" max-width="500px">
       <v-card>
@@ -152,18 +150,12 @@ export default {
       noiseCalibrating: false,
       noiseSamples: [],
 
-      // Spectrogram
-      spectrogramCtx: null,
-      spectrogramData: [],
-      maxSpectrogramHistory: 100,
-      smoothedSpectrogramData: null, // For temporal smoothing
-      spectrogramSmoothingFactor: 0.3, // Higher = more smoothing
-
       // Performance optimization
       lastHistogramDraw: 0,
-      lastSpectrogramUpdate: 0,
       histogramThrottle: 50, // ms between histogram redraws
-      spectrogramThrottle: 100, // ms between spectrogram updates
+
+      // Clave de Sol SVG
+      trebleClefImage: null,
     }
   },
   computed: {
@@ -275,8 +267,14 @@ export default {
     this.ctx.lineWidth = 0.5
     this.buffer = new Float32Array(2048)
 
-    // Inicializar spectrogram canvas
-    this.spectrogramCtx = this.$refs.spectrogram.getContext("2d")
+    this.staffCtx = this.$refs.staff.getContext("2d")
+    
+    // Cargar SVG de clave de Sol
+    this.trebleClefImage = new Image()
+    this.trebleClefImage.onload = () => {
+      this.drawStaff()
+    }
+    this.trebleClefImage.src = '/clave_sol.svg'
 
     this.updateCanvasSize()
     window.addEventListener("resize", this.debouncedResize)
@@ -340,14 +338,9 @@ export default {
       this.history = []
       this.lastFreq = null
       this.centsDeviation = null
-      this.spectrogramData = []
-      this.smoothedSpectrogramData = null
       const canvas = this.$refs.histogram
       this.ctx.clearRect(0, 0, canvas.width, canvas.height)
       this.drawNoteLines()
-      if (this.spectrogramCtx && this.$refs.spectrogram) {
-        this.spectrogramCtx.clearRect(0, 0, this.$refs.spectrogram.width, this.$refs.spectrogram.height)
-      }
     },
     calibrateNoise() {
       // Verificar que el micrófono esté activo
@@ -421,14 +414,9 @@ export default {
       this.centsDeviation = null
       this.history = []
       this.lastFreq = null
-      this.spectrogramData = []
-      this.smoothedSpectrogramData = null
       if (this.ctx && this.$refs.histogram) {
         this.ctx.clearRect(0, 0, this.$refs.histogram.width, this.$refs.histogram.height)
         this.drawNoteLines()
-      }
-      if (this.spectrogramCtx && this.$refs.spectrogram) {
-        this.spectrogramCtx.clearRect(0, 0, this.$refs.spectrogram.width, this.$refs.spectrogram.height)
       }
     },
     async toggleMic() {
@@ -632,13 +620,6 @@ export default {
         this.centsDeviation = null
       }
 
-      // Update spectrogram with throttling
-      const now = Date.now()
-      if (now - this.lastSpectrogramUpdate > this.spectrogramThrottle) {
-        this.updateSpectrogram()
-        this.lastSpectrogramUpdate = now
-      }
-
       if (this.isMicActive) requestAnimationFrame(this.update)
     },
     drawHistogram() {
@@ -807,180 +788,126 @@ export default {
         }
       }
     },
-    updateSpectrogram() {
-      if (!this.analyser || !this.spectrogramCtx || !this.$refs.spectrogram) return
-
-      const canvas = this.$refs.spectrogram
-      const ctx = this.spectrogramCtx
+    drawStaff() {
+      const canvas = this.$refs.staff
+      const ctx = this.staffCtx
       const width = canvas.width
       const height = canvas.height
 
-      // Get frequency data
-      const bufferLength = this.analyser.frequencyBinCount
-      const dataArray = new Uint8Array(bufferLength)
-      this.analyser.getByteFrequencyData(dataArray)
-
-      // Initialize smoothed data array if needed
-      if (!this.smoothedSpectrogramData || this.smoothedSpectrogramData.length !== bufferLength) {
-        this.smoothedSpectrogramData = new Float32Array(bufferLength)
-        // Initialize with first frame
-        for (let i = 0; i < bufferLength; i++) {
-          this.smoothedSpectrogramData[i] = dataArray[i]
-        }
-      }
-
-      // Apply temporal smoothing (exponential moving average)
-      const smoothing = this.spectrogramSmoothingFactor
-      for (let i = 0; i < bufferLength; i++) {
-        this.smoothedSpectrogramData[i] = this.smoothedSpectrogramData[i] * smoothing + dataArray[i] * (1 - smoothing)
-      }
-
-      // Create smoothed Uint8Array for storage
-      const smoothedArray = new Uint8Array(bufferLength)
-      for (let i = 0; i < bufferLength; i++) {
-        smoothedArray[i] = Math.round(this.smoothedSpectrogramData[i])
-      }
-
-      // Add to spectrogram history
-      this.spectrogramData.push(smoothedArray)
-      if (this.spectrogramData.length > this.maxSpectrogramHistory) {
-        this.spectrogramData.shift()
-      }
-
-      // Clear canvas once
-      ctx.fillStyle = "#1a1a1a"
+      // Limpiar canvas
+      ctx.fillStyle = "#f5f5f5"
       ctx.fillRect(0, 0, width, height)
 
-      const sampleRate = this.audioContext.sampleRate
-      const nyquist = sampleRate / 2
+      // Configuración del pentagrama
+      const staffTop = 150
+      const lineSpacing = 20
+      const staffWidth = width - 40
+      const staffLeft = 20
 
-      // Draw spectrogram with better frequency resolution
-      const sliceWidth = width / this.spectrogramData.length
-      // Reduce binStep to show more detail
-      const binStep = 2
-      const frequencyRange = 5000 // Show up to 5kHz for better note visibility
-      const maxBin = Math.min(bufferLength, Math.floor((frequencyRange / nyquist) * bufferLength))
-      const binHeight = height / maxBin
-
-      for (let i = 0; i < this.spectrogramData.length; i++) {
-        const spectrum = this.spectrogramData[i]
-        const x = i * sliceWidth
-
-        for (let j = 0; j < maxBin; j += binStep) {
-          const value = spectrum[j]
-          if (value < 5) continue // Lower threshold to show more detail
-
-          // Map frequency bins to y position (inverted, with log scale for better note perception)
-          const y = height - (j / maxBin) * height
-
-          // Enhanced color mapping for better visibility
-          const intensity = value / 255
-          let r, g, b
-
-          if (intensity < 0.25) {
-            // Low: dark blue
-            r = 0
-            g = 0
-            b = Math.floor(intensity * 4 * 255)
-          } else if (intensity < 0.5) {
-            // Medium-low: cyan
-            const t = (intensity - 0.25) / 0.25
-            r = 0
-            g = Math.floor(t * 255)
-            b = 255
-          } else if (intensity < 0.75) {
-            // Medium-high: green to yellow
-            const t = (intensity - 0.5) / 0.25
-            r = Math.floor(t * 255)
-            g = 255
-            b = Math.floor((1 - t) * 128)
-          } else {
-            // High: yellow to red
-            const t = (intensity - 0.75) / 0.25
-            r = 255
-            g = Math.floor((1 - t * 0.7) * 255)
-            b = 0
-          }
-
-          ctx.fillStyle = `rgb(${r},${g},${b})`
-          ctx.fillRect(x, y, sliceWidth + 1, binHeight * binStep + 1)
-        }
+      // Dibujar las 5 líneas del pentagrama
+      ctx.strokeStyle = "#000"
+      ctx.lineWidth = 2
+      for (let i = 0; i < 5; i++) {
+        const y = staffTop + i * lineSpacing
+        ctx.beginPath()
+        ctx.moveTo(staffLeft, y)
+        ctx.lineTo(staffLeft + staffWidth, y)
+        ctx.stroke()
       }
 
-      // Draw frequency labels and note markers
-      ctx.fillStyle = "rgba(255, 255, 255, 0.8)"
-      ctx.font = "10px sans-serif"
-
-      // Draw common musical note frequencies with more detail in low range
-      const noteFreqs = [
-        { freq: 82.41, name: "E2" },
-        { freq: 87.31, name: "F2" },
-        { freq: 92.5, name: "F#2" },
-        { freq: 98.0, name: "G2" },
-        { freq: 103.83, name: "G#2" },
-        { freq: 110.0, name: "A2" },
-        { freq: 116.54, name: "A#2" },
-        { freq: 123.47, name: "B2" },
-        { freq: 130.81, name: "C3" },
-        { freq: 146.83, name: "D3" },
-        { freq: 164.81, name: "E3" },
-        { freq: 196.0, name: "G3" },
-        { freq: 220.0, name: "A3" },
-        { freq: 246.94, name: "B3" },
-        { freq: 329.63, name: "E4" },
-        { freq: 440.0, name: "A4" },
-        { freq: 659.25, name: "E5" },
-        { freq: 880.0, name: "A5" },
-        { freq: 1318.51, name: "E6" },
-      ]
-
-      noteFreqs.forEach(({ freq, name }) => {
-        if (freq < frequencyRange) {
-          const y = height - (freq / frequencyRange) * height
-          // Draw subtle line with more visibility for low notes
-          const isLowNote = freq < 150
-          ctx.strokeStyle = isLowNote ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.2)"
-          ctx.lineWidth = isLowNote ? 0.8 : 0.5
-          ctx.beginPath()
-          ctx.moveTo(0, y)
-          ctx.lineTo(width, y)
-          ctx.stroke()
-          // Draw label with better visibility for low notes
-          ctx.fillStyle = isLowNote ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.8)"
-          ctx.font = isLowNote ? "bold 10px sans-serif" : "10px sans-serif"
-          ctx.fillText(`${name} (${Math.round(freq)}Hz)`, width - 90, y - 2)
-        }
-      })
-
-      // Highlight current detected frequency if available
-      if (this.freqDisplay !== "--" && this.history.length > 0) {
-        const currentFreq = parseFloat(this.freqDisplay)
-        if (currentFreq > 0 && currentFreq < frequencyRange) {
-          const y = height - (currentFreq / frequencyRange) * height
-
-          // Draw full-width bright line for current note
-          ctx.strokeStyle = "rgba(255, 255, 0, 0.9)"
-          ctx.lineWidth = 2.5
-          ctx.setLineDash([5, 3]) // Dashed line
-          ctx.beginPath()
-          ctx.moveTo(0, y)
-          ctx.lineTo(width, y)
-          ctx.stroke()
-          ctx.setLineDash([]) // Reset line dash
-
-          // Draw frequency marker on the right
-          ctx.fillStyle = "yellow"
-          ctx.beginPath()
-          ctx.arc(width - 5, y, 4, 0, 2 * Math.PI)
-          ctx.fill()
-
-          // Draw frequency label
-          ctx.fillStyle = "yellow"
-          ctx.font = "bold 11px sans-serif"
-          ctx.fillText(`${Math.round(currentFreq)}Hz`, 5, y - 5)
-        }
+      // Dibujar clave de Sol desde SVG
+      if (this.trebleClefImage && this.trebleClefImage.complete) {
+        const clefWidth = 40
+        const clefHeight = 100
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, staffTop - 20, clefWidth, clefHeight)
       }
+
+      // Dibujar nota negra (en la línea del Sol - segunda línea desde abajo)
+      const noteX = staffLeft + 120
+      const noteY = staffTop + 3 * lineSpacing // Línea del Sol (G4)
+      this.drawQuarterNote(ctx, noteX, noteY)
     },
+    drawTrebleClef(ctx, x, y) {
+      // Dibujar clave de Sol más realista
+      ctx.fillStyle = "#000"
+      ctx.strokeStyle = "#000"
+      ctx.lineWidth = 1.5
+
+      const lineSpacing = 20
+      const gLine = y + 2 * lineSpacing // Línea del Sol
+
+      ctx.save()
+      ctx.translate(x + 20, gLine)
+      ctx.scale(0.8, 0.8)
+
+      // Dibujar la clave de Sol completa con Path2D
+      ctx.beginPath()
+      
+      // Círculo central alrededor de la línea del Sol
+      ctx.moveTo(12, 0)
+      ctx.bezierCurveTo(12, -10, 3, -15, -6, -12)
+      ctx.bezierCurveTo(-12, -10, -15, -3, -15, 5)
+      ctx.bezierCurveTo(-15, 13, -10, 18, -2, 18)
+      ctx.bezierCurveTo(5, 18, 10, 14, 12, 8)
+      ctx.bezierCurveTo(14, 2, 13, -4, 12, 0)
+      
+      // Línea vertical que sube
+      ctx.moveTo(5, 2)
+      ctx.lineTo(5, -85)
+      
+      // Gancho superior decorativo
+      ctx.bezierCurveTo(5, -92, 2, -96, -3, -96)
+      ctx.bezierCurveTo(-10, -96, -16, -91, -16, -83)
+      ctx.bezierCurveTo(-16, -76, -12, -71, -6, -71)
+      ctx.bezierCurveTo(-2, -71, 1, -73, 1, -77)
+      ctx.bezierCurveTo(1, -81, -2, -83, -6, -83)
+      
+      // Curva de regreso hacia abajo
+      ctx.moveTo(5, -85)
+      ctx.bezierCurveTo(8, -80, 10, -70, 10, -55)
+      ctx.lineTo(10, 50)
+      
+      // Espiral inferior característica
+      ctx.bezierCurveTo(10, 60, 5, 66, -2, 66)
+      ctx.bezierCurveTo(-10, 66, -16, 60, -16, 52)
+      ctx.bezierCurveTo(-16, 46, -13, 41, -7, 41)
+      ctx.bezierCurveTo(-3, 41, 0, 43, 0, 47)
+      ctx.bezierCurveTo(0, 51, -3, 54, -7, 54)
+      ctx.bezierCurveTo(-9, 54, -11, 53, -12, 51)
+      
+      ctx.fill()
+      
+      // Agregar detalles con líneas para dar grosor
+      ctx.lineWidth = 3
+      ctx.beginPath()
+      ctx.moveTo(5, -85)
+      ctx.lineTo(5, 0)
+      ctx.stroke()
+      
+      ctx.lineWidth = 2.5
+      ctx.beginPath()
+      ctx.moveTo(5, 0)
+      ctx.lineTo(10, 45)
+      ctx.stroke()
+
+      ctx.restore()
+    },
+    drawQuarterNote(ctx, x, y) {
+      // Dibujar cabeza de nota (óvalo negro)
+      ctx.fillStyle = "#000"
+      ctx.beginPath()
+      ctx.ellipse(x, y, 8, 6, -0.3, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Dibujar plica (stem) hacia arriba
+      ctx.strokeStyle = "#000"
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(x + 7, y - 1)
+      ctx.lineTo(x + 7, y - 60)
+      ctx.stroke()
+    },
+    // updateSpectrogram removed
   },
 }
 </script>
