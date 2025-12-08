@@ -853,8 +853,8 @@ export default {
       // Dibujar clave de Sol desde SVG
       if (this.trebleClefImage && this.trebleClefImage.complete) {
         const clefWidth = 45 * staffSizeRatio
-        const clefHeight = 130 * staffSizeRatio
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 20 * staffSizeRatio, clefWidth, clefHeight)
+        const clefHeight = baseLineSpacing * 6.5 * staffSizeRatio
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - baseLineSpacing * staffSizeRatio, clefWidth, clefHeight)
       }
 
       // Configuración del pentagrama inferior (Clave de Fa)
@@ -874,9 +874,9 @@ export default {
       // Dibujar clave de Fa (desde SVG o manualmente)
       if (this.bassClefImage && this.bassClefImage.complete) {
         const clefWidth = 65 * staffSizeRatio
-        const clefHeight = 120 * staffSizeRatio
+        const clefHeight = baseLineSpacing * 6 * staffSizeRatio
         // Ajustar posición vertical: subir un poco la clave de Fa
-        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - 30 * staffSizeRatio, clefWidth, clefHeight)
+        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - baseLineSpacing * 1.33 * staffSizeRatio, clefWidth, clefHeight)
       } else {
         // Dibujar clave de Fa manualmente
         this.drawBassClef(ctx, staffLeft, bassStaffTop)
