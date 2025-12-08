@@ -1,8 +1,18 @@
-import createPersistedState from "vuex-persistedstate"
+import VuexPersistence from "vuex-persist"
+import localforage from "localforage"
 
 export default ({ store }) => {
-  createPersistedState({
-    key: "adminaui_v1",
-    paths: ["pitcher_store"],
-  })(store)
+  if (!process.client) return
+
+  const vuexLocal = new VuexPersistence({
+    key: "mazapan_v1",
+    storage: localforage,
+    asyncStorage: true,
+    reducer: (state) => ({
+      newinvest: state.newinvest,
+      pitcher_store: state.pitcher_store,
+    }),
+  })
+
+  vuexLocal.plugin(store)
 }

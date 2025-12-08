@@ -69,6 +69,7 @@ export default {
     "./plugins/eventBus.js",
     "./plugins/notify.js",
     { src: "./plugins/localstorage.js", mode: "client" },
+    { src: "./plugins/rehydrate.js", mode: "client" },
   ],
 
   // Auto import components
