@@ -66,7 +66,7 @@
     </v-row>
     <v-row dense>
       <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
+        <canvas ref="histogram" :height="histogramHeight + 'px'" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
       </v-col>
       <v-col cols="6" class="px-0 mx-0">
         <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black" />
@@ -109,6 +109,12 @@
               <v-slider v-model="totalNotes" :min="13" :max="25" :step="1" label="# Notas" hide-details thumb-label />
               <div class="text-center font-weight-bold">
                 {{ totalNotes }}
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-slider v-model="histogramHeight" :min="300" :max="600" :step="30" label="Altura Histograma" hide-details thumb-label />
+              <div class="text-center font-weight-bold">
+                {{ histogramHeight }}px
               </div>
             </v-col>
           </v-row>
@@ -207,6 +213,14 @@ export default {
       },
       set(value) {
         this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
+      },
+    },
+    histogramHeight: {
+      get() {
+        return this.$store.state.pitcher_store.histogramHeight
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
       },
     },
     scaleNoteIndices() {

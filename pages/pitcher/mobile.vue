@@ -48,36 +48,39 @@
       </v-col>
     </v-row>
 
-    <v-row align="center" justify="center" dense class="mb-4">
-      <v-col cols="12" sm="9" md="8" class="d-flex flex-wrap justify-center justify-sm-start">
-        <v-btn color="primary" class="mr-2 mb-2" block small @click="resetHistory">
+    <v-row dense class="mb-4">
+      <v-col cols="6">
+        <v-btn color="primary" block small @click="resetHistory">
           <v-icon left>mdi-restart</v-icon>
           <span>Reiniciar</span>
         </v-btn>
-        <v-btn color="warning" class="mr-2 mb-2" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small @click="calibrateNoise">
+      </v-col>
+      <v-col cols="6">
+        <v-btn color="warning" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small @click="calibrateNoise">
           <v-icon left>mdi-tune</v-icon>
           <span>Calibrar Ruido</span>
         </v-btn>
-        <v-btn :color="isMicActive ? 'error' : 'success'" block small class="mb-2" @click="toggleMic">
+      </v-col>
+      <v-col cols="6">
+        <v-btn :color="isMicActive ? 'error' : 'success'" block small @click="toggleMic">
           <v-icon left>{{ isMicActive ? "mdi-microphone-off" : "mdi-microphone" }}</v-icon>
           <span>
             {{ isMicActive ? "Silenciar" : "Activar mic" }}
           </span>
         </v-btn>
       </v-col>
-
-      <v-col cols="12" sm="3" md="4" class="mt-2 mt-sm-0">
+      <v-col cols="6">
         <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Nota Raíz' : 'Root Note'" dense outlined hide-details />
       </v-col>
     </v-row>
 
     <v-row dense>
       <v-col cols="8" class="pr-1 mx-0">
-        <h5 class="text-center font-weight-regular mb-1">Histograma de Frecuencia</h5>
-        <canvas ref="histogram" height="550px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
+        <h5 class="text-center font-weight-regular">Histograma de Frecuencia</h5>
+        <canvas ref="histogram" :height="histogramHeight + 'px'" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
       </v-col>
       <v-col cols="4" class="px-0 mx-0">
-        <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama</h5>
+        <h5 class="text-center font-weight-regular">Pentagrama</h5>
         <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
       </v-col>
     </v-row>
@@ -117,6 +120,10 @@
               <div class="text-center font-weight-bold">
                 {{ totalNotes }}
               </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-slider v-model="histogramHeight" :min="300" :max="600" :step="30" label="Altura Histograma" hide-details thumb-label />
+              <div class="text-center font-weight-bold">{{ histogramHeight }}px</div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -214,6 +221,14 @@ export default {
       },
       set(value) {
         this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
+      },
+    },
+    histogramHeight: {
+      get() {
+        return this.$store.state.pitcher_store.histogramHeight
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
       },
     },
     scaleNoteIndices() {
