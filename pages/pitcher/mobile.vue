@@ -72,11 +72,11 @@
     </v-row>
 
     <v-row dense>
-      <v-col cols="12" md="6" class="px-0 mx-0">
+      <v-col cols="8" class="px-0 mx-0">
         <h5 class="text-center font-weight-regular mb-1">Histograma de Frecuencia</h5>
         <canvas ref="histogram" height="350px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
       </v-col>
-      <v-col cols="12" md="6" class="px-0 mx-0">
+      <v-col cols="4" class="px-0 mx-0">
         <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama (Tomasín)</h5>
         <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
       </v-col>
