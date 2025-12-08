@@ -69,7 +69,7 @@
         <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
       </v-col>
       <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="staff" height="700px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black;" />
+        <canvas ref="staff" height="700px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black" />
       </v-col>
     </v-row>
     <!-- Spectrogram -->
@@ -836,7 +836,7 @@ export default {
 
       // Configuración del pentagrama inferior (Clave de Fa)
       const bassStaffTop = trebleStaffTop + 120 // Separación entre pentagramas
-      
+
       // Dibujar las 5 líneas del pentagrama de Fa
       ctx.strokeStyle = "#000"
       ctx.lineWidth = 2
@@ -861,7 +861,7 @@ export default {
       // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
       const noteX = staffLeft + 120
       let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
-      let noteColor = '#000' // Color por defecto
+      let noteColor = "#000" // Color por defecto
       let isSharp = false // Indica si la nota es sostenido
       const ledgerLines = [] // Array de líneas adicionales a dibujar
 
@@ -869,11 +869,11 @@ export default {
       if (this.history.length > 0 && this.history[0].freq) {
         const currentMidi = this.freqToMidi(this.history[0].freq)
         const roundedMidi = Math.round(currentMidi)
-        
+
         // Determinar si es sostenido basándose en el nombre de la nota
         const noteName = this.getNoteName(roundedMidi)
-        isSharp = noteName.includes('♯') || noteName.includes('#')
-        
+        isSharp = noteName.includes("♯") || noteName.includes("#")
+
         // Calcular posición Y en el pentagrama
         // Referencia: E4 (Mi) = MIDI 64, sobre la primera línea (trebleStaffTop + 4*lineSpacing)
         // Mapeo de índices MIDI % 12 a posiciones naturales:
@@ -883,11 +883,12 @@ export default {
         const positionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[e4Midi % 12]
         const octaveDiff = Math.floor(roundedMidi / 12) - Math.floor(e4Midi / 12)
         const totalPositionDiff = octaveDiff * 7 + positionDiff // 7 notas naturales por octava
-        
+
         // Decidir si usar pentagrama de Sol o de Fa
-        if (roundedMidi >= 60) { // C4 (MIDI 60) y superior en clave de Sol
-          noteY = trebleStaffTop + 4 * lineSpacing - (totalPositionDiff * (lineSpacing / 2))
-          
+        if (roundedMidi >= 60) {
+          // C4 (MIDI 60) y superior en clave de Sol
+          noteY = trebleStaffTop + 4 * lineSpacing - totalPositionDiff * (lineSpacing / 2)
+
           // Calcular líneas adicionales debajo del pentagrama de Sol
           const bottomLine = trebleStaffTop + 4 * lineSpacing
           if (noteY > bottomLine) {
@@ -896,22 +897,23 @@ export default {
               ledgerLines.push(bottomLine + i * lineSpacing)
             }
           }
-        } else { // Notas graves en clave de Fa
+        } else {
+          // Notas graves en clave de Fa
           // Referencia: F3 (Fa3) = MIDI 53, sobre la cuarta línea del pentagrama de Fa
           const f3Midi = 53
           const bassPositionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[f3Midi % 12]
           const bassOctaveDiff = Math.floor(roundedMidi / 12) - Math.floor(f3Midi / 12)
           const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
-          noteY = bassStaffTop + lineSpacing - (bassTotalPositionDiff * (lineSpacing / 2))
+          noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
         }
-        
+
         // Obtener color según la nota
         const fullIndex = (roundedMidi % 12) * 2
         noteColor = COLORS[fullIndex]
       }
 
       // Dibujar líneas adicionales si es necesario (antes de la nota)
-      ledgerLines.forEach(ledgerY => {
+      ledgerLines.forEach((ledgerY) => {
         ctx.strokeStyle = "#000"
         ctx.lineWidth = 2
         ctx.beginPath()
@@ -1002,7 +1004,7 @@ export default {
 
       // Dibujar la clave de Fa (símbolo de dos puntos con curva)
       ctx.beginPath()
-      
+
       // Curva principal de la clave de Fa
       ctx.arc(-5, 0, 8, Math.PI * 0.5, Math.PI * 1.5)
       ctx.arc(-5, -10, 4, Math.PI * 1.5, Math.PI * 0.5, true)
@@ -1012,35 +1014,35 @@ export default {
       ctx.beginPath()
       ctx.arc(5, -5, 2.5, 0, Math.PI * 2)
       ctx.fill()
-      
+
       ctx.beginPath()
       ctx.arc(5, 5, 2.5, 0, Math.PI * 2)
       ctx.fill()
 
       ctx.restore()
     },
-    drawQuarterNote(ctx, x, y, color = '#000', isSharp = false) {
+    drawQuarterNote(ctx, x, y, color = "#000", isSharp = false) {
       // Dibujar símbolo # si es sostenido (a la izquierda de la nota)
       if (isSharp) {
         // Contorno negro del #
-        ctx.strokeStyle = '#000'
+        ctx.strokeStyle = "#000"
         ctx.lineWidth = 3
-        ctx.font = 'bold 24px serif'
-        ctx.strokeText('♯', x - 25, y + 8)
-        
+        ctx.font = "bold 24px serif"
+        ctx.strokeText("♯", x - 25, y + 8)
+
         // Relleno de color del #
         ctx.fillStyle = color
-        ctx.fillText('♯', x - 25, y + 8)
+        ctx.fillText("♯", x - 25, y + 8)
       }
-      
+
       // Primero dibujar el relleno con color (nota interior)
       ctx.fillStyle = color
       ctx.beginPath()
       ctx.ellipse(x, y, 8, 6, -0.3, 0, Math.PI * 2)
       ctx.fill()
-      
+
       // Luego el contorno negro más grande (1px expandido)
-      ctx.strokeStyle = '#000'
+      ctx.strokeStyle = "#000"
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.ellipse(x, y, 9, 7, -0.3, 0, Math.PI * 2)
@@ -1053,15 +1055,15 @@ export default {
       ctx.moveTo(x + 7, y - 1)
       ctx.lineTo(x + 7, y - 60)
       ctx.stroke()
-      
+
       // Dibujar contorno negro de la plica (1px más ancho)
-      ctx.strokeStyle = '#000'
+      ctx.strokeStyle = "#000"
       ctx.lineWidth = 4
       ctx.beginPath()
       ctx.moveTo(x + 7, y - 1)
       ctx.lineTo(x + 7, y - 60)
       ctx.stroke()
-      
+
       // Volver a dibujar la plica con color encima
       ctx.strokeStyle = color
       ctx.lineWidth = 2
