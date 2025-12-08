@@ -72,13 +72,13 @@
     </v-row>
 
     <v-row dense>
-      <v-col cols="8" class="px-0 mx-0">
+      <v-col cols="8" class="pr-1 mx-0">
         <h5 class="text-center font-weight-regular mb-1">Histograma de Frecuencia</h5>
         <canvas ref="histogram" height="350px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
       </v-col>
       <v-col cols="4" class="px-0 mx-0">
         <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama (Tomasín)</h5>
-        <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
+        <canvas ref="staff" height="550px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
       </v-col>
     </v-row>
 
@@ -817,17 +817,29 @@ export default {
       ctx.fillStyle = "#f5f5f5"
       ctx.fillRect(0, 0, width, height)
 
+      // Factor de escala para ajustar tamaño del pentagrama (0.5 = 50%, 1.0 = 100%, 1.5 = 150%)
+      const staffSizeRatio = 1.0
+      // Distancia entre líneas del pentagrama (ajusta este valor para cambiar el espaciado)
+      const baseLineSpacing = 20
+
       // Configuración del pentagrama superior (Clave de Sol)
-      const trebleStaffTop = 50
-      const lineSpacing = 30
+      const trebleStaffTop = 50 * staffSizeRatio
+      const lineSpacing = baseLineSpacing * staffSizeRatio
       const staffWidth = width - 40
       const staffLeft = 20
       // Usar una longitud fija para las líneas del pentagrama en móvil
-      const staffLineLength = 110
+      const staffLineLength = 110 * staffSizeRatio
       const lineStart = staffLeft + 10
       const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
 
-      // Dibujar las 5 líneas del pentagrama de Sol
+      // Separación entre pentagramas proporcional al lineSpacing
+      // La distancia de la primera línea del pentagrama de Sol (trebleStaffTop)
+      // a la quinta línea del pentagrama de Fa (bassStaffTop + 4*lineSpacing) debe ser 2*baseLineSpacing
+      // trebleStaffTop + 2*lineSpacing = bassStaffTop + 4*lineSpacing
+      // bassStaffTop = trebleStaffTop + 2*lineSpacing - 4*lineSpacing = trebleStaffTop - 2*lineSpacing
+      // Pero necesitamos la separación entre los tops, así que:
+      // bassStaffTop = trebleStaffTop + 4*lineSpacing + 2*lineSpacing = trebleStaffTop + 6*lineSpacing
+      const staffSeparation = 6 * lineSpacing // Dibujar las 5 líneas del pentagrama de Sol
       ctx.strokeStyle = "#000"
       ctx.lineWidth = 2
       for (let i = 0; i < 5; i++) {
@@ -840,13 +852,13 @@ export default {
 
       // Dibujar clave de Sol desde SVG
       if (this.trebleClefImage && this.trebleClefImage.complete) {
-        const clefWidth = 50
-        const clefHeight = 145
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 16, clefWidth, clefHeight)
+        const clefWidth = 50 * staffSizeRatio
+        const clefHeight = 145 * staffSizeRatio
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 16 * staffSizeRatio, clefWidth, clefHeight)
       }
 
       // Configuración del pentagrama inferior (Clave de Fa)
-      const bassStaffTop = trebleStaffTop + 170 // Separación entre pentagramas
+      const bassStaffTop = trebleStaffTop + staffSeparation // Separación entre pentagramas
 
       // Dibujar las 5 líneas del pentagrama de Fa
       ctx.strokeStyle = "#000"
@@ -861,17 +873,17 @@ export default {
 
       // Dibujar clave de Fa (desde SVG o manualmente)
       if (this.bassClefImage && this.bassClefImage.complete) {
-        const clefWidth = 75
-        const clefHeight = 140
+        const clefWidth = 75 * staffSizeRatio
+        const clefHeight = 140 * staffSizeRatio
         // Ajustar posición vertical: subir un poco la clave de Fa
-        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - 34, clefWidth, clefHeight)
+        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - 34 * staffSizeRatio, clefWidth, clefHeight)
       } else {
         // Dibujar clave de Fa manualmente
         this.drawBassClef(ctx, staffLeft, bassStaffTop)
       }
 
       // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
-      const noteX = staffLeft + 90
+      const noteX = staffLeft + 90 * staffSizeRatio
       let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
       let noteColor = "#000" // Color por defecto
       let isSharp = false // Indica si la nota es sostenido
@@ -903,10 +915,16 @@ export default {
 
           // Calcular líneas adicionales debajo del pentagrama de Sol
           const bottomLine = trebleStaffTop + 4 * lineSpacing
-          if (noteY > bottomLine) {
-            const linesNeeded = Math.floor((noteY - bottomLine) / lineSpacing)
+
+          // Agregar línea para C4 (MIDI 60), C#4 (MIDI 61), D4 (MIDI 62) y D#4 (MIDI 63)
+          if (roundedMidi === 60 || roundedMidi === 61 || roundedMidi === 62 || roundedMidi === 63) {
+            ledgerLines.push(bottomLine + lineSpacing)
+          }
+
+          if (noteY > bottomLine + lineSpacing) {
+            const linesNeeded = Math.floor((noteY - (bottomLine + lineSpacing)) / lineSpacing)
             for (let i = 1; i <= linesNeeded; i++) {
-              ledgerLines.push(bottomLine + i * lineSpacing)
+              ledgerLines.push(bottomLine + lineSpacing + i * lineSpacing)
             }
           }
         } else {
@@ -917,12 +935,20 @@ export default {
           const bassOctaveDiff = Math.floor(roundedMidi / 12) - Math.floor(f3Midi / 12)
           const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
           noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
-          // Calcular líneas adicionales debajo del pentagrama de Fa (ledger lines)
-          const bassBottomLine = bassStaffTop + 4 * lineSpacing
-          if (noteY > bassBottomLine) {
-            const linesNeeded = Math.floor((noteY - bassBottomLine) / lineSpacing)
+
+          // Agregar línea para B3 (MIDI 59): comparte la línea con C4
+          // Esta línea está debajo del pentagrama de Sol
+          if (roundedMidi === 59) {
+            const trebleBottomLine = trebleStaffTop + 4 * lineSpacing
+            ledgerLines.push(trebleBottomLine + lineSpacing)
+          }
+
+          // Calcular líneas adicionales encima del pentagrama de Fa
+          const bassTopLine = bassStaffTop
+          if (noteY < bassTopLine) {
+            const linesNeeded = Math.floor((bassTopLine - noteY) / lineSpacing)
             for (let i = 1; i <= linesNeeded; i++) {
-              ledgerLines.push(bassBottomLine + i * lineSpacing)
+              ledgerLines.push(bassTopLine - i * lineSpacing)
             }
           }
         }
