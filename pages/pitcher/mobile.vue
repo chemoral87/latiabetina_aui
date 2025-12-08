@@ -818,8 +818,8 @@ export default {
       ctx.fillRect(0, 0, width, height)
 
       // Configuración del pentagrama superior (Clave de Sol)
-      const trebleStaffTop = 100
-      const lineSpacing = 20
+      const trebleStaffTop = 50
+      const lineSpacing = 30
       const staffWidth = width - 40
       const staffLeft = 20
       // Usar una longitud fija para las líneas del pentagrama en móvil
@@ -840,13 +840,13 @@ export default {
 
       // Dibujar clave de Sol desde SVG
       if (this.trebleClefImage && this.trebleClefImage.complete) {
-        const clefWidth = 40
-        const clefHeight = 115
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 11, clefWidth, clefHeight)
+        const clefWidth = 50
+        const clefHeight = 145
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 16, clefWidth, clefHeight)
       }
 
       // Configuración del pentagrama inferior (Clave de Fa)
-      const bassStaffTop = trebleStaffTop + 120 // Separación entre pentagramas
+      const bassStaffTop = trebleStaffTop + 170 // Separación entre pentagramas
 
       // Dibujar las 5 líneas del pentagrama de Fa
       ctx.strokeStyle = "#000"
@@ -861,17 +861,17 @@ export default {
 
       // Dibujar clave de Fa (desde SVG o manualmente)
       if (this.bassClefImage && this.bassClefImage.complete) {
-        const clefWidth = 60
-        const clefHeight = 115
+        const clefWidth = 75
+        const clefHeight = 140
         // Ajustar posición vertical: subir un poco la clave de Fa
-        ctx.drawImage(this.bassClefImage, staffLeft + -3, bassStaffTop - 28, clefWidth, clefHeight)
+        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - 34, clefWidth, clefHeight)
       } else {
         // Dibujar clave de Fa manualmente
         this.drawBassClef(ctx, staffLeft, bassStaffTop)
       }
 
       // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
-      const noteX = staffLeft + 80
+      const noteX = staffLeft + 90
       let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
       let noteColor = "#000" // Color por defecto
       let isSharp = false // Indica si la nota es sostenido
@@ -1015,7 +1015,7 @@ export default {
       ctx.strokeStyle = "#000"
       ctx.lineWidth = 2
 
-      const lineSpacing = 20
+      const lineSpacing = 30
       const fLine = y + lineSpacing // Segunda línea desde arriba (línea del Fa)
 
       ctx.save()
