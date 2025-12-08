@@ -74,11 +74,11 @@
     <v-row dense>
       <v-col cols="8" class="pr-1 mx-0">
         <h5 class="text-center font-weight-regular mb-1">Histograma de Frecuencia</h5>
-        <canvas ref="histogram" height="350px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
+        <canvas ref="histogram" height="550px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
       </v-col>
       <v-col cols="4" class="px-0 mx-0">
-        <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama (Tomasín)</h5>
-        <canvas ref="staff" height="550px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
+        <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama</h5>
+        <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
       </v-col>
     </v-row>
 
@@ -817,10 +817,12 @@ export default {
       ctx.fillStyle = "#f5f5f5"
       ctx.fillRect(0, 0, width, height)
 
+      // Factor de zoom global para el pentagrama (0.5 = 50%, 1.0 = 100%, 1.5 = 150%, 2.0 = 200%)
+      const zoom = 2
       // Factor de escala para ajustar tamaño del pentagrama (0.5 = 50%, 1.0 = 100%, 1.5 = 150%)
-      const staffSizeRatio = 1.0
+      const staffSizeRatio = 1.0 * zoom
       // Distancia entre líneas del pentagrama (ajusta este valor para cambiar el espaciado)
-      const baseLineSpacing = 20
+      const baseLineSpacing = 9 * zoom
 
       // Configuración del pentagrama superior (Clave de Sol)
       const trebleStaffTop = 50 * staffSizeRatio
@@ -961,14 +963,14 @@ export default {
       // Dibujar líneas adicionales si es necesario (antes de la nota)
       ledgerLines.forEach((ledgerY) => {
         ctx.strokeStyle = "#000"
-        ctx.lineWidth = 2
+        ctx.lineWidth = 2 * zoom
         ctx.beginPath()
-        ctx.moveTo(noteX - 20, ledgerY)
-        ctx.lineTo(noteX + 20, ledgerY)
+        ctx.moveTo(noteX - 20 * zoom, ledgerY)
+        ctx.lineTo(noteX + 20 * zoom, ledgerY)
         ctx.stroke()
       })
 
-      this.drawQuarterNote(ctx, noteX, noteY, noteColor, isSharp)
+      this.drawQuarterNote(ctx, noteX, noteY, noteColor, isSharp, zoom)
     },
     drawTrebleClef(ctx, x, y) {
       // Dibujar clave de Sol más realista
@@ -1067,55 +1069,55 @@ export default {
 
       ctx.restore()
     },
-    drawQuarterNote(ctx, x, y, color = "#000", isSharp = false) {
+    drawQuarterNote(ctx, x, y, color = "#000", isSharp = false, zoom = 1.0) {
       // Dibujar símbolo # si es sostenido (a la izquierda de la nota)
       if (isSharp) {
         // Contorno negro del #
         ctx.strokeStyle = "#000"
-        ctx.lineWidth = 3
-        ctx.font = "bold 24px serif"
-        ctx.strokeText("♯", x - 25, y + 8)
+        ctx.lineWidth = 3 * zoom
+        ctx.font = `bold ${24 * zoom}px serif`
+        ctx.strokeText("♯", x - 25 * zoom, y + 8 * zoom)
 
         // Relleno de color del #
         ctx.fillStyle = color
-        ctx.fillText("♯", x - 25, y + 8)
+        ctx.fillText("♯", x - 25 * zoom, y + 8 * zoom)
       }
 
       // Primero dibujar el relleno con color (nota interior)
       ctx.fillStyle = color
       ctx.beginPath()
-      ctx.ellipse(x, y, 8, 6, -0.3, 0, Math.PI * 2)
+      ctx.ellipse(x, y, 8 * zoom, 6 * zoom, -0.3, 0, Math.PI * 2)
       ctx.fill()
 
       // Luego el contorno negro más grande (1px expandido)
       ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2
+      ctx.lineWidth = 2 * zoom
       ctx.beginPath()
-      ctx.ellipse(x, y, 9, 7, -0.3, 0, Math.PI * 2)
+      ctx.ellipse(x, y, 9 * zoom, 7 * zoom, -0.3, 0, Math.PI * 2)
       ctx.stroke()
 
       // Dibujar plica (stem) con color
       ctx.strokeStyle = color
-      ctx.lineWidth = 2
+      ctx.lineWidth = 2 * zoom
       ctx.beginPath()
-      ctx.moveTo(x + 7, y - 1)
-      ctx.lineTo(x + 7, y - 60)
+      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
       ctx.stroke()
 
       // Dibujar contorno negro de la plica (1px más ancho)
       ctx.strokeStyle = "#000"
-      ctx.lineWidth = 4
+      ctx.lineWidth = 4 * zoom
       ctx.beginPath()
-      ctx.moveTo(x + 7, y - 1)
-      ctx.lineTo(x + 7, y - 60)
+      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
       ctx.stroke()
 
       // Volver a dibujar la plica con color encima
       ctx.strokeStyle = color
-      ctx.lineWidth = 2
+      ctx.lineWidth = 2 * zoom
       ctx.beginPath()
-      ctx.moveTo(x + 7, y - 1)
-      ctx.lineTo(x + 7, y - 60)
+      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
       ctx.stroke()
     },
     // updateSpectrogram removed
