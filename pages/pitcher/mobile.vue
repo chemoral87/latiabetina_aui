@@ -1,54 +1,20 @@
 <template>
   <v-container class="pa-4" style="max-width: 1000px">
-    <h4 class="text-left mb-4">
-      <v-btn icon class="mr-2" @click="settingsDialog = true">
+    <h4 class="text-left mb-1">
+      <v-btn icon class="mr-1" @click="settingsDialog = true">
         <v-icon>mdi-cog</v-icon>
       </v-btn>
       Tuner
       <span>
         Frec:
-        <strong>{{ freqDisplay }}</strong>
+        <strong class="text-right" style="display: inline-block; width: 50px">{{ freqDisplay }}</strong>
         Hz
       </span>
       |
       <span>({{ dBDisplay }} dB)</span>
     </h4>
 
-    <v-row dense class="mb-4" align="center">
-      <v-col cols="12" sm="5">
-        <div class="tuning-meter-container">
-          <div class="tuning-meter-bar">
-            <div class="tuning-meter-center"></div>
-            <div
-              v-if="centsDeviation !== null"
-              class="tuning-meter-needle"
-              :style="{
-                left: `calc(50% + ${Math.min(50, Math.max(-50, centsDeviation))}%)`,
-              }"
-            >
-              <div class="needle-triangle" :class="tuningAccuracyClass"></div>
-            </div>
-          </div>
-          <div class="tuning-meter-labels">
-            <span>-50</span>
-            <span>0</span>
-            <span>+50</span>
-          </div>
-        </div>
-      </v-col>
-      <v-col cols="12" sm="7" class="text-center text-sm-left">
-        <div class="d-flex align-center justify-sm-start justify-center">
-          <span class="mr-3">
-            <strong style="display: inline-block; min-width: 72px" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
-          </span>
-          <v-chip small :color="tuningAccuracyColor" dark>
-            {{ tuningAccuracyText }}
-          </v-chip>
-        </div>
-      </v-col>
-    </v-row>
-
-    <v-row dense class="mb-4">
+    <v-row dense class="mb-1">
       <v-col cols="6">
         <v-btn color="primary" block small @click="resetHistory">
           <v-icon left>mdi-restart</v-icon>
@@ -78,10 +44,38 @@
       <v-col cols="8" class="pr-1 mx-0">
         <h5 class="text-center font-weight-regular">Histograma de Frecuencia</h5>
         <canvas ref="histogram" :height="histogramHeight + 'px'" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
+        <div class="tuning-meter-container mt-2">
+          <div class="tuning-meter-bar">
+            <div class="tuning-meter-center"></div>
+            <div
+              v-if="centsDeviation !== null"
+              class="tuning-meter-needle"
+              :style="{
+                left: `calc(50% + ${Math.min(50, Math.max(-50, centsDeviation))}%)`,
+              }"
+            >
+              <div class="needle-triangle" :class="tuningAccuracyClass"></div>
+            </div>
+          </div>
+          <div class="tuning-meter-labels">
+            <span>-50</span>
+            <span>0</span>
+            <span>+50</span>
+          </div>
+        </div>
       </v-col>
       <v-col cols="4" class="px-0 mx-0">
         <h5 class="text-center font-weight-regular">Pentagrama</h5>
         <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
+        <div class="text-right">
+          <span class="mr-3">
+            <strong style="display: inline-block; min-width: 72px; text-align: right" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }}</strong>
+            <strong>cents</strong>
+          </span>
+          <v-chip small :color="tuningAccuracyColor" dark>
+            {{ tuningAccuracyText }}
+          </v-chip>
+        </div>
       </v-col>
     </v-row>
 
