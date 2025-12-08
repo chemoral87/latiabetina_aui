@@ -68,11 +68,12 @@
         <h5 class="text-center font-weight-regular">Pentagrama</h5>
         <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
         <div class="text-right">
-          <span class="mr-3">
-            <strong style="display: inline-block; min-width: 72px; text-align: right" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }}</strong>
+          <div class="caption">
+            <strong style="display: inline-block; text-align: right" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }}</strong>
             <strong>cents</strong>
-          </span>
-          <v-chip small :color="tuningAccuracyColor" dark>
+          </div>
+
+          <v-chip class="caption" small :color="tuningAccuracyColor" dark>
             {{ tuningAccuracyText }}
           </v-chip>
         </div>

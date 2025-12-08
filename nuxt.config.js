@@ -68,6 +68,7 @@ export default {
     "./plugins/handleError.js",
     "./plugins/eventBus.js",
     "./plugins/notify.js",
+    { src: "./plugins/localstorage.js", mode: "client" },
   ],
 
   // Auto import components
