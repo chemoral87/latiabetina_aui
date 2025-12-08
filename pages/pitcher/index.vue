@@ -69,7 +69,7 @@
         <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
       </v-col>
       <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="staff" height="700px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black" />
+        <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black" />
       </v-col>
     </v-row>
     <!-- Spectrogram -->
@@ -830,8 +830,8 @@ export default {
       // Dibujar clave de Sol desde SVG
       if (this.trebleClefImage && this.trebleClefImage.complete) {
         const clefWidth = 40
-        const clefHeight = 100
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 20, clefWidth, clefHeight)
+        const clefHeight = 115
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 11, clefWidth, clefHeight)
       }
 
       // Configuración del pentagrama inferior (Clave de Fa)
@@ -850,9 +850,10 @@ export default {
 
       // Dibujar clave de Fa (desde SVG o manualmente)
       if (this.bassClefImage && this.bassClefImage.complete) {
-        const clefWidth = 40
-        const clefHeight = 60
-        ctx.drawImage(this.bassClefImage, staffLeft + 5, bassStaffTop + 10, clefWidth, clefHeight)
+        const clefWidth = 60
+        const clefHeight = 115
+        // Ajustar posición vertical: subir un poco la clave de Fa
+        ctx.drawImage(this.bassClefImage, staffLeft + -3, bassStaffTop - 28, clefWidth, clefHeight)
       } else {
         // Dibujar clave de Fa manualmente
         this.drawBassClef(ctx, staffLeft, bassStaffTop)
@@ -905,6 +906,14 @@ export default {
           const bassOctaveDiff = Math.floor(roundedMidi / 12) - Math.floor(f3Midi / 12)
           const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
           noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
+          // Calcular líneas adicionales debajo del pentagrama de Fa (ledger lines)
+          const bassBottomLine = bassStaffTop + 4 * lineSpacing
+          if (noteY > bassBottomLine) {
+            const linesNeeded = Math.floor((noteY - bassBottomLine) / lineSpacing)
+            for (let i = 1; i <= linesNeeded; i++) {
+              ledgerLines.push(bassBottomLine + i * lineSpacing)
+            }
+          }
         }
 
         // Obtener color según la nota
