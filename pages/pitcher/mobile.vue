@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-4" style="max-width: 1000px">
     <h4 class="text-left mb-4">
-      <v-btn icon @click="settingsDialog = true">
+      <v-btn icon class="mr-2" @click="settingsDialog = true">
         <v-icon>mdi-cog</v-icon>
       </v-btn>
       Tuner
@@ -14,13 +14,18 @@
       <span>({{ dBDisplay }} dB)</span>
     </h4>
 
-    <!-- Tuning Accuracy Indicator -->
-    <v-row dense class="mb-2">
-      <v-col cols="5">
+    <v-row dense class="mb-4" align="center">
+      <v-col cols="12" sm="5">
         <div class="tuning-meter-container">
           <div class="tuning-meter-bar">
             <div class="tuning-meter-center"></div>
-            <div v-if="centsDeviation !== null" class="tuning-meter-needle" :style="{ left: `calc(50% + ${centsDeviation}%)` }">
+            <div
+              v-if="centsDeviation !== null"
+              class="tuning-meter-needle"
+              :style="{
+                left: `calc(50% + ${Math.min(50, Math.max(-50, centsDeviation))}%)`,
+              }"
+            >
               <div class="needle-triangle" :class="tuningAccuracyClass"></div>
             </div>
           </div>
@@ -29,52 +34,54 @@
             <span>0</span>
             <span>+50</span>
           </div>
-          <div v-if="centsDeviation !== null" class="text-center mt-1"></div>
         </div>
       </v-col>
-      <v-col cols="7">
-        <span>
-          <strong style="display: inline-block; min-width: 72px" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
-        </span>
-        <v-chip small :color="tuningAccuracyColor" dark>
-          {{ tuningAccuracyText }}
-        </v-chip>
+      <v-col cols="12" sm="7" class="text-center text-sm-left">
+        <div class="d-flex align-center justify-sm-start justify-center">
+          <span class="mr-3">
+            <strong style="display: inline-block; min-width: 72px" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }} cents</strong>
+          </span>
+          <v-chip small :color="tuningAccuracyColor" dark>
+            {{ tuningAccuracyText }}
+          </v-chip>
+        </div>
       </v-col>
     </v-row>
 
-    <v-row align="center" justify="center" dense>
-      <v-col cols="auto">
-        <v-btn color="primary" class="mr-1" @click="resetHistory">
-          <v-icon>mdi-restart</v-icon>
-          <span class="d-none d-sm-inline">Reiniciar</span>
+    <v-row align="center" justify="center" dense class="mb-4">
+      <v-col cols="12" sm="9" md="8" class="d-flex flex-wrap justify-center justify-sm-start">
+        <v-btn color="primary" class="mr-2 mb-2" block small @click="resetHistory">
+          <v-icon left>mdi-restart</v-icon>
+          <span>Reiniciar</span>
         </v-btn>
-        <v-btn color="warning" class="mr-1" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" @click="calibrateNoise">
-          <v-icon>mdi-tune</v-icon>
-          <span class="d-none d-sm-inline">Calibrar Ruido</span>
+        <v-btn color="warning" class="mr-2 mb-2" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small @click="calibrateNoise">
+          <v-icon left>mdi-tune</v-icon>
+          <span>Calibrar Ruido</span>
         </v-btn>
-        <v-btn :color="isMicActive ? 'error' : 'success'" @click="toggleMic">
-          <v-icon>{{ isMicActive ? "mdi-microphone-off" : "mdi-microphone" }}</v-icon>
-          <span class="d-none d-sm-inline">
+        <v-btn :color="isMicActive ? 'error' : 'success'" block small class="mb-2" @click="toggleMic">
+          <v-icon left>{{ isMicActive ? "mdi-microphone-off" : "mdi-microphone" }}</v-icon>
+          <span>
             {{ isMicActive ? "Silenciar" : "Activar mic" }}
           </span>
         </v-btn>
       </v-col>
 
-      <v-col cols="6" sm="3" md="2">
+      <v-col cols="12" sm="3" md="4" class="mt-2 mt-sm-0">
         <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Nota Raíz' : 'Root Note'" dense outlined hide-details />
       </v-col>
     </v-row>
+
     <v-row dense>
-      <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
+      <v-col cols="12" md="6" class="px-0 mx-0">
+        <h5 class="text-center font-weight-regular mb-1">Histograma de Frecuencia</h5>
+        <canvas ref="histogram" height="350px" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
       </v-col>
-      <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black" />
+      <v-col cols="12" md="6" class="px-0 mx-0">
+        <h5 class="text-center font-weight-regular mb-1 mt-4 mt-md-0">Pentagrama (Tomasín)</h5>
+        <canvas ref="staff" height="350px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
       </v-col>
     </v-row>
-    <!-- Spectrogram -->
-    <!-- Spectrogram removed -->
-    <!-- Modal Dialog -->
+
     <v-dialog v-model="settingsDialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -815,8 +822,8 @@ export default {
       const lineSpacing = 20
       const staffWidth = width - 40
       const staffLeft = 20
-      // Usar una longitud fija para las líneas del pentagrama
-      const staffLineLength = 220
+      // Usar una longitud fija para las líneas del pentagrama en móvil
+      const staffLineLength = 110
       const lineStart = staffLeft + 10
       const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
 
@@ -864,7 +871,7 @@ export default {
       }
 
       // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
-      const noteX = staffLeft + 100
+      const noteX = staffLeft + 80
       let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
       let noteColor = "#000" // Color por defecto
       let isSharp = false // Indica si la nota es sostenido
@@ -1089,18 +1096,22 @@ export default {
   },
 }
 </script>
-
 <style scoped>
-h4 {
-  font-weight: 600;
-}
-
+/*
+  Ajustes de estilo para el medidor de afinación
+  (Aunque ya es responsivo, se asegura que el contenedor no tenga un alto fijo que lo rompa)
+*/
 .tuning-meter-container {
   width: 100%;
   height: 67px;
   max-width: 600px;
   margin: 0 auto;
   padding: 10px;
+}
+
+/* El resto de estilos permanece igual */
+h4 {
+  font-weight: 600;
 }
 
 .tuning-meter-bar {
