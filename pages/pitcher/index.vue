@@ -69,7 +69,7 @@
         <canvas ref="histogram" height="500px" :width="canvasWidth + 'px'" style="display: block; background-color: black" />
       </v-col>
       <v-col cols="6" class="px-0 mx-0">
-        <canvas ref="staff" height="500px" width="300" style="display: block; background-color: #f5f5f5" />
+        <canvas ref="staff" height="700px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black;" />
       </v-col>
     </v-row>
     <!-- Spectrogram -->
@@ -156,6 +156,8 @@ export default {
 
       // Clave de Sol SVG
       trebleClefImage: null,
+      // Clave de Fa SVG
+      bassClefImage: null,
     }
   },
   computed: {
@@ -265,16 +267,25 @@ export default {
       willReadFrequently: true,
     })
     this.ctx.lineWidth = 0.5
-    this.buffer = new Float32Array(2048)
-
     this.staffCtx = this.$refs.staff.getContext("2d")
-    
+
     // Cargar SVG de clave de Sol
     this.trebleClefImage = new Image()
     this.trebleClefImage.onload = () => {
       this.drawStaff()
     }
-    this.trebleClefImage.src = '/clave_sol.svg'
+    this.trebleClefImage.src = "/clave_sol.svg"
+
+    // Cargar SVG de clave de Fa (si existe, si no, se dibujará manualmente)
+    this.bassClefImage = new Image()
+    this.bassClefImage.onload = () => {
+      this.drawStaff()
+    }
+    this.bassClefImage.onerror = () => {
+      // Si no existe el archivo, continuamos sin él
+      this.bassClefImage = null
+    }
+    this.bassClefImage.src = "/clave_fa.svg"
 
     this.updateCanvasSize()
     window.addEventListener("resize", this.debouncedResize)
@@ -613,6 +624,7 @@ export default {
         this.history.unshift({ freq: exactFreq, midi })
         if (this.history.length > this.maxHistory) this.history.pop()
         this.drawHistogram()
+        this.drawStaff() // Actualizar Tomasín con la nota detectada
       } else {
         this.freqDisplay = "--"
         this.noteDisplay = "--"
@@ -798,17 +810,17 @@ export default {
       ctx.fillStyle = "#f5f5f5"
       ctx.fillRect(0, 0, width, height)
 
-      // Configuración del pentagrama
-      const staffTop = 150
+      // Configuración del pentagrama superior (Clave de Sol)
+      const trebleStaffTop = 100
       const lineSpacing = 20
       const staffWidth = width - 40
       const staffLeft = 20
 
-      // Dibujar las 5 líneas del pentagrama
+      // Dibujar las 5 líneas del pentagrama de Sol
       ctx.strokeStyle = "#000"
       ctx.lineWidth = 2
       for (let i = 0; i < 5; i++) {
-        const y = staffTop + i * lineSpacing
+        const y = trebleStaffTop + i * lineSpacing
         ctx.beginPath()
         ctx.moveTo(staffLeft, y)
         ctx.lineTo(staffLeft + staffWidth, y)
@@ -819,13 +831,96 @@ export default {
       if (this.trebleClefImage && this.trebleClefImage.complete) {
         const clefWidth = 40
         const clefHeight = 100
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, staffTop - 20, clefWidth, clefHeight)
+        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - 20, clefWidth, clefHeight)
       }
 
-      // Dibujar nota negra (en la línea del Sol - segunda línea desde abajo)
+      // Configuración del pentagrama inferior (Clave de Fa)
+      const bassStaffTop = trebleStaffTop + 120 // Separación entre pentagramas
+      
+      // Dibujar las 5 líneas del pentagrama de Fa
+      ctx.strokeStyle = "#000"
+      ctx.lineWidth = 2
+      for (let i = 0; i < 5; i++) {
+        const y = bassStaffTop + i * lineSpacing
+        ctx.beginPath()
+        ctx.moveTo(staffLeft, y)
+        ctx.lineTo(staffLeft + staffWidth, y)
+        ctx.stroke()
+      }
+
+      // Dibujar clave de Fa (desde SVG o manualmente)
+      if (this.bassClefImage && this.bassClefImage.complete) {
+        const clefWidth = 40
+        const clefHeight = 60
+        ctx.drawImage(this.bassClefImage, staffLeft + 5, bassStaffTop + 10, clefWidth, clefHeight)
+      } else {
+        // Dibujar clave de Fa manualmente
+        this.drawBassClef(ctx, staffLeft, bassStaffTop)
+      }
+
+      // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
       const noteX = staffLeft + 120
-      const noteY = staffTop + 3 * lineSpacing // Línea del Sol (G4)
-      this.drawQuarterNote(ctx, noteX, noteY)
+      let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
+      let noteColor = '#000' // Color por defecto
+      let isSharp = false // Indica si la nota es sostenido
+      const ledgerLines = [] // Array de líneas adicionales a dibujar
+
+      // Si hay una nota detectada, calcular su posición y color
+      if (this.history.length > 0 && this.history[0].freq) {
+        const currentMidi = this.freqToMidi(this.history[0].freq)
+        const roundedMidi = Math.round(currentMidi)
+        
+        // Determinar si es sostenido basándose en el nombre de la nota
+        const noteName = this.getNoteName(roundedMidi)
+        isSharp = noteName.includes('♯') || noteName.includes('#')
+        
+        // Calcular posición Y en el pentagrama
+        // Referencia: E4 (Mi) = MIDI 64, sobre la primera línea (trebleStaffTop + 4*lineSpacing)
+        // Mapeo de índices MIDI % 12 a posiciones naturales:
+        // C=0→0, C#=1→0, D=2→1, D#=3→1, E=4→2, F=5→3, F#=6→3, G=7→4, G#=8→4, A=9→5, A#=10→5, B=11→6
+        const naturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
+        const e4Midi = 64 // Mi/E4 (índice 4 en escala cromática)
+        const positionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[e4Midi % 12]
+        const octaveDiff = Math.floor(roundedMidi / 12) - Math.floor(e4Midi / 12)
+        const totalPositionDiff = octaveDiff * 7 + positionDiff // 7 notas naturales por octava
+        
+        // Decidir si usar pentagrama de Sol o de Fa
+        if (roundedMidi >= 60) { // C4 (MIDI 60) y superior en clave de Sol
+          noteY = trebleStaffTop + 4 * lineSpacing - (totalPositionDiff * (lineSpacing / 2))
+          
+          // Calcular líneas adicionales debajo del pentagrama de Sol
+          const bottomLine = trebleStaffTop + 4 * lineSpacing
+          if (noteY > bottomLine) {
+            const linesNeeded = Math.floor((noteY - bottomLine) / lineSpacing)
+            for (let i = 1; i <= linesNeeded; i++) {
+              ledgerLines.push(bottomLine + i * lineSpacing)
+            }
+          }
+        } else { // Notas graves en clave de Fa
+          // Referencia: F3 (Fa3) = MIDI 53, sobre la cuarta línea del pentagrama de Fa
+          const f3Midi = 53
+          const bassPositionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[f3Midi % 12]
+          const bassOctaveDiff = Math.floor(roundedMidi / 12) - Math.floor(f3Midi / 12)
+          const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
+          noteY = bassStaffTop + lineSpacing - (bassTotalPositionDiff * (lineSpacing / 2))
+        }
+        
+        // Obtener color según la nota
+        const fullIndex = (roundedMidi % 12) * 2
+        noteColor = COLORS[fullIndex]
+      }
+
+      // Dibujar líneas adicionales si es necesario (antes de la nota)
+      ledgerLines.forEach(ledgerY => {
+        ctx.strokeStyle = "#000"
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(noteX - 20, ledgerY)
+        ctx.lineTo(noteX + 20, ledgerY)
+        ctx.stroke()
+      })
+
+      this.drawQuarterNote(ctx, noteX, noteY, noteColor, isSharp)
     },
     drawTrebleClef(ctx, x, y) {
       // Dibujar clave de Sol más realista
@@ -842,7 +937,7 @@ export default {
 
       // Dibujar la clave de Sol completa con Path2D
       ctx.beginPath()
-      
+
       // Círculo central alrededor de la línea del Sol
       ctx.moveTo(12, 0)
       ctx.bezierCurveTo(12, -10, 3, -15, -6, -12)
@@ -850,23 +945,23 @@ export default {
       ctx.bezierCurveTo(-15, 13, -10, 18, -2, 18)
       ctx.bezierCurveTo(5, 18, 10, 14, 12, 8)
       ctx.bezierCurveTo(14, 2, 13, -4, 12, 0)
-      
+
       // Línea vertical que sube
       ctx.moveTo(5, 2)
       ctx.lineTo(5, -85)
-      
+
       // Gancho superior decorativo
       ctx.bezierCurveTo(5, -92, 2, -96, -3, -96)
       ctx.bezierCurveTo(-10, -96, -16, -91, -16, -83)
       ctx.bezierCurveTo(-16, -76, -12, -71, -6, -71)
       ctx.bezierCurveTo(-2, -71, 1, -73, 1, -77)
       ctx.bezierCurveTo(1, -81, -2, -83, -6, -83)
-      
+
       // Curva de regreso hacia abajo
       ctx.moveTo(5, -85)
       ctx.bezierCurveTo(8, -80, 10, -70, 10, -55)
       ctx.lineTo(10, 50)
-      
+
       // Espiral inferior característica
       ctx.bezierCurveTo(10, 60, 5, 66, -2, 66)
       ctx.bezierCurveTo(-10, 66, -16, 60, -16, 52)
@@ -874,16 +969,16 @@ export default {
       ctx.bezierCurveTo(-3, 41, 0, 43, 0, 47)
       ctx.bezierCurveTo(0, 51, -3, 54, -7, 54)
       ctx.bezierCurveTo(-9, 54, -11, 53, -12, 51)
-      
+
       ctx.fill()
-      
+
       // Agregar detalles con líneas para dar grosor
       ctx.lineWidth = 3
       ctx.beginPath()
       ctx.moveTo(5, -85)
       ctx.lineTo(5, 0)
       ctx.stroke()
-      
+
       ctx.lineWidth = 2.5
       ctx.beginPath()
       ctx.moveTo(5, 0)
@@ -892,15 +987,83 @@ export default {
 
       ctx.restore()
     },
-    drawQuarterNote(ctx, x, y) {
-      // Dibujar cabeza de nota (óvalo negro)
+    drawBassClef(ctx, x, y) {
+      // Dibujar clave de Fa manualmente
       ctx.fillStyle = "#000"
+      ctx.strokeStyle = "#000"
+      ctx.lineWidth = 2
+
+      const lineSpacing = 20
+      const fLine = y + lineSpacing // Segunda línea desde arriba (línea del Fa)
+
+      ctx.save()
+      ctx.translate(x + 15, fLine)
+      ctx.scale(1, 1)
+
+      // Dibujar la clave de Fa (símbolo de dos puntos con curva)
+      ctx.beginPath()
+      
+      // Curva principal de la clave de Fa
+      ctx.arc(-5, 0, 8, Math.PI * 0.5, Math.PI * 1.5)
+      ctx.arc(-5, -10, 4, Math.PI * 1.5, Math.PI * 0.5, true)
+      ctx.fill()
+
+      // Dos puntos característicos de la clave de Fa
+      ctx.beginPath()
+      ctx.arc(5, -5, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+      
+      ctx.beginPath()
+      ctx.arc(5, 5, 2.5, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.restore()
+    },
+    drawQuarterNote(ctx, x, y, color = '#000', isSharp = false) {
+      // Dibujar símbolo # si es sostenido (a la izquierda de la nota)
+      if (isSharp) {
+        // Contorno negro del #
+        ctx.strokeStyle = '#000'
+        ctx.lineWidth = 3
+        ctx.font = 'bold 24px serif'
+        ctx.strokeText('♯', x - 25, y + 8)
+        
+        // Relleno de color del #
+        ctx.fillStyle = color
+        ctx.fillText('♯', x - 25, y + 8)
+      }
+      
+      // Primero dibujar el relleno con color (nota interior)
+      ctx.fillStyle = color
       ctx.beginPath()
       ctx.ellipse(x, y, 8, 6, -0.3, 0, Math.PI * 2)
       ctx.fill()
+      
+      // Luego el contorno negro más grande (1px expandido)
+      ctx.strokeStyle = '#000'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.ellipse(x, y, 9, 7, -0.3, 0, Math.PI * 2)
+      ctx.stroke()
 
-      // Dibujar plica (stem) hacia arriba
-      ctx.strokeStyle = "#000"
+      // Dibujar plica (stem) con color
+      ctx.strokeStyle = color
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(x + 7, y - 1)
+      ctx.lineTo(x + 7, y - 60)
+      ctx.stroke()
+      
+      // Dibujar contorno negro de la plica (1px más ancho)
+      ctx.strokeStyle = '#000'
+      ctx.lineWidth = 4
+      ctx.beginPath()
+      ctx.moveTo(x + 7, y - 1)
+      ctx.lineTo(x + 7, y - 60)
+      ctx.stroke()
+      
+      // Volver a dibujar la plica con color encima
+      ctx.strokeStyle = color
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.moveTo(x + 7, y - 1)
