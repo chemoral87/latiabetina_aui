@@ -99,6 +99,9 @@
               <v-switch v-model="showMicrotones" :label="latinNotation ? 'Mostrar microtonos' : 'Show microtones'" hide-details class="mt-0 pt-0"></v-switch>
             </v-col>
             <v-col cols="12" sm="6">
+              <v-switch v-model="ghostQuarterNote" label="Mostrar nota fantasma" hide-details class="mt-0 pt-0"></v-switch>
+            </v-col>
+            <v-col cols="12" sm="6">
               <v-slider v-model="sensitivity" :min="0.0001" :max="0.01" :step="0.0001" label="Sensibilidad" hide-details thumb-label />
               <div class="text-center font-weight-bold">
                 {{ sensitivity.toFixed(4) }}
@@ -167,6 +170,8 @@ export default {
       trebleClefImage: null,
       // Clave de Fa SVG
       bassClefImage: null,
+      // Mostrar nota fantasma en pantalla
+      // ghostQuarterNote is persisted in Vuex (pitcher_store)
     }
   },
   computed: {
@@ -200,6 +205,14 @@ export default {
       },
       set(value) {
         this.$store.commit("pitcher_store/SET_SHOW_MICROTONES", value)
+      },
+    },
+    ghostQuarterNote: {
+      get() {
+        return this.$store.state.pitcher_store.ghostQuarterNote
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_GHOST_QUARTER_NOTE", value)
       },
     },
     maxHistory: {
@@ -980,6 +993,48 @@ export default {
         ctx.stroke()
       })
 
+      // Dibujar notas fantasma si la opción está activada
+      if (this.ghostQuarterNote && this.history.length > 0 && this.history[0].freq) {
+        const currentMidi = this.freqToMidi(this.history[0].freq)
+        const roundedMidi = Math.round(currentMidi)
+        
+        // Dibujar nota fantasma una octava arriba (MIDI + 12)
+        const upperMidi = roundedMidi + 12
+        const upperNaturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
+        const upperPositionDiff = upperNaturalPositions[upperMidi % 12] - upperNaturalPositions[64 % 12]
+        const upperOctaveDiff = Math.floor(upperMidi / 12) - Math.floor(64 / 12)
+        const upperTotalPositionDiff = upperOctaveDiff * 7 + upperPositionDiff
+        const upperNoteY = trebleStaffTop + 4 * lineSpacing - upperTotalPositionDiff * (lineSpacing / 2)
+        
+        // Dibujar nota fantasma una octava abajo (MIDI - 12)
+        const lowerMidi = roundedMidi - 12
+        let lowerNoteY
+        
+        if (lowerMidi >= 60) {
+          // Aún en clave de Sol
+          const lowerPositionDiff = upperNaturalPositions[lowerMidi % 12] - upperNaturalPositions[64 % 12]
+          const lowerOctaveDiff = Math.floor(lowerMidi / 12) - Math.floor(64 / 12)
+          const lowerTotalPositionDiff = lowerOctaveDiff * 7 + lowerPositionDiff
+          lowerNoteY = trebleStaffTop + 4 * lineSpacing - lowerTotalPositionDiff * (lineSpacing / 2)
+        } else {
+          // En clave de Fa
+          const f3Midi = 53
+          const lowerPositionDiff = upperNaturalPositions[lowerMidi % 12] - upperNaturalPositions[f3Midi % 12]
+          const lowerOctaveDiff = Math.floor(lowerMidi / 12) - Math.floor(f3Midi / 12)
+          const lowerTotalPositionDiff = lowerOctaveDiff * 7 + lowerPositionDiff
+          lowerNoteY = bassStaffTop + lineSpacing - lowerTotalPositionDiff * (lineSpacing / 2)
+        }
+        
+        // Dibujar nota fantasma superior con transparencia
+        ctx.globalAlpha = 0.6
+        this.drawQuarterNote(ctx, noteX, upperNoteY, noteColor, isSharp, zoom)
+        
+        // Dibujar nota fantasma inferior con transparencia
+        this.drawQuarterNote(ctx, noteX, lowerNoteY, noteColor, isSharp, zoom)
+        ctx.globalAlpha = 1.0
+      }
+
+      // Dibujar nota principal (sin transparencia)
       this.drawQuarterNote(ctx, noteX, noteY, noteColor, isSharp, zoom)
     },
     drawTrebleClef(ctx, x, y) {

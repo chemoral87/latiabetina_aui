@@ -3,6 +3,8 @@ export const state = () => ({
   selectedRootNote: "C",
   latinNotation: false,
   showMicrotones: true,
+  // Mostrar nota fantasma en la UI (persistido)
+  ghostQuarterNote: false,
   maxHistory: 400,
   totalNotes: 14,
   histogramHeight: 350,
@@ -26,6 +28,9 @@ export const getters = {
   },
   showMicrotones(state) {
     return state.showMicrotones
+  },
+  ghostQuarterNote(state) {
+    return state.ghostQuarterNote
   },
 }
 
@@ -65,6 +70,9 @@ export const mutations = {
   },
   SET_SHOW_MICROTONES(state, showMicrotones) {
     state.showMicrotones = showMicrotones
+  },
+  SET_GHOST_QUARTER_NOTE(state, ghost) {
+    state.ghostQuarterNote = !!ghost
   },
 }
 
