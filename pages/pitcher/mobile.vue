@@ -41,7 +41,7 @@
     </v-row>
 
     <v-row dense>
-      <v-col cols="8" class="pr-1 mx-0">
+      <v-col cols="8" md="5" class="pr-1 mx-0">
         <h5 class="text-center font-weight-regular">Histograma de Frecuencia</h5>
         <canvas ref="histogram" :height="histogramHeight + 'px'" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
         <div class="tuning-meter-container mt-2">
@@ -64,7 +64,7 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="4" class="px-0 mx-0">
+      <v-col cols="4" md="2" class="px-0 mx-0">
         <h5 class="text-center font-weight-regular">Pentagrama</h5>
         <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
         <div class="text-right">

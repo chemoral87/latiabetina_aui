@@ -1,18 +1,40 @@
-import VuexPersistence from "vuex-persist"
-import localforage from "localforage"
-
 export default ({ store }) => {
   if (!process.client) return
 
-  const vuexLocal = new VuexPersistence({
-    key: "mazapan_v1",
-    storage: localforage,
-    asyncStorage: true,
-    reducer: (state) => ({
-      newinvest: state.newinvest,
-      pitcher_store: state.pitcher_store,
-    }),
-  })
+  const KEY = "adminaui_v1"
 
-  vuexLocal.plugin(store)
+  // Cargar estado al inicio
+  try {
+    const saved = localStorage.getItem(KEY)
+    if (saved) {
+      const data = JSON.parse(saved)
+      if (data.pitcher_store) {
+        Object.assign(store.state.pitcher_store, data.pitcher_store)
+      }
+      // if (data.newinvest) {
+      //   Object.assign(store.state.newinvest, data.newinvest)
+      // }
+    }
+  } catch (e) {
+    // Ignorar errores de parseo
+  }
+
+  // Guardar en cada mutación (con debounce)
+  let timeout
+  store.subscribe(() => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({
+            pitcher_store: store.state.pitcher_store,
+            newinvest: store.state.newinvest,
+          })
+        )
+      } catch (e) {
+        // Ignorar errores de guardado
+      }
+    }, 300)
+  })
 }
