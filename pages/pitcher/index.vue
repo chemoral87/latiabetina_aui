@@ -113,9 +113,7 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-slider v-model="histogramHeight" :min="300" :max="600" :step="30" label="Altura Histograma" hide-details thumb-label />
-              <div class="text-center font-weight-bold">
-                {{ histogramHeight }}px
-              </div>
+              <div class="text-center font-weight-bold">{{ histogramHeight }}px</div>
             </v-col>
           </v-row>
         </v-card-text>
