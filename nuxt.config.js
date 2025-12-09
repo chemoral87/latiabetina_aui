@@ -1,4 +1,4 @@
-import colors from "vuetify/es5/util/colors"
+const colors = require("vuetify/lib/util/colors").default
 
 const isDev = process.env.NODE_ENV !== "production"
 const port = 3001
@@ -185,6 +185,70 @@ export default {
     },
   },
 
+  // PostCSS con PurgeCSS y cssnano para producción
+  postcss: {
+    plugins: {
+      autoprefixer: {},
+      ...(!isDev
+        ? {
+            "@fullhuman/postcss-purgecss": {
+              content: ["./components/**/*.{vue,js}", "./layouts/**/*.vue", "./pages/**/*.vue", "./plugins/**/*.{js,ts}", "./nuxt.config.{js,ts}"],
+              safelist: {
+                standard: [
+                  /^v-/,
+                  /^mdi-/,
+                  /^bg-/,
+                  /^text-/,
+                  /^d-/,
+                  /^flex-/,
+                  /^ma-/,
+                  /^mx-/,
+                  /^my-/,
+                  /^mt-/,
+                  /^mb-/,
+                  /^ml-/,
+                  /^mr-/,
+                  /^pa-/,
+                  /^px-/,
+                  /^py-/,
+                  /^pt-/,
+                  /^pb-/,
+                  /^pl-/,
+                  /^pr-/,
+                  /^align-/,
+                  /^justify-/,
+                  /^fill-/,
+                  /^elevation-/,
+                ],
+                deep: [/v-.*/, /mdi-.*/],
+                greedy: [/v-.*/, /mdi-.*/],
+              },
+              defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+            },
+            cssnano: {
+              preset: [
+                "default",
+                {
+                  discardComments: { removeAll: true },
+                  normalizeWhitespace: true,
+                  minifyFontValues: true,
+                  minifySelectors: true,
+                  mergeLonghand: true,
+                  mergeRules: true,
+                  colormin: true,
+                  reduceIdents: false,
+                  zindex: false,
+                  minifyGradients: true,
+                  normalizeUrl: true,
+                  svgo: true,
+                },
+              ],
+            },
+          }
+        : {}),
+    },
+  },
+
   // Build configuration optimizada
   build: {
     // Analizar bundle
@@ -206,8 +270,15 @@ export default {
         }
       : false,
 
-    // Optimiza CSS solo en producción
-    optimizeCSS: !isDev,
+    // Optimiza CSS solo en producción con configuración avanzada
+    optimizeCSS: !isDev
+      ? {
+          cssProcessorOptions: {
+            parser: require("postcss-safe-parser"),
+            map: false,
+          },
+        }
+      : false,
 
     // Parallel DESACTIVADO siempre que extractCSS esté activo
     parallel: false,
@@ -264,6 +335,16 @@ export default {
       css: ({ isDev }) => (isDev ? "[name].css" : "[name].[contenthash:7].css"),
       img: ({ isDev }) => (isDev ? "[path][name].[ext]" : "img/[name].[contenthash:7].[ext]"),
       font: ({ isDev }) => (isDev ? "[path][name].[ext]" : "fonts/[name].[contenthash:7].[ext]"),
+      video: ({ isDev }) => (isDev ? "[path][name].[ext]" : "videos/[name].[contenthash:7].[ext]"),
+    },
+
+    // Compila assets con loaders optimizados
+    loaders: {
+      vue: {
+        prettify: false,
+      },
+      imgUrl: { limit: 4096 }, // Inline assets < 4kb
+      fontUrl: { limit: 4096 },
     },
 
     // Transpila Vuetify correctamente
@@ -285,25 +366,70 @@ export default {
       },
     },
 
-    // Terser para minificación en producción
-    terser: {
-      terserOptions: {
-        compress: {
-          drop_console: !isDev, // Elimina console.log en producción
-          drop_debugger: !isDev,
-          pure_funcs: !isDev ? ["console.log", "console.info", "console.debug"] : [],
+    // Terser para minificación agresiva en producción
+    terser: !isDev
+      ? {
+          parallel: true,
+          cache: true,
+          sourceMap: false,
+          terserOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              passes: 2,
+              pure_funcs: ["console.log", "console.info", "console.debug", "console.warn"],
+              dead_code: true,
+              conditionals: true,
+              evaluate: true,
+              booleans: true,
+              loops: true,
+              unused: true,
+              hoist_funs: true,
+              keep_fargs: false,
+              hoist_vars: false,
+              if_return: true,
+              join_vars: true,
+              side_effects: true,
+              sequences: true,
+              collapse_vars: true,
+              reduce_vars: true,
+              warnings: false,
+              ecma: 5,
+              toplevel: false,
+              inline: 2,
+            },
+            mangle: {
+              safari10: true,
+              keep_classnames: false,
+              keep_fnames: false,
+            },
+            output: {
+              comments: false,
+              beautify: false,
+              ecma: 5,
+              ascii_only: false,
+            },
+          },
+        }
+      : {
+          terserOptions: {
+            compress: {
+              drop_console: false,
+              drop_debugger: false,
+            },
+            output: {
+              comments: true,
+            },
+          },
         },
-        output: {
-          comments: false,
-        },
-      },
-    },
 
     // Performance hints
     extend(config, { isDev, isClient }) {
       // Source maps solo en desarrollo
       if (isDev) {
         config.devtool = "eval-source-map"
+      } else {
+        config.devtool = false // Sin source maps en producción
       }
 
       // Performance hints en producción
@@ -312,6 +438,37 @@ export default {
           maxEntrypointSize: 512000, // 500kb
           maxAssetSize: 512000,
           hints: "warning",
+        }
+
+        // Agregar compresión gzip para producción
+        const CompressionPlugin = require("compression-webpack-plugin")
+        config.plugins.push(
+          new CompressionPlugin({
+            filename: "[path][base].gz",
+            algorithm: "gzip",
+            test: /\.(js|css|html|svg)$/,
+            threshold: 10240, // Solo comprimir archivos > 10kb
+            minRatio: 0.8,
+            deleteOriginalAssets: false,
+          })
+        )
+      }
+
+      // Optimización adicional para producción
+      if (!isDev) {
+        // Minimizar archivos HTML
+        const htmlMinifier = config.plugins.find((plugin) => plugin.constructor.name === "HtmlWebpackPlugin")
+        if (htmlMinifier) {
+          htmlMinifier.options.minify = {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+            minifyCSS: true,
+            minifyJS: true,
+          }
         }
       }
     },
