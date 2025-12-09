@@ -1,8 +1,9 @@
 <template>
   <v-container class="pa-4" style="max-width: 1000px">
     <h4 class="text-left mb-1">
-      <v-btn icon class="mr-1" @click="settingsDialog = true">
-        <v-icon>mdi-cog</v-icon>
+      <v-btn class="mr-1 settings-btn-glow" @click="settingsDialog = true">
+        <v-icon left>mdi-cog</v-icon>
+        Config
       </v-btn>
       Tuner
       <span>
@@ -388,7 +389,7 @@ export default {
       if (!this.analyser || !this.isMicActive) {
         return
       }
-
+      console.log("Iniciando calibración de ruido...")
       // Capturar perfil de ruido ambiente durante 3 segundos para mayor precisión
       this.noiseCalibrating = true
       this.noiseSamples = []
@@ -477,6 +478,8 @@ export default {
 
           this.isMicActive = true
           this.drawNoteLines()
+          // Calibrar ruido automáticamente al activar el micrófono
+          this.calibrateNoise()
           this.update()
         } catch (e) {
           alert("Error accediendo al micrófono: " + e.message)
@@ -997,7 +1000,7 @@ export default {
       if (this.ghostQuarterNote && this.history.length > 0 && this.history[0].freq) {
         const currentMidi = this.freqToMidi(this.history[0].freq)
         const roundedMidi = Math.round(currentMidi)
-        
+
         // Dibujar nota fantasma una octava arriba (MIDI + 12)
         const upperMidi = roundedMidi + 12
         const upperNaturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
@@ -1005,11 +1008,11 @@ export default {
         const upperOctaveDiff = Math.floor(upperMidi / 12) - Math.floor(64 / 12)
         const upperTotalPositionDiff = upperOctaveDiff * 7 + upperPositionDiff
         const upperNoteY = trebleStaffTop + 4 * lineSpacing - upperTotalPositionDiff * (lineSpacing / 2)
-        
+
         // Dibujar nota fantasma una octava abajo (MIDI - 12)
         const lowerMidi = roundedMidi - 12
         let lowerNoteY
-        
+
         if (lowerMidi >= 60) {
           // Aún en clave de Sol
           const lowerPositionDiff = upperNaturalPositions[lowerMidi % 12] - upperNaturalPositions[64 % 12]
@@ -1024,11 +1027,11 @@ export default {
           const lowerTotalPositionDiff = lowerOctaveDiff * 7 + lowerPositionDiff
           lowerNoteY = bassStaffTop + lineSpacing - lowerTotalPositionDiff * (lineSpacing / 2)
         }
-        
+
         // Dibujar nota fantasma superior con transparencia
-        ctx.globalAlpha = 0.6
+        ctx.globalAlpha = 0.45
         this.drawQuarterNote(ctx, noteX, upperNoteY, noteColor, isSharp, zoom)
-        
+
         // Dibujar nota fantasma inferior con transparencia
         this.drawQuarterNote(ctx, noteX, lowerNoteY, noteColor, isSharp, zoom)
         ctx.globalAlpha = 1.0
@@ -1135,6 +1138,9 @@ export default {
       ctx.restore()
     },
     drawQuarterNote(ctx, x, y, color = "#000", isSharp = false, zoom = 1.0) {
+      // Longitud del palito (stem) de la nota
+      const stemLength = 47 * zoom
+
       // Dibujar símbolo # si es sostenido (a la izquierda de la nota)
       if (isSharp) {
         // Contorno negro del #
@@ -1166,7 +1172,7 @@ export default {
       ctx.lineWidth = 2 * zoom
       ctx.beginPath()
       ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - stemLength)
       ctx.stroke()
 
       // Dibujar contorno negro de la plica (1px más ancho)
@@ -1174,7 +1180,7 @@ export default {
       ctx.lineWidth = 4 * zoom
       ctx.beginPath()
       ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - stemLength)
       ctx.stroke()
 
       // Volver a dibujar la plica con color encima
@@ -1182,7 +1188,7 @@ export default {
       ctx.lineWidth = 2 * zoom
       ctx.beginPath()
       ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - 60 * zoom)
+      ctx.lineTo(x + 7 * zoom, y - stemLength)
       ctx.stroke()
     },
     // updateSpectrogram removed
@@ -1282,5 +1288,19 @@ h4 {
 
 .tuning-poor {
   color: #d32f2f !important;
+}
+
+.settings-btn-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8), 0 0 30px rgba(33, 150, 243, 0.6);
+  }
 }
 </style>
