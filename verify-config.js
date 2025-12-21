@@ -28,7 +28,6 @@ if (config.default.build.terser) {
 } else {
   console.log("❌ Terser no configurado")
 }
-console.log("")
 
 // Verificar extractCSS
 console.log("✅ ExtractCSS:", config.default.build.extractCSS ? "Habilitado" : "Deshabilitado")

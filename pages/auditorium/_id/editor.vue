@@ -18,23 +18,12 @@
           Agregar etiqueta sección
         </v-btn>
 
-        <!-- Botones de Importar/Exportar -->
-        <v-card outlined class="mb-4 pa-2">
-          <div class="text-caption mb-2 font-weight-bold">Configuración</div>
-          <v-btn x-small color="success" block class="mb-2" @click="exportConfiguration">
-            <v-icon left x-small>mdi-download</v-icon>
-            Exportar JSON
-          </v-btn>
-          <v-btn x-small color="info" block @click="$refs.fileInput.click()">
-            <v-icon left x-small>mdi-upload</v-icon>
-            Importar JSON
-          </v-btn>
-          <input ref="fileInput" type="file" accept=".json" style="display: none" @change="importConfiguration" />
-        </v-card>
+        <!-- Botones de Importar/Exportar (componente separado) -->
+        <json-config :config-data="configData" @imported="handleImportedConfig" @import-error="$toast?.error('Error al importar JSON')" />
 
-        <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="40" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
+        <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
 
-        <v-slider v-model="settings.SEATS_DISTANCE" :min="0" :max="60" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
+        <v-slider v-model="settings.SEATS_DISTANCE" :min="5" :max="12" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
 
         <!-- Lista de Secciones -->
         <v-expansion-panels accordion>
@@ -119,63 +108,25 @@
         </v-expansion-panels>
       </v-col>
 
-      <!-- Canvas de Asientos -->
+      <!-- Canvas de Asientos (separated component) -->
       <v-col cols="12" md="9">
-        <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
-          <v-stage :config="stageConfig">
-            <v-layer>
-              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
-                <!-- Fondo de sección (solo si NO es etiqueta) -->
-                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
-
-                <!-- Título de sección -->
-                <v-text :config="getSectionTitleConfig(section)" />
-
-                <!-- Subsecciones (solo si NO es etiqueta de sección) -->
-                <template v-if="!section.isLabel">
-                  <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
-                    <!-- Si la subsección es una etiqueta/área -->
-                    <template v-if="sub.isLabel">
-                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
-                    </template>
-
-                    <!-- Si la subsección tiene asientos -->
-                    <template v-else>
-                      <!-- Etiquetas del eje Y (números de fila) -->
-                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-
-                      <!-- Etiquetas del eje X (letras de columna) -->
-                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-
-                      <!-- Fondo de subsección -->
-                      <v-rect :config="getSubsectionRectConfig(sub)" />
-
-                      <!-- Título de subsección -->
-                      <v-text :config="getSubsectionTitleConfig(sub)" />
-
-                      <!-- Asientos -->
-                      <v-circle v-for="seat in getSubsectionSeats(sub)" :key="seat.id" :config="getSeatConfig(seat)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat)" />
-                    </template>
-                  </v-group>
-                </template>
-              </v-group>
-            </v-layer>
-          </v-stage>
-        </v-sheet>
+        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" />
       </v-col>
     </v-row>
+    {{ configData }}
   </v-container>
 </template>
 
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
+import JsonConfig from "~/components/JsonConfig.vue"
+import SeatsStage from "~/components/SeatsStage.vue"
 Vue.use(VueKonva)
 
 const DEFAULT_SETTINGS = {
-  SEAT_SIZE: 10,
-  SEATS_DISTANCE: 15,
+  SEAT_SIZE: 12,
+  SEATS_DISTANCE: 8,
   SUBSECTION_PADDING: 30,
   SECTIONS_MARGIN: 10,
   SECTION_TOP_PADDING: 40,
@@ -193,6 +144,7 @@ const COLORS = {
 }
 // reference https://codesandbox.io/p/sandbox/kind-waterfall-483dgv
 export default {
+  components: { JsonConfig, SeatsStage },
   middleware: ["authenticated"],
 
   async asyncData({ params, app, error }) {
@@ -209,6 +161,7 @@ export default {
     return {
       auditorium: {},
       stageConfig: { width: 900, height: 700 },
+      activeSeat: null,
       sections: [],
       selectedRow: {},
       settings: { ...DEFAULT_SETTINGS },
@@ -219,13 +172,51 @@ export default {
     seatSpacing() {
       return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
     },
-    configData() {
-      return {
-        version: "1.0",
-        timestamp: new Date().toISOString(),
-        settings: this.settings,
-        sections: this.sections,
+    tooltipPos() {
+      if (!this.activeSeat) return { x: 0, y: 0 }
+      try {
+        const parts = String(this.activeSeat.id).split("-")
+        // expected id like 'section-1-2-3' -> parts ['section','1','2','3']
+        const sectionIdx = Math.max(0, parseInt(parts[1], 10) - 1)
+        const subIdx = Math.max(0, parseInt(parts[2], 10) - 1)
+        const section = this.sections[sectionIdx]
+        if (!section) return { x: this.activeSeat.x, y: this.activeSeat.y }
+        const sectionPos = this.getSectionConfig(sectionIdx)
+        const subPos = this.getSubsectionPosition(section, subIdx)
+        const x = sectionPos.x + subPos.x + this.activeSeat.x + (this.settings.SEAT_SIZE / 2 + 6)
+        const y = sectionPos.y + subPos.y + this.activeSeat.y - (this.settings.SEAT_SIZE / 2 + 8)
+        return { x, y }
+      } catch (err) {
+        return { x: this.activeSeat.x, y: this.activeSeat.y }
       }
+    },
+    configData() {
+      // Return a cleaned copy so transient values like category="Ninguno" are not persisted
+      const cleaned = JSON.parse(
+        JSON.stringify({
+          version: "1.0",
+          timestamp: new Date().toISOString(),
+          settings: this.settings,
+          sections: this.sections,
+        })
+      )
+
+      if (Array.isArray(cleaned.sections)) {
+        cleaned.sections.forEach((section) => {
+          if (!Array.isArray(section.subsections)) return
+          section.subsections.forEach((sub) => {
+            if (!Array.isArray(sub.seats)) return
+            sub.seats.forEach((row) => {
+              if (!Array.isArray(row)) return
+              row.forEach((seat) => {
+                if (seat && seat.category === "Ninguno") delete seat.category
+              })
+            })
+          })
+        })
+      }
+
+      return cleaned
     },
   },
 
@@ -402,10 +393,89 @@ export default {
     },
 
     // ============ MANEJO DE EVENTOS ============
-    handleSeatClick(seat) {
+    handleSeatClick(seat, e) {
+      // Toggle selection if not reserved
       if (seat.state !== "reserved") {
         seat.state = seat.state === "selected" ? "free" : "selected"
       }
+      // Open tooltip for this seat
+      this.activeSeat = seat
+      this.$forceUpdate()
+
+      // After DOM update, move the tooltip group to top of its layer so it renders above seats
+      this.$nextTick(() => {
+        try {
+          const stage = e && e.target && e.target.getStage ? e.target.getStage() : null
+          if (!stage) return
+          const tooltipNode = stage.findOne("." + ("tooltip-" + seat.id))
+          if (tooltipNode && tooltipNode.moveToTop) {
+            tooltipNode.moveToTop()
+            const layer = tooltipNode.getLayer && tooltipNode.getLayer()
+            if (layer && layer.draw) layer.draw()
+          }
+        } catch (err) {
+          // ignore
+        }
+      })
+    },
+
+    setSeatCategory(seat, category) {
+      if (!seat) return
+
+      // Normalize category to the user's required export values
+      const categoryMap = {
+        servidores: "Servidores",
+        nuevos: "Nuevos",
+        incapacitados: "Incapacitados",
+        discapacitados: "Incapacitados",
+      }
+
+      // Find original seat object in sections (getSubsectionSeats returns copies)
+      const original = this.findSeatById(seat.id)
+
+      const value = category == null ? "Ninguno" : categoryMap[String(category).toLowerCase()] || category
+
+      if (original) {
+        this.$set(original, "category", value)
+      } else {
+        this.$set(seat, "category", value)
+      }
+
+      // Close tooltip after selection
+      this.activeSeat = null
+      this.$forceUpdate()
+    },
+
+    findSeatById(id) {
+      if (!id) return null
+      for (let s = 0; s < this.sections.length; s++) {
+        const section = this.sections[s]
+        for (let subIdx = 0; subIdx < (section.subsections?.length || 0); subIdx++) {
+          const sub = section.subsections[subIdx]
+          if (!sub.seats) continue
+          for (let r = 0; r < sub.seats.length; r++) {
+            const row = sub.seats[r]
+            for (let c = 0; c < row.length; c++) {
+              const seat = row[c]
+              if (seat && seat.id === id) return seat
+            }
+          }
+        }
+      }
+      return null
+    },
+
+    handleStageClick(e) {
+      // Close tooltip when clicking outside a seat (i.e. target is not a Circle nor inside one)
+      let node = e.target
+      while (node) {
+        const cls = node.getClassName && node.getClassName()
+        if (cls === "Circle") return
+        if (cls === "Stage") break
+        node = node.getParent()
+      }
+      this.activeSeat = null
+      this.$forceUpdate()
     },
 
     handleSeatHover(e) {
@@ -558,14 +628,30 @@ export default {
     getSeatConfig(seat) {
       const isReserved = seat.state === "reserved"
       const isSelected = seat.state === "selected"
+      // Border color/width override when seat has a category
+      const category = seat.category ? String(seat.category).toLowerCase() : null
+      const classStrokeMap = {
+        servidores: "#9e9e9e",
+        nuevos: COLORS.SEAT_SELECTED,
+        incapacitados: "#f44336",
+        discapacitados: "#f44336",
+      }
+
+      let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
+      let strokeWidth = 1
+
+      if (category && classStrokeMap[category]) {
+        stroke = classStrokeMap[category]
+        strokeWidth = 4
+      }
 
       return {
         x: seat.x,
         y: seat.y,
         radius: this.settings.SEAT_SIZE / 2,
         fill: isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE,
-        stroke: isSelected ? COLORS.SEAT_SELECTED : "#757575",
-        strokeWidth: 1,
+        stroke,
+        strokeWidth,
         opacity: isReserved ? 0.6 : 1,
       }
     },
@@ -606,60 +692,37 @@ export default {
       return maxRows * this.seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
     },
 
-    // ============ IMPORTAR/EXPORTAR ============
-    exportConfiguration() {
-      const jsonStr = JSON.stringify(this.configData, null, 2)
-      const blob = new Blob([jsonStr], { type: "application/json" })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = url
-      link.download = `auditorio-config-${Date.now()}.json`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-    },
+    // Handle configuration object emitted by JsonConfig component
+    handleImportedConfig(config) {
+      try {
+        if (!config || !config.sections || !config.settings) {
+          alert("Archivo JSON inválido: falta estructura requerida")
+          return
+        }
 
-    importConfiguration(event) {
-      const file = event.target.files[0]
-      if (!file) return
+        this.auditorium.config = config
+        Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
 
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        try {
-          const config = JSON.parse(e.target.result)
-
-          if (!config.sections || !config.settings) {
-            alert("Archivo JSON inválido: falta estructura requerida")
-            return
-          }
-
-          this.auditorium.config = config
-          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-          // Reasignar IDs consecutivos al importar
-          const cleanSections = JSON.parse(JSON.stringify(config.sections))
-          cleanSections.forEach((section, sIdx) => {
-            section.id = `${sIdx + 1}`
-            section.subsections?.forEach((sub, subIdx) => {
-              sub.id = `${section.id}-${subIdx + 1}`
-              sub.seats?.forEach((row, rowIdx) => {
-                row.forEach((seat, colIdx) => {
-                  if ("state" in seat) delete seat.state
-                  // Actualizar ID del asiento con nuevos IDs consecutivos
-                  seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
-                })
+        // Reasignar IDs consecutivos al importar
+        const cleanSections = JSON.parse(JSON.stringify(config.sections))
+        cleanSections.forEach((section, sIdx) => {
+          section.id = `${sIdx + 1}`
+          section.subsections?.forEach((sub, subIdx) => {
+            sub.id = `${section.id}-${subIdx + 1}`
+            sub.seats?.forEach((row, rowIdx) => {
+              row.forEach((seat, colIdx) => {
+                if ("state" in seat) delete seat.state
+                seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
               })
             })
           })
-          this.sections = cleanSections
-          event.target.value = ""
-          this.$forceUpdate()
-          alert("Configuración importada correctamente")
-        } catch (error) {
-          alert("Error al importar: " + error.message)
-        }
+        })
+        this.sections = cleanSections
+        this.$forceUpdate()
+        alert("Configuración importada correctamente")
+      } catch (error) {
+        alert("Error al importar: " + error.message)
       }
-      reader.readAsText(file)
     },
   },
 }
