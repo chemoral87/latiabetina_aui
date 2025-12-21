@@ -32,13 +32,19 @@
 
       <v-layer>
         <v-group v-if="activeSeat" :config="{ x: tooltipPos.x, y: tooltipPos.y }">
-          <v-rect :config="{ width: 110, height: 92, fill: '#333', cornerRadius: 6, opacity: 0.95 }" />
+          <v-rect :config="{ width: tooltipWidth, height: tooltipHeight, fill: '#333', cornerRadius: 6, opacity: 0.95 }" />
           <v-text :config="{ x: 8, y: 6, text: 'Clasificación:', fontSize: 11, fill: '#fff', fontStyle: 'bold' }" />
 
-          <v-text :config="{ x: 8, y: 24, text: 'Servidores', fontSize: 12, fill: '#9e9e9e' }" @click="setSeatCategory(activeSeat, 'Servidores')" />
-          <v-text :config="{ x: 8, y: 40, text: 'Nuevos', fontSize: 12, fill: '#1976d2' }" @click="setSeatCategory(activeSeat, 'Nuevos')" />
-          <v-text :config="{ x: 8, y: 56, text: 'Incapacitados', fontSize: 12, fill: '#f44336' }" @click="setSeatCategory(activeSeat, 'Incapacitados')" />
-          <v-text :config="{ x: 8, y: 72, text: 'Ninguno', fontSize: 12, fill: '#fff' }" @click="setSeatCategory(activeSeat, null)" />
+          <template v-for="(cat, ci) in categories">
+            <v-text
+              :key="`cat-${ci}`"
+              :config="{ x: 8, y: 24 + ci * 16, text: '-> ' + cat.label, fontSize: 12, fill: '#fff' }"
+              @click="setSeatCategory(activeSeat, cat.value)"
+              @mouseenter="handleTooltipHover"
+              @mouseleave="handleTooltipLeave"
+            />
+            <v-rect :key="`ucat-${ci}`" :config="getUnderlineConfig(cat, ci)" />
+          </template>
         </v-group>
       </v-layer>
     </v-stage>
@@ -66,6 +72,10 @@ export default {
     sections: { type: Array, required: true },
     settings: { type: Object, required: true },
     stageConfig: { type: Object, required: true },
+    categories: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -98,6 +108,23 @@ export default {
       } catch (err) {
         return { x: this.activeSeat.x, y: this.activeSeat.y }
       }
+    },
+    tooltipWidth() {
+      const base = 110
+      try {
+        if (!this.categories || this.categories.length === 0) return base
+        const maxText = Math.max(...this.categories.map((cat) => this.getTextWidth("-> " + cat.label, 12)))
+        return Math.max(base, Math.ceil(maxText) + 16)
+      } catch (err) {
+        return base
+      }
+    },
+    tooltipHeight() {
+      const header = 20
+      const optionHeight = 16
+      const bottomPad = 12
+      const count = this.categories ? this.categories.length : 0
+      return Math.max(40, header + count * optionHeight + bottomPad)
     },
   },
   methods: {
@@ -251,9 +278,24 @@ export default {
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
       let strokeWidth = 1
 
-      if (category && classStrokeMap[category]) {
-        stroke = classStrokeMap[category]
-        strokeWidth = 4
+      if (category) {
+        // prefer category color from passed `categories` prop when available
+        try {
+          const def = (this.categories || []).find((c) => String(c.label).toLowerCase() === category || String(c.value).toLowerCase() === category)
+          // Do NOT apply border when the matched category represents "Ninguno" (value === null)
+          if (def && typeof def.value !== "undefined" && def.value !== null && def.fill) {
+            stroke = def.fill
+            strokeWidth = 4
+          } else if (classStrokeMap[category]) {
+            stroke = classStrokeMap[category]
+            strokeWidth = 4
+          }
+        } catch (err) {
+          if (classStrokeMap[category]) {
+            stroke = classStrokeMap[category]
+            strokeWidth = 4
+          }
+        }
       }
 
       return {
@@ -382,6 +424,49 @@ export default {
 
     handleSeatLeave(e) {
       e.target.getStage().container().style.cursor = "default"
+    },
+    handleTooltipHover(e) {
+      try {
+        const container = e.target.getStage().container()
+        container.style.cursor = "pointer"
+      } catch (err) {
+        // ignore
+      }
+    },
+    handleTooltipLeave(e) {
+      try {
+        const container = e.target.getStage().container()
+        container.style.cursor = "default"
+      } catch (err) {
+        // ignore
+      }
+    },
+    getTextWidth(text, fontSize = 12, fontFamily = "Arial") {
+      try {
+        if (typeof document === "undefined") return text.length * (fontSize * 0.6)
+        if (!this._textMeasureCtx) {
+          const canvas = document.createElement("canvas")
+          this._textMeasureCtx = canvas.getContext("2d")
+        }
+        this._textMeasureCtx.font = `${fontSize}px ${fontFamily}`
+        return this._textMeasureCtx.measureText(text).width
+      } catch (err) {
+        return text.length * (fontSize * 0.6)
+      }
+    },
+
+    getUnderlineConfig(cat, ci) {
+      const text = "-> " + cat.label
+      const fontSize = 12
+      const width = this.getTextWidth(text, fontSize)
+      return {
+        x: 8,
+        y: 26 + ci * 16 + fontSize - 2,
+        width,
+        height: 2,
+        fill: cat.fill,
+        cornerRadius: 1,
+      }
     },
     // Parse seat id robustly: extract numeric parts and map to section/sub indexes
     parseSeatId(id) {

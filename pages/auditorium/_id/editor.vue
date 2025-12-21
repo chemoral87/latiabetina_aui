@@ -114,7 +114,7 @@
 
       <!-- Canvas de Asientos (separated component) -->
       <v-col cols="12" md="9">
-        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" />
+        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
       </v-col>
     </v-row>
     {{ configData }}
@@ -165,6 +165,14 @@ export default {
     return {
       auditorium: {},
       stageConfig: { width: 900, height: 700 },
+      stageCategories: [
+        { label: "Servidores", value: "Servidores", fill: "#9e9e9e" },
+        { label: "Nuevos", value: "Nuevos", fill: "#1976d2" },
+        { label: "Incapacitados", value: "Incapacitados", fill: "#f44336" },
+        { label: "Reservados", value: "Reservados", fill: "#008f39" },
+        { label: "Lideres", value: "Lideres", fill: "#ff6eec" },
+        { label: "Ninguno", value: null, fill: "#ffffff" },
+      ],
       activeSeat: null,
       sections: [],
       selectedRow: {},
@@ -456,18 +464,16 @@ export default {
     setSeatCategory(seat, category) {
       if (!seat) return
 
-      // Normalize category to the user's required export values
-      const categoryMap = {
-        servidores: "Servidores",
-        nuevos: "Nuevos",
-        incapacitados: "Incapacitados",
-        discapacitados: "Incapacitados",
-      }
-
+      // Derive normalized category label from the page's `stageCategories`
       // Find original seat object in sections (getSubsectionSeats returns copies)
       const original = this.findSeatById(seat.id)
-
-      const value = category == null ? "Ninguno" : categoryMap[String(category).toLowerCase()] || category
+      let value
+      if (category == null) {
+        value = "Ninguno"
+      } else {
+        const match = (this.stageCategories || []).find((c) => String(c.value) === String(category) || String(c.label) === String(category))
+        value = match ? match.label : category
+      }
 
       if (original) {
         this.$set(original, "category", value)
