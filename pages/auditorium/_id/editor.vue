@@ -8,6 +8,7 @@
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>
+
         <v-btn color="primary" block class="mb-2" @click="addSection(false)">
           <v-icon left>mdi-plus</v-icon>
           Agregar sección
@@ -24,6 +25,9 @@
         <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
 
         <v-slider v-model="settings.SEATS_DISTANCE" :min="5" :max="12" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
+
+        <!-- Slider para depuración: Padding superior de sección -->
+        <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5" label="Padding superior sección" thumb-label class="mb-4" />
 
         <!-- Lista de Secciones -->
         <v-expansion-panels accordion>
@@ -129,7 +133,7 @@ const DEFAULT_SETTINGS = {
   SEATS_DISTANCE: 8,
   SUBSECTION_PADDING: 30,
   SECTIONS_MARGIN: 10,
-  SECTION_TOP_PADDING: 40,
+  SECTION_TOP_PADDING: 80,
   SECTION_SIDE_PADDING: 20,
   SECTION_BOTTOM_PADDING: 20,
 }
@@ -206,10 +210,20 @@ export default {
           if (!Array.isArray(section.subsections)) return
           section.subsections.forEach((sub) => {
             if (!Array.isArray(sub.seats)) return
-            sub.seats.forEach((row) => {
+            // Normalize each seat to only the minimal persisted fields
+            sub.seats.forEach((row, rowIdx) => {
               if (!Array.isArray(row)) return
-              row.forEach((seat) => {
-                if (seat && seat.category === "Ninguno") delete seat.category
+              row.forEach((seat, colIdx) => {
+                if (!seat) return
+                // remove transient props
+                if (seat.category === "Ninguno") delete seat.category
+                if ("state" in seat) delete seat.state
+
+                // replace seat object with minimal persisted shape
+                const minimal = { id: seat.id, row: seat.row, col: seat.col }
+                if (seat.category) minimal.category = seat.category
+                // assign back into cleaned structure
+                row[colIdx] = minimal
               })
             })
           })
@@ -346,6 +360,26 @@ export default {
       const cols = Math.max(1, Math.min(30, parseInt(sub.tempCols) || 5))
       sub.seats = this.createSeatsGrid(rows, cols, sIdx, subIdx, section.id)
       this.$forceUpdate()
+    },
+
+    clearAllSeatStates() {
+      if (!Array.isArray(this.sections)) return
+      this.sections.forEach((section) => {
+        if (!Array.isArray(section.subsections)) return
+        section.subsections.forEach((sub) => {
+          if (!Array.isArray(sub.seats)) return
+          sub.seats.forEach((row) => {
+            if (!Array.isArray(row)) return
+            row.forEach((seat) => {
+              if (seat && "state" in seat) {
+                this.$delete(seat, "state")
+              }
+            })
+          })
+        })
+      })
+      this.$forceUpdate()
+      this.$toast?.success && this.$toast.success("Estados eliminados")
     },
 
     getRowOptions(sub) {
@@ -490,7 +524,7 @@ export default {
     // ============ CONFIGURACIONES DE KONVA ============
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 60)
+      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, this.settings.SECTION_TOP_PADDING)
 
       return {
         x: (this.stageConfig.width - this.getSectionWidth(section)) / 2,

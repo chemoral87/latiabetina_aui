@@ -9,8 +9,8 @@
           <template v-if="!section.isLabel">
             <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
               <template v-if="sub.isLabel">
-                <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
+                <!-- <v-rect :config="getSubsectionLabelBgConfig(sub, section)" /> -->
+                <!-- <v-text :config="getSubsectionLabelTextConfig(sub, section)" /> -->
               </template>
 
               <template v-else>
@@ -32,13 +32,13 @@
 
       <v-layer>
         <v-group v-if="activeSeat" :config="{ x: tooltipPos.x, y: tooltipPos.y }">
-          <v-rect :config="{ width: 170, height: 72, fill: '#333', cornerRadius: 6, opacity: 0.95 }" />
+          <v-rect :config="{ width: 110, height: 92, fill: '#333', cornerRadius: 6, opacity: 0.95 }" />
           <v-text :config="{ x: 8, y: 6, text: 'Clasificación:', fontSize: 11, fill: '#fff', fontStyle: 'bold' }" />
 
           <v-text :config="{ x: 8, y: 24, text: 'Servidores', fontSize: 12, fill: '#9e9e9e' }" @click="setSeatCategory(activeSeat, 'Servidores')" />
           <v-text :config="{ x: 8, y: 40, text: 'Nuevos', fontSize: 12, fill: '#1976d2' }" @click="setSeatCategory(activeSeat, 'Nuevos')" />
-          <v-text :config="{ x: 90, y: 24, text: 'Incapacitados', fontSize: 12, fill: '#f44336' }" @click="setSeatCategory(activeSeat, 'Incapacitados')" />
-          <v-text :config="{ x: 90, y: 40, text: 'Ninguno', fontSize: 12, fill: '#fff' }" @click="setSeatCategory(activeSeat, null)" />
+          <v-text :config="{ x: 8, y: 56, text: 'Incapacitados', fontSize: 12, fill: '#f44336' }" @click="setSeatCategory(activeSeat, 'Incapacitados')" />
+          <v-text :config="{ x: 8, y: 72, text: 'Ninguno', fontSize: 12, fill: '#fff' }" @click="setSeatCategory(activeSeat, null)" />
         </v-group>
       </v-layer>
     </v-stage>
@@ -52,7 +52,8 @@ Vue.use(VueKonva)
 
 const COLORS = {
   SEAT_SELECTED: "#1976d2",
-  SEAT_FREE: "#1b728d",
+
+  SEAT_FREE: "#ffeb3b", // "#1b728d",
   SEAT_RESERVED: "lightgrey",
   SECTION_BG: "#222d3b",
   SUBSECTION_BG: "#e0e0e0",
@@ -78,11 +79,17 @@ export default {
     tooltipPos() {
       if (!this.activeSeat) return { x: 0, y: 0 }
       try {
+        // If click handler already computed absolute tooltip position, use it
+        if (this.activeSeat.isAbsolute && typeof this.activeSeat.x === "number" && typeof this.activeSeat.y === "number") {
+          return { x: this.activeSeat.x, y: this.activeSeat.y }
+        }
+
         const parts = String(this.activeSeat.id).split("-")
         const sectionIdx = Math.max(0, parseInt(parts[1], 10) - 1)
         const subIdx = Math.max(0, parseInt(parts[2], 10) - 1)
         const section = this.sections[sectionIdx]
         if (!section) return { x: this.activeSeat.x, y: this.activeSeat.y }
+
         const sectionPos = this.getSectionConfig(sectionIdx)
         const subPos = this.getSubsectionPosition(section, subIdx)
         const x = sectionPos.x + subPos.x + this.activeSeat.x + (this.settings.SEAT_SIZE / 2 + 6)
@@ -96,7 +103,7 @@ export default {
   methods: {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 60)
+      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, this.settings.SECTION_TOP_PADDING)
       return { x: (this.stageConfig.width - this.getSectionWidth(section)) / 2, y }
     },
 
@@ -201,8 +208,9 @@ export default {
     },
 
     getColLabelConfig(colIdx, sub) {
+      const labelSpacing = this.seatSpacing // small extra gap between column letters
       return {
-        x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+        x: colIdx * labelSpacing + this.settings.SEAT_SIZE / 2,
         y: this.getSubsectionHeight(sub) + 5,
         text: String.fromCharCode(65 + colIdx),
         fontSize: 8,
@@ -292,16 +300,34 @@ export default {
 
     // Events & interactions
     handleSeatClick(seat, e) {
-      if (seat.state !== "reserved") {
-        const original = this.findSeatById(seat.id)
-        const newState = (original?.state || seat.state) === "selected" ? "free" : "selected"
-        if (original) {
-          this.$set(original, "state", newState)
-        } else {
-          this.$set(seat, "state", newState)
+      // stop Konva/native event propagation so stage click doesn't immediately close the tooltip
+      try {
+        if (e && e.evt && typeof e.evt.stopPropagation === "function") {
+          e.evt.stopPropagation()
+        } else if (e && typeof e.cancelBubble !== "undefined") {
+          e.cancelBubble = true
         }
+      } catch (err) {
+        // ignore
       }
-      this.activeSeat = seat
+
+      // compute absolute tooltip position so it remains accurate even if seat objects are re-created
+      try {
+        const { sectionIdx, subIdx } = this.parseSeatId(seat.id)
+        const section = this.sections[sectionIdx]
+        if (section) {
+          const sectionPos = this.getSectionConfig(sectionIdx)
+          const subPos = this.getSubsectionPosition(section, subIdx)
+          const absX = sectionPos.x + subPos.x + seat.x + (this.settings.SEAT_SIZE / 2 + 6)
+          const absY = sectionPos.y + subPos.y + seat.y - (this.settings.SEAT_SIZE / 2 + 8)
+          this.activeSeat = { id: seat.id, x: absX, y: absY, isAbsolute: true }
+        } else {
+          this.activeSeat = { id: seat.id, x: seat.x, y: seat.y, isAbsolute: false }
+        }
+      } catch (err) {
+        this.activeSeat = { id: seat.id, x: seat.x, y: seat.y, isAbsolute: false }
+      }
+
       this.$forceUpdate()
     },
 
@@ -356,6 +382,16 @@ export default {
 
     handleSeatLeave(e) {
       e.target.getStage().container().style.cursor = "default"
+    },
+    // Parse seat id robustly: extract numeric parts and map to section/sub indexes
+    parseSeatId(id) {
+      if (!id) return { sectionIdx: 0, subIdx: 0 }
+      const nums = String(id).match(/\d+/g)
+      if (!nums || nums.length === 0) return { sectionIdx: 0, subIdx: 0 }
+      // Expecting at least [section, subsection, row, col] or ['section','1','2','3'] formats
+      const sectionIdx = Math.max(0, parseInt(nums[0], 10) - 1)
+      const subIdx = Math.max(0, parseInt(nums[1] || 1, 10) - 1)
+      return { sectionIdx, subIdx }
     },
   },
 }
