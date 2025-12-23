@@ -1,0 +1,118 @@
+<template>
+  <v-card>
+    <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" :loading="loading" :items-per-page="optionsTable.itemsPerPage" class="elevation-1">
+      <template #[`item.actions`]="{ item }">
+        <div class="d-flex flex-nowrap justify-center">
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="edit(item)">
+                <v-icon small>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+            <span>Editar</span>
+          </v-tooltip>
+
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="remove(item)">
+                <v-icon small>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Eliminar</span>
+          </v-tooltip>
+        </div>
+      </template>
+      <template #no-data>
+        <v-card-text>No hay datos</v-card-text>
+      </template>
+      <!-- Fecha formatted -->
+      <template #[`item.created_at`]="{ item }">
+        <span>{{ $moment(item.created_at).format("DD MMM YYYY HH:mm").toUpperCase() }}</span>
+      </template>
+    </v-data-table>
+  </v-card>
+</template>
+
+<script>
+export default {
+  name: "TestimonyTable",
+  props: {
+    options: { type: Object, required: true },
+    response: { type: Object, required: true },
+    loading: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      optionsTable: {},
+      headers: [
+        { text: "ID", value: "id" },
+        { text: "Nombre", value: "name" },
+        { text: "Teléfono", value: "phone_number" },
+        { text: "Categorías", value: "categories" },
+        { text: "Fecha", value: "created_at" },
+        { text: "Acciones", value: "actions", sortable: false },
+      ],
+      isFirstWatch: true,
+    }
+  },
+  computed: {
+    total() {
+      return this.response && this.response.total ? this.response.total : 0
+    },
+
+    items() {
+      return this.response && this.response.data ? this.response.data : []
+    },
+  },
+  watch: {
+    options: {
+      handler(newOptions) {
+        if (newOptions) {
+          this.optionsTable = Object.assign({}, newOptions)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+
+    optionsTable: {
+      handler(newValue, oldValue) {
+        if (this.isFirstWatch) {
+          this.isFirstWatch = false
+          return
+        }
+
+        if (this.hasOptionsChanged(newValue, oldValue)) {
+          this.$emit("sorting", newValue)
+        }
+      },
+      deep: true,
+    },
+  },
+
+  methods: {
+    hasOptionsChanged(newVal, oldVal) {
+      if (!oldVal) return true
+
+      const relevantProps = ["page", "itemsPerPage", "sortBy", "sortDesc"]
+
+      return relevantProps.some((prop) => {
+        if (Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
+          return JSON.stringify(newVal[prop]) !== JSON.stringify(oldVal[prop])
+        }
+        return newVal[prop] !== oldVal[prop]
+      })
+    },
+
+    edit(item) {
+      this.$emit("edit", item)
+    },
+
+    remove(item) {
+      this.$emit("delete", item)
+    },
+  },
+}
+</script>
+
+<style scoped></style>
