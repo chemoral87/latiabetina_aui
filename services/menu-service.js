@@ -36,6 +36,10 @@ export class MenuService {
       if (this.hasPermission("expense-ticket-index")) {
         menu.push({ icon: "mdi-receipt", title: "Ticket de Gastos", to: "/expense-ticket" })
       }
+
+      if (this.hasPermission("testimony-index")) {
+        menu.push({ icon: "mdi-comment-text", title: "Testimonios", to: "/testimony" })
+      }
       // menu.push({
       //   icon: "mdi-chart-bar",
       //   title: "ReportesA",
