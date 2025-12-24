@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'TestimonyDialog',
+  name: "TestimonyDialog",
   props: {
     testimony: { type: Object, default: () => ({}) },
     loading: { type: Boolean, default: false },
@@ -40,11 +40,11 @@ export default {
     return {
       item: {
         id: null,
-        name: '',
-        phone_number: '',
+        name: "",
+        phone_number: "",
         categories: [],
         link: null,
-        description: '',
+        description: "",
       },
     }
   },
@@ -53,13 +53,13 @@ export default {
       return !!this.item.id
     },
     iconTitle() {
-      return this.isEditMode ? 'mdi-pencil' : 'mdi-plus'
+      return this.isEditMode ? "mdi-pencil" : "mdi-plus"
     },
     formTitle() {
-      return this.isEditMode ? 'Editar Testimonio' : 'Nuevo Testimonio'
+      return this.isEditMode ? "Editar Testimonio" : "Nuevo Testimonio"
     },
     errors() {
-      const validationErrors = this.$store.getters['validation/errors']
+      const validationErrors = this.$store.getters["validation/errors"]
       return validationErrors || {}
     },
     isValid() {
@@ -67,11 +67,11 @@ export default {
     },
     categoriesString: {
       get() {
-        return Array.isArray(this.item.categories) ? this.item.categories.join(', ') : ''
+        return Array.isArray(this.item.categories) ? this.item.categories.join(", ") : ""
       },
       set(v) {
         this.item.categories = v
-          .split(',')
+          .split(",")
           .map((s) => s.trim())
           .filter((s) => s.length > 0)
       },
@@ -84,11 +84,11 @@ export default {
           this.item = Object.assign(
             {
               id: null,
-              name: '',
-              phone_number: '',
+              name: "",
+              phone_number: "",
               categories: [],
               link: null,
-              description: '',
+              description: "",
             },
             newValue
           )
@@ -106,14 +106,14 @@ export default {
       if (this.testimony && Object.keys(this.testimony).length > 0) {
         this.item = Object.assign({}, this.testimony)
       }
-      this.$store.dispatch('validation/clearErrors')
+      this.$store.dispatch("validation/clearErrors")
     },
     close() {
-      this.$emit('close')
+      this.$emit("close")
     },
     save() {
       if (!this.isValid || this.loading) return
-      this.$emit('save', Object.assign({}, this.item))
+      this.$emit("save", Object.assign({}, this.item))
     },
   },
 }
