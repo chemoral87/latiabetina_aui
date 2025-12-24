@@ -21,7 +21,7 @@
       </v-col>
     </v-row>
 
-    <!-- <TestimonyDialog v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog" @save="saveTestimony" /> -->
+    <TestimonyDialog v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog" @save="saveTestimony" />
 
     <DialogDelete v-if="testimonyDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteTestimony" @close="testimonyDialogDelete = false" />
   </v-container>
