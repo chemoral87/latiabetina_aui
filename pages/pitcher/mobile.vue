@@ -1,10 +1,7 @@
 <template>
   <v-container class="pa-4" style="max-width: 1000px">
     <h4 class="text-left mb-1">
-      <v-btn class="mr-1 settings-btn-glow" @click="settingsDialog = true">
-        <v-icon left>mdi-cog</v-icon>
-        Config
-      </v-btn>
+      <PitcherConfigButton />
       Tuner
       <span>
         Frec:
@@ -80,64 +77,12 @@
         </div>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="settingsDialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          Configuración v2.023
-          <v-spacer></v-spacer>
-          <v-btn icon @click="settingsDialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="latinNotation" label="Notación latina" hide-details class="mt-0 pt-0"></v-switch>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="showMicrotones" :label="latinNotation ? 'Mostrar microtonos' : 'Show microtones'" hide-details class="mt-0 pt-0"></v-switch>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="ghostQuarterNote" label="Mostrar nota fantasma" hide-details class="mt-0 pt-0"></v-switch>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-slider v-model="sensitivity" :min="0.0001" :max="0.01" :step="0.0001" label="Sensibilidad" hide-details thumb-label />
-              <div class="text-center font-weight-bold">
-                {{ sensitivity.toFixed(4) }}
-              </div>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-slider v-model="maxHistory" :min="300" :max="800" :step="50" label="Máx Historial" hide-details thumb-label />
-              <div class="text-center font-weight-bold">
-                {{ maxHistory }}
-              </div>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-slider v-model="totalNotes" :min="13" :max="25" :step="1" label="# Notas" hide-details thumb-label />
-              <div class="text-center font-weight-bold">
-                {{ totalNotes }}
-              </div>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-slider v-model="histogramHeight" :min="300" :max="600" :step="30" label="Altura Histograma" hide-details thumb-label />
-              <div class="text-center font-weight-bold">{{ histogramHeight }}px</div>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="settingsDialog = false">Cerrar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { COLORS, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS, MAJOR_STEPS, MIN_MIDI, TOLERANCE_HZ, A4_FREQ, A4_MIDI, TEXT_WIDTH } from "./constants.js"
+// import PitcherConfigButton from "~/components/Pitcher/ConfigButton.vue"
 
 export default {
   data() {
@@ -834,10 +779,11 @@ export default {
       }
     },
     drawStaff() {
-      const canvas = this.$refs.staff
-      const ctx = this.staffCtx
-      const width = canvas.width
-      const height = canvas.height
+      const canvas = this.$refs.staff;
+      const ctx = this.staffCtx;
+      if (!canvas || !ctx) return;
+      const width = canvas.width;
+      const height = canvas.height;
 
       // Limpiar canvas
       ctx.fillStyle = "#f5f5f5"
@@ -1288,19 +1234,5 @@ h4 {
 
 .tuning-poor {
   color: #d32f2f !important;
-}
-
-.settings-btn-glow {
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-@keyframes glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8), 0 0 30px rgba(33, 150, 243, 0.6);
-  }
 }
 </style>
