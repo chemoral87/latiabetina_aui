@@ -40,55 +40,46 @@
 
     <v-row dense>
       <v-col cols="8" md="5" class="pr-1 mx-0">
-        <h5 class="text-center font-weight-regular">Histograma de Frecuencia</h5>
-        <canvas ref="histogram" :height="histogramHeight + 'px'" :width="canvasWidth + 'px'" style="display: block; background-color: black; width: 100%" />
-        <div class="tuning-meter-container mt-2">
-          <div class="tuning-meter-bar">
-            <div class="tuning-meter-center"></div>
-            <div
-              v-if="centsDeviation !== null"
-              class="tuning-meter-needle"
-              :style="{
-                left: `calc(50% + ${Math.min(50, Math.max(-50, centsDeviation))}%)`,
-              }"
-            >
-              <div class="needle-triangle" :class="tuningAccuracyClass"></div>
-            </div>
-          </div>
-          <div class="tuning-meter-labels">
-            <span>-50</span>
-            <span>0</span>
-            <span>+50</span>
-          </div>
-        </div>
+        <PitcherHistogram
+          ref="histogramComponent"
+          :history="history"
+          :freq-display="freqDisplay"
+          :last-freq="lastFreq"
+          :cents-deviation="centsDeviation"
+          :latin-notation="latinNotation"
+          :selected-root-note="selectedRootNote"
+          :show-microtones="showMicrotones"
+          :max-history="maxHistory"
+          :total-notes="totalNotes"
+          :histogram-height="histogramHeight"
+        />
       </v-col>
-      <v-col cols="4" md="2" class="px-0 mx-0">
-        <h5 class="text-center font-weight-regular">Pentagrama</h5>
-        <canvas ref="staff" height="600px" width="300" style="display: block; background-color: #f5f5f5; border: 10px solid black; width: 100%" />
-        <div class="text-right">
-          <div class="caption">
-            <strong style="display: inline-block; text-align: right" :class="tuningAccuracyClass">{{ centsDeviation > 0 ? "+" : "" }}{{ centsDeviation }}</strong>
-            <strong>cents</strong>
-          </div>
 
-          <v-chip class="caption" small :color="tuningAccuracyColor" dark>
-            {{ tuningAccuracyText }}
-          </v-chip>
-        </div>
+      <v-col cols="4" md="2" class="px-0 mx-0">
+        <PitcherStaffNotation
+          title="Pentagrama"
+          :frequency="lastFreq"
+          :cents-deviation="centsDeviation"
+          :show-ghost-notes="ghostQuarterNote"
+          :latin-notation="latinNotation"
+          :zoom="2"
+          :canvas-height="600"
+          :canvas-width="300"
+          :show-cents-deviation="true"
+        />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { COLORS, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS, MAJOR_STEPS, MIN_MIDI, TOLERANCE_HZ, A4_FREQ, A4_MIDI, TEXT_WIDTH } from "./constants.js"
-// import PitcherConfigButton from "~/components/Pitcher/ConfigButton.vue"
+// Import the constants that are still needed
+import { A4_FREQ, A4_MIDI } from "./constants.js"
 
 export default {
   data() {
     return {
       settingsDialog: false,
-      canvasWidth: 350,
       isMicActive: false,
       mediaStream: null,
       audioContext: null,
@@ -103,23 +94,12 @@ export default {
       lastFreq: null,
       correlationArray: [],
 
-      // Sistema de filtrado de ruido de fondo
       noiseProfile: null,
       noiseCalibrating: false,
       noiseSamples: [],
-
-      // Performance optimization
-      lastHistogramDraw: 0,
-      histogramThrottle: 50, // ms between histogram redraws
-
-      // Clave de Sol SVG
-      trebleClefImage: null,
-      // Clave de Fa SVG
-      bassClefImage: null,
-      // Mostrar nota fantasma en pantalla
-      // ghostQuarterNote is persisted in Vuex (pitcher_store)
     }
   },
+
   computed: {
     selectedRootNote: {
       get() {
@@ -185,166 +165,40 @@ export default {
         this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
       },
     },
-    scaleNoteIndices() {
-      return this.getMajorScaleNotes(this.selectedRootNote)
-    },
     currentNoteOptions() {
       return this.latinNotation ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"] : ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     },
-    convertedRootNote() {
-      if (this.latinNotation) {
-        const angloIndex = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"].indexOf(this.selectedRootNote)
-        return angloIndex >= 0 ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"][angloIndex] : "Do"
-      } else {
-        const latinIndex = ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"].indexOf(this.selectedRootNote)
-        return latinIndex >= 0 ? ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"][latinIndex] : "C"
-      }
-    },
-    tuningAccuracyClass() {
-      if (this.centsDeviation === null) return ""
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "tuning-perfect"
-      if (abs <= 15) return "tuning-good"
-      if (abs <= 30) return "tuning-fair"
-      return "tuning-poor"
-    },
-    tuningAccuracyColor() {
-      if (this.centsDeviation === null) return "grey"
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "green"
-      if (abs <= 15) return "light-green"
-      if (abs <= 30) return "orange"
-      return "red"
-    },
-    tuningAccuracyText() {
-      if (this.centsDeviation === null) return "--"
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "Perfecta afinación"
-      if (abs <= 15) return "Buena afinación"
-      if (abs <= 30) return "Afinación aceptable"
-      return "Desafinado"
-    },
   },
-  watch: {
-    selectedRootNote() {
-      if (process.client) {
-        localStorage.setItem("selectedRootNote", this.selectedRootNote)
-      }
-      this.drawHistogram()
-    },
-    latinNotation(newVal) {
-      // Convertir la nota seleccionada al cambiar la notación
-      this.selectedRootNote = this.convertedRootNote
-      this.drawHistogram()
-    },
-  },
-  mounted() {
-    this.ctx = this.$refs.histogram.getContext("2d", {
-      willReadFrequently: true,
-    })
-    this.ctx.lineWidth = 0.5
-    this.staffCtx = this.$refs.staff.getContext("2d")
 
-    // Cargar SVG de clave de Sol
-    this.trebleClefImage = new Image()
-    this.trebleClefImage.onload = () => {
-      this.drawStaff()
-    }
-    this.trebleClefImage.src = "/clave_sol.svg"
-
-    // Cargar SVG de clave de Fa (si existe, si no, se dibujará manualmente)
-    this.bassClefImage = new Image()
-    this.bassClefImage.onload = () => {
-      this.drawStaff()
-    }
-    this.bassClefImage.onerror = () => {
-      // Si no existe el archivo, continuamos sin él
-      this.bassClefImage = null
-    }
-    this.bassClefImage.src = "/clave_fa.svg"
-
-    this.updateCanvasSize()
-    window.addEventListener("resize", this.debouncedResize)
-    this.drawHistogram()
-  },
   beforeUnmount() {
     if (this.isMicActive) {
       this.cleanup()
     }
-    window.removeEventListener("resize", this.debouncedResize)
   },
+
   methods: {
-    debouncedResize() {
-      if (this.resizeTimeout) {
-        clearTimeout(this.resizeTimeout)
-      }
-      this.resizeTimeout = setTimeout(() => {
-        this.updateCanvasSize()
-      }, 150)
-    },
-    updateCanvasSize() {
-      const container = this.$el.querySelector(".v-container")
-      if (container) {
-        this.canvasWidth = Math.min(container.clientWidth - 32, 1000)
-        this.$nextTick(() => {
-          this.drawHistogram()
-        })
-      }
-    },
-    midiToFreq(midi) {
-      return A4_FREQ * Math.pow(2, (midi - A4_MIDI) / 12)
-    },
-    freqToMidi(freq) {
-      if (freq <= 0) return 0
-      return 69 + 12 * Math.log2(freq / 440)
-    },
-    getNoteNameNum(midiNote) {
-      const roundedMidi = Math.round(midiNote * 2) / 2
-      const noteIndex = Math.floor(roundedMidi) % 12
-      const isHalfStep = roundedMidi % 1 === 0.5
-      // Para obtener el índice completo dentro de NOTE_SHORT_STRINGS (y COLORS)
-      const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
-      const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
-      const note = noteStrings[fullIndex]
-      const octave = Math.floor(roundedMidi / 12 - 1)
-      return `${note}${octave}`
-    },
-    getNoteName(midiNote) {
-      const noteIndex = Math.floor(midiNote) % 12
-      const isHalfStep = Math.round(midiNote * 2) % 2 === 1
-      const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
-      const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
-      return noteStrings[fullIndex]
-    },
-    getMajorScaleNotes(root) {
-      // Convertir root a notación anglosajona si está en latín
-      const rootIndex = this.latinNotation ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"].indexOf(root) : ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"].indexOf(root)
-      return MAJOR_STEPS.map((step) => (rootIndex + step) % 12)
-    },
     resetHistory() {
       this.history = []
       this.lastFreq = null
       this.centsDeviation = null
-      const canvas = this.$refs.histogram
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height)
-      this.drawNoteLines()
+      // Clear histogram canvas
+      if (this.$refs.histogramComponent) {
+        this.$refs.histogramComponent.resetCanvas()
+      }
     },
+
     calibrateNoise() {
-      // Verificar que el micrófono esté activo
       if (!this.analyser || !this.isMicActive) {
         return
       }
       console.log("Iniciando calibración de ruido...")
-      // Capturar perfil de ruido ambiente durante 3 segundos para mayor precisión
       this.noiseCalibrating = true
       this.noiseSamples = []
 
       const captureNoise = () => {
         if (this.noiseSamples.length < 180 && this.analyser && this.noiseCalibrating) {
-          // ~3 segundos a 60fps
           this.analyser.getFloatTimeDomainData(this.buffer)
 
-          // Calcular RMS del ruido
           let sumSquares = 0
           for (let i = 0; i < this.buffer.length; i++) {
             sumSquares += this.buffer[i] * this.buffer[i]
@@ -352,28 +206,20 @@ export default {
           const rms = Math.sqrt(sumSquares / this.buffer.length)
           this.noiseSamples.push(rms)
 
-          setTimeout(captureNoise, 16) // ~60fps
+          setTimeout(captureNoise, 16)
         } else if (this.noiseSamples.length > 0) {
-          // Ordenar muestras para calcular estadísticas robustas
           const sortedSamples = [...this.noiseSamples].sort((a, b) => a - b)
 
-          // Eliminar outliers: usar percentiles 10-90 para mayor robustez
           const p10Index = Math.floor(sortedSamples.length * 0.1)
           const p90Index = Math.floor(sortedSamples.length * 0.9)
           const filteredSamples = sortedSamples.slice(p10Index, p90Index)
 
-          // Calcular promedio del ruido (excluyendo outliers)
           const avgNoise = filteredSamples.reduce((a, b) => a + b, 0) / filteredSamples.length
-
-          // Calcular mediana para mayor robustez ante picos esporádicos
           const medianIndex = Math.floor(filteredSamples.length / 2)
           const medianNoise = filteredSamples[medianIndex]
 
-          // Usar promedio entre media y mediana para balance
           this.noiseProfile = (avgNoise + medianNoise) / 2
 
-          // Ajustar sensibilidad automáticamente basado en el ruido detectado
-          // Usar factor conservador para evitar falsos positivos
           const recommendedSensitivity = Math.max(0.003, Math.min(0.12, this.noiseProfile * 3.5))
           this.sensitivity = recommendedSensitivity
 
@@ -385,6 +231,7 @@ export default {
 
       captureNoise()
     },
+
     async cleanup() {
       if (this.mediaStream) {
         this.mediaStream.getTracks().forEach((t) => t.stop())
@@ -401,11 +248,8 @@ export default {
       this.centsDeviation = null
       this.history = []
       this.lastFreq = null
-      if (this.ctx && this.$refs.histogram) {
-        this.ctx.clearRect(0, 0, this.$refs.histogram.width, this.$refs.histogram.height)
-        this.drawNoteLines()
-      }
     },
+
     async toggleMic() {
       if (!this.isMicActive) {
         try {
@@ -422,17 +266,17 @@ export default {
           source.connect(this.analyser)
 
           this.isMicActive = true
-          this.drawNoteLines()
-          // Calibrar ruido automáticamente al activar el micrófono
           this.calibrateNoise()
-          this.update()
+          this.update() // Start the update loop
         } catch (e) {
           alert("Error accediendo al micrófono: " + e.message)
+          this.isMicActive = false
         }
       } else {
         await this.cleanup()
       }
     },
+
     smoothFrequency(currentFreq) {
       if (!this.lastFreq) {
         this.lastFreq = currentFreq
@@ -457,6 +301,7 @@ export default {
 
       return this.lastFreq
     },
+
     autoCorrelate(buf, sampleRate) {
       const SIZE = buf.length
       const MIN_DB = 28
@@ -532,7 +377,6 @@ export default {
 
       if (peakIndex <= 0) return -1
 
-      // Interpolación parabólica para mayor precisión sub-sample
       let betterPeak = peakIndex
       if (peakIndex > 0 && peakIndex < windowSize - 1) {
         const y1 = this.correlationArray[peakIndex - 1]
@@ -567,8 +411,9 @@ export default {
 
       return freq > 20 && freq < 2000 ? freq : -1
     },
+
     update() {
-      if (!this.analyser) {
+      if (!this.analyser || !this.isMicActive) {
         return
       }
 
@@ -591,7 +436,6 @@ export default {
         const midi = this.freqToMidi(exactFreq)
         const note = this.getNoteNameNum(midi)
 
-        // Calculate cents deviation from nearest note
         const nearestMidi = Math.round(midi)
         const nearestFreq = this.midiToFreq(nearestMidi)
         this.centsDeviation = Math.round(1200 * Math.log2(exactFreq / nearestFreq))
@@ -601,8 +445,6 @@ export default {
 
         this.history.unshift({ freq: exactFreq, midi })
         if (this.history.length > this.maxHistory) this.history.pop()
-        this.drawHistogram()
-        this.drawStaff() // Actualizar Tomasín con la nota detectada
       } else {
         this.freqDisplay = "--"
         this.noteDisplay = "--"
@@ -612,627 +454,38 @@ export default {
 
       if (this.isMicActive) requestAnimationFrame(this.update)
     },
-    drawHistogram() {
-      const canvas = this.$refs.histogram
-      const ctx = this.ctx
-      const height = canvas.height
-      const width = canvas.width
-      const spacing = (width - 50) / this.maxHistory
-      const len = Math.min(this.history.length, this.maxHistory)
 
-      // Limpiar canvas de una vez
-      ctx.clearRect(0, 0, width, height)
-      this.drawNoteLines()
-
-      const currentData = this.history[0]
-      if (!currentData || !currentData.freq || currentData.freq < 20 || currentData.freq > 2000) {
-        for (let i = 1; i < len; i++) {
-          const { freq, midi } = this.history[i]
-          if (!freq || freq < 20 || freq > 2000) continue
-          this.drawHistoryPoints(i, freq, midi, spacing)
-        }
-        return
-      }
-
-      const { freq, midi } = currentData
-      const currentNoteName = this.getNoteNameNum(Math.round(midi * 2) / 2)
-      const currentNoteBase = currentNoteName.replace(/[0-9+]/g, "")
-
-      const staticDisplayText = `${currentNoteName} (${this.freqDisplay} Hz)`
-      ctx.font = "bold 16px sans-serif"
-      const textWidth = ctx.measureText(staticDisplayText).width
-
-      for (let octaveOffset = -2; octaveOffset <= 4; octaveOffset++) {
-        const shiftedFreq = freq * Math.pow(2, octaveOffset)
-        const shiftedMidi = this.freqToMidi(shiftedFreq)
-        const y = height - ((shiftedMidi - MIN_MIDI) / this.totalNotes) * height
-        if (y < 0 || y > height) continue
-
-        const x = width - TEXT_WIDTH - 5
-        const shiftedNoteName = this.getNoteName(Math.round(shiftedMidi * 2) / 2)
-        const shiftedNoteBase = shiftedNoteName.replace(/[0-9+]/g, "")
-        const isSameNoteFamily = shiftedNoteBase === currentNoteBase
-        // Se obtiene el índice completo (0 a 23) usando la resolución de medio tono
-        const fullIndex = Math.round(shiftedMidi * 2) % 24
-
-        let pointColor, textColor
-        if (isSameNoteFamily) {
-          pointColor = textColor = "white"
-        } else {
-          pointColor = textColor = COLORS[fullIndex]
-        }
-
-        ctx.fillStyle = pointColor
-        ctx.beginPath()
-        ctx.arc(x, y, 3, 0, 2 * Math.PI)
-        ctx.fill()
-
-        ctx.fillStyle = textColor
-        ctx.fillText(staticDisplayText, x - textWidth - 10, y - 5)
-      }
-
-      for (let i = 1; i < len; i++) {
-        const { freq, midi } = this.history[i]
-        if (!freq || freq < 20 || freq > 2000) continue
-        this.drawHistoryPoints(i, freq, midi, spacing)
-      }
+    // Need to keep these helper methods for update() to work
+    midiToFreq(midi) {
+      return A4_FREQ * Math.pow(2, (midi - A4_MIDI) / 12)
     },
-    drawNoteLines() {
-      const canvas = this.$refs.histogram
-      const ctx = this.ctx
-      const height = canvas.height
-      const width = canvas.width
-      const scaleNoteIndices = this.getMajorScaleNotes(this.selectedRootNote)
 
-      let currentNoteInfo = null
-      if (this.history.length > 0 && this.history[0].freq) {
-        const currentMidi = this.freqToMidi(this.history[0].freq)
-        const roundedMidi = Math.round(currentMidi * 2) / 2
-        currentNoteInfo = {
-          type: roundedMidi % 1 === 0.5 ? "halfstep" : "natural",
-          name: this.getNoteName(roundedMidi),
-          base: this.getNoteName(roundedMidi).replace(/\+/g, ""),
-          freq: this.history[0].freq,
-        }
-      }
-
-      for (let i = 0; i <= this.totalNotes * 2; i++) {
-        const y = height - (i / (this.totalNotes * 2)) * height
-        const midi = MIN_MIDI + i / 2
-        const noteIndex = Math.floor(midi) % 12
-        const isHalfStep = i % 2 === 1
-        // Se calcula el índice completo: si es semitono, se usa noteIndex*2+1, de lo contrario noteIndex*2.
-        // const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2 // unused
-        const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
-        const noteName = isHalfStep ? noteStrings[noteIndex * 2 + 1] : noteStrings[noteIndex * 2]
-        const noteBase = noteName.replace(/\+/g, "")
-        const isInScale = scaleNoteIndices.includes(noteIndex)
-
-        const style = {
-          stroke: isHalfStep ? "green" : "gray",
-          fill: isHalfStep ? "green" : "gray",
-          lineWidth: 1,
-        }
-
-        if (currentNoteInfo) {
-          const freqDistance = Math.abs(currentNoteInfo.freq - this.midiToFreq(midi))
-          const isExactNote = freqDistance <= TOLERANCE_HZ / 2
-          const isSameNoteType = isHalfStep === (currentNoteInfo.type === "halfstep")
-          const isSameNoteFamily = noteBase === currentNoteInfo.base
-
-          if (isSameNoteFamily && isSameNoteType) {
-            if (isHalfStep) {
-              style.stroke = style.fill = "yellow"
-            } else {
-              style.stroke = style.fill = isInScale ? "red" : "orange"
-            }
-            style.lineWidth = isExactNote ? 2.5 : 2
-          } else if (isInScale && !isHalfStep) {
-            style.stroke = style.fill = "white"
-          }
-        }
-
-        ctx.strokeStyle = style.stroke
-        ctx.fillStyle = style.fill
-        ctx.lineWidth = style.lineWidth
-
-        // Dibujar la línea horizontal
-        if ((this.showMicrotones && isHalfStep) || !isHalfStep) {
-          ctx.beginPath()
-          ctx.moveTo(5, y)
-          ctx.lineTo(width - TEXT_WIDTH - 3, y)
-          ctx.stroke()
-
-          ctx.font = isHalfStep ? `bold ${style.lineWidth > 1 ? 11 : 10}px sans-serif` : `bold ${style.lineWidth > 1 ? 13 : 12}px sans-serif`
-          ctx.fillText(noteName, width - TEXT_WIDTH + (isHalfStep ? 15 : 0), y + 3)
-        }
-      }
-
-      ctx.strokeStyle = "#444"
-      // separador
-      ctx.beginPath()
-      ctx.moveTo(width - TEXT_WIDTH - 5, 0)
-      ctx.lineTo(width - TEXT_WIDTH - 5, height)
-      ctx.stroke()
+    freqToMidi(freq) {
+      if (freq <= 0) return 0
+      return 69 + 12 * Math.log2(freq / A4_FREQ)
     },
-    drawHistoryPoints(i, freq, midi, spacing) {
-      const canvas = this.$refs.histogram
-      const ctx = this.ctx
-      const height = canvas.height
-      const width = canvas.width
-      const baseFreq = freq
 
-      for (let octaveOffset = -2; octaveOffset <= 4; octaveOffset++) {
-        const shiftedFreq = baseFreq * Math.pow(2, octaveOffset)
-        const shiftedMidi = this.freqToMidi(shiftedFreq)
-        const y = height - ((shiftedMidi - MIN_MIDI) / this.totalNotes) * height
+    getNoteNameNum(midiNote) {
+      const roundedMidi = Math.round(midiNote * 2) / 2
+      const noteIndex = Math.floor(roundedMidi) % 12
+      const isHalfStep = roundedMidi % 1 === 0.5
+      const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
 
-        if (y >= 0 && y <= height) {
-          const x = width - i * spacing - TEXT_WIDTH - 5
-          // Calcular el índice completo (0–23) a partir del valor midi redondeado a medio tono
-          const fullIndex = Math.round(shiftedMidi * 2) % 24
-          ctx.fillStyle = COLORS[fullIndex]
-          ctx.beginPath()
-          ctx.arc(x, y, 2.0, 0, Math.PI * 2)
-          ctx.fill()
-        }
-      }
+      // Import arrays directly since they're needed here
+      const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
+      const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]
+
+      const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
+      const note = noteStrings[fullIndex]
+      const octave = Math.floor(roundedMidi / 12 - 1)
+      return `${note}${octave}`
     },
-    drawStaff() {
-      const canvas = this.$refs.staff;
-      const ctx = this.staffCtx;
-      if (!canvas || !ctx) return;
-      const width = canvas.width;
-      const height = canvas.height;
-
-      // Limpiar canvas
-      ctx.fillStyle = "#f5f5f5"
-      ctx.fillRect(0, 0, width, height)
-
-      // Factor de zoom global para el pentagrama (0.5 = 50%, 1.0 = 100%, 1.5 = 150%, 2.0 = 200%)
-      const zoom = 2
-      // Factor de escala para ajustar tamaño del pentagrama (0.5 = 50%, 1.0 = 100%, 1.5 = 150%)
-      const staffSizeRatio = 1.0 * zoom
-      // Distancia entre líneas del pentagrama (ajusta este valor para cambiar el espaciado)
-      const baseLineSpacing = 9 * zoom
-
-      // Configuración del pentagrama superior (Clave de Sol)
-      const trebleStaffTop = 50 * staffSizeRatio
-      const lineSpacing = baseLineSpacing * staffSizeRatio
-      const staffWidth = width - 40
-      const staffLeft = 20
-      // Usar una longitud fija para las líneas del pentagrama en móvil
-      const staffLineLength = 110 * staffSizeRatio
-      const lineStart = staffLeft + 10
-      const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
-
-      // Separación entre pentagramas proporcional al lineSpacing
-      // La distancia de la primera línea del pentagrama de Sol (trebleStaffTop)
-      // a la quinta línea del pentagrama de Fa (bassStaffTop + 4*lineSpacing) debe ser 2*baseLineSpacing
-      // trebleStaffTop + 2*lineSpacing = bassStaffTop + 4*lineSpacing
-      // bassStaffTop = trebleStaffTop + 2*lineSpacing - 4*lineSpacing = trebleStaffTop - 2*lineSpacing
-      // Pero necesitamos la separación entre los tops, así que:
-      // bassStaffTop = trebleStaffTop + 4*lineSpacing + 2*lineSpacing = trebleStaffTop + 6*lineSpacing
-      const staffSeparation = 6 * lineSpacing // Dibujar las 5 líneas del pentagrama de Sol
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2
-      for (let i = 0; i < 5; i++) {
-        const y = trebleStaffTop + i * lineSpacing
-        ctx.beginPath()
-        ctx.moveTo(lineStart, y)
-        ctx.lineTo(lineEnd, y)
-        ctx.stroke()
-      }
-
-      // Dibujar clave de Sol desde SVG
-      if (this.trebleClefImage && this.trebleClefImage.complete) {
-        const clefWidth = 45 * staffSizeRatio
-        const clefHeight = baseLineSpacing * 6.5 * staffSizeRatio
-        ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - baseLineSpacing * staffSizeRatio, clefWidth, clefHeight)
-      }
-
-      // Configuración del pentagrama inferior (Clave de Fa)
-      const bassStaffTop = trebleStaffTop + staffSeparation // Separación entre pentagramas
-
-      // Dibujar las 5 líneas del pentagrama de Fa
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2
-      for (let i = 0; i < 5; i++) {
-        const y = bassStaffTop + i * lineSpacing
-        ctx.beginPath()
-        ctx.moveTo(lineStart, y)
-        ctx.lineTo(lineEnd, y)
-        ctx.stroke()
-      }
-
-      // Dibujar clave de Fa (desde SVG o manualmente)
-      if (this.bassClefImage && this.bassClefImage.complete) {
-        const clefWidth = 65 * staffSizeRatio
-        const clefHeight = baseLineSpacing * 6 * staffSizeRatio
-        // Ajustar posición vertical: subir un poco la clave de Fa
-        ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - baseLineSpacing * 1.33 * staffSizeRatio, clefWidth, clefHeight)
-      } else {
-        // Dibujar clave de Fa manualmente
-        this.drawBassClef(ctx, staffLeft, bassStaffTop)
-      }
-
-      // Dibujar Tomasín (nota que se mueve según la frecuencia detectada)
-      const noteX = staffLeft + 90 * staffSizeRatio
-      let noteY = trebleStaffTop + 3 * lineSpacing // Posición por defecto (Sol/G4)
-      let noteColor = "#000" // Color por defecto
-      let isSharp = false // Indica si la nota es sostenido
-      const ledgerLines = [] // Array de líneas adicionales a dibujar
-
-      // Si hay una nota detectada, calcular su posición y color
-      if (this.history.length > 0 && this.history[0].freq) {
-        const currentMidi = this.freqToMidi(this.history[0].freq)
-        const roundedMidi = Math.round(currentMidi)
-
-        // Determinar si es sostenido basándose en el nombre de la nota
-        const noteName = this.getNoteName(roundedMidi)
-        isSharp = noteName.includes("♯") || noteName.includes("#")
-
-        // Calcular posición Y en el pentagrama
-        // Referencia: E4 (Mi) = MIDI 64, sobre la primera línea (trebleStaffTop + 4*lineSpacing)
-        // Mapeo de índices MIDI % 12 a posiciones naturales:
-        // C=0→0, C#=1→0, D=2→1, D#=3→1, E=4→2, F=5→3, F#=6→3, G=7→4, G#=8→4, A=9→5, A#=10→5, B=11→6
-        const naturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
-        const e4Midi = 64 // Mi/E4 (índice 4 en escala cromática)
-        const positionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[e4Midi % 12]
-        const octaveDiff = Math.floor(roundedMidi / 12) - Math.floor(e4Midi / 12)
-        const totalPositionDiff = octaveDiff * 7 + positionDiff // 7 notas naturales por octava
-
-        // Decidir si usar pentagrama de Sol o de Fa
-        if (roundedMidi >= 60) {
-          // C4 (MIDI 60) y superior en clave de Sol
-          noteY = trebleStaffTop + 4 * lineSpacing - totalPositionDiff * (lineSpacing / 2)
-
-          // Calcular líneas adicionales debajo del pentagrama de Sol
-          const bottomLine = trebleStaffTop + 4 * lineSpacing
-
-          // Agregar línea para C4 (MIDI 60), C#4 (MIDI 61), D4 (MIDI 62) y D#4 (MIDI 63)
-          if (roundedMidi === 60 || roundedMidi === 61 || roundedMidi === 62 || roundedMidi === 63) {
-            ledgerLines.push(bottomLine + lineSpacing)
-          }
-
-          if (noteY > bottomLine + lineSpacing) {
-            const linesNeeded = Math.floor((noteY - (bottomLine + lineSpacing)) / lineSpacing)
-            for (let i = 1; i <= linesNeeded; i++) {
-              ledgerLines.push(bottomLine + lineSpacing + i * lineSpacing)
-            }
-          }
-        } else {
-          // Notas graves en clave de Fa
-          // Referencia: F3 (Fa3) = MIDI 53, sobre la cuarta línea del pentagrama de Fa
-          const f3Midi = 53
-          const bassPositionDiff = naturalPositions[roundedMidi % 12] - naturalPositions[f3Midi % 12]
-          const bassOctaveDiff = Math.floor(roundedMidi / 12) - Math.floor(f3Midi / 12)
-          const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
-          noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
-
-          // Agregar línea para B3 (MIDI 59): comparte la línea con C4
-          // Esta línea está debajo del pentagrama de Sol
-          if (roundedMidi === 59) {
-            const trebleBottomLine = trebleStaffTop + 4 * lineSpacing
-            ledgerLines.push(trebleBottomLine + lineSpacing)
-          }
-
-          // Calcular líneas adicionales encima del pentagrama de Fa
-          const bassTopLine = bassStaffTop
-          if (noteY < bassTopLine) {
-            const linesNeeded = Math.floor((bassTopLine - noteY) / lineSpacing)
-            for (let i = 1; i <= linesNeeded; i++) {
-              ledgerLines.push(bassTopLine - i * lineSpacing)
-            }
-          }
-        }
-
-        // Obtener color según la nota
-        const fullIndex = (roundedMidi % 12) * 2
-        noteColor = COLORS[fullIndex]
-      }
-
-      // Dibujar líneas adicionales si es necesario (antes de la nota)
-      ledgerLines.forEach((ledgerY) => {
-        ctx.strokeStyle = "#000"
-        ctx.lineWidth = 2 * zoom
-        ctx.beginPath()
-        ctx.moveTo(noteX - 20 * zoom, ledgerY)
-        ctx.lineTo(noteX + 20 * zoom, ledgerY)
-        ctx.stroke()
-      })
-
-      // Dibujar notas fantasma si la opción está activada
-      if (this.ghostQuarterNote && this.history.length > 0 && this.history[0].freq) {
-        const currentMidi = this.freqToMidi(this.history[0].freq)
-        const roundedMidi = Math.round(currentMidi)
-
-        // Dibujar nota fantasma una octava arriba (MIDI + 12)
-        const upperMidi = roundedMidi + 12
-        const upperNaturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
-        const upperPositionDiff = upperNaturalPositions[upperMidi % 12] - upperNaturalPositions[64 % 12]
-        const upperOctaveDiff = Math.floor(upperMidi / 12) - Math.floor(64 / 12)
-        const upperTotalPositionDiff = upperOctaveDiff * 7 + upperPositionDiff
-        const upperNoteY = trebleStaffTop + 4 * lineSpacing - upperTotalPositionDiff * (lineSpacing / 2)
-
-        // Dibujar nota fantasma una octava abajo (MIDI - 12)
-        const lowerMidi = roundedMidi - 12
-        let lowerNoteY
-
-        if (lowerMidi >= 60) {
-          // Aún en clave de Sol
-          const lowerPositionDiff = upperNaturalPositions[lowerMidi % 12] - upperNaturalPositions[64 % 12]
-          const lowerOctaveDiff = Math.floor(lowerMidi / 12) - Math.floor(64 / 12)
-          const lowerTotalPositionDiff = lowerOctaveDiff * 7 + lowerPositionDiff
-          lowerNoteY = trebleStaffTop + 4 * lineSpacing - lowerTotalPositionDiff * (lineSpacing / 2)
-        } else {
-          // En clave de Fa
-          const f3Midi = 53
-          const lowerPositionDiff = upperNaturalPositions[lowerMidi % 12] - upperNaturalPositions[f3Midi % 12]
-          const lowerOctaveDiff = Math.floor(lowerMidi / 12) - Math.floor(f3Midi / 12)
-          const lowerTotalPositionDiff = lowerOctaveDiff * 7 + lowerPositionDiff
-          lowerNoteY = bassStaffTop + lineSpacing - lowerTotalPositionDiff * (lineSpacing / 2)
-        }
-
-        // Dibujar nota fantasma superior con transparencia
-        ctx.globalAlpha = 0.45
-        this.drawQuarterNote(ctx, noteX, upperNoteY, noteColor, isSharp, zoom)
-
-        // Dibujar nota fantasma inferior con transparencia
-        this.drawQuarterNote(ctx, noteX, lowerNoteY, noteColor, isSharp, zoom)
-        ctx.globalAlpha = 1.0
-      }
-
-      // Dibujar nota principal (sin transparencia)
-      this.drawQuarterNote(ctx, noteX, noteY, noteColor, isSharp, zoom)
-    },
-    drawTrebleClef(ctx, x, y) {
-      // Dibujar clave de Sol más realista
-      ctx.fillStyle = "#000"
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 1.5
-
-      const lineSpacing = 20
-      const gLine = y + 2 * lineSpacing // Línea del Sol
-
-      ctx.save()
-      ctx.translate(x + 20, gLine)
-      ctx.scale(0.8, 0.8)
-
-      // Dibujar la clave de Sol completa con Path2D
-      ctx.beginPath()
-
-      // Círculo central alrededor de la línea del Sol
-      ctx.moveTo(12, 0)
-      ctx.bezierCurveTo(12, -10, 3, -15, -6, -12)
-      ctx.bezierCurveTo(-12, -10, -15, -3, -15, 5)
-      ctx.bezierCurveTo(-15, 13, -10, 18, -2, 18)
-      ctx.bezierCurveTo(5, 18, 10, 14, 12, 8)
-      ctx.bezierCurveTo(14, 2, 13, -4, 12, 0)
-
-      // Línea vertical que sube
-      ctx.moveTo(5, 2)
-      ctx.lineTo(5, -85)
-
-      // Gancho superior decorativo
-      ctx.bezierCurveTo(5, -92, 2, -96, -3, -96)
-      ctx.bezierCurveTo(-10, -96, -16, -91, -16, -83)
-      ctx.bezierCurveTo(-16, -76, -12, -71, -6, -71)
-      ctx.bezierCurveTo(-2, -71, 1, -73, 1, -77)
-      ctx.bezierCurveTo(1, -81, -2, -83, -6, -83)
-
-      // Curva de regreso hacia abajo
-      ctx.moveTo(5, -85)
-      ctx.bezierCurveTo(8, -80, 10, -70, 10, -55)
-      ctx.lineTo(10, 50)
-
-      // Espiral inferior característica
-      ctx.bezierCurveTo(10, 60, 5, 66, -2, 66)
-      ctx.bezierCurveTo(-10, 66, -16, 60, -16, 52)
-      ctx.bezierCurveTo(-16, 46, -13, 41, -7, 41)
-      ctx.bezierCurveTo(-3, 41, 0, 43, 0, 47)
-      ctx.bezierCurveTo(0, 51, -3, 54, -7, 54)
-      ctx.bezierCurveTo(-9, 54, -11, 53, -12, 51)
-
-      ctx.fill()
-
-      // Agregar detalles con líneas para dar grosor
-      ctx.lineWidth = 3
-      ctx.beginPath()
-      ctx.moveTo(5, -85)
-      ctx.lineTo(5, 0)
-      ctx.stroke()
-
-      ctx.lineWidth = 2.5
-      ctx.beginPath()
-      ctx.moveTo(5, 0)
-      ctx.lineTo(10, 45)
-      ctx.stroke()
-
-      ctx.restore()
-    },
-    drawBassClef(ctx, x, y) {
-      // Dibujar clave de Fa manualmente
-      ctx.fillStyle = "#000"
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2
-
-      const lineSpacing = 30
-      const fLine = y + lineSpacing // Segunda línea desde arriba (línea del Fa)
-
-      ctx.save()
-      ctx.translate(x + 15, fLine)
-      ctx.scale(1, 1)
-
-      // Dibujar la clave de Fa (símbolo de dos puntos con curva)
-      ctx.beginPath()
-
-      // Curva principal de la clave de Fa
-      ctx.arc(-5, 0, 8, Math.PI * 0.5, Math.PI * 1.5)
-      ctx.arc(-5, -10, 4, Math.PI * 1.5, Math.PI * 0.5, true)
-      ctx.fill()
-
-      // Dos puntos característicos de la clave de Fa
-      ctx.beginPath()
-      ctx.arc(5, -5, 2.5, 0, Math.PI * 2)
-      ctx.fill()
-
-      ctx.beginPath()
-      ctx.arc(5, 5, 2.5, 0, Math.PI * 2)
-      ctx.fill()
-
-      ctx.restore()
-    },
-    drawQuarterNote(ctx, x, y, color = "#000", isSharp = false, zoom = 1.0) {
-      // Longitud del palito (stem) de la nota
-      const stemLength = 47 * zoom
-
-      // Dibujar símbolo # si es sostenido (a la izquierda de la nota)
-      if (isSharp) {
-        // Contorno negro del #
-        ctx.strokeStyle = "#000"
-        ctx.lineWidth = 3 * zoom
-        ctx.font = `bold ${24 * zoom}px serif`
-        ctx.strokeText("♯", x - 25 * zoom, y + 8 * zoom)
-
-        // Relleno de color del #
-        ctx.fillStyle = color
-        ctx.fillText("♯", x - 25 * zoom, y + 8 * zoom)
-      }
-
-      // Primero dibujar el relleno con color (nota interior)
-      ctx.fillStyle = color
-      ctx.beginPath()
-      ctx.ellipse(x, y, 8 * zoom, 6 * zoom, -0.3, 0, Math.PI * 2)
-      ctx.fill()
-
-      // Luego el contorno negro más grande (1px expandido)
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.ellipse(x, y, 9 * zoom, 7 * zoom, -0.3, 0, Math.PI * 2)
-      ctx.stroke()
-
-      // Dibujar plica (stem) con color
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
-
-      // Dibujar contorno negro de la plica (1px más ancho)
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 4 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
-
-      // Volver a dibujar la plica con color encima
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
-    },
-    // updateSpectrogram removed
   },
 }
 </script>
-<style scoped>
-/*
-  Ajustes de estilo para el medidor de afinación
-  (Aunque ya es responsivo, se asegura que el contenedor no tenga un alto fijo que lo rompa)
-*/
-.tuning-meter-container {
-  width: 100%;
-  height: 67px;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 10px;
-}
 
-/* El resto de estilos permanece igual */
+<style scoped>
 h4 {
   font-weight: 600;
-}
-
-.tuning-meter-bar {
-  position: relative;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(to right, #d32f2f 0%, #ff9800 25%, #4caf50 45%, #4caf50 55%, #ff9800 75%, #d32f2f 100%);
-  border-radius: 20px;
-  overflow: visible;
-}
-
-.tuning-meter-center {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 3px;
-  height: 100%;
-  background-color: white;
-  transform: translateX(-50%);
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-}
-
-.tuning-meter-needle {
-  position: absolute;
-  top: -10px;
-  transform: translateX(-50%);
-  transition: left 0.1s ease-out;
-}
-
-.needle-triangle {
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 14px solid white;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-.needle-triangle.tuning-perfect {
-  border-top-color: #4caf50;
-}
-
-.needle-triangle.tuning-good {
-  border-top-color: #8bc34a;
-}
-
-.needle-triangle.tuning-fair {
-  border-top-color: #ff9800;
-}
-
-.needle-triangle.tuning-poor {
-  border-top-color: #d32f2f;
-}
-
-.tuning-meter-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 5px;
-  font-size: 12px;
-  color: #aaa;
-}
-
-.tuning-perfect {
-  color: #4caf50 !important;
-  font-weight: bold;
-}
-
-.tuning-good {
-  color: #8bc34a !important;
-}
-
-.tuning-fair {
-  color: #ff9800 !important;
-}
-
-.tuning-poor {
-  color: #d32f2f !important;
 }
 </style>
