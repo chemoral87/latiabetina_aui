@@ -17,60 +17,29 @@
 <script>
 import { COLORS } from "../../pages/pitcher/constants.js"
 
+// --- CONSTANTES DEFINIDAS AL INICIO ---
+const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
+const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]
+const NATURAL_POSITIONS = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
+
+const BASE_LINE_SPACING = 16
+const STAFF_TOP_OFFSET = 60
+const STEM_LENGTH = 40
+const NOTE_X_OFFSET = 80
+const SHORT_LINE_HALF_WIDTH = 20
+const CANVAS_BG_COLOR = "#f5f5f5"
+
 export default {
   props: {
-    // Título del componente
-    title: {
-      type: String,
-      default: "Pentagrama",
-    },
-
-    // Frecuencia actual detectada en Hz
-    frequency: {
-      type: Number,
-      default: null,
-    },
-
-    // Desviación en cents
-    centsDeviation: {
-      type: Number,
-      default: null,
-    },
-
-    // Mostrar notas fantasma (octavas)
-    showGhostNotes: {
-      type: Boolean,
-      default: false,
-    },
-
-    // Usar notación latina (Do, Re, Mi) vs anglosajona (C, D, E)
-    latinNotation: {
-      type: Boolean,
-      default: false,
-    },
-
-    // Factor de zoom del pentagrama
-    zoom: {
-      type: Number,
-      default: 2,
-    },
-
-    // Dimensiones del canvas
-    canvasHeight: {
-      type: [Number, String],
-      default: 600,
-    },
-
-    canvasWidth: {
-      type: [Number, String],
-      default: 300,
-    },
-
-    // Mostrar información de cents
-    showCentsDeviation: {
-      type: Boolean,
-      default: true,
-    },
+    title: { type: String, default: "Pentagrama" },
+    frequency: { type: Number, default: null },
+    centsDeviation: { type: Number, default: null },
+    showGhostNotes: { type: Boolean, default: false },
+    latinNotation: { type: Boolean, default: false },
+    zoom: { type: Number, default: 2 },
+    canvasHeight: { type: [Number, String], default: 600 },
+    canvasWidth: { type: [Number, String], default: 300 },
+    showCentsDeviation: { type: Boolean, default: true },
   },
 
   data() {
@@ -79,46 +48,34 @@ export default {
       trebleClefImage: null,
       bassClefImage: null,
       isReady: false,
-      trebleClefPath: "/clave_sol.svg",
-      bassClefPath: "/clave_fa.svg",
     }
   },
 
   computed: {
-    canvasStyle() {
-      return {
-        display: "block",
-        backgroundColor: "#f5f5f5",
-        border: "10px solid black",
-        width: "100%",
-      }
+    canvasStyle: () => ({
+      display: "block",
+      backgroundColor: CANVAS_BG_COLOR,
+      border: "10px solid black",
+      width: "100%",
+    }),
+
+    tuningMetrics() {
+      if (this.centsDeviation === null) return { class: "", color: "grey", text: "--" }
+      const abs = Math.abs(this.centsDeviation)
+      if (abs <= 5) return { class: "tuning-perfect", color: "green", text: "Perfecta afinación" }
+      if (abs <= 15) return { class: "tuning-good", color: "light-green", text: "Buena afinación" }
+      if (abs <= 30) return { class: "tuning-fair", color: "orange", text: "Afinación aceptable" }
+      return { class: "tuning-poor", color: "red", text: "Desafinado" }
     },
 
     tuningAccuracyClass() {
-      if (this.centsDeviation === null) return ""
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "tuning-perfect"
-      if (abs <= 15) return "tuning-good"
-      if (abs <= 30) return "tuning-fair"
-      return "tuning-poor"
+      return this.tuningMetrics.class
     },
-
     tuningAccuracyColor() {
-      if (this.centsDeviation === null) return "grey"
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "green"
-      if (abs <= 15) return "light-green"
-      if (abs <= 30) return "orange"
-      return "red"
+      return this.tuningMetrics.color
     },
-
     tuningAccuracyText() {
-      if (this.centsDeviation === null) return "--"
-      const abs = Math.abs(this.centsDeviation)
-      if (abs <= 5) return "Perfecta afinación"
-      if (abs <= 15) return "Buena afinación"
-      if (abs <= 30) return "Afinación aceptable"
-      return "Desafinado"
+      return this.tuningMetrics.text
     },
   },
 
@@ -137,363 +94,221 @@ export default {
   methods: {
     initCanvas() {
       const canvas = this.$refs.staffCanvas
-      if (!canvas) return
-
-      this.ctx = canvas.getContext("2d")
-      this.drawStaff()
-    },
-
-    loadClefImages() {
-      // Cargar SVG de clave de Sol
-      this.trebleClefImage = new Image()
-      this.trebleClefImage.onload = () => {
-        this.checkImagesReady()
-      }
-      this.trebleClefImage.onerror = () => {
-        // console.warn("No se pudo cargar clave_sol.svg")
-        this.trebleClefImage = null
-        this.checkImagesReady()
-      }
-      this.trebleClefImage.src = this.trebleClefPath
-
-      // Cargar SVG de clave de Fa
-      this.bassClefImage = new Image()
-      this.bassClefImage.onload = () => {
-        this.checkImagesReady()
-      }
-      this.bassClefImage.onerror = () => {
-        // console.warn("No se pudo cargar clave_fa.svg")
-        this.bassClefImage = null
-        this.checkImagesReady()
-      }
-      this.bassClefImage.src = this.bassClefPath
-    },
-
-    checkImagesReady() {
-      // Esperar a que ambas imágenes intenten cargar
-      if ((this.trebleClefImage === null || this.trebleClefImage.complete) && (this.bassClefImage === null || this.bassClefImage.complete)) {
-        this.isReady = true
+      if (canvas) {
+        this.ctx = canvas.getContext("2d")
         this.drawStaff()
       }
     },
 
-    midiToFreq(midi) {
-      const A4_FREQ = 440
-      const A4_MIDI = 69
-      return A4_FREQ * Math.pow(2, (midi - A4_MIDI) / 12)
+    loadClefImages() {
+      const paths = { treble: "/clave_sol.svg", bass: "/clave_fa.svg" }
+      let loaded = 0
+
+      const checkAllLoaded = () => {
+        if (++loaded === 2) {
+          this.isReady = true
+          this.drawStaff()
+        }
+      }
+
+      Object.entries(paths).forEach(([key, src]) => {
+        const img = new Image()
+        img.onload = () => {
+          this[`${key}ClefImage`] = img
+          checkAllLoaded()
+        }
+        img.onerror = () => {
+          this[`${key}ClefImage`] = null
+          checkAllLoaded()
+        }
+        img.src = src
+      })
     },
 
-    freqToMidi(freq) {
-      if (freq <= 0) return 0
-      return 69 + 12 * Math.log2(freq / 440)
-    },
+    freqToMidi: (freq) => (freq <= 0 ? 0 : 69 + 12 * Math.log2(freq / 440)),
 
     getNoteName(midiNote) {
-      const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
-      const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]
-
       const noteIndex = Math.floor(midiNote) % 12
       const isHalfStep = Math.round(midiNote * 2) % 2 === 1
       const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
-
-      const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
-      return noteStrings[fullIndex]
+      return (this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS)[fullIndex]
     },
 
     drawStaff() {
       if (!this.ctx || !this.isReady) return
 
       const canvas = this.$refs.staffCanvas
-      if (!canvas) return
-
-      const canvasWidth = canvas.width
-      const canvasHeight = canvas.height
+      const { width, height } = canvas
+      const lineSpacing = BASE_LINE_SPACING * this.zoom
+      const trebleTop = STAFF_TOP_OFFSET * this.zoom
+      const staffLeft = 20
+      const noteX = staffLeft + NOTE_X_OFFSET * this.zoom
+      const lineStart = staffLeft + 10
+      const lineEnd = Math.min(lineStart + 120 * this.zoom, width - 10)
+      const bassTop = trebleTop + 6 * lineSpacing
 
       // Limpiar canvas
-      this.ctx.fillStyle = "#f5f5f5"
-      this.ctx.fillRect(0, 0, canvasWidth, canvasHeight)
-
-      const zoom = this.zoom
-      const staffSizeRatio = 1.0 * zoom
-      const baseLineSpacing = 9 * zoom
-
-      const trebleStaffTop = 60 * staffSizeRatio
-      const lineSpacing = baseLineSpacing * staffSizeRatio
-      const staffWidth = canvasWidth - 40
-      const staffLeft = 20
-
-      // Coordenadas para líneas largas (pentagrama)
-      const staffLineLength = 120 * staffSizeRatio
-      const lineStart = staffLeft + 10
-      const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
-
-      // Coordenadas para líneas CORTAS (ledger lines)
-      // Centradas en la posición donde aparece la nota (noteX en drawNotes)
-      const noteX = staffLeft + 80 * staffSizeRatio
-      const shortLineHalfWidth = 20 * zoom
-      const shortLineStart = noteX - shortLineHalfWidth
-      const shortLineEnd = noteX + shortLineHalfWidth
-
-      const staffSeparation = 6 * lineSpacing
-      const bassStaffTop = trebleStaffTop + staffSeparation
+      this.ctx.fillStyle = CANVAS_BG_COLOR
+      this.ctx.fillRect(0, 0, width, height)
 
       this.ctx.strokeStyle = "#000"
       this.ctx.lineWidth = 2
 
-      // 1. Dibujar 3 líneas adicionales CORTAS arriba (Clave de Sol)
+      const sStart = noteX - SHORT_LINE_HALF_WIDTH * this.zoom
+      const sEnd = noteX + SHORT_LINE_HALF_WIDTH * this.zoom
+
+      // 1. Líneas adicionales superiores
       for (let i = 1; i <= 2; i++) {
-        const y = trebleStaffTop - i * lineSpacing
-        this.ctx.beginPath()
-        this.ctx.moveTo(shortLineStart, y)
-        this.ctx.lineTo(shortLineEnd, y)
-        this.ctx.stroke()
+        this.drawHorizontal(trebleTop - i * lineSpacing, sStart, sEnd)
       }
 
-      // 2. Dibujar Pentagrama de Sol (5 líneas LARGAS)
+      // 2. Pentagrama Sol
       for (let i = 0; i < 5; i++) {
-        const y = trebleStaffTop + i * lineSpacing
-        this.ctx.beginPath()
-        this.ctx.moveTo(lineStart, y)
-        this.ctx.lineTo(lineEnd, y)
-        this.ctx.stroke()
+        this.drawHorizontal(trebleTop + i * lineSpacing, lineStart, lineEnd)
       }
 
-      // 3. Dibujar Línea de Do Central (C4) CORTA y permanente
-      const middleCLineY = trebleStaffTop + 5 * lineSpacing
-      this.ctx.beginPath()
-      this.ctx.moveTo(shortLineStart, middleCLineY)
-      this.ctx.lineTo(shortLineEnd, middleCLineY)
-      this.ctx.stroke()
+      // 3. Do Central (C4)
+      this.drawHorizontal(trebleTop + 5 * lineSpacing, sStart, sEnd)
 
-      // 4. Dibujar Pentagrama de Fa (5 líneas LARGAS)
+      // 4. Pentagrama Fa
       for (let i = 0; i < 5; i++) {
-        const y = bassStaffTop + i * lineSpacing
-        this.ctx.beginPath()
-        this.ctx.moveTo(lineStart, y)
-        this.ctx.lineTo(lineEnd, y)
-        this.ctx.stroke()
+        this.drawHorizontal(bassTop + i * lineSpacing, lineStart, lineEnd)
       }
 
-      // 5. Dibujar 3 líneas adicionales CORTAS abajo (Clave de Fa)
+      // 5. Líneas adicionales inferiores
       for (let i = 1; i <= 2; i++) {
-        const y = bassStaffTop + 4 * lineSpacing + i * lineSpacing
-        this.ctx.beginPath()
-        this.ctx.moveTo(shortLineStart, y)
-        this.ctx.lineTo(shortLineEnd, y)
-        this.ctx.stroke()
+        this.drawHorizontal(bassTop + 4 * lineSpacing + i * lineSpacing, sStart, sEnd)
       }
 
-      // Dibujar Claves (el resto del código se mantiene igual...)
-      if (this.trebleClefImage && this.trebleClefImage.complete) {
-        const clefWidth = 45 * staffSizeRatio
-        const clefHeight = baseLineSpacing * 6.5 * staffSizeRatio
-        this.ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - baseLineSpacing * staffSizeRatio, clefWidth, clefHeight)
-      }
+      // Dibujar Claves
+      this.renderClefs(staffLeft, trebleTop, bassTop, lineSpacing)
 
-      if (this.bassClefImage && this.bassClefImage.complete) {
-        const clefWidth = 65 * staffSizeRatio
-        const clefHeight = baseLineSpacing * 6 * staffSizeRatio
-        this.ctx.drawImage(this.bassClefImage, staffLeft - 3, bassStaffTop - baseLineSpacing * 1.33 * staffSizeRatio, clefWidth, clefHeight)
-      } else {
-        this.drawBassClef(this.ctx, staffLeft, bassStaffTop)
-      }
-
+      // Dibujar Notas
       if (this.frequency) {
-        this.drawNotes(trebleStaffTop, bassStaffTop, lineSpacing, staffLeft, staffSizeRatio, zoom)
+        this.renderNotes(trebleTop, bassTop, lineSpacing, noteX)
       }
     },
-    drawNotes(trebleStaffTop, bassStaffTop, lineSpacing, staffLeft, staffSizeRatio, zoom) {
-      const noteX = staffLeft + 80 * staffSizeRatio
+
+    drawHorizontal(y, start, end) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(start, y)
+      this.ctx.lineTo(end, y)
+      this.ctx.stroke()
+    },
+
+    renderClefs(x, trebleTop, bassTop, lineSpacing) {
+      if (this.trebleClefImage) {
+        this.ctx.drawImage(this.trebleClefImage, x + 5, trebleTop - lineSpacing, 45 * this.zoom, lineSpacing * 6.5)
+      }
+      if (this.bassClefImage) {
+        this.ctx.drawImage(this.bassClefImage, x - 3, bassTop - lineSpacing * 1.33, 65 * this.zoom, lineSpacing * 6)
+      } else {
+        this.drawBassClefFallback(x, bassTop)
+      }
+    },
+
+    renderNotes(trebleTop, bassTop, lineSpacing, noteX) {
       const currentMidi = this.freqToMidi(this.frequency)
       const roundedMidi = Math.round(currentMidi)
+      const isSharp = this.getNoteName(roundedMidi).match(/[♯#]/)
+      const noteColor = COLORS[(roundedMidi % 12) * 2]
 
-      // Determinar si es sostenido
-      const noteName = this.getNoteName(roundedMidi)
-      const isSharp = noteName.includes("♯") || noteName.includes("#")
+      const drawComponent = (midi, alpha = 1.0) => {
+        const { noteY, ledgerLines } = this.calculateNotePos(midi, trebleTop, bassTop, lineSpacing)
+        this.ctx.globalAlpha = alpha
 
-      // Calcular posición Y de la nota principal
-      const { noteY, ledgerLines } = this.calculateNotePosition(roundedMidi, trebleStaffTop, bassStaffTop, lineSpacing)
+        ledgerLines.forEach((ly) => {
+          this.ctx.strokeStyle = "#000"
+          this.ctx.lineWidth = 2 * this.zoom
+          this.ctx.beginPath()
+          this.ctx.moveTo(noteX - 20 * this.zoom, ly)
+          this.ctx.lineTo(noteX + 20 * this.zoom, ly)
+          this.ctx.stroke()
+        })
 
-      // Obtener color según la nota
-      const fullIndex = (roundedMidi % 12) * 2
-      const noteColor = COLORS[fullIndex]
-
-      // Dibujar líneas adicionales
-      ledgerLines.forEach((ledgerY) => {
-        this.ctx.strokeStyle = "#000"
-        this.ctx.lineWidth = 2 * zoom
-        this.ctx.beginPath()
-        this.ctx.moveTo(noteX - 20 * zoom, ledgerY)
-        this.ctx.lineTo(noteX + 20 * zoom, ledgerY)
-        this.ctx.stroke()
-      })
-
-      // Dibujar notas fantasma si está activado
-      if (this.showGhostNotes) {
-        // Nota fantasma superior (octava arriba)
-        const upperMidi = roundedMidi + 12
-        const upperResult = this.calculateNotePosition(upperMidi, trebleStaffTop, bassStaffTop, lineSpacing)
-
-        this.ctx.globalAlpha = 0.45
-        this.drawQuarterNote(this.ctx, noteX, upperResult.noteY, noteColor, isSharp, zoom)
-
-        // Nota fantasma inferior (octava abajo)
-        const lowerMidi = roundedMidi - 12
-        const lowerResult = this.calculateNotePosition(lowerMidi, trebleStaffTop, bassStaffTop, lineSpacing)
-
-        this.drawQuarterNote(this.ctx, noteX, lowerResult.noteY, noteColor, isSharp, zoom)
-        this.ctx.globalAlpha = 1.0
+        this.drawQuarterNote(noteX, noteY, noteColor, isSharp)
       }
 
-      // Dibujar nota principal
-      this.drawQuarterNote(this.ctx, noteX, noteY, noteColor, isSharp, zoom)
+      if (this.showGhostNotes) {
+        drawComponent(roundedMidi + 12, 0.45)
+        drawComponent(roundedMidi - 12, 0.45)
+      }
+      drawComponent(roundedMidi, 1.0)
+      this.ctx.globalAlpha = 1.0
     },
 
-    calculateNotePosition(midiNote, trebleStaffTop, bassStaffTop, lineSpacing) {
-      const naturalPositions = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
+    calculateNotePos(midi, trebleTop, bassTop, lineSpacing) {
+      const isTreble = midi >= 60
+      const refMidi = isTreble ? 64 : 53 // E4 o F3
+      const refY = isTreble ? trebleTop + 4 * lineSpacing : bassTop + lineSpacing
+
+      const totalDiff = (Math.floor(midi / 12) - Math.floor(refMidi / 12)) * 7 + (NATURAL_POSITIONS[midi % 12] - NATURAL_POSITIONS[refMidi % 12])
+      const noteY = refY - totalDiff * (lineSpacing / 2)
       const ledgerLines = []
-      let noteY
 
-      if (midiNote >= 60) {
-        const e4Midi = 64
-        const positionDiff = naturalPositions[midiNote % 12] - naturalPositions[e4Midi % 12]
-        const octaveDiff = Math.floor(midiNote / 12) - Math.floor(e4Midi / 12)
-        const totalPositionDiff = octaveDiff * 7 + positionDiff
-
-        noteY = trebleStaffTop + 4 * lineSpacing - totalPositionDiff * (lineSpacing / 2)
-
-        const bottomLine = trebleStaffTop + 4 * lineSpacing
-
-        // COMENTAR O ELIMINAR ESTA SECCIÓN:
-        // Ya no añadimos la línea para C4 (60) dinámicamente porque ahora es permanente
-        /*
-    if (midiNote >= 60 && midiNote <= 63) {
-      ledgerLines.push(bottomLine + lineSpacing)
-    }
-    */
-
-        // Mantener solo las líneas para notas mucho más graves o agudas si fuera necesario
-        if (noteY > bottomLine + lineSpacing) {
-          const linesNeeded = Math.floor((noteY - (bottomLine + lineSpacing)) / lineSpacing)
-          for (let i = 1; i <= linesNeeded; i++) {
-            // Evitar dibujar la línea de Do4 (que está a exactamente 1 lineSpacing del fondo)
-            const currentY = bottomLine + lineSpacing + i * lineSpacing
-            ledgerLines.push(currentY)
-          }
+      if (isTreble) {
+        const bottom = trebleTop + 4 * lineSpacing
+        if (noteY > bottom + lineSpacing) {
+          const count = Math.floor((noteY - (bottom + lineSpacing)) / lineSpacing)
+          for (let i = 1; i <= count; i++) ledgerLines.push(bottom + lineSpacing + i * lineSpacing)
         }
-      } else {
-        // ... resto de la lógica para clave de Fa
-        // (Asegúrate de no añadir la línea de Do4 aquí tampoco si existiera)
-        const f3Midi = 53
-        const bassPositionDiff = naturalPositions[midiNote % 12] - naturalPositions[f3Midi % 12]
-        const bassOctaveDiff = Math.floor(midiNote / 12) - Math.floor(f3Midi / 12)
-        const bassTotalPositionDiff = bassOctaveDiff * 7 + bassPositionDiff
-
-        noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
-
-        // ELIMINAR ESTA SECCIÓN (Línea de Do4 desde abajo):
-        /*
-    if (midiNote === 59) {
-      const trebleBottomLine = trebleStaffTop + 4 * lineSpacing
-      ledgerLines.push(trebleBottomLine + lineSpacing)
-    }
-    */
-
-        const bassTopLine = bassStaffTop
-        if (noteY < bassTopLine) {
-          const linesNeeded = Math.floor((bassTopLine - noteY) / lineSpacing)
-          for (let i = 1; i <= linesNeeded; i++) {
-            ledgerLines.push(bassTopLine - i * lineSpacing)
-          }
-        }
+      } else if (noteY < bassTop) {
+        const count = Math.floor((bassTop - noteY) / lineSpacing)
+        for (let i = 1; i <= count; i++) ledgerLines.push(bassTop - i * lineSpacing)
       }
 
       return { noteY, ledgerLines }
     },
 
-    drawQuarterNote(ctx, x, y, color = "#000", isSharp = false, zoom = 1.0) {
-      const stemLength = 47 * zoom
+    drawQuarterNote(x, y, color, isSharp) {
+      const z = this.zoom
 
-      // Dibujar símbolo # si es sostenido
       if (isSharp) {
-        ctx.strokeStyle = "#000"
-        ctx.lineWidth = 3 * zoom
-        ctx.font = `bold ${24 * zoom}px serif`
-        ctx.strokeText("♯", x - 25 * zoom, y + 8 * zoom)
-
-        ctx.fillStyle = color
-        ctx.fillText("♯", x - 25 * zoom, y + 8 * zoom)
+        this.ctx.font = `bold ${24 * z}px serif`
+        this.ctx.strokeStyle = "#000"
+        this.ctx.lineWidth = 3 * z
+        this.ctx.strokeText("♯", x - 25 * z, y + 8 * z)
+        this.ctx.fillStyle = color
+        this.ctx.fillText("♯", x - 25 * z, y + 8 * z)
       }
 
-      // Relleno con color
-      ctx.fillStyle = color
-      ctx.beginPath()
-      ctx.ellipse(x, y, 8 * zoom, 6 * zoom, -0.3, 0, Math.PI * 2)
-      ctx.fill()
+      this.ctx.fillStyle = color
+      this.ctx.strokeStyle = "#000"
+      this.ctx.lineWidth = 2 * z
+      this.ctx.beginPath()
+      this.ctx.ellipse(x, y, 8 * z, 6 * z, -0.3, 0, Math.PI * 2)
+      this.ctx.fill()
+      this.ctx.stroke()
 
-      // Contorno negro
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.ellipse(x, y, 9 * zoom, 7 * zoom, -0.3, 0, Math.PI * 2)
-      ctx.stroke()
+      // Plica
+      this.ctx.lineCap = "round"
+      this.ctx.strokeStyle = "#000"
+      this.ctx.lineWidth = 4 * z
+      this.ctx.beginPath()
+      this.ctx.moveTo(x + 7 * z, y - 1 * z)
+      this.ctx.lineTo(x + 7 * z, y - STEM_LENGTH * z)
+      this.ctx.stroke()
 
-      // Plica con color
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
-
-      // Contorno negro de la plica
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 4 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
-
-      // Plica con color encima
-      ctx.strokeStyle = color
-      ctx.lineWidth = 2 * zoom
-      ctx.beginPath()
-      ctx.moveTo(x + 7 * zoom, y - 1 * zoom)
-      ctx.lineTo(x + 7 * zoom, y - stemLength)
-      ctx.stroke()
+      this.ctx.strokeStyle = color
+      this.ctx.lineWidth = 2 * z
+      this.ctx.stroke()
     },
 
-    drawBassClef(ctx, x, y) {
-      ctx.fillStyle = "#000"
-      ctx.strokeStyle = "#000"
-      ctx.lineWidth = 2
-
-      const lineSpacing = 30
-      const fLine = y + lineSpacing
-
-      ctx.save()
-      ctx.translate(x + 15, fLine)
-      ctx.scale(1, 1)
-
-      // Curva principal de la clave de Fa
-      ctx.beginPath()
-      ctx.arc(-5, 0, 8, Math.PI * 0.5, Math.PI * 1.5)
-      ctx.arc(-5, -10, 4, Math.PI * 1.5, Math.PI * 0.5, true)
-      ctx.fill()
-
-      // Dos puntos característicos
-      ctx.beginPath()
-      ctx.arc(5, -5, 2.5, 0, Math.PI * 2)
-      ctx.fill()
-
-      ctx.beginPath()
-      ctx.arc(5, 5, 2.5, 0, Math.PI * 2)
-      ctx.fill()
-
-      ctx.restore()
+    drawBassClefFallback(x, y) {
+      this.ctx.fillStyle = "#000"
+      this.ctx.save()
+      this.ctx.translate(x + 15, y + 30)
+      this.ctx.beginPath()
+      this.ctx.arc(-5, 0, 8, Math.PI * 0.5, Math.PI * 1.5)
+      this.ctx.arc(-5, -10, 4, Math.PI * 1.5, Math.PI * 0.5, true)
+      this.ctx.fill()
+      this.ctx.beginPath()
+      this.ctx.arc(5, -5, 2.5, 0, Math.PI * 2)
+      this.ctx.arc(5, 5, 2.5, 0, Math.PI * 2)
+      this.ctx.fill()
+      this.ctx.restore()
     },
 
-    // Método público para redibujar el pentagrama
     redraw() {
       this.drawStaff()
     },
@@ -505,20 +320,16 @@ export default {
 .staff-notation {
   width: 100%;
 }
-
 .tuning-perfect {
   color: #4caf50 !important;
   font-weight: bold;
 }
-
 .tuning-good {
   color: #8bc34a !important;
 }
-
 .tuning-fair {
   color: #ff9800 !important;
 }
-
 .tuning-poor {
   color: #d32f2f !important;
 }
