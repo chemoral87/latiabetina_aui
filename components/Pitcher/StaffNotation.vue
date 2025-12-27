@@ -355,7 +355,6 @@ export default {
       let noteY
 
       if (midiNote >= 60) {
-        // C4 (MIDI 60) y superior en clave de Sol
         const e4Midi = 64
         const positionDiff = naturalPositions[midiNote % 12] - naturalPositions[e4Midi % 12]
         const octaveDiff = Math.floor(midiNote / 12) - Math.floor(e4Midi / 12)
@@ -365,19 +364,26 @@ export default {
 
         const bottomLine = trebleStaffTop + 4 * lineSpacing
 
-        // Línea para C4, C#4, D4, D#4
-        if (midiNote >= 60 && midiNote <= 63) {
-          ledgerLines.push(bottomLine + lineSpacing)
-        }
+        // COMENTAR O ELIMINAR ESTA SECCIÓN:
+        // Ya no añadimos la línea para C4 (60) dinámicamente porque ahora es permanente
+        /*
+    if (midiNote >= 60 && midiNote <= 63) {
+      ledgerLines.push(bottomLine + lineSpacing)
+    }
+    */
 
+        // Mantener solo las líneas para notas mucho más graves o agudas si fuera necesario
         if (noteY > bottomLine + lineSpacing) {
           const linesNeeded = Math.floor((noteY - (bottomLine + lineSpacing)) / lineSpacing)
           for (let i = 1; i <= linesNeeded; i++) {
-            ledgerLines.push(bottomLine + lineSpacing + i * lineSpacing)
+            // Evitar dibujar la línea de Do4 (que está a exactamente 1 lineSpacing del fondo)
+            const currentY = bottomLine + lineSpacing + i * lineSpacing
+            ledgerLines.push(currentY)
           }
         }
       } else {
-        // Notas graves en clave de Fa
+        // ... resto de la lógica para clave de Fa
+        // (Asegúrate de no añadir la línea de Do4 aquí tampoco si existiera)
         const f3Midi = 53
         const bassPositionDiff = naturalPositions[midiNote % 12] - naturalPositions[f3Midi % 12]
         const bassOctaveDiff = Math.floor(midiNote / 12) - Math.floor(f3Midi / 12)
@@ -385,11 +391,13 @@ export default {
 
         noteY = bassStaffTop + lineSpacing - bassTotalPositionDiff * (lineSpacing / 2)
 
-        // Línea para B3
-        if (midiNote === 59) {
-          const trebleBottomLine = trebleStaffTop + 4 * lineSpacing
-          ledgerLines.push(trebleBottomLine + lineSpacing)
-        }
+        // ELIMINAR ESTA SECCIÓN (Línea de Do4 desde abajo):
+        /*
+    if (midiNote === 59) {
+      const trebleBottomLine = trebleStaffTop + 4 * lineSpacing
+      ledgerLines.push(trebleBottomLine + lineSpacing)
+    }
+    */
 
         const bassTopLine = bassStaffTop
         if (noteY < bassTopLine) {
