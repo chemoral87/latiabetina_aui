@@ -28,6 +28,7 @@
 import { COLORS, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS, MAJOR_STEPS, MIN_MIDI, TOLERANCE_HZ, A4_FREQ, A4_MIDI, TEXT_WIDTH } from "../../pages/pitcher/constants.js"
 
 export default {
+  name: "PitcherHistogram",
   props: {
     history: {
       type: Array,
@@ -45,30 +46,6 @@ export default {
       type: Number,
       default: null,
     },
-    latinNotation: {
-      type: Boolean,
-      default: false,
-    },
-    selectedRootNote: {
-      type: String,
-      default: "C",
-    },
-    showMicrotones: {
-      type: Boolean,
-      default: false,
-    },
-    maxHistory: {
-      type: Number,
-      default: 500,
-    },
-    totalNotes: {
-      type: Number,
-      default: 18,
-    },
-    histogramHeight: {
-      type: Number,
-      default: 400,
-    },
   },
 
   data() {
@@ -80,6 +57,47 @@ export default {
   },
 
   computed: {
+    latinNotation: {
+      get() {
+        return this.$store.state.pitcher_store.latinNotation
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_LATIN_NOTATION", value)
+      },
+    },
+    showMicrotones: {
+      get() {
+        return this.$store.state.pitcher_store.showMicrotones
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_SHOW_MICROTONES", value)
+      },
+    },
+    maxHistory: {
+      get() {
+        return this.$store.state.pitcher_store.maxHistory
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_MAX_HISTORY", value)
+      },
+    },
+    totalNotes: {
+      get() {
+        return this.$store.state.pitcher_store.totalNotes
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
+      },
+    },
+    histogramHeight: {
+      get() {
+        return this.$store.state.pitcher_store.histogramHeight
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
+      },
+    },
+    // Removed duplicate keys for selectedRootNote, showMicrotones, latinNotation
     tuningAccuracyClass() {
       if (this.centsDeviation === null) return ""
       const abs = Math.abs(this.centsDeviation)

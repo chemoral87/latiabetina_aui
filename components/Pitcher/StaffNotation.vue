@@ -222,7 +222,7 @@ export default {
       const lineSpacing = baseLineSpacing * staffSizeRatio
       const staffWidth = canvasWidth - 40
       const staffLeft = 20
-      const staffLineLength = 110 * staffSizeRatio
+      const staffLineLength = 120 * staffSizeRatio
       const lineStart = staffLeft + 10
       const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
 
@@ -276,7 +276,7 @@ export default {
     },
 
     drawNotes(trebleStaffTop, bassStaffTop, lineSpacing, staffLeft, staffSizeRatio, zoom) {
-      const noteX = staffLeft + 90 * staffSizeRatio
+      const noteX = staffLeft + 80 * staffSizeRatio
       const currentMidi = this.freqToMidi(this.frequency)
       const roundedMidi = Math.round(currentMidi)
 
