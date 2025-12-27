@@ -217,20 +217,39 @@ export default {
       const staffSizeRatio = 1.0 * zoom
       const baseLineSpacing = 9 * zoom
 
-      // Configuración del pentagrama superior (Clave de Sol)
-      const trebleStaffTop = 50 * staffSizeRatio
+      const trebleStaffTop = 60 * staffSizeRatio
       const lineSpacing = baseLineSpacing * staffSizeRatio
       const staffWidth = canvasWidth - 40
       const staffLeft = 20
+
+      // Coordenadas para líneas largas (pentagrama)
       const staffLineLength = 120 * staffSizeRatio
       const lineStart = staffLeft + 10
       const lineEnd = Math.min(lineStart + staffLineLength, staffLeft + staffWidth - 10)
 
-      const staffSeparation = 6 * lineSpacing
+      // Coordenadas para líneas CORTAS (ledger lines)
+      // Centradas en la posición donde aparece la nota (noteX en drawNotes)
+      const noteX = staffLeft + 80 * staffSizeRatio
+      const shortLineHalfWidth = 20 * zoom
+      const shortLineStart = noteX - shortLineHalfWidth
+      const shortLineEnd = noteX + shortLineHalfWidth
 
-      // Dibujar las 5 líneas del pentagrama de Sol
+      const staffSeparation = 6 * lineSpacing
+      const bassStaffTop = trebleStaffTop + staffSeparation
+
       this.ctx.strokeStyle = "#000"
       this.ctx.lineWidth = 2
+
+      // 1. Dibujar 3 líneas adicionales CORTAS arriba (Clave de Sol)
+      for (let i = 1; i <= 2; i++) {
+        const y = trebleStaffTop - i * lineSpacing
+        this.ctx.beginPath()
+        this.ctx.moveTo(shortLineStart, y)
+        this.ctx.lineTo(shortLineEnd, y)
+        this.ctx.stroke()
+      }
+
+      // 2. Dibujar Pentagrama de Sol (5 líneas LARGAS)
       for (let i = 0; i < 5; i++) {
         const y = trebleStaffTop + i * lineSpacing
         this.ctx.beginPath()
@@ -239,19 +258,14 @@ export default {
         this.ctx.stroke()
       }
 
-      // Dibujar clave de Sol desde SVG
-      if (this.trebleClefImage && this.trebleClefImage.complete) {
-        const clefWidth = 45 * staffSizeRatio
-        const clefHeight = baseLineSpacing * 6.5 * staffSizeRatio
-        this.ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - baseLineSpacing * staffSizeRatio, clefWidth, clefHeight)
-      }
+      // 3. Dibujar Línea de Do Central (C4) CORTA y permanente
+      const middleCLineY = trebleStaffTop + 5 * lineSpacing
+      this.ctx.beginPath()
+      this.ctx.moveTo(shortLineStart, middleCLineY)
+      this.ctx.lineTo(shortLineEnd, middleCLineY)
+      this.ctx.stroke()
 
-      // Configuración del pentagrama inferior (Clave de Fa)
-      const bassStaffTop = trebleStaffTop + staffSeparation
-
-      // Dibujar las 5 líneas del pentagrama de Fa
-      this.ctx.strokeStyle = "#000"
-      this.ctx.lineWidth = 2
+      // 4. Dibujar Pentagrama de Fa (5 líneas LARGAS)
       for (let i = 0; i < 5; i++) {
         const y = bassStaffTop + i * lineSpacing
         this.ctx.beginPath()
@@ -260,7 +274,22 @@ export default {
         this.ctx.stroke()
       }
 
-      // Dibujar clave de Fa
+      // 5. Dibujar 3 líneas adicionales CORTAS abajo (Clave de Fa)
+      for (let i = 1; i <= 2; i++) {
+        const y = bassStaffTop + 4 * lineSpacing + i * lineSpacing
+        this.ctx.beginPath()
+        this.ctx.moveTo(shortLineStart, y)
+        this.ctx.lineTo(shortLineEnd, y)
+        this.ctx.stroke()
+      }
+
+      // Dibujar Claves (el resto del código se mantiene igual...)
+      if (this.trebleClefImage && this.trebleClefImage.complete) {
+        const clefWidth = 45 * staffSizeRatio
+        const clefHeight = baseLineSpacing * 6.5 * staffSizeRatio
+        this.ctx.drawImage(this.trebleClefImage, staffLeft + 5, trebleStaffTop - baseLineSpacing * staffSizeRatio, clefWidth, clefHeight)
+      }
+
       if (this.bassClefImage && this.bassClefImage.complete) {
         const clefWidth = 65 * staffSizeRatio
         const clefHeight = baseLineSpacing * 6 * staffSizeRatio
@@ -269,12 +298,10 @@ export default {
         this.drawBassClef(this.ctx, staffLeft, bassStaffTop)
       }
 
-      // Dibujar notas si hay frecuencia detectada
       if (this.frequency) {
         this.drawNotes(trebleStaffTop, bassStaffTop, lineSpacing, staffLeft, staffSizeRatio, zoom)
       }
     },
-
     drawNotes(trebleStaffTop, bassStaffTop, lineSpacing, staffLeft, staffSizeRatio, zoom) {
       const noteX = staffLeft + 80 * staffSizeRatio
       const currentMidi = this.freqToMidi(this.frequency)
