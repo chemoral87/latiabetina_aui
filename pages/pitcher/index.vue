@@ -61,7 +61,7 @@
       </v-col>
 
       <v-col cols="6" sm="3" md="2">
-        <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Nota Raíz' : 'Root Note'" dense outlined hide-details />
+        <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Escala Mayor' : 'Mayor Scale'" dense outlined hide-details />
       </v-col>
     </v-row>
     <v-row dense>

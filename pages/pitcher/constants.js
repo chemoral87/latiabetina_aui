@@ -46,3 +46,16 @@ export const TOLERANCE_HZ = 1.95
 export const A4_FREQ = 440
 export const A4_MIDI = 69
 export const TEXT_WIDTH = 40
+
+// Add these missing constants that were defined inline in other files
+export const NATURAL_POSITIONS = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
+export const BASE_LINE_SPACING = 16
+export const STAFF_TOP_OFFSET = 60
+export const STEM_LENGTH = 40
+export const NOTE_X_OFFSET = 65
+export const NOTE_X_B_OFFSET = 45 // Changed from noteXbOffset to camelCase
+export const SHORT_LINE_HALF_WIDTH = 15
+export const CANVAS_BG_COLOR = "#f5f5f5"
+export const SIMBOL_MARGIN = 23
+export const MARGIN_LINE = 0
+export const LINE_BASE = 130

@@ -1,6 +1,6 @@
 <template>
   <div class="staff-notation">
-    <h5 class="text-center font-weight-regular">{{ title }}</h5>
+    <h5 class="text-center font-weight-regular">Pentagrama</h5>
     <canvas ref="staffCanvas" :height="canvasHeight" :width="canvasWidth" :style="canvasStyle" />
     <div v-if="showCentsDeviation" class="text-right mt-2">
       <div class="caption">
@@ -15,31 +15,27 @@
 </template>
 
 <script>
-import { COLORS } from "../../pages/pitcher/constants.js"
-
-// --- CONSTANTES DEFINIDAS AL INICIO ---
-const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
-const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]
-const NATURAL_POSITIONS = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6]
-
-const BASE_LINE_SPACING = 16
-const STAFF_TOP_OFFSET = 60
-const STEM_LENGTH = 40
-const NOTE_X_OFFSET = 65
-const noteXbOffset = 45 // CamelCase to satisfy linting
-const SHORT_LINE_HALF_WIDTH = 15
-const CANVAS_BG_COLOR = "#f5f5f5"
-const SIMBOL_MARGIN = 23
-const MARGIN_LINE = 0
-const LINE_BASE = 130
+import {
+  COLORS,
+  NOTE_SHORT_STRINGS,
+  NOTE_LATIN_STRINGS,
+  NATURAL_POSITIONS,
+  BASE_LINE_SPACING,
+  STAFF_TOP_OFFSET,
+  STEM_LENGTH,
+  NOTE_X_OFFSET,
+  NOTE_X_B_OFFSET, // Changed from noteXbOffset
+  SHORT_LINE_HALF_WIDTH,
+  CANVAS_BG_COLOR,
+  SIMBOL_MARGIN,
+  MARGIN_LINE,
+  LINE_BASE,
+} from "../../pages/pitcher/constants.js"
 
 export default {
   props: {
-    title: { type: String, default: "Pentagrama" },
     frequency: { type: Number, default: null },
     centsDeviation: { type: Number, default: null },
-    showGhostNotes: { type: Boolean, default: false },
-    latinNotation: { type: Boolean, default: false },
     zoom: { type: Number, default: 2 },
     canvasHeight: { type: [Number, String], default: 600 },
     canvasWidth: { type: [Number, String], default: 300 },
@@ -56,6 +52,12 @@ export default {
   },
 
   computed: {
+    showGhostNotes: {
+      get() {
+        return this.$store.state.pitcher_store.ghostQuarterNote
+      },
+    },
+
     canvasStyle: () => ({
       display: "block",
       backgroundColor: CANVAS_BG_COLOR,
@@ -154,7 +156,7 @@ export default {
       this.ctx.lineWidth = 2
 
       const sStart = noteX - SHORT_LINE_HALF_WIDTH * this.zoom
-      const sEnd = noteX + noteXbOffset * this.zoom + SHORT_LINE_HALF_WIDTH * this.zoom
+      const sEnd = noteX + NOTE_X_B_OFFSET * this.zoom + SHORT_LINE_HALF_WIDTH * this.zoom
 
       for (let i = 1; i <= 2; i++) this.drawHorizontal(trebleTop - i * lineSpacing, sStart, sEnd)
       for (let i = 0; i < 5; i++) this.drawHorizontal(trebleTop + i * lineSpacing, lineStart, lineEnd)
@@ -206,7 +208,7 @@ export default {
         // 2. Draw enharmonic Flat Note if applicable
         if (isSharp) {
           const flatMidi = midi + 1 // Move to flat position (e.g., D position for Db)
-          const flatX = noteX + noteXbOffset * this.zoom
+          const flatX = noteX + NOTE_X_B_OFFSET * this.zoom // Use imported constant
           const { noteY: yFlat, ledgerLines: lFlat } = this.calculateNotePos(flatMidi, trebleTop, bassTop, lineSpacing)
 
           lFlat.forEach((ly) => {
@@ -231,7 +233,7 @@ export default {
       const isTreble = midi >= 60
       const refMidi = isTreble ? 64 : 53
       const refY = isTreble ? trebleTop + 4 * lineSpacing : bassTop + lineSpacing
-      const totalDiff = (Math.floor(midi / 12) - Math.floor(refMidi / 12)) * 7 + (NATURAL_POSITIONS[midi % 12] - NATURAL_POSITIONS[refMidi % 12])
+      const totalDiff = (Math.floor(midi / 12) - Math.floor(refMidi / 12)) * 7 + (NATURAL_POSITIONS[midi % 12] - NATURAL_POSITIONS[refMidi % 12]) // Use imported constant
       const noteY = refY - totalDiff * (lineSpacing / 2)
       const ledgerLines = []
 

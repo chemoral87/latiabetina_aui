@@ -77,25 +77,25 @@ export default {
       get() {
         return this.$store.state.pitcher_store.maxHistory
       },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_MAX_HISTORY", value)
-      },
+      // set(value) {
+      //   this.$store.commit("pitcher_store/SET_MAX_HISTORY", value)
+      // },
     },
     totalNotes: {
       get() {
         return this.$store.state.pitcher_store.totalNotes
       },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
-      },
+      // set(value) {
+      //   this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
+      // },
     },
     histogramHeight: {
       get() {
         return this.$store.state.pitcher_store.histogramHeight
       },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
-      },
+      // set(value) {
+      //   this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
+      // },
     },
     // Removed duplicate keys for selectedRootNote, showMicrotones, latinNotation
     tuningAccuracyClass() {

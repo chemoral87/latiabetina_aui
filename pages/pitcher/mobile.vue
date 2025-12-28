@@ -34,35 +34,17 @@
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Nota Raíz' : 'Root Note'" dense outlined hide-details />
+        <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Escala Mayor' : 'Mayor Scale'" dense outlined hide-details />
       </v-col>
     </v-row>
 
     <v-row dense>
       <v-col cols="8" md="5" class="pr-1 mx-0">
-        <PitcherHistogram
-          ref="histogramComponent"
-          :history="history"
-          :freq-display="freqDisplay"
-          :last-freq="lastFreq"
-          :cents-deviation="centsDeviation"
-          :max-history="maxHistory"
-          :total-notes="totalNotes"
-          :histogram-height="histogramHeight"
-        />
+        <PitcherHistogram ref="histogramComponent" :history="history" :freq-display="freqDisplay" :last-freq="lastFreq" :cents-deviation="centsDeviation" />
       </v-col>
 
       <v-col cols="4" md="2" class="px-0 mx-0">
-        <PitcherStaffNotation
-          title="Pentagrama"
-          :frequency="lastFreq"
-          :cents-deviation="centsDeviation"
-          :show-ghost-notes="ghostQuarterNote"
-          :zoom="2"
-          :canvas-height="600"
-          :canvas-width="300"
-          :show-cents-deviation="true"
-        />
+        <PitcherStaffNotation :frequency="lastFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
       </v-col>
     </v-row>
   </v-container>
@@ -70,7 +52,7 @@
 
 <script>
 // Import the constants that are still needed
-import { A4_FREQ, A4_MIDI } from "./constants.js"
+import { A4_FREQ, A4_MIDI, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS } from "./constants.js"
 
 export default {
   data() {
@@ -145,22 +127,7 @@ export default {
         this.$store.commit("pitcher_store/SET_MAX_HISTORY", value)
       },
     },
-    totalNotes: {
-      get() {
-        return this.$store.state.pitcher_store.totalNotes
-      },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_TOTAL_NOTES", value)
-      },
-    },
-    histogramHeight: {
-      get() {
-        return this.$store.state.pitcher_store.histogramHeight
-      },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_HISTOGRAM_HEIGHT", value)
-      },
-    },
+
     currentNoteOptions() {
       return this.latinNotation ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"] : ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     },
@@ -467,10 +434,7 @@ export default {
       const isHalfStep = roundedMidi % 1 === 0.5
       const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
 
-      // Import arrays directly since they're needed here
-      const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
-      const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]
-
+      // Use imported constants instead of inline arrays
       const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
       const note = noteStrings[fullIndex]
       const octave = Math.floor(roundedMidi / 12 - 1)
