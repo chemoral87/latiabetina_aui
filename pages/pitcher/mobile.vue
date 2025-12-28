@@ -51,30 +51,23 @@
 </template>
 
 <script>
-// Import the constants that are still needed
+// Import the constants and AudioProcessor
 import { A4_FREQ, A4_MIDI, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS } from "./constants.js"
+import { AudioProcessor } from "./audioProcessor_hib_gemini3.js"
 
 export default {
   data() {
     return {
       settingsDialog: false,
       isMicActive: false,
-      mediaStream: null,
-      audioContext: null,
-      analyser: null,
-      buffer: null,
+      audioProcessor: null, // Add audio processor instance
       history: [],
       freqDisplay: "--",
       noteDisplay: "--",
       dBDisplay: "--",
       centsDeviation: null,
-
       lastFreq: null,
-      correlationArray: [],
-
-      noiseProfile: null,
-      noiseCalibrating: false,
-      noiseSamples: [],
+      noiseCalibrating: false, // Keep for UI state
     }
   },
 
@@ -91,46 +84,25 @@ export default {
       get() {
         return this.$store.state.pitcher_store.sensitivity
       },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_SENSITIVITY", value)
-      },
     },
     latinNotation: {
       get() {
         return this.$store.state.pitcher_store.latinNotation
-      },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_LATIN_NOTATION", value)
-      },
-    },
-    showMicrotones: {
-      get() {
-        return this.$store.state.pitcher_store.showMicrotones
-      },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_SHOW_MICROTONES", value)
-      },
-    },
-    ghostQuarterNote: {
-      get() {
-        return this.$store.state.pitcher_store.ghostQuarterNote
-      },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_GHOST_QUARTER_NOTE", value)
       },
     },
     maxHistory: {
       get() {
         return this.$store.state.pitcher_store.maxHistory
       },
-      set(value) {
-        this.$store.commit("pitcher_store/SET_MAX_HISTORY", value)
-      },
     },
-
     currentNoteOptions() {
       return this.latinNotation ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"] : ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     },
+  },
+
+  created() {
+    // Initialize audio processor
+    this.audioProcessor = new AudioProcessor()
   },
 
   beforeUnmount() {
@@ -148,62 +120,32 @@ export default {
       if (this.$refs.histogramComponent) {
         this.$refs.histogramComponent.resetCanvas()
       }
+      // Reset audio processor
+      this.audioProcessor.reset()
     },
 
-    calibrateNoise() {
-      if (!this.analyser || !this.isMicActive) {
+    async calibrateNoise() {
+      if (!this.isMicActive) {
         return
       }
+
       console.log("Iniciando calibración de ruido...")
       this.noiseCalibrating = true
-      this.noiseSamples = []
 
-      const captureNoise = () => {
-        if (this.noiseSamples.length < 180 && this.analyser && this.noiseCalibrating) {
-          this.analyser.getFloatTimeDomainData(this.buffer)
-
-          let sumSquares = 0
-          for (let i = 0; i < this.buffer.length; i++) {
-            sumSquares += this.buffer[i] * this.buffer[i]
-          }
-          const rms = Math.sqrt(sumSquares / this.buffer.length)
-          this.noiseSamples.push(rms)
-
-          setTimeout(captureNoise, 16)
-        } else if (this.noiseSamples.length > 0) {
-          const sortedSamples = [...this.noiseSamples].sort((a, b) => a - b)
-
-          const p10Index = Math.floor(sortedSamples.length * 0.1)
-          const p90Index = Math.floor(sortedSamples.length * 0.9)
-          const filteredSamples = sortedSamples.slice(p10Index, p90Index)
-
-          const avgNoise = filteredSamples.reduce((a, b) => a + b, 0) / filteredSamples.length
-          const medianIndex = Math.floor(filteredSamples.length / 2)
-          const medianNoise = filteredSamples[medianIndex]
-
-          this.noiseProfile = (avgNoise + medianNoise) / 2
-
-          const recommendedSensitivity = Math.max(0.003, Math.min(0.12, this.noiseProfile * 3.5))
-          this.sensitivity = recommendedSensitivity
-
-          this.noiseCalibrating = false
-        } else {
-          this.noiseCalibrating = false
-        }
+      try {
+        await this.audioProcessor.calibrateNoise()
+        // Update sensitivity in store
+        const newSensitivity = this.audioProcessor.getSensitivity()
+        this.$store.commit("pitcher_store/SET_SENSITIVITY", newSensitivity)
+      } catch (error) {
+        console.error("Error during noise calibration:", error)
+      } finally {
+        this.noiseCalibrating = false
       }
-
-      captureNoise()
     },
 
     async cleanup() {
-      if (this.mediaStream) {
-        this.mediaStream.getTracks().forEach((t) => t.stop())
-        this.mediaStream = null
-      }
-      if (this.audioContext && this.audioContext.state !== "closed") {
-        await this.audioContext.close()
-        this.audioContext = null
-      }
+      await this.audioProcessor.cleanupMicrophone()
       this.isMicActive = false
       this.freqDisplay = "--"
       this.noteDisplay = "--"
@@ -216,21 +158,18 @@ export default {
     async toggleMic() {
       if (!this.isMicActive) {
         try {
-          this.mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          })
-
-          this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
-          this.analyser = this.audioContext.createAnalyser()
-          this.analyser.fftSize = 2048
-          this.buffer = new Float32Array(this.analyser.fftSize)
-
-          const source = this.audioContext.createMediaStreamSource(this.mediaStream)
-          source.connect(this.analyser)
-
+          // Use audio processor to initialize microphone
+          await this.audioProcessor.initializeMicrophone()
           this.isMicActive = true
+
+          // Set initial sensitivity
+          this.audioProcessor.setSensitivity(this.sensitivity)
+
+          // Start calibration
           this.calibrateNoise()
-          this.update() // Start the update loop
+
+          // Start the update loop
+          this.update()
         } catch (e) {
           alert("Error accediendo al micrófono: " + e.message)
           this.isMicActive = false
@@ -240,185 +179,47 @@ export default {
       }
     },
 
-    smoothFrequency(currentFreq) {
-      if (!this.lastFreq) {
-        this.lastFreq = currentFreq
-        return currentFreq
-      }
-
-      const OCTAVE_THRESHOLD_LOW = 1.8
-      const OCTAVE_THRESHOLD_HIGH = 2.2
-      const HALF_OCTAVE_THRESHOLD_LOW = 0.45
-      const HALF_OCTAVE_THRESHOLD_HIGH = 0.55
-
-      const ratio = currentFreq / this.lastFreq
-
-      if (ratio > OCTAVE_THRESHOLD_LOW && ratio < OCTAVE_THRESHOLD_HIGH) {
-        currentFreq = (currentFreq + this.lastFreq * 2) * 0.5
-      } else if (ratio > HALF_OCTAVE_THRESHOLD_LOW && ratio < HALF_OCTAVE_THRESHOLD_HIGH) {
-        currentFreq = (currentFreq + this.lastFreq * 0.5) * 0.5
-      }
-
-      const SMOOTHING_FACTOR = 0.3
-      this.lastFreq = this.lastFreq * (1 - SMOOTHING_FACTOR) + currentFreq * SMOOTHING_FACTOR
-
-      return this.lastFreq
-    },
-
-    autoCorrelate(buf, sampleRate) {
-      const SIZE = buf.length
-      const MIN_DB = 28
-      const MIN_SAMPLE_THRESHOLD = 0.008
-      const PEAK_THRESHOLD_FACTOR = 0.2
-      const WINDOW_PADDING = 10
-
-      let sumSquares = 0
-      let maxSample = 0
-
-      for (let i = 0; i < SIZE; i++) {
-        const sample = buf[i]
-        sumSquares += sample * sample
-        if (Math.abs(sample) > maxSample) maxSample = Math.abs(sample)
-      }
-
-      const rms = Math.sqrt(sumSquares / SIZE)
-      const dBSPL = 20 * Math.log10(rms / 0.00002)
-      this.dBDisplay = Math.max(0, dBSPL).toFixed(1)
-
-      if (dBSPL < MIN_DB || rms < this.sensitivity || maxSample < MIN_SAMPLE_THRESHOLD) {
-        this.freqDisplay = "--"
-        this.noteDisplay = "--"
-        return -1
-      }
-
-      const threshold = maxSample * PEAK_THRESHOLD_FACTOR
-      let start = 0
-      let end = SIZE - 1
-
-      for (let i = 0; i < SIZE / 2; i++) {
-        if (Math.abs(buf[i]) > threshold) {
-          start = Math.max(0, i - WINDOW_PADDING)
-          break
-        }
-      }
-
-      for (let i = SIZE - 1; i > SIZE / 2; i--) {
-        if (Math.abs(buf[i]) > threshold) {
-          end = Math.min(SIZE - 1, i + WINDOW_PADDING)
-          break
-        }
-      }
-
-      const windowSize = end - start
-      if (windowSize <= 0) return -1
-
-      if (!this.correlationArray || this.correlationArray.length < windowSize) {
-        this.correlationArray = new Float32Array(windowSize)
-      }
-
-      for (let lag = 0; lag < windowSize; lag++) {
-        let sum = 0
-        for (let i = 0; i < windowSize - lag; i++) {
-          sum += buf[start + i] * buf[start + i + lag]
-        }
-        this.correlationArray[lag] = sum
-      }
-
-      let dipIndex = 0
-      while (dipIndex < windowSize - 1 && this.correlationArray[dipIndex] > this.correlationArray[dipIndex + 1]) {
-        dipIndex++
-      }
-
-      let maxVal = -Infinity
-      let peakIndex = -1
-      for (let i = dipIndex; i < windowSize; i++) {
-        if (this.correlationArray[i] > maxVal) {
-          maxVal = this.correlationArray[i]
-          peakIndex = i
-        }
-      }
-
-      if (peakIndex <= 0) return -1
-
-      let betterPeak = peakIndex
-      if (peakIndex > 0 && peakIndex < windowSize - 1) {
-        const y1 = this.correlationArray[peakIndex - 1]
-        const y2 = this.correlationArray[peakIndex]
-        const y3 = this.correlationArray[peakIndex + 1]
-        const delta = (y1 - y3) / (2 * (y1 - 2 * y2 + y3))
-        if (!isNaN(delta) && Math.abs(delta) < 1) {
-          betterPeak = peakIndex + delta
-        }
-      }
-
-      let freq = sampleRate / betterPeak
-
-      const checkHarmonic = (divisor, thresholdRatio) => {
-        const subIndex = Math.floor(peakIndex / divisor)
-        if (subIndex > 0 && subIndex < windowSize) {
-          const subVal = this.correlationArray[subIndex]
-          if (subVal > thresholdRatio * maxVal) {
-            return sampleRate / subIndex
-          }
-        }
-        return freq
-      }
-
-      if (freq > 0 && freq < 2000) {
-        if (freq > 160 && freq < 800) {
-          freq = checkHarmonic(2, 0.8)
-        } else if (freq > 240 && freq < 1200) {
-          freq = checkHarmonic(3, 0.7)
-        }
-      }
-
-      return freq > 20 && freq < 2000 ? freq : -1
-    },
-
     update() {
-      if (!this.analyser || !this.isMicActive) {
-        return
-      }
+      if (!this.isMicActive) return
 
-      this.analyser.getFloatTimeDomainData(this.buffer)
-      const rawFreq = this.autoCorrelate(this.buffer, this.audioContext.sampleRate)
+      const result = this.audioProcessor.analyzeFrequency()
+      this.dBDisplay = Math.max(0, result.dB).toFixed(1)
 
-      if (rawFreq !== -1) {
-        let correctedFreq = rawFreq
+      if (result.freq !== -1) {
+        // Intentar estabilizar el ataque
+        const stableFreq = this.audioProcessor.smoothFrequency(result.freq)
 
-        if (rawFreq > 180 && rawFreq < 220) {
-          const possibleFreq = rawFreq / 2
-          const midi = this.freqToMidi(possibleFreq)
-          if (midi >= 48 && midi <= 84) {
-            correctedFreq = possibleFreq
-          }
+        // Solo si la nota es estable la procesamos y dibujamos
+        if (stableFreq !== -1) {
+          const exactFreq = parseFloat(stableFreq.toFixed(2))
+          const midi = this.freqToMidi(exactFreq)
+          const note = this.getNoteNameNum(midi)
+
+          const nearestMidi = Math.round(midi)
+          const nearestFreq = this.midiToFreq(nearestMidi)
+          this.centsDeviation = Math.round(1200 * Math.log2(exactFreq / nearestFreq))
+
+          this.freqDisplay = exactFreq.toString()
+          this.noteDisplay = note
+          this.lastFreq = exactFreq
+
+          this.history.unshift({ freq: stableFreq, midi })
+          if (this.history.length > this.maxHistory) this.history.pop()
+        } else {
+          // Nota en fase de estabilización: no actualizamos displays de frecuencia
+          this.freqDisplay = "--"
         }
-
-        const smoothedFreq = this.smoothFrequency(correctedFreq)
-        const exactFreq = parseFloat(smoothedFreq.toFixed(2))
-        const midi = this.freqToMidi(exactFreq)
-        const note = this.getNoteNameNum(midi)
-
-        const nearestMidi = Math.round(midi)
-        const nearestFreq = this.midiToFreq(nearestMidi)
-        this.centsDeviation = Math.round(1200 * Math.log2(exactFreq / nearestFreq))
-
-        this.freqDisplay = exactFreq.toString()
-        this.noteDisplay = note
-
-        this.history.unshift({ freq: exactFreq, midi })
-        if (this.history.length > this.maxHistory) this.history.pop()
       } else {
         this.freqDisplay = "--"
         this.noteDisplay = "--"
-        this.dBDisplay = "--"
         this.centsDeviation = null
+        this.lastFreq = null
       }
 
       if (this.isMicActive) requestAnimationFrame(this.update)
     },
 
-    // Need to keep these helper methods for update() to work
+    // Helper methods for frequency conversion
     midiToFreq(midi) {
       return A4_FREQ * Math.pow(2, (midi - A4_MIDI) / 12)
     },
@@ -434,7 +235,6 @@ export default {
       const isHalfStep = roundedMidi % 1 === 0.5
       const fullIndex = isHalfStep ? noteIndex * 2 + 1 : noteIndex * 2
 
-      // Use imported constants instead of inline arrays
       const noteStrings = this.latinNotation ? NOTE_LATIN_STRINGS : NOTE_SHORT_STRINGS
       const note = noteStrings[fullIndex]
       const octave = Math.floor(roundedMidi / 12 - 1)
@@ -443,6 +243,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+h4 {
+  font-weight: 600;
+}
+</style>
 
 <style scoped>
 h4 {
