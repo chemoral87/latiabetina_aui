@@ -15,21 +15,29 @@
         </v-card-title>
 
         <v-card-text>
-          <v-row>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="latinNotation" label="Notación latina" hide-details class="mt-0 pt-0"></v-switch>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="showMicrotones" :label="latinNotation ? 'Mostrar microtonos' : 'Show microtones'" hide-details class="mt-0 pt-0"></v-switch>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-switch v-model="ghostQuarterNote" label="Mostrar nota fantasma" hide-details class="mt-0 pt-0"></v-switch>
+          <v-row dense>
+            <!-- Microfono Section -->
+            <v-col cols="12">
+              <h3 class="text-center py-0 my-0">Micrófono</h3>
             </v-col>
             <v-col cols="12" sm="6">
               <v-slider v-model="sensitivity" :min="0.0001" :max="0.01" :step="0.0001" label="Sensibilidad" hide-details thumb-label />
               <div class="text-center font-weight-bold">
                 {{ sensitivity.toFixed(4) }}
               </div>
+            </v-col>
+          </v-row>
+          <v-divider class="my-4"></v-divider>
+          <v-row dense>
+            <!-- Histograma Section -->
+            <v-col cols="12">
+              <h3 class="text-center py-0 my-0">Histograma</h3>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-switch v-model="latinNotation" label="Notación latina" hide-details class="mt-0 pt-0"></v-switch>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-switch v-model="showMicrotones" :label="latinNotation ? 'Mostrar microtonos' : 'Show microtones'" hide-details class="mt-0 pt-0"></v-switch>
             </v-col>
             <v-col cols="12" sm="6">
               <v-slider v-model="maxHistory" :min="300" :max="800" :step="50" label="Máx Historial" hide-details thumb-label />
@@ -44,8 +52,18 @@
               </div>
             </v-col>
             <v-col cols="12" sm="6">
-              <v-slider v-model="histogramHeight" :min="300" :max="600" :step="30" label="Altura Histograma" hide-details thumb-label />
+              <v-slider v-model="histogramHeight" :min="250" :max="450" :step="25" label="Altura Histograma" hide-details thumb-label />
               <div class="text-center font-weight-bold">{{ histogramHeight }}px</div>
+            </v-col>
+          </v-row>
+          <v-divider class="my-4"></v-divider>
+          <v-row dense>
+            <!-- Pentagrama Section -->
+            <v-col cols="12">
+              <h3 class="text-center py-0 my-0">Pentagrama</h3>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-switch v-model="ghostQuarterNote" label="Mostrar nota fantasma" hide-details class="mt-0 pt-0"></v-switch>
             </v-col>
           </v-row>
         </v-card-text>
