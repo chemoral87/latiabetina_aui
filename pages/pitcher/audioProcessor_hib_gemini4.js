@@ -1,4 +1,4 @@
-// audioProcessor.js - Estable para Ataques y Glissandos
+// audioProcessor.js - Versión Final Unificada (Ataque Limpio + Glissando)
 import { A4_FREQ, A4_MIDI } from "./constants.js"
 
 export class AudioProcessor {
@@ -18,13 +18,13 @@ export class AudioProcessor {
     this.consecutiveCount = 0
     this.isTracking = false
 
-    // Parámetros de control de precisión
+    // Parámetros de sensibilidad y ruido
     this.MIN_DB = 28
     this.sensitivity = 0.005
 
     // Umbrales para Histéresis Dinámica
-    this.STRICT_THRESHOLD = 8 // cents: rigor para el inicio
-    this.GLIDE_THRESHOLD = 100 // cents: libertad para el glissando
+    this.STRICT_THRESHOLD = 8 // cents: rigor para evitar puntos basura al inicio
+    this.GLIDE_THRESHOLD = 110 // cents: permisividad para glissandos fluidos
     this.CONSECUTIVE_THRESHOLD = 3
 
     this.MIN_FREQ = 40
@@ -38,11 +38,15 @@ export class AudioProcessor {
       })
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
       this.sampleRate = this.audioContext.sampleRate
+
+      // fftSize 4096 es vital para la resolución en notas graves (Fa2-La2)
       this.analyser = this.audioContext.createAnalyser()
       this.analyser.fftSize = 4096
       this.buffer = new Float32Array(this.analyser.fftSize)
 
       const source = this.audioContext.createMediaStreamSource(this.mediaStream)
+
+      // Filtro de paso de banda para limpiar armónicos no deseados en móviles
       const filter = this.audioContext.createBiquadFilter()
       filter.type = "bandpass"
       filter.frequency.value = 500
@@ -53,7 +57,7 @@ export class AudioProcessor {
       this.isMicActive = true
       return true
     } catch (error) {
-      console.error("Error inicializando micrófono:", error)
+      console.error("Error al inicializar micrófono:", error)
       throw error
     }
   }
@@ -70,6 +74,7 @@ export class AudioProcessor {
     const rms = Math.sqrt(sumSquares / this.buffer.length)
     const dB = 20 * Math.log10(rms / 0.00002)
 
+    // Si el volumen cae por debajo del umbral, reiniciamos el tracking
     if (dB < this.MIN_DB || rms < this.sensitivity) {
       this.resetTracking()
       return { freq: -1, dB }
@@ -82,6 +87,7 @@ export class AudioProcessor {
     const SIZE = buf.length
     if (!this.correlationArray) this.correlationArray = new Float32Array(SIZE)
 
+    // Aplicar ventana de Hanning para mejorar la precisión espectral
     const winBuf = new Float32Array(buf)
     for (let i = 0; i < SIZE; i++) {
       winBuf[i] *= 0.5 * (1 - Math.cos((2 * Math.PI * i) / (SIZE - 1)))
@@ -106,6 +112,7 @@ export class AudioProcessor {
 
     if (maxCorr < 0.1) return { freq: -1, dB }
 
+    // Interpolación parabólica para obtener precisión de sub-cents
     let refinedLag = bestLag
     if (bestLag > 0 && bestLag < SIZE - 1) {
       const y1 = this.correlationArray[bestLag - 1]
@@ -127,11 +134,15 @@ export class AudioProcessor {
     }
 
     const diffCents = Math.abs(1200 * Math.log2(currentFreq / this.lastFreq))
+
+    // Si ya estamos trackeando, somos permisivos para el glissando
+    // Si no, somos estrictos para evitar transitorios en el ataque
     const currentThreshold = this.isTracking ? this.GLIDE_THRESHOLD : this.STRICT_THRESHOLD
 
     if (diffCents < currentThreshold) {
       this.consecutiveCount++
     } else {
+      // Salto brusco: reseteamos para limpiar el gráfico de líneas diagonales
       this.isTracking = false
       this.consecutiveCount = 1
       this.lastFreq = currentFreq

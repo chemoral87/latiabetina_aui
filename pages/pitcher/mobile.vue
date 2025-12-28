@@ -53,7 +53,8 @@
 <script>
 // Import the constants and AudioProcessor
 import { A4_FREQ, A4_MIDI, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS } from "./constants.js"
-import { AudioProcessor } from "./audioProcessor_hib_gemini3.js"
+// import { AudioProcessor } from "./audioProcessor_hib_gemini4.js"
+import { AudioProcessor } from "./audioProcessor_hib_claude2.js"
 
 export default {
   data() {
