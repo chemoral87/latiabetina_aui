@@ -139,35 +139,35 @@ export default {
     },
 
     drawStaff() {
-      const canvas = this.$refs.staffCanvas;
-      if (!this.ctx || !this.isReady || !canvas) return; // Ensure canvas exists
-      const { width, height } = canvas;
-      const lineSpacing = BASE_LINE_SPACING * this.zoom;
-      const trebleTop = STAFF_TOP_OFFSET * this.zoom;
-      const staffLeft = 20;
-      const noteX = staffLeft + NOTE_X_OFFSET * this.zoom;
-      const lineStart = staffLeft + MARGIN_LINE;
-      const lineEnd = Math.min(lineStart + LINE_BASE * this.zoom, width - MARGIN_LINE);
-      const bassTop = trebleTop + 6 * lineSpacing;
+      const canvas = this.$refs.staffCanvas
+      if (!this.ctx || !this.isReady || !canvas) return // Ensure canvas exists
+      const { width, height } = canvas
+      const lineSpacing = BASE_LINE_SPACING * this.zoom
+      const trebleTop = STAFF_TOP_OFFSET * this.zoom
+      const staffLeft = 20
+      const noteX = staffLeft + NOTE_X_OFFSET * this.zoom
+      const lineStart = staffLeft + MARGIN_LINE
+      const lineEnd = Math.min(lineStart + LINE_BASE * this.zoom, width - MARGIN_LINE)
+      const bassTop = trebleTop + 6 * lineSpacing
 
-      this.ctx.fillStyle = CANVAS_BG_COLOR;
-      this.ctx.fillRect(0, 0, width, height);
-      this.ctx.strokeStyle = "#000";
-      this.ctx.lineWidth = 2;
+      this.ctx.fillStyle = CANVAS_BG_COLOR
+      this.ctx.fillRect(0, 0, width, height)
+      this.ctx.strokeStyle = "#000"
+      this.ctx.lineWidth = 2
 
-      const sStart = noteX - SHORT_LINE_HALF_WIDTH * this.zoom;
-      const sEnd = noteX + NOTE_X_B_OFFSET * this.zoom + SHORT_LINE_HALF_WIDTH * this.zoom;
+      const sStart = noteX - SHORT_LINE_HALF_WIDTH * this.zoom
+      const sEnd = noteX + NOTE_X_B_OFFSET * this.zoom + SHORT_LINE_HALF_WIDTH * this.zoom
 
-      for (let i = 1; i <= 2; i++) this.drawHorizontal(trebleTop - i * lineSpacing, sStart, sEnd);
-      for (let i = 0; i < 5; i++) this.drawHorizontal(trebleTop + i * lineSpacing, lineStart, lineEnd);
-      this.drawHorizontal(trebleTop + 5 * lineSpacing, sStart, sEnd);
-      for (let i = 0; i < 5; i++) this.drawHorizontal(bassTop + i * lineSpacing, lineStart, lineEnd);
-      for (let i = 1; i <= 2; i++) this.drawHorizontal(bassTop + 4 * lineSpacing + i * lineSpacing, sStart, sEnd);
+      for (let i = 1; i <= 2; i++) this.drawHorizontal(trebleTop - i * lineSpacing, sStart, sEnd)
+      for (let i = 0; i < 5; i++) this.drawHorizontal(trebleTop + i * lineSpacing, lineStart, lineEnd)
+      this.drawHorizontal(trebleTop + 5 * lineSpacing, sStart, sEnd)
+      for (let i = 0; i < 5; i++) this.drawHorizontal(bassTop + i * lineSpacing, lineStart, lineEnd)
+      for (let i = 1; i <= 2; i++) this.drawHorizontal(bassTop + 4 * lineSpacing + i * lineSpacing, sStart, sEnd)
 
-      this.renderClefs(staffLeft, trebleTop, bassTop, lineSpacing);
+      this.renderClefs(staffLeft, trebleTop, bassTop, lineSpacing)
 
       if (this.frequency) {
-        this.renderNotes(trebleTop, bassTop, lineSpacing, noteX);
+        this.renderNotes(trebleTop, bassTop, lineSpacing, noteX)
       }
     },
 
