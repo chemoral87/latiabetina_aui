@@ -1,5 +1,5 @@
-// audioProcessor.js - Estable para Ataques y Glissandos
-import { A4_FREQ, A4_MIDI } from "./constants.js"
+// audioProcessor.js - Versión Simplificada: Basada en Gemini10 con Mejoras Mínimas
+import { A4_FREQ, A4_MIDI } from "../constants.js"
 
 export class AudioProcessor {
   constructor() {
@@ -18,14 +18,21 @@ export class AudioProcessor {
     this.consecutiveCount = 0
     this.isTracking = false
 
-    // Parámetros de control de precisión
-    this.MIN_DB = 28
+    // Filtro de Mediana mínimo (de Gemini10)
+    this.recentFreqs = []
+    this.MEDIAN_WINDOW = 2
+
+    // Sensibilidad (de Gemini10)
+    this.MIN_DB = 24
     this.sensitivity = 0.005
 
-    // Umbrales para Histéresis Dinámica
-    this.STRICT_THRESHOLD = 8 // cents: rigor para el inicio
-    this.GLIDE_THRESHOLD = 100 // cents: libertad para el glissando
-    this.CONSECUTIVE_THRESHOLD = 3
+    // Configuración de Gemini10 (funciona bien)
+    this.STRICT_THRESHOLD = 20
+    this.GLIDE_THRESHOLD = 300
+    this.CONSECUTIVE_THRESHOLD = 1
+
+    // ÚNICA MEJORA: Umbral para detectar movimiento rápido
+    this.FAST_CHANGE_THRESHOLD = 35 // cents
 
     this.MIN_FREQ = 40
     this.MAX_FREQ = 2000
@@ -38,6 +45,7 @@ export class AudioProcessor {
       })
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
       this.sampleRate = this.audioContext.sampleRate
+
       this.analyser = this.audioContext.createAnalyser()
       this.analyser.fftSize = 4096
       this.buffer = new Float32Array(this.analyser.fftSize)
@@ -45,7 +53,7 @@ export class AudioProcessor {
       const source = this.audioContext.createMediaStreamSource(this.mediaStream)
       const filter = this.audioContext.createBiquadFilter()
       filter.type = "bandpass"
-      filter.frequency.value = 500
+      filter.frequency.value = 440
       filter.Q.value = 0.5
 
       source.connect(filter)
@@ -53,7 +61,7 @@ export class AudioProcessor {
       this.isMicActive = true
       return true
     } catch (error) {
-      console.error("Error inicializando micrófono:", error)
+      console.error("Error mic:", error)
       throw error
     }
   }
@@ -120,10 +128,13 @@ export class AudioProcessor {
   }
 
   smoothFrequency(currentFreq) {
+    // Primer frame: inicio inmediato (de Gemini10)
     if (this.lastFreq === -1) {
       this.lastFreq = currentFreq
       this.consecutiveCount = 1
-      return -1
+      this.isTracking = true
+      this.recentFreqs = [currentFreq]
+      return currentFreq
     }
 
     const diffCents = Math.abs(1200 * Math.log2(currentFreq / this.lastFreq))
@@ -131,20 +142,33 @@ export class AudioProcessor {
 
     if (diffCents < currentThreshold) {
       this.consecutiveCount++
+      this.isTracking = true
+
+      // MEJORA SIMPLE: Si hay movimiento rápido, devolver directo sin mediana
+      if (diffCents > this.FAST_CHANGE_THRESHOLD) {
+        this.lastFreq = currentFreq
+        this.recentFreqs = [currentFreq] // Resetear buffer para próximo frame
+        return currentFreq
+      }
+
+      // Movimiento lento o estable: aplicar mediana
+      this.recentFreqs.push(currentFreq)
+      if (this.recentFreqs.length > this.MEDIAN_WINDOW) {
+        this.recentFreqs.shift()
+      }
+
+      const sorted = [...this.recentFreqs].sort((a, b) => a - b)
+      const medianFreq = sorted[Math.floor(sorted.length / 2)]
+
+      this.lastFreq = medianFreq
+      return medianFreq
     } else {
-      this.isTracking = false
-      this.consecutiveCount = 1
+      // Cambio demasiado brusco: resetear
+      this.resetTracking()
       this.lastFreq = currentFreq
+      this.recentFreqs = [currentFreq]
       return -1
     }
-
-    if (this.consecutiveCount >= this.CONSECUTIVE_THRESHOLD) {
-      this.isTracking = true
-      this.lastFreq = currentFreq
-      return currentFreq
-    }
-
-    return -1
   }
 
   calibrateNoise() {
@@ -161,8 +185,14 @@ export class AudioProcessor {
           this.noiseSamples.push(Math.sqrt(s / this.buffer.length))
           setTimeout(capture, 20)
         } else {
-          const avg = this.noiseSamples.reduce((a, b) => a + b, 0) / 30
+          // Calibración con trimming
+          const sorted = [...this.noiseSamples].sort((a, b) => a - b)
+          const trimCount = Math.floor(sorted.length * 0.1)
+          const trimmed = sorted.slice(trimCount, -trimCount)
+          const avg = trimmed.reduce((a, b) => a + b, 0) / trimmed.length
+
           this.sensitivity = Math.max(0.005, avg * 2.5)
+          console.log(`Calibración completada. Sensibilidad: ${this.sensitivity.toFixed(4)}`)
           this.noiseCalibrating = false
           resolve()
         }
@@ -175,6 +205,7 @@ export class AudioProcessor {
     this.lastFreq = -1
     this.consecutiveCount = 0
     this.isTracking = false
+    this.recentFreqs = []
   }
 
   async cleanupMicrophone() {

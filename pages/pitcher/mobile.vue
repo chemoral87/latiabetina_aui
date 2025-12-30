@@ -36,6 +36,9 @@
       <v-col cols="6">
         <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Escala Mayor' : 'Mayor Scale'" dense outlined hide-details />
       </v-col>
+      <v-col cols="6">
+        <v-select v-model="selectedProcessor" :items="processorOptions" label="Audio Processor" dense outlined hide-details @change="changeProcessor" />
+      </v-col>
     </v-row>
 
     <v-row dense>
@@ -51,24 +54,24 @@
 </template>
 
 <script>
-// Import the constants and AudioProcessor
+// Import constants
 import { A4_FREQ, A4_MIDI, NOTE_SHORT_STRINGS, NOTE_LATIN_STRINGS } from "./constants.js"
-// import { AudioProcessor } from "./audioProcessor_hib_gemini4.js"
-import { AudioProcessor } from "./audioProcessor_hib_claude2.js"
 
 export default {
   data() {
     return {
       settingsDialog: false,
       isMicActive: false,
-      audioProcessor: null, // Add audio processor instance
+      audioProcessor: null, // Audio processor instance
       history: [],
       freqDisplay: "--",
       noteDisplay: "--",
       dBDisplay: "--",
       centsDeviation: null,
       lastFreq: null,
-      noiseCalibrating: false, // Keep for UI state
+      noiseCalibrating: false, // UI state
+      selectedProcessor: "ap_gemini9", // Default processor
+      processorOptions: ["ap_claude9", "ap_gemini10"],
     }
   },
 
@@ -102,17 +105,22 @@ export default {
   },
 
   created() {
-    // Initialize audio processor
-    this.audioProcessor = new AudioProcessor()
-  },
-
-  beforeUnmount() {
-    if (this.isMicActive) {
-      this.cleanup()
-    }
+    this.loadProcessor(this.selectedProcessor)
   },
 
   methods: {
+    async loadProcessor(processorName) {
+      const module = await import(`./audioProcessors/${processorName}.js`)
+      this.audioProcessor = new module.AudioProcessor()
+    },
+
+    async changeProcessor() {
+      if (this.isMicActive) {
+        await this.cleanup()
+      }
+      await this.loadProcessor(this.selectedProcessor)
+    },
+
     resetHistory() {
       this.history = []
       this.lastFreq = null
