@@ -109,6 +109,8 @@ export default {
         this.innerCircleStyle.transitionTimingFunction = "ease-out"
         this.innerCircleStyle.transform = "scale(1)"
         const timeout = setTimeout(() => {
+          this.circleStyle.transitionTimingFunction = "cubic-bezier(0.68, -0.55, 0.27, 1.55)"
+          this.innerCircleStyle.transitionTimingFunction = "cubic-bezier(0.68, -0.55, 0.27, 1.55)"
           this.animationState = "inhale"
           this.animateCircle()
         }, this.hold * 1000)
