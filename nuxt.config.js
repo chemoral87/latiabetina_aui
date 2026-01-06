@@ -68,6 +68,7 @@ export default {
     "./plugins/handleError.js",
     "./plugins/eventBus.js",
     "./plugins/notify.js",
+    { src: "./plugins/vuetify-lang.js", mode: "client" },
     { src: "./plugins/localstorage.js", mode: "client" },
   ],
 
@@ -182,17 +183,6 @@ export default {
           success: colors.green.accent3,
         },
       },
-    },
-    lang: {
-      locales: {
-        es: {
-          dataIterator: {
-            rowsPerPageText: "Filas por pág.",
-            pageText: "{0}-{1}/{2}",
-          },
-        },
-      },
-      current: "es",
     },
   },
 

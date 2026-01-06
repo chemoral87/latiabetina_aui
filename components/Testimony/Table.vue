@@ -10,6 +10,11 @@
       :items-per-page="optionsTable.itemsPerPage"
       class="elevation-1 xwidth800"
     >
+      <template #[`item.review`]="{ item }">
+        <v-btn outlined color="primary" fab x-small @click="show(item)">
+          <v-icon small>mdi-eye</v-icon>
+        </v-btn>
+      </template>
       <template #[`item.actions`]="{ item }">
         <div class="d-flex flex-nowrap justify-center">
           <v-tooltip bottom>
@@ -55,6 +60,7 @@ export default {
       optionsTable: {},
       headers: [
         // { text: "ID", value: "id" },
+        { text: "", value: "review", sortable: false },
         { text: "Nombre", value: "name" },
         // { text: "Teléfono", value: "phone_number" },
         { text: "Categorías", value: "categories" },
@@ -115,6 +121,10 @@ export default {
 
     edit(item) {
       this.$emit("edit", item)
+    },
+
+    show(item) {
+      this.$emit("show", item)
     },
 
     remove(item) {

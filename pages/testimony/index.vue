@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="12">
-        <TestimonyTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @delete="beforeDeleteTestimony" />
+        <TestimonyTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
       </v-col>
     </v-row>
 
@@ -131,7 +131,9 @@ export default {
       this.testimony = { ...item }
       this.testimonyDialog = true
     },
-
+    showTestimony(item) {
+      this.$router.push(`/testimony/review/${item.id}`)
+    },
     beforeDeleteTestimony(item) {
       this.dialogDelete = {
         text: "¿Desea eliminar el Testimonio ",

@@ -9,8 +9,8 @@
           <template v-if="!section.isLabel">
             <v-group v-for="(sub, subIdx) in section.subsections" :key="`sub-${sIdx}-${subIdx}`" :config="getSubsectionPosition(section, subIdx)">
               <template v-if="sub.isLabel">
-                <!-- <v-rect :config="getSubsectionLabelBgConfig(sub, section)" /> -->
-                <!-- <v-text :config="getSubsectionLabelTextConfig(sub, section)" /> -->
+                <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
               </template>
 
               <template v-else>
