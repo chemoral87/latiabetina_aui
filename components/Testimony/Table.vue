@@ -9,8 +9,8 @@
       :loading="loading"
       mobile-breakpoint="0"
       :items-per-page="optionsTable.itemsPerPage"
-        :must-sort="true"
-        class="elevation-1 xwidth800"
+      :must-sort="true"
+      class="elevation-1 xwidth800"
     >
       <template #[`item.review`]="{ item }">
         <v-btn outlined color="primary" fab x-small @click="show(item)">
