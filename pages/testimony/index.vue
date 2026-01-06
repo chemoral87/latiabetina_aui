@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="12">
-        <TestimonyTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
+        <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
       </v-col>
     </v-row>
 
@@ -68,15 +68,13 @@ export default {
   },
 
   watch: {
-    filterTestimony: {
-      // handler: debounce(function (value) {
-      //   if (this.skipFilterWatch) {
-      //     this.skipFilterWatch = false
-      //     return
-      //   }
-      //   this.handleFilterChange(value)
-      // }, 500),
-    },
+    // filterTestimony(value) {
+    //   if (this.skipFilterWatch) {
+    //     this.skipFilterWatch = false
+    //     return
+    //   }
+    //   this.handleFilterChange(value)
+    // },
   },
 
   mounted() {
@@ -164,15 +162,31 @@ export default {
       try {
         this.saving = true
         const isUpdate = Boolean(item.id)
+        let saved = null
         if (isUpdate) {
-          await this.$repository.Testimony.update(item.id, item)
+          const res = await this.$repository.Testimony.update(item.id, item)
+          saved = res.data?.testimony || res.testimony || res.data || res
+
+          const idx = this.response.data.findIndex((d) => d.id === (saved.id || item.id))
+          if (idx !== -1) {
+            this.$set(this.response.data, idx, saved)
+          } else {
+            this.response.data.unshift(saved)
+            this.response.total = (this.response.total || 0) + 1
+          }
         } else {
-          await this.$repository.Testimony.create(item)
+          const res = await this.$repository.Testimony.create(item)
+          saved = res.data?.testimony || res.testimony || res.data || res
+          this.response.data.unshift(saved)
+          this.response.total = (this.response.total || 0) + 1
+        }
+
+        // update the table row via ref if available
+        if (this.$refs.testimonyTable && typeof this.$refs.testimonyTable.updateRow === "function") {
+          this.$refs.testimonyTable.updateRow(saved)
         }
 
         this.$notify({ type: "success", text: `Testimonio ${isUpdate ? "actualizado" : "creado"} exitosamente` })
-
-        this.filterTestimony = item.name
         this.testimonyDialog = false
       } catch (error) {
         console.error("Error saving testimony:", error)

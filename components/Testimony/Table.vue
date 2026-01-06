@@ -1,8 +1,9 @@
 <template>
   <v-card>
     <v-data-table
+      dense
       :headers="headers"
-      :items="items"
+      :items="localItems"
       :options.sync="optionsTable"
       :server-items-length="total"
       :loading="loading"
@@ -68,6 +69,7 @@ export default {
         { text: "Acciones", value: "actions", sortable: false },
       ],
       isFirstWatch: true,
+      localItems: [],
     }
   },
   computed: {
@@ -103,6 +105,14 @@ export default {
       },
       deep: true,
     },
+    // keep localItems in sync with incoming prop
+    response: {
+      handler(newVal) {
+        this.localItems = newVal && newVal.data ? (Array.isArray(newVal.data) ? [...newVal.data] : []) : []
+      },
+      immediate: true,
+      deep: true,
+    },
   },
 
   methods: {
@@ -129,6 +139,18 @@ export default {
 
     remove(item) {
       this.$emit("delete", item)
+    },
+
+    // allow parent to update/insert a single row by id
+    updateRow(item) {
+      if (!item) return
+      const id = item.id
+      const idx = this.localItems.findIndex((d) => d.id === id)
+      if (idx !== -1) {
+        this.$set(this.localItems, idx, item)
+      } else {
+        this.localItems.unshift(item)
+      }
     },
   },
 }
