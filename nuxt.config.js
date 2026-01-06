@@ -183,6 +183,17 @@ export default {
         },
       },
     },
+    lang: {
+      locales: {
+        es: {
+          dataIterator: {
+            rowsPerPageText: "Filas por pág.",
+            pageText: "{0}-{1}/{2}",
+          },
+        },
+      },
+      current: "es",
+    },
   },
 
   // PostCSS con PurgeCSS y cssnano para producción

@@ -1,6 +1,15 @@
 <template>
   <v-card>
-    <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" :loading="loading" :items-per-page="optionsTable.itemsPerPage" class="elevation-1">
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      :options.sync="optionsTable"
+      :server-items-length="total"
+      :loading="loading"
+      mobile-breakpoint="0"
+      :items-per-page="optionsTable.itemsPerPage"
+      class="elevation-1 xwidth800"
+    >
       <template #[`item.actions`]="{ item }">
         <div class="d-flex flex-nowrap justify-center">
           <v-tooltip bottom>
@@ -45,9 +54,9 @@ export default {
     return {
       optionsTable: {},
       headers: [
-        { text: "ID", value: "id" },
+        // { text: "ID", value: "id" },
         { text: "Nombre", value: "name" },
-        { text: "Teléfono", value: "phone_number" },
+        // { text: "Teléfono", value: "phone_number" },
         { text: "Categorías", value: "categories" },
         { text: "Fecha", value: "created_at" },
         { text: "Acciones", value: "actions", sortable: false },

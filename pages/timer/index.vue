@@ -4,7 +4,7 @@
     <v-row dense justify="center">
       <v-col cols="12">
         <div class="text-center">
-          <h1 class="text-h6 font-weight-medium py-0 my-0">Temporizadores</h1>
+          <h1 class="text-h6 font-weight-medium py-0 my-0">Temporizadores v.1.0.0</h1>
         </div>
       </v-col>
     </v-row>
@@ -180,35 +180,23 @@ export default {
         this.resetTimer(timer)
       })
     },
+    // Reemplaza tu función playSound() actual por esta:
     playSound() {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      // Usamos un sonido de notificación corto y limpio
+      const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3")
 
-      // Función interna para crear cada "dong"
-      const playDong = (startTime) => {
-        const oscillator = audioContext.createOscillator()
-        const gainNode = audioContext.createGain()
+      // En iOS es vital intentar reproducir inmediatamente tras el clic
+      const playPromise = audio.play()
 
-        oscillator.connect(gainNode)
-        gainNode.connect(audioContext.destination)
-
-        // Frecuencia de 400Hz (más grave, suena más a "dong")
-        oscillator.frequency.value = 852
-        oscillator.type = "sine"
-
-        // Envolvente de sonido: inicia fuerte y decae rápido
-        gainNode.gain.setValueAtTime(0, startTime)
-        gainNode.gain.linearRampToValueAtTime(0.5, startTime + 0.05)
-        gainNode.gain.exponentialRampToValueAtTime(0.1, startTime + 0.5)
-
-        oscillator.start(startTime)
-        oscillator.stop(startTime + 0.5)
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Reproducción exitosa
+          })
+          .catch((error) => {
+            console.error("Error al reproducir audio en iOS:", error)
+          })
       }
-
-      // Primer Dong (ahora mismo)
-      playDong(audioContext.currentTime)
-
-      // Segundo Dong (0.6 segundos después)
-      playDong(audioContext.currentTime + 0.6)
     },
     formatTime(seconds) {
       const mins = Math.floor(seconds / 60)
