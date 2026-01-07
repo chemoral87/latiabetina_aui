@@ -43,7 +43,7 @@
 </template>
 
 <script>
-// import { debounce } from "lodash-es"
+import { debounce } from "lodash-es"
 
 export default {
   middleware: ["authenticated"],
@@ -84,13 +84,16 @@ export default {
   },
 
   watch: {
-    // filterTestimony(value) {
-    //   if (this.skipFilterWatch) {
-    //     this.skipFilterWatch = false
-    //     return
-    //   }
-    //   this.handleFilterChange(value)
-    // },
+    filterTestimony: {
+      handler: debounce(function (value) {
+        // Si skipFilterWatch está activo, no ejecutar el watch
+        if (this.skipFilterWatch) {
+          this.skipFilterWatch = false
+          return
+        }
+        this.handleFilterChange(value)
+      }, 500),
+    },
   },
 
   mounted() {

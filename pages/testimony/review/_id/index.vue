@@ -92,7 +92,6 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      {{ mTestimony }}
     </v-row>
   </v-container>
 </template>
