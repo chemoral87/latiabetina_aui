@@ -41,6 +41,15 @@
       <template #no-data>
         <v-card-text>No hay datos</v-card-text>
       </template>
+      <!-- Estado formatted -->
+      <template #[`item.status`]="{ item }">
+        <div class="d-flex align-center">
+          <v-chip v-if="item.status === 'approved'" small color="green" text-color="white">APROBADO</v-chip>
+          <v-chip v-else-if="item.status === 'rejected'" small color="red" text-color="white">RECHAZADO</v-chip>
+          <v-chip v-else small color="grey">Pendiente</v-chip>
+        </div>
+      </template>
+
       <!-- Fecha formatted -->
       <template #[`item.created_at`]="{ item }">
         <span>{{ $moment(item.created_at).format("DD MMM YYYY HH:mm").toUpperCase() }}</span>
@@ -64,6 +73,7 @@ export default {
         // { text: "ID", value: "id" },
         { text: "", value: "review", sortable: false },
         { text: "Nombre", value: "name" },
+        { text: "Estado", value: "status", sortable: false },
         // { text: "Teléfono", value: "phone_number" },
         { text: "Categorías", value: "categories" },
         { text: "Fecha", value: "created_at" },

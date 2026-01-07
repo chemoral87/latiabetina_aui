@@ -5,6 +5,21 @@
         <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar..." dense :disabled="loading" />
       </v-col>
 
+      <v-col cols="12" md="2">
+        <v-select
+          v-model="statusFilter"
+          :items="[
+            { text: 'Pendientes', value: '' },
+            { text: 'Aprobados', value: 'approved' },
+            { text: 'Rechazados', value: 'rejected' },
+          ]"
+          label="Estado"
+          dense
+          hide-details
+          :disabled="loading"
+          @change="onStatusChange"
+        />
+      </v-col>
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mr-2" @click="newTestimony">
           <v-icon left>mdi-plus</v-icon>
@@ -54,6 +69,7 @@ export default {
   data() {
     return {
       filterTestimony: "",
+      statusFilter: "",
       testimony: {},
       response: { data: [], total: 0 },
       options: { page: 1, sortBy: ["name"], sortDesc: [true], itemsPerPage: 10 },
@@ -100,6 +116,9 @@ export default {
         if (this.filterTestimony && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterTestimony
         }
+        if (this.statusFilter && !Object.prototype.hasOwnProperty.call(overrides, "status")) {
+          requestOptions.status = this.statusFilter
+        }
 
         this.response = await this.$repository.Testimony.index(requestOptions)
         this.options = requestOptions
@@ -109,6 +128,10 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    async onStatusChange(value) {
+      await this.loadTestimonies({ page: 1, status: value })
     },
 
     async refreshTestimonies() {
