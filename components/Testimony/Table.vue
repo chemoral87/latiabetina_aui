@@ -13,7 +13,7 @@
       class="elevation-1 xwidth800"
     >
       <template #[`item.review`]="{ item }">
-        <v-btn outlined color="primary" fab x-small @click="show(item)">
+        <v-btn outlined color="primary" fab x-small class="my-1" @click="show(item)">
           <v-icon small>mdi-eye</v-icon>
         </v-btn>
       </template>

@@ -11,7 +11,7 @@
               </div>
               <div class="text-right">
                 <v-chip v-if="mTestimony.status === 'approved'" color="green" text-color="white" small>APROBADO</v-chip>
-                <v-chip v-else-if="mTestimony.status === 'declined'" color="red" text-color="white" small>RECHAZADO</v-chip>
+                <v-chip v-else-if="mTestimony.status === 'rejected'" color="red" text-color="white" small>RECHAZADO</v-chip>
                 <v-chip v-else color="grey" small>Pendiente</v-chip>
                 <div v-if="mTestimony.status_username" class="grey--text text-caption mt-1">Por: {{ mTestimony.status_username }}</div>
               </div>
@@ -43,6 +43,22 @@
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
+
+                <div v-if="mTestimony.link" class="mt-3">
+                  <v-responsive v-if="embedSrc" aspect-ratio="16/9">
+                    <iframe
+                      :src="embedSrc"
+                      frameborder="0"
+                      style="width: 100%; height: 100%"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                    ></iframe>
+                  </v-responsive>
+                  <div v-else class="grey--text text-caption">
+                    Vista previa no disponible para este enlace.
+                    <a :href="mTestimony.link" target="_blank" rel="noopener">Abrir enlace</a>
+                  </div>
+                </div>
               </v-col>
 
               <v-col cols="12" md="8">
@@ -71,7 +87,7 @@
             <v-spacer />
             <v-btn text color="primary" @click="$router.push('/testimony')">Volver</v-btn>
 
-            <v-btn class="mr-5" outlined :loading="saving" color="error" @click="updateStatus('declined')">Rechazar</v-btn>
+            <v-btn class="mr-5" outlined :loading="saving" color="error" @click="updateStatus('rejected')">Rechazar</v-btn>
             <v-btn :loading="saving" large color="success" class="mr-2" @click="updateStatus('approved')">Aprobar</v-btn>
           </v-card-actions>
         </v-card>
@@ -96,6 +112,29 @@ export default {
       mTestimony: {},
       saving: false,
     }
+  },
+  computed: {
+    embedSrc() {
+      const link = this.mTestimony?.link
+      if (!link) return null
+
+      // YouTube watch or short URL -> embed
+      const ytMatch = link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+      if (ytMatch && ytMatch[1]) {
+        return `https://www.youtube.com/embed/${ytMatch[1]}`
+      }
+
+      // Vimeo -> embed
+      const vimeoMatch = link.match(/vimeo\.com\/(?:video\/)?(\d+)/)
+      if (vimeoMatch && vimeoMatch[1]) {
+        return `https://player.vimeo.com/video/${vimeoMatch[1]}`
+      }
+
+      // If it's already an embed url, allow it
+      if (link.includes("youtube.com/embed") || link.includes("player.vimeo.com")) return link
+
+      return null
+    },
   },
 
   mounted() {
