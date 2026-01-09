@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar..." dense :disabled="loading" />
+        <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar" placeholder="Buscar..." :disabled="loading" />
       </v-col>
 
       <v-col cols="12" md="2">
@@ -14,7 +14,6 @@
             { text: 'Rechazados', value: 'rejected' },
           ]"
           label="Estado"
-          dense
           hide-details
           :disabled="loading"
           @change="onStatusChange"
@@ -30,7 +29,6 @@
           Refrescar
         </v-btn>
       </v-col>
-
       <v-col cols="12">
         <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
       </v-col>
