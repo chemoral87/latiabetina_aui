@@ -1,6 +1,6 @@
 <template>
   <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
-    <v-stage :config="stageConfig" @click="handleStageClick">
+    <v-stage :config="stageConfig" @click="handleStageClick" @tap="handleStageClick">
       <v-layer>
         <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
           <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
@@ -21,7 +21,7 @@
 
                 <template v-for="seat in getSubsectionSeats(sub)">
                   <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat, $event)" />
+                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat, $event)" @tap="handleSeatClick(seat, $event)" />
                   </v-group>
                 </template>
               </template>
@@ -40,10 +40,11 @@
               :key="`cat-${ci}`"
               :config="{ x: 8, y: 24 + ci * 16, text: '-> ' + cat.label, fontSize: 12, fill: '#fff' }"
               @click="setSeatCategory(activeSeat, cat.value)"
+              @tap="setSeatCategory(activeSeat, cat.value)"
               @mouseenter="handleTooltipHover"
               @mouseleave="handleTooltipLeave"
             />
-            <v-rect :key="`ucat-${ci}`" :config="getUnderlineConfig(cat, ci)" />
+            <v-rect :key="`ucat-${ci}`" :config="getUnderlineConfig(cat, ci)" @click="setSeatCategory(activeSeat, cat.value)" @tap="setSeatCategory(activeSeat, cat.value)" />
           </template>
         </v-group>
       </v-layer>
