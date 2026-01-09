@@ -1,64 +1,90 @@
 <template>
-  <v-container fluid>
-    <span v-if="auditorium && auditorium.name">Auditorio: {{ auditorium.name }}</span>
+  <v-container fluid class="pa-2 pa-md-4">
+    <!-- Header -->
+    <v-row class="mb-2">
+      <v-col cols="12">
+        <div class="d-flex align-center justify-space-between">
+          <span v-if="auditorium && auditorium.name" class="text-h6 text-md-h5">{{ auditorium.name }}</span>
+          <v-btn color="primary" :small="$vuetify.breakpoint.mobile" @click="saveAuditorium">
+            <v-icon :left="!$vuetify.breakpoint.mobile">mdi-content-save</v-icon>
+            <span v-if="!$vuetify.breakpoint.mobile">Guardar</span>
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+
     <v-row>
-      <!-- Panel de Control -->
-      <v-col cols="12" md="3">
-        <v-btn color="primary" class="mb-4" @click="saveAuditorium">
-          <v-icon left>mdi-content-save</v-icon>
-          Guardar
-        </v-btn>
+      <!-- Canvas de Asientos - Primero en mobile -->
+      <v-col cols="12" :md="9" :order="$vuetify.breakpoint.mdAndUp ? 2 : 1">
+        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
+      </v-col>
 
-        <v-btn color="primary" block class="mb-2" @click="addSection(false)">
-          <v-icon left>mdi-plus</v-icon>
-          Agregar sección
-        </v-btn>
+      <!-- Panel de Control - Segundo en mobile -->
+      <v-col cols="12" :md="3" :order="$vuetify.breakpoint.mdAndUp ? 1 : 2">
+        <!-- Botones de Acción -->
+        <v-row dense class="mb-3">
+          <v-col cols="6" md="12">
+            <v-btn color="primary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="addSection(false)">
+              <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-plus</v-icon>
+              <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar sección</span>
+            </v-btn>
+          </v-col>
+          <v-col cols="6" md="12">
+            <v-btn color="secondary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="addSection(true)">
+              <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-label</v-icon>
+              <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar etiqueta sección</span>
+            </v-btn>
+          </v-col>
+        </v-row>
 
-        <v-btn color="secondary" block class="mb-2" @click="addSection(true)">
-          <v-icon left>mdi-label</v-icon>
-          Agregar etiqueta sección
-        </v-btn>
+        <!-- Configuración -->
+        <v-card outlined class="mb-3 pa-2">
+          <div class="text-subtitle-2 mb-2">Configuración</div>
+          <json-config :config-data="configData" @imported="handleImportedConfig" @import-error="$toast?.error('Error al importar JSON')" />
 
-        <!-- Botones de Importar/Exportar (componente separado) -->
-        <json-config :config-data="configData" @imported="handleImportedConfig" @import-error="$toast?.error('Error al importar JSON')" />
+          <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label dense class="mb-1" />
 
-        <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label class="mb-2" />
+          <v-slider v-model="settings.SEATS_DISTANCE" :min="5" :max="12" :step="1" label="Distancia entre asientos" thumb-label dense class="mb-1" />
 
-        <v-slider v-model="settings.SEATS_DISTANCE" :min="5" :max="12" :step="1" label="Distancia entre asientos" thumb-label class="mb-4" />
-
-        <!-- Slider para depuración: Padding superior de sección -->
-        <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5" label="Padding superior sección" thumb-label class="mb-4" />
+          <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5" label="Padding superior sección" thumb-label dense class="mb-0" />
+        </v-card>
 
         <!-- Lista de Secciones -->
+        <div class="text-subtitle-2 mb-2">Secciones</div>
         <v-expansion-panels accordion>
           <v-expansion-panel v-for="(section, sIdx) in sections" :key="`section-${sIdx}`">
             <v-expansion-panel-header>
-              <div class="d-flex align-center">
-                <v-text-field v-model="section.name" dense solo hide-details style="max-width: 140px" @click.stop />
-                <v-chip v-if="section.isLabel" x-small color="secondary" class="ml-2">Etiqueta</v-chip>
+              <div class="d-flex align-center" style="width: 100%">
+                <v-text-field v-model="section.name" dense solo hide-details :style="$vuetify.breakpoint.mobile ? 'max-width: 120px' : 'max-width: 140px'" @click.stop />
+                <v-chip v-if="section.isLabel" x-small color="secondary" class="ml-1 ml-md-2">Etiqueta</v-chip>
                 <v-spacer />
-                <v-btn icon small color="error" @click.stop="removeSection(sIdx)">
-                  <v-icon small>mdi-delete</v-icon>
+                <v-btn icon :small="$vuetify.breakpoint.mdAndUp" color="error" @click.stop="removeSection(sIdx)">
+                  <v-icon :small="$vuetify.breakpoint.mdAndUp">mdi-delete</v-icon>
                 </v-btn>
               </div>
             </v-expansion-panel-header>
 
             <v-expansion-panel-content v-if="!section.isLabel">
-              <v-btn small block color="secondary" class="mb-2" @click="addSubsection(sIdx, false)">
-                <v-icon left small>mdi-plus</v-icon>
-                Agregar subsección
-              </v-btn>
-
-              <v-btn small block color="accent" class="mb-2" @click="addSubsection(sIdx, true)">
-                <v-icon left small>mdi-label-outline</v-icon>
-                Agregar área
-              </v-btn>
+              <v-row dense class="mb-2">
+                <v-col cols="6">
+                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="secondary" @click="addSubsection(sIdx, false)">
+                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs" small>mdi-plus</v-icon>
+                    <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.xs }">Agregar subsección</span>
+                  </v-btn>
+                </v-col>
+                <v-col cols="6">
+                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="accent" @click="addSubsection(sIdx, true)">
+                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs" small>mdi-label-outline</v-icon>
+                    <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.xs }">Agregar área</span>
+                  </v-btn>
+                </v-col>
+              </v-row>
 
               <!-- Subsecciones -->
-              <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2 pa-2">
+              <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2" :class="$vuetify.breakpoint.mobile ? 'pa-1' : 'pa-2'">
                 <div class="d-flex align-center mb-2">
-                  <v-text-field v-model="sub.name" :label="sub.isLabel ? 'Nombre área' : 'Nombre subsección'" dense hide-details />
-                  <v-chip v-if="sub.isLabel" x-small color="accent" class="ml-2">Área</v-chip>
+                  <v-text-field v-model="sub.name" :label="sub.isLabel ? 'Nombre área' : 'Nombre subsección'" dense hide-details :style="$vuetify.breakpoint.mobile ? 'font-size: 14px' : ''" />
+                  <v-chip v-if="sub.isLabel" x-small color="accent" class="ml-1 ml-md-2">Área</v-chip>
                 </div>
 
                 <!-- Ancho de área (solo para etiquetas) -->
@@ -67,14 +93,14 @@
                 <template v-if="!sub.isLabel">
                   <!-- Definir filas y columnas -->
                   <v-row dense class="mb-2">
-                    <v-col cols="3">
+                    <v-col cols="4" sm="3">
                       <v-text-field v-model.number="sub.tempRows" label="Filas" type="text" dense hide-details />
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4" sm="3">
                       <v-text-field v-model.number="sub.tempCols" label="Columnas" type="text" dense hide-details />
                     </v-col>
-                    <v-col cols="2">
-                      <v-btn small color="primary" @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>
+                    <v-col cols="4" sm="2">
+                      <v-btn :x-small="$vuetify.breakpoint.xs" small color="primary" @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>
                     </v-col>
                   </v-row>
 
@@ -82,17 +108,17 @@
                   <v-divider class="my-2" />
                   <div class="text-caption mb-1">Agregar asiento individual:</div>
                   <v-row dense>
-                    <v-col cols="6">
+                    <v-col cols="12" sm="6">
                       <v-select v-model="selectedRow[`${sIdx}-${subIdx}`]" :items="getRowOptions(sub)" label="Seleccionar fila" dense hide-details />
                     </v-col>
-                    <v-col cols="6" class="d-flex gap-1">
-                      <v-btn x-small color="primary" :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'left')">
+                    <v-col cols="12" sm="6" class="d-flex" style="gap: 4px">
+                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'left')">
                         <v-icon x-small>mdi-arrow-left-circle</v-icon>
-                        Izq
+                        <span class="ml-1">Izq</span>
                       </v-btn>
-                      <v-btn x-small color="primary" :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'right')">
+                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'right')">
                         <v-icon x-small>mdi-arrow-right-circle</v-icon>
-                        Der
+                        <span class="ml-1">Der</span>
                       </v-btn>
                     </v-col>
                   </v-row>
@@ -111,13 +137,10 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
-
-      <!-- Canvas de Asientos (separated component) -->
-      <v-col cols="12" md="9">
-        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
-      </v-col>
     </v-row>
-    {{ configData }}
+    
+    <!-- Debug info (hidden by default) -->
+    <div v-if="false">{{ configData }}</div>
   </v-container>
 </template>
 
@@ -255,10 +278,35 @@ export default {
       icon: "mdi-seat-outline",
       back: "/auditorium",
     })
+
+    // Ajustar tamaño del canvas según el viewport
+    this.updateStageSize()
+    window.addEventListener("resize", this.updateStageSize)
     this.loadConfiguration()
   },
 
+  beforeDestroy() {
+    window.removeEventListener("resize", this.updateStageSize)
+  },
+
   methods: {
+    updateStageSize() {
+      // Ajustar el tamaño del canvas según el viewport
+      const width = window.innerWidth
+      if (width < 600) {
+        // Mobile - restar padding del container (pa-2 = 8px * 2) + padding del sheet (pa-2 = 8px * 2)
+        this.stageConfig.width = Math.max(width - 48, 280)
+        this.stageConfig.height = 450
+      } else if (width < 960) {
+        // Tablet
+        this.stageConfig.width = Math.min(width - 64, 700)
+        this.stageConfig.height = 600
+      } else {
+        // Desktop
+        this.stageConfig.width = 900
+        this.stageConfig.height = 700
+      }
+    },
     forceUpdate() {
       this.$forceUpdate()
     },
@@ -774,5 +822,51 @@ export default {
 }
 .gap-2 {
   gap: 8px;
+}
+
+/* Mejoras para mobile */
+@media (max-width: 600px) {
+  ::v-deep .v-expansion-panel-header {
+    padding: 8px 12px;
+    min-height: 48px !important;
+  }
+  
+  ::v-deep .v-expansion-panel-content__wrap {
+    padding: 8px 12px;
+  }
+  
+  ::v-deep .v-text-field--dense {
+    font-size: 14px;
+  }
+  
+  ::v-deep .v-btn--small {
+    height: 32px !important;
+    font-size: 13px;
+  }
+  
+  ::v-deep .v-btn--x-small {
+    height: 24px !important;
+    padding: 0 6px !important;
+    font-size: 11px;
+  }
+  
+  ::v-deep .v-slider {
+    margin-top: 8px;
+  }
+  
+  ::v-deep .v-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+/* Asegurar que los botones tengan buen tamaño táctil en mobile */
+@media (max-width: 960px) {
+  ::v-deep .v-btn {
+    min-height: 36px;
+  }
+  
+  ::v-deep .v-icon {
+    font-size: 20px;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet elevation="2" class="pa-2" style="background: #f5f5f5; min-height: 500px">
+  <v-sheet elevation="2" class="pa-2 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: auto; overflow-y: hidden;">
     <v-stage :config="stageConfig" @click="handleStageClick" @tap="handleStageClick">
       <v-layer>
         <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
@@ -21,7 +21,13 @@
 
                 <template v-for="seat in getSubsectionSeats(sub)">
                   <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave" @click="handleSeatClick(seat, $event)" @tap="handleSeatClick(seat, $event)" />
+                    <v-circle
+                      :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })"
+                      @mouseenter="handleSeatHover"
+                      @mouseleave="handleSeatLeave"
+                      @click="handleSeatClick(seat, $event)"
+                      @tap="handleSeatClick(seat, $event)"
+                    />
                   </v-group>
                 </template>
               </template>
@@ -483,4 +489,16 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.stage-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Mejorar scroll en mobile */
+@media (max-width: 600px) {
+  .stage-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+</style>
