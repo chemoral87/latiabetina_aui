@@ -47,7 +47,7 @@
       </v-col>
 
       <v-col cols="4" md="2" class="px-0 mx-0">
-        <PitcherStaffNotation :frequency="lastFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
+        <PitcherStaffNotation v-if="lastValidFreq" :frequency="lastValidFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
       </v-col>
     </v-row>
   </v-container>
@@ -69,8 +69,9 @@ export default {
       dBDisplay: "--",
       centsDeviation: null,
       lastFreq: null,
+      lastValidFreq: null, // Última frecuencia válida detectada
       noiseCalibrating: false, // UI state
-      selectedProcessor: "ap_gemini9", // Default processor
+      selectedProcessor: "ap_gemini10", // Default processor
       processorOptions: ["ap_claude9", "ap_gemini10"],
     }
   },
@@ -102,6 +103,10 @@ export default {
     currentNoteOptions() {
       return this.latinNotation ? ["Do", "Do♯", "Re", "Re♯", "Mi", "Fa", "Fa♯", "Sol", "Sol♯", "La", "La♯", "Si"] : ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     },
+    displayFrequency() {
+      // Retorna lastFreq solo si es válida, de lo contrario mantiene el valor anterior
+      return this.lastFreq || this.displayFrequency
+    },
   },
 
   created() {
@@ -124,6 +129,7 @@ export default {
     resetHistory() {
       this.history = []
       this.lastFreq = null
+      this.lastValidFreq = null
       this.centsDeviation = null
       // Clear histogram canvas
       if (this.$refs.histogramComponent) {
@@ -211,6 +217,7 @@ export default {
           this.freqDisplay = exactFreq.toString()
           this.noteDisplay = note
           this.lastFreq = exactFreq
+          this.lastValidFreq = exactFreq // Guardar la última frecuencia válida
 
           this.history.unshift({ freq: stableFreq, midi })
           if (this.history.length > this.maxHistory) this.history.pop()

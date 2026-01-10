@@ -48,6 +48,8 @@ export default {
       trebleClefImage: null,
       bassClefImage: null,
       isReady: false,
+      lastDetectedMidi: null,
+      lastDetectedColor: null,
     }
   },
 
@@ -190,10 +192,12 @@ export default {
     renderNotes(trebleTop, bassTop, lineSpacing, noteX) {
       const currentMidi = this.freqToMidi(this.frequency)
       const roundedMidi = Math.round(currentMidi)
-      const isSharp = this.getNoteName(roundedMidi).match(/[♯#]/)
       const noteColor = COLORS[(roundedMidi % 12) * 2]
 
-      const drawPair = (midi, alpha = 1.0) => {
+      const drawPair = (midi, alpha = 1.0, customColor = null) => {
+        const pairIsSharp = this.getNoteName(midi).match(/[♯#]/)
+        const pairColor = customColor || COLORS[(midi % 12) * 2]
+
         // 1. Draw original Sharp Note
         const { noteY: ySharp, ledgerLines: lSharp } = this.calculateNotePos(midi, trebleTop, bassTop, lineSpacing)
         this.ctx.globalAlpha = alpha
@@ -203,10 +207,10 @@ export default {
           this.ctx.lineTo(noteX + 20 * this.zoom, ly)
           this.ctx.stroke()
         })
-        this.drawQuarterNote(noteX, ySharp, noteColor, isSharp, false)
+        this.drawQuarterNote(noteX, ySharp, pairColor, pairIsSharp, false)
 
         // 2. Draw enharmonic Flat Note if applicable
-        if (isSharp) {
+        if (pairIsSharp) {
           const flatMidi = midi + 1 // Move to flat position (e.g., D position for Db)
           const flatX = noteX + NOTE_X_B_OFFSET * this.zoom // Use imported constant
           const { noteY: yFlat, ledgerLines: lFlat } = this.calculateNotePos(flatMidi, trebleTop, bassTop, lineSpacing)
@@ -217,8 +221,13 @@ export default {
             this.ctx.lineTo(flatX + 20 * this.zoom, ly)
             this.ctx.stroke()
           })
-          this.drawQuarterNote(flatX, yFlat, noteColor, false, true)
+          this.drawQuarterNote(flatX, yFlat, pairColor, false, true)
         }
+      }
+
+      // Dibujar la última nota detectada con opacidad reducida (si existe y es diferente)
+      if (this.lastDetectedMidi !== null && this.lastDetectedMidi !== roundedMidi) {
+        drawPair(this.lastDetectedMidi, 0.3, this.lastDetectedColor)
       }
 
       if (this.showGhostNotes) {
@@ -227,6 +236,10 @@ export default {
       }
       drawPair(roundedMidi, 1.0)
       this.ctx.globalAlpha = 1.0
+
+      // Guardar la nota actual como última detectada
+      this.lastDetectedMidi = roundedMidi
+      this.lastDetectedColor = noteColor
     },
 
     calculateNotePos(midi, trebleTop, bassTop, lineSpacing) {

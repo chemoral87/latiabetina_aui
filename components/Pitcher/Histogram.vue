@@ -57,6 +57,14 @@ export default {
   },
 
   computed: {
+    selectedRootNote: {
+      get() {
+        return this.$store.state.pitcher_store.selectedRootNote
+      },
+      set(value) {
+        this.$store.commit("pitcher_store/SET_ROOT_NOTE", value)
+      },
+    },
     latinNotation: {
       get() {
         return this.$store.state.pitcher_store.latinNotation

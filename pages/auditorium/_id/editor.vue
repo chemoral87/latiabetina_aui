@@ -138,7 +138,7 @@
         </v-expansion-panels>
       </v-col>
     </v-row>
-    
+
     <!-- Debug info (hidden by default) -->
     <div v-if="false">{{ configData }}</div>
   </v-container>
@@ -830,30 +830,30 @@ export default {
     padding: 8px 12px;
     min-height: 48px !important;
   }
-  
+
   ::v-deep .v-expansion-panel-content__wrap {
     padding: 8px 12px;
   }
-  
+
   ::v-deep .v-text-field--dense {
     font-size: 14px;
   }
-  
+
   ::v-deep .v-btn--small {
     height: 32px !important;
     font-size: 13px;
   }
-  
+
   ::v-deep .v-btn--x-small {
     height: 24px !important;
     padding: 0 6px !important;
     font-size: 11px;
   }
-  
+
   ::v-deep .v-slider {
     margin-top: 8px;
   }
-  
+
   ::v-deep .v-card {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
   }
@@ -864,7 +864,7 @@ export default {
   ::v-deep .v-btn {
     min-height: 36px;
   }
-  
+
   ::v-deep .v-icon {
     font-size: 20px;
   }
