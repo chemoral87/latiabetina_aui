@@ -1,21 +1,14 @@
 <template>
-  <v-card class="pa-4">
-    <v-card-title class="text-h5 mb-4">
-      Guitar Fretboard
-      <v-chip v-if="selectedNote" color="primary" class="ml-3">Note: {{ selectedNote }}</v-chip>
+  <v-card class="pa-0">
+    <v-card-title class="text-h6 mb-2">
+      Diapasón de Guitarra
+      <v-chip v-if="currentNote" color="primary" class="ml-2" small>Nota: {{ currentNote }}</v-chip>
     </v-card-title>
 
-    <v-card-text>
-      <!-- Controls -->
-      <v-row class="mb-4">
-        <v-col cols="12" md="6">
-          <v-select v-model="selectedNote" :items="notes" label="Select a note" outlined dense clearable></v-select>
-        </v-col>
-      </v-row>
-
+    <v-card-text class="">
       <!-- Fretboard -->
       <div class="fretboard-container">
-        <svg :width="fretboardWidth" :height="fretboardHeight" class="fretboard">
+        <svg :viewBox="`0 0 ${fretboardWidth} ${fretboardHeight}`" class="fretboard" preserveAspectRatio="xMidYMid meet">
           <!-- Fret lines -->
           <line v-for="fret in 13" :key="'fret-' + fret" :x1="getFretX(fret - 1)" y1="20" :x2="getFretX(fret - 1)" :y2="fretboardHeight - 20" stroke="#8B7355" :stroke-width="fret === 1 ? 6 : 2" />
 
@@ -33,11 +26,11 @@
           </text>
 
           <!-- Fret markers (dots) -->
-          <circle v-for="marker in fretMarkers" :key="'marker-' + marker" :cx="getFretX(marker) - fretSpacing / 2" :cy="fretboardHeight / 2" r="8" fill="#DEB887" opacity="0.5" />
+          <circle v-for="marker in fretMarkers" :key="'marker-' + marker" :cx="getFretX(marker) - fretSpacing / 2" :cy="fretboardHeight / 2" r="8" fill="red" opacity="0.5" />
 
           <!-- Double dots for 12th fret -->
-          <circle :cx="getFretX(12) - fretSpacing / 2" :cy="fretboardHeight / 2 - 30" r="8" fill="#DEB887" opacity="0.5" />
-          <circle :cx="getFretX(12) - fretSpacing / 2" :cy="fretboardHeight / 2 + 30" r="8" fill="#DEB887" opacity="0.5" />
+          <circle :cx="getFretX(12) - fretSpacing / 2" :cy="fretboardHeight / 2 - 30" r="8" fill="red" opacity="0.5" />
+          <circle :cx="getFretX(12) - fretSpacing / 2" :cy="fretboardHeight / 2 + 30" r="8" fill="red" opacity="0.5" />
 
           <!-- Notes on fretboard -->
           <g v-for="(string, stringIndex) in strings" :key="'notes-' + stringIndex">
@@ -75,18 +68,17 @@
 export default {
   name: "GuitarNotation",
   props: {
-    note: {
-      type: String,
+    frequency: {
+      type: Number,
       default: null,
     },
   },
   data() {
     return {
-      selectedNote: this.note,
       fretboardWidth: 900,
       fretboardHeight: 250,
       fretSpacing: 65,
-      notes: ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"],
+      notes: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
       strings: [
         { name: "E", note: "E", octave: 4 },
         { name: "B", note: "B", octave: 3 },
@@ -98,12 +90,20 @@ export default {
       fretMarkers: [3, 5, 7, 9],
     }
   },
-  watch: {
-    note(newVal) {
-      this.selectedNote = newVal
+  computed: {
+    currentNote() {
+      if (!this.frequency) return null
+      const midi = this.freqToMidi(this.frequency)
+      const roundedMidi = Math.round(midi)
+      const noteIndex = roundedMidi % 12
+      return this.notes[noteIndex]
     },
   },
   methods: {
+    freqToMidi(freq) {
+      if (freq <= 0) return 0
+      return 69 + 12 * Math.log2(freq / 440)
+    },
     getFretX(fret) {
       return 60 + fret * this.fretSpacing
     },
@@ -117,9 +117,9 @@ export default {
       return this.notes[noteIndex]
     },
     isNoteHighlighted(string, fret) {
-      if (!this.selectedNote) return false
+      if (!this.currentNote) return false
       const noteAtFret = this.getNoteAtFret(string, fret)
-      return noteAtFret === this.selectedNote
+      return noteAtFret === this.currentNote
     },
   },
 }
@@ -127,15 +127,17 @@ export default {
 
 <style scoped>
 .fretboard-container {
-  overflow-x: auto;
-  background: linear-gradient(to bottom, #d2691e 0%, #8b4513 100%);
+  width: 100%;
   border-radius: 8px;
-  padding: 10px;
+  padding: 4px;
+  overflow: hidden;
 }
 
 .fretboard {
   display: block;
-  margin: 0 auto;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 .note-circle {

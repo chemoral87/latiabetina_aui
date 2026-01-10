@@ -49,6 +49,9 @@
       <v-col cols="4" md="2" class="px-0 mx-0">
         <PitcherStaffNotation v-if="lastValidFreq" :frequency="lastValidFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
       </v-col>
+      <v-col cols="12">
+        <PitcherGuitarNotation v-if="lastValidFreq" :frequency="lastValidFreq"></PitcherGuitarNotation>
+      </v-col>
     </v-row>
   </v-container>
 </template>
