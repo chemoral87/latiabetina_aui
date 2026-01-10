@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-0">
     <v-card-title class="text-h6 mb-2">
-      Diapasón de Guitarra
+      Diapasón de Ukelele
       <v-chip v-if="currentNote" color="primary" class="ml-2" small>Nota: {{ currentNote }}</v-chip>
     </v-card-title>
 
@@ -70,7 +70,7 @@
 import { COLORS, COLOR_NEEDS_WHITE_TEXT } from "../../pages/pitcher/constants.js"
 
 export default {
-  name: "GuitarNotation",
+  name: "UkeleleNotation",
   props: {
     frequency: {
       type: Number,
@@ -86,12 +86,12 @@ export default {
       notes: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
       latinNotes: ["Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"],
       strings: [
-        { name: "E", note: "E", octave: 4 },
-        { name: "B", note: "B", octave: 3 },
-        { name: "G", note: "G", octave: 3 },
-        { name: "D", note: "D", octave: 3 },
-        { name: "A", note: "A", octave: 2 },
-        { name: "E", note: "E", octave: 2 },
+        { name: "A", note: "A", octave: 4 }, // Primera cuerda (la más aguda)
+        { name: "E", note: "E", octave: 4 }, // Segunda cuerda
+        { name: "C", note: "C", octave: 4 }, // Tercera cuerda
+        { name: "G", note: "G", octave: 3 }, // Cuarta cuerda
+        { name: "D", note: "D", octave: 3 }, // Quinta cuerda
+        { name: "A", note: "A", octave: 2 }, // Sexta cuerda (la más grave)
       ],
       fretMarkers: [3, 5, 7, 9],
     }

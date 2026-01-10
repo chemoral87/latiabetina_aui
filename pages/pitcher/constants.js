@@ -36,6 +36,43 @@ export const COLORS = [
   "#FF20FF", // Cycle back to red (optional)
 ]
 
+// Define qué colores necesitan texto blanco para mejor legibilidad
+// true = texto blanco, false = texto gris (#666)
+export const COLOR_NEEDS_WHITE_TEXT = [
+  // C (Do) - rojos/naranjas oscuros necesitan blanco
+  true, // C (bright red)
+  true, // C+
+  true, // C♯ (orange)
+  false, // C♯+
+  // D (Re) - amarillos/dorados pueden usar gris
+  false, // D (gold)
+  false, // D+
+  false, // D♯ (yellow)
+  false, // D♯+
+  // E (Mi) - verdes claros pueden usar gris
+  false, // E
+  false, // E+
+  // F (Fa) - verdes pueden usar gris
+  false, // F (lime)
+  false, // F+
+  false, // F♯ (green)
+  false, // F♯+
+  // G (Sol) - aguamarinas/cianos pueden usar gris
+  false, // G (aqua)
+  false, // G+ (cyan)
+  true, // G♯ (sky blue)
+  true, // G♯+ (azul más oscuro)
+  // A (La) - azules oscuros necesitan blanco
+  true, // A (bright blue)
+  true, // A+
+  true, // A♯ (lighter violet-blue)
+  true, // A♯+
+  // B (Si) - púrpuras/magentas oscuros necesitan blanco
+  true, // B (electric purple)
+  true, // B+ (magenta)
+  true, // Cycle back to red
+]
+
 export const NOTE_SHORT_STRINGS = ["C", "C+", "C♯", "C♯+", "D", "D+", "D♯", "D♯+", "E", "E+", "F", "F+", "F♯", "F♯+", "G", "G+", "G♯", "G♯+", "A", "A+", "A♯", "A♯+", "B", "B+"]
 
 export const NOTE_LATIN_STRINGS = ["Do", "Do+", "Do♯", "Do♯+", "Re", "Re+", "Re♯", "Re♯+", "Mi", "Mi+", "Fa", "Fa+", "Fa♯", "Fa♯+", "Sol", "Sol+", "Sol♯", "Sol♯+", "La", "La+", "La♯", "La♯+", "Si", "Si+"]

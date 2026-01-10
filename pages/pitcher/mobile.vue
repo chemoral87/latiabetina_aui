@@ -50,7 +50,10 @@
         <PitcherStaffNotation v-if="lastValidFreq" :frequency="lastValidFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
       </v-col>
       <v-col cols="12">
-        <PitcherGuitarNotation v-if="lastValidFreq" :frequency="lastValidFreq"></PitcherGuitarNotation>
+        <PitcherUkeleleNotation v-if="lastValidFreq" :frequency="lastValidFreq" />
+      </v-col>
+      <v-col cols="12">
+        <PitcherGuitarNotation v-if="lastValidFreq" :frequency="lastValidFreq" />
       </v-col>
     </v-row>
   </v-container>
