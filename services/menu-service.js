@@ -40,6 +40,10 @@ export class MenuService {
       if (this.hasPermission("testimony-index")) {
         menu.push({ icon: "mdi-comment-text", title: "Testimonios", to: "/testimony" })
       }
+
+      if (this.hasPermission("church-event-index")) {
+        menu.push({ icon: "mdi-calendar", title: "Eventos de Iglesia", to: "/church-event" })
+      }
       // menu.push({
       //   icon: "mdi-chart-bar",
       //   title: "ReportesA",

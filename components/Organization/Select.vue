@@ -1,16 +1,36 @@
 <template>
-  <v-select v-model="selected" :disabled="disabled" :items="items" label="Org" item-text="name" item-value="id" v-bind="$attrs"></v-select>
+  <v-select v-show="showSelect" v-model="selected" :disabled="disabled" :items="items" label="Org" item-text="name" item-value="id" v-bind="$attrs"></v-select>
 </template>
 <script>
 export default {
   name: "OrganizationSelect",
-  props: ["permission"],
+  props: {
+    permission: {
+      type: String,
+      required: true,
+    },
+    hideOne: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       items: [],
       selected: null,
       disabled: false,
     }
+  },
+  computed: {
+    showSelect() {
+      // Si hideOne está presente y disabled es true, ocultar el select
+      if (this.hideOne && this.disabled) {
+        console.log("Hiding select because hideOne is true and disabled is true")
+        return false
+      }
+      // De lo contrario, mostrar solo si no está disabled
+      return true
+    },
   },
   watch: {
     selected(val) {

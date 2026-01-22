@@ -15,6 +15,7 @@ export default ($axios) => ({
   Organization: CommonRepository($axios)("/organization"),
   Auditorium: CommonRepository($axios)("/auditorium"),
   Testimony: CommonRepository($axios)("/testimony"),
+  ChurchEvent: CommonRepository($axios)("/church-event"),
   /// ////////Admin Repository////////////////////////
   Store: CommonRepository($axios)("/store"),
   // Investor: InvestorRepository($axios)("/investor"),

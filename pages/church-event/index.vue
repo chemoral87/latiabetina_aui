@@ -3,32 +3,32 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..." dense :disabled="loading" />
+        <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar evento..." dense :disabled="loading" />
       </v-col>
 
       <!-- Botones de acción -->
       <v-col cols="12" md="3">
-        <v-btn color="primary" class="mr-2" @click="newRole">
+        <v-btn color="primary" class="mr-2" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" :loading="loading" @click="refreshRoles">
+        <v-btn color="primary" :loading="loading" @click="refreshChurchEvents">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
       </v-col>
 
-      <!-- Tabla de roles -->
+      <!-- Tabla de eventos -->
       <v-col cols="12">
-        <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
+        <ChurchEventTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
       </v-col>
     </v-row>
 
-    <!-- Diálogo para crear/editar rol -->
-    <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
+    <!-- Diálogo para crear/editar evento -->
+    <ChurchEventDialog v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog" @save="saveChurchEvent" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole" @close="roleDialogDelete = false" />
+    <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent" @close="churchEventDialogDelete = false" />
   </v-container>
 </template>
 
@@ -39,7 +39,7 @@ export default {
   middleware: ["authenticated"],
 
   async asyncData({ app, error, store }) {
-    store.dispatch("validatePermission", { error, permission: "role-index" })
+    store.dispatch("validatePermission", { error, permission: "church-event-index" })
 
     const options = {
       page: 1,
@@ -49,11 +49,11 @@ export default {
     }
 
     try {
-      const response = await app.$repository.Role.index(options)
+      const response = await app.$repository.ChurchEvent.index(options)
       return { response, options }
     } catch (e) {
-      console.error("Error loading roles:", e)
-      error({ statusCode: e.response?.status || 500, message: "Error al cargar roles" })
+      console.error("Error loading church events:", e)
+      error({ statusCode: e.response?.status || 500, message: "Error al cargar eventos de iglesia" })
       return {
         response: { data: [], total: 0 },
         options,
@@ -63,8 +63,8 @@ export default {
 
   data() {
     return {
-      filterRole: "",
-      role: {},
+      filterChurchEvent: "",
+      churchEvent: {},
       response: { data: [], total: 0 },
       options: {
         page: 1,
@@ -72,8 +72,8 @@ export default {
         sortDesc: [false],
         itemsPerPage: 10,
       },
-      roleDialog: false,
-      roleDialogDelete: false,
+      churchEventDialog: false,
+      churchEventDialogDelete: false,
       dialogDelete: {},
       loading: false,
       saving: false,
@@ -83,13 +83,13 @@ export default {
   },
 
   computed: {
-    hasRoles() {
+    hasChurchEvents() {
       return this.response?.data?.length > 0
     },
   },
 
   watch: {
-    filterRole: {
+    filterChurchEvent: {
       handler: debounce(function (value) {
         // Si skipFilterWatch está activo, no ejecutar el watch
         if (this.skipFilterWatch) {
@@ -109,8 +109,8 @@ export default {
     setNavBar() {
       const eventBus = this.$eventBus || this.$nuxt
       eventBus.$emit("setNavBar", {
-        title: "Roles",
-        icon: "mdi-redhat",
+        title: "Eventos de Iglesia",
+        icon: "mdi-calendar",
       })
     },
 
@@ -118,13 +118,13 @@ export default {
      * Maneja el cambio en el filtro de búsqueda
      */
     async handleFilterChange(value) {
-      await this.loadRoles({ filter: value || "", page: 1 })
+      await this.loadChurchEvents({ filter: value || "", page: 1 })
     },
 
     /**
-     * Carga los roles con las opciones especificadas
+     * Carga los eventos con las opciones especificadas
      */
-    async loadRoles(overrides = {}) {
+    async loadChurchEvents(overrides = {}) {
       try {
         this.loading = true
         this.$store.dispatch("hideNextLoading")
@@ -136,19 +136,19 @@ export default {
         }
 
         // Preserva el filtro actual si no se sobrescribe explícitamente
-        if (this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
-          requestOptions.filter = this.filterRole
+        if (this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+          requestOptions.filter = this.filterChurchEvent
         }
 
-        this.response = await this.$repository.Role.index(requestOptions)
+        this.response = await this.$repository.ChurchEvent.index(requestOptions)
 
         // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions
       } catch (error) {
-        console.error("Error loading roles:", error)
+        console.error("Error loading church events:", error)
         this.$notify({
           type: "error",
-          text: error.response?.data?.message || "Error al cargar roles",
+          text: error.response?.data?.message || "Error al cargar eventos de iglesia",
         })
       } finally {
         this.loading = false
@@ -156,10 +156,10 @@ export default {
     },
 
     /**
-     * Refresca la lista de roles manteniendo las opciones actuales
+     * Refresca la lista de eventos manteniendo las opciones actuales
      */
-    async refreshRoles() {
-      await this.loadRoles()
+    async refreshChurchEvents() {
+      await this.loadChurchEvents()
     },
 
     /**
@@ -167,66 +167,59 @@ export default {
      */
     async handleSorting(options) {
       this.options = options
-      await this.loadRoles()
+      await this.loadChurchEvents()
     },
 
     /**
-     * Abre el diálogo para crear un nuevo rol
+     * Abre el diálogo para crear un nuevo evento
      */
-    newRole() {
-      this.role = {}
-      this.roleDialog = true
+    newChurchEvent() {
+      this.churchEvent = {}
+      this.churchEventDialog = true
     },
 
     /**
-     * Abre el diálogo para editar un rol existente
+     * Abre el diálogo para editar un evento existente
      */
-    editRole(item) {
-      this.role = { ...item }
-      this.roleDialog = true
+    editChurchEvent(item) {
+      this.churchEvent = { ...item }
+      this.churchEventDialog = true
     },
 
     /**
-     * Navega a la página de permisos del rol
+     * Prepara el diálogo de confirmación para eliminar un evento
      */
-    editRolePermissions(item) {
-      this.$router.push(`/role/${item.id}`)
-    },
-
-    /**
-     * Prepara el diálogo de confirmación para eliminar un rol
-     */
-    beforeDeleteRole(item) {
+    beforeDeleteChurchEvent(item) {
       this.dialogDelete = {
-        text: "¿Desea eliminar el Rol ",
+        text: "¿Desea eliminar el Evento ",
         strong: item.name,
         text2: "?",
         payload: item,
       }
-      this.roleDialogDelete = true
+      this.churchEventDialogDelete = true
     },
 
     /**
-     * Elimina un rol
+     * Elimina un evento
      */
-    async deleteRole(item) {
+    async deleteChurchEvent(item) {
       try {
         this.deleting = true
-        await this.$repository.Role.delete(item.id, item)
+        await this.$repository.ChurchEvent.delete(item.id, item)
 
         // Activa el flag para evitar que el watch dispare una llamada adicional
         this.skipFilterWatch = true
 
         // Limpia el filtro y recarga la primera página (solo 1 llamada GET)
-        this.filterRole = ""
-        await this.loadRoles({ page: 1, filter: "" })
+        this.filterChurchEvent = ""
+        await this.loadChurchEvents({ page: 1, filter: "" })
 
-        this.roleDialogDelete = false
+        this.churchEventDialogDelete = false
       } catch (error) {
-        console.error("Error deleting role:", error)
+        console.error("Error deleting church event:", error)
         this.$notify({
           type: "error",
-          text: error.response?.data?.message || "Error al eliminar el rol",
+          text: error.response?.data?.message || "Error al eliminar el evento",
         })
       } finally {
         this.deleting = false
@@ -234,33 +227,33 @@ export default {
     },
 
     /**
-     * Guarda un rol (crear o actualizar)
+     * Guarda un evento (crear o actualizar)
      */
-    async saveRole(item) {
+    async saveChurchEvent(item) {
       try {
         this.saving = true
 
         const isUpdate = Boolean(item.id)
 
         if (isUpdate) {
-          await this.$repository.Role.update(item.id, item)
+          await this.$repository.ChurchEvent.update(item.id, item)
         } else {
-          await this.$repository.Role.create(item)
+          await this.$repository.ChurchEvent.create(item)
         }
 
         this.$notify({
           type: "success",
-          text: `Rol ${isUpdate ? "actualizado" : "creado"} exitosamente`,
+          text: `Evento ${isUpdate ? "actualizado" : "creado"} exitosamente`,
         })
 
-        // Aplica el filtro con el nombre del rol guardado y recarga
-        this.filterRole = item.name
-        this.roleDialog = false
+        // Aplica el filtro con el nombre del evento guardado y recarga
+        this.filterChurchEvent = item.name
+        this.churchEventDialog = false
       } catch (error) {
-        console.error("Error saving role:", error)
+        console.error("Error saving church event:", error)
         this.$notify({
           type: "error",
-          text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} el rol`,
+          text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} el evento`,
         })
       } finally {
         this.saving = false
@@ -268,11 +261,11 @@ export default {
     },
 
     /**
-     * Cierra el diálogo de rol
+     * Cierra el diálogo de evento
      */
     closeDialog() {
-      this.roleDialog = false
-      this.role = {}
+      this.churchEventDialog = false
+      this.churchEvent = {}
     },
   },
 }
