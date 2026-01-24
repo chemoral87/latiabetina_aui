@@ -39,7 +39,7 @@ export default {
 
   props: {
     response: {
-      type: [Object, Array],
+      type: Object,
       default: () => ({ data: [], total: 0 }),
     },
     options: {
@@ -88,20 +88,10 @@ export default {
 
   computed: {
     total() {
-      // Si response es un array, retornar su longitud
-      if (Array.isArray(this.response)) {
-        return this.response.length
-      }
-      // Si es un objeto con total, retornarlo
       return this.response && this.response.total ? this.response.total : 0
     },
 
     items() {
-      // Si response es un array directamente, retornarlo
-      if (Array.isArray(this.response)) {
-        return this.response
-      }
-      // Si es un objeto con data, retornar data
       return this.response && this.response.data ? this.response.data : []
     },
   },

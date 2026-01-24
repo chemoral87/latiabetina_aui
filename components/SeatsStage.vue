@@ -61,6 +61,7 @@
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
+import { CLASS_STROKE_MAP } from "~/constants/auditorium.js"
 Vue.use(VueKonva)
 
 const COLORS = {
@@ -275,12 +276,7 @@ export default {
       const isReserved = seat.state === "reserved"
       const isSelected = seat.state === "selected"
       const category = seat.category ? String(seat.category).toLowerCase() : null
-      const classStrokeMap = {
-        servidores: "#9e9e9e",
-        nuevos: COLORS.SEAT_SELECTED,
-        incapacitados: "#f44336",
-        discapacitados: "#f44336",
-      }
+      const classStrokeMap = CLASS_STROKE_MAP
 
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
       let strokeWidth = 1

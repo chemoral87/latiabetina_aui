@@ -59,7 +59,7 @@ export default {
   props: {
     response: {
       type: Object,
-      default: () => ({ data: [], total: 0 }),
+      default: () => ({ data: null, total: 0 }),
     },
     options: {
       type: Object,

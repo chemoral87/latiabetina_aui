@@ -50,6 +50,10 @@ export default {
 
     try {
       const response = await app.$repository.ChurchEvent.index(options)
+      // Normalizar la respuesta si es un array
+      //   if (Array.isArray(response)) {
+      //     response = { data: response, total: response.length }
+      //   }
       return { response, options }
     } catch (e) {
       console.error("Error loading church events:", e)
@@ -140,7 +144,14 @@ export default {
           requestOptions.filter = this.filterChurchEvent
         }
 
-        this.response = await this.$repository.ChurchEvent.index(requestOptions)
+        let response = await this.$repository.ChurchEvent.index(requestOptions)
+
+        // Normalizar la respuesta si es un array
+        if (Array.isArray(response)) {
+          response = { data: response, total: response.length }
+        }
+
+        this.response = response
 
         // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions

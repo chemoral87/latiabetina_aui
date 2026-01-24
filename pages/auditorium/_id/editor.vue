@@ -35,6 +35,12 @@
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar etiqueta sección</span>
             </v-btn>
           </v-col>
+          <v-col cols="6" md="12">
+            <v-btn color="warning" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="clearAllSeatStates">
+              <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-broom</v-icon>
+              <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Limpiar categorías</span>
+            </v-btn>
+          </v-col>
         </v-row>
 
         <!-- Configuración -->
@@ -140,7 +146,7 @@
     </v-row>
 
     <!-- Debug info (hidden by default) -->
-    <div v-if="false">{{ configData }}</div>
+    <div v-if="true">{{ configData }}</div>
   </v-container>
 </template>
 
@@ -149,6 +155,7 @@ import Vue from "vue"
 import VueKonva from "vue-konva"
 import JsonConfig from "~/components/JsonConfig.vue"
 import SeatsStage from "~/components/SeatsStage.vue"
+import { STAGE_CATEGORIES, CLASS_STROKE_MAP } from "~/constants/auditorium.js"
 Vue.use(VueKonva)
 
 const DEFAULT_SETTINGS = {
@@ -188,14 +195,7 @@ export default {
     return {
       auditorium: {},
       stageConfig: { width: 900, height: 700 },
-      stageCategories: [
-        { label: "Servidores", value: "Servidores", fill: "#9e9e9e" },
-        { label: "Nuevos", value: "Nuevos", fill: "#1976d2" },
-        { label: "Incapacitados", value: "Incapacitados", fill: "#f44336" },
-        { label: "Reservados", value: "Reservados", fill: "#008f39" },
-        { label: "Lideres", value: "Lideres", fill: "#ff6eec" },
-        { label: "Ninguno", value: null, fill: "#ffffff" },
-      ],
+      stageCategories: STAGE_CATEGORIES,
       activeSeat: null,
       sections: [],
       selectedRow: {},
@@ -427,15 +427,15 @@ export default {
           sub.seats.forEach((row) => {
             if (!Array.isArray(row)) return
             row.forEach((seat) => {
-              if (seat && "state" in seat) {
-                this.$delete(seat, "state")
+              if (seat && "category" in seat) {
+                this.$delete(seat, "category")
               }
             })
           })
         })
       })
       this.$forceUpdate()
-      this.$toast?.success && this.$toast.success("Estados eliminados")
+      this.$toast?.success && this.$toast.success("Categorías eliminadas")
     },
 
     getRowOptions(sub) {
@@ -718,12 +718,7 @@ export default {
       const isSelected = seat.state === "selected"
       // Border color/width override when seat has a category
       const category = seat.category ? String(seat.category).toLowerCase() : null
-      const classStrokeMap = {
-        servidores: "#9e9e9e",
-        nuevos: COLORS.SEAT_SELECTED,
-        incapacitados: "#f44336",
-        discapacitados: "#f44336",
-      }
+      const classStrokeMap = CLASS_STROKE_MAP
 
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
       let strokeWidth = 1

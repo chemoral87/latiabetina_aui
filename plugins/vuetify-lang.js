@@ -11,7 +11,16 @@ export default function (context) {
       pageText: "{0}-{1}/{2}",
     },
     dataTable: {
+      ...es.dataTable,
       itemsPerPageText: "Filas por pág:",
+      ariaLabel: {
+        sortDescending: "Ordenado descendente.",
+        sortAscending: "Ordenado ascendente.",
+        sortNone: "Sin ordenar.",
+        activateNone: "Activar para quitar ordenamiento.",
+        activateDescending: "Activar para ordenar descendente.",
+        activateAscending: "Activar para ordenar ascendente.",
+      },
     },
   }
 
