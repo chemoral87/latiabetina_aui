@@ -13,6 +13,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    preventAutoSelect: {
+      type: Boolean,
+      default: false,
+    },
+    value: {
+      type: [String, Number],
+      default: null,
+    },
   },
   data() {
     return {
@@ -36,6 +44,12 @@ export default {
     selected(val) {
       this.$emit("input", val)
     },
+    value: {
+      immediate: true,
+      handler(val) {
+        this.selected = val
+      },
+    },
   },
   mounted() {
     const me = this
@@ -45,10 +59,12 @@ export default {
 
     me.items = filterOrgs
 
-    // select if only one
-    if (filterOrgs.length === 1) {
-      me.selected = filterOrgs[0].id
-      me.disabled = true
+    // select if only one and no existing value and not preventing auto-select
+    if (filterOrgs.length === 1 && !this.preventAutoSelect && (this.value === null || this.value === "" || this.value === undefined)) {
+      me.$nextTick(() => {
+        me.selected = filterOrgs[0].id
+        me.disabled = true
+      })
       // set disabled if only one
     }
   },

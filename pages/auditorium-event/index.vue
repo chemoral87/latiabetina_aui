@@ -4,10 +4,10 @@
       <v-col cols="12" md="2">
         <v-text-field v-model="filterAuditoriumEvent" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
       </v-col>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="auto">
         <v-btn color="primary" class="mr-1" @click="newAuditoriumEvent()">
           <v-icon>mdi-plus</v-icon>
-          Nuevo Evento de Auditorio
+          Nuevo
         </v-btn>
         <v-btn color="primary" @click="getAuditoriumEvents()">
           <v-icon>mdi-reload</v-icon>
@@ -24,8 +24,8 @@
       </v-col>
     </v-row>
     <!-- Diálogos para crear/editar y eliminar eventos de auditorio -->
-    <!-- AuditoriumEventDialog v-if="auditoriumEventDialog" :auditoriumEvent="auditoriumEvent" @close="closeDialog" @save="saveAuditoriumEvent" />
-    <DialogDelete v-if="auditoriumEventDialogDelete" :dialog="dialogDelete" @ok="deleteAuditoriumEvent" @close="auditoriumEventDialogDelete = false"></DialogDelete> -->
+    <AuditoriumEventDialog v-model="auditoriumEventDialog" :auditorium-event="auditoriumEvent" @close="closeDialog" @save="saveAuditoriumEvent" />
+    <DialogDelete v-if="auditoriumEventDialogDelete" :dialog="dialogDelete" @ok="deleteAuditoriumEvent" @close="auditoriumEventDialogDelete = false"></DialogDelete>
   </v-container>
 </template>
 
@@ -65,9 +65,9 @@ export default {
         { text: "Fecha", value: "date" },
         { text: "Acciones", value: "actions", sortable: false },
       ],
-      // auditoriumEventDialog: false,
-      // auditoriumEventDialogDelete: false,
-      // dialogDelete: {},
+      auditoriumEventDialog: false,
+      auditoriumEventDialogDelete: false,
+      dialogDelete: {},
     }
   },
 
@@ -109,58 +109,62 @@ export default {
 
     newAuditoriumEvent() {
       this.auditoriumEvent = {}
-      // this.auditoriumEventDialog = true
+      this.auditoriumEventDialog = true
     },
 
     editAuditoriumEvent(item) {
       this.auditoriumEvent = { ...item }
-      // this.auditoriumEventDialog = true
+      this.auditoriumEventDialog = true
     },
 
     beforeDeleteAuditoriumEvent(item) {
-      // this.dialogDelete = {
-      //   text: "¿Desea eliminar el Evento de Auditorio ",
-      //   strong: item.name + "?",
-      //   payload: item,
-      // }
-      // this.auditoriumEventDialogDelete = true
+      this.dialogDelete = {
+        text: "¿Desea eliminar el Evento de Auditorio ",
+        strong: item.name + "?",
+        payload: item,
+      }
+      this.auditoriumEventDialogDelete = true
     },
 
     async deleteAuditoriumEvent(item) {
       try {
-        // await this.$repository.AuditoriumEvent?.delete?.(item.id, item)
+        if (this.$repository?.AuditoriumEvent?.destroy) {
+          await this.$repository.AuditoriumEvent.destroy(item.id)
+        }
         await this.getAuditoriumEvents()
         this.$store.dispatch("notify", {
           success: "Evento de auditorio eliminado exitosamente",
         })
       } catch (error) {
-        // console.error("Error deleting auditorium event:", error)
+        console.error("Error deleting auditorium event:", error)
         this.$store.dispatch("notify", {
           error: "Error al eliminar el evento de auditorio",
         })
       } finally {
-        // this.auditoriumEventDialogDelete = false
+        this.auditoriumEventDialogDelete = false
       }
     },
 
     async saveAuditoriumEvent(item) {
       try {
-        // if (item.id) {
-        //   await this.$repository.AuditoriumEvent?.update?.(item.id, item)
-        //   this.$store.dispatch("notify", {
-        //     success: "Evento de auditorio actualizado exitosamente",
-        //   })
-        // } else {
-        //   await this.$repository.AuditoriumEvent?.create?.(item)
-        //   this.$store.dispatch("notify", {
-        //     success: "Evento de auditorio creado exitosamente",
-        //   })
-        // }
+        if (this.$repository?.AuditoriumEvent) {
+          if (item.id) {
+            await this.$repository.AuditoriumEvent.update(item.id, item)
+            // this.$store.dispatch("notify", {
+            //   success: "Evento de auditorio actualizado exitosamente",
+            // })
+          } else {
+            await this.$repository.AuditoriumEvent.create(item)
+            // this.$store.dispatch("notify", {
+            //   success: "Evento de auditorio creado exitosamente",
+            // })
+          }
+        }
 
         await this.getAuditoriumEvents()
-        // this.auditoriumEventDialog = false
+        this.auditoriumEventDialog = false
       } catch (error) {
-        // console.error("Error saving auditorium event:", error)
+        console.error("Error saving auditorium event:", error)
         this.$store.dispatch("notify", {
           error: "Error al guardar el evento de auditorio",
         })
@@ -168,7 +172,7 @@ export default {
     },
 
     closeDialog() {
-      // this.auditoriumEventDialog = false
+      this.auditoriumEventDialog = false
     },
   },
 }
