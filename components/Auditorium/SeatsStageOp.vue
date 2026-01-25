@@ -39,7 +39,7 @@
     </v-row>
 
     <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: 'auto', overflowX: 'hidden', overflowY: 'auto' }">
-      <v-stage :config="adjustedStageConfig" style="background-color: pink" @click="handleStageClick" @tap="handleStageClick">
+      <v-stage ref="konvaStage" :config="adjustedStageConfig" style="background-color: pink" @click="handleStageClick" @tap="handleStageClick">
         <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
@@ -201,6 +201,7 @@ export default {
         width: containerWidth,
         height: scaledHeight, // Altura escalada para que todo sea visible
         x: 0, // Asegurar que el stage comienza en x=0
+        draggable: true, // Permitir arrastrar para mover la imagen
       }
     },
 
@@ -511,6 +512,15 @@ export default {
         }
 
         console.log("Fit to width zoom level:", this.zoomLevel)
+
+        // Resetear la posición del stage al centro
+        this.$nextTick(() => {
+          const stage = this.$refs.konvaStage?.getStage()
+          if (stage) {
+            stage.position({ x: 0, y: 0 })
+            stage.batchDraw()
+          }
+        })
       } catch (error) {
         console.error("Error calculating fit:", error)
         this.zoomLevel = 0.7
@@ -547,6 +557,15 @@ export default {
         }
 
         console.log("Fit to height zoom level:", this.zoomLevel)
+
+        // Resetear la posición del stage al centro
+        this.$nextTick(() => {
+          const stage = this.$refs.konvaStage?.getStage()
+          if (stage) {
+            stage.position({ x: 0, y: 0 })
+            stage.batchDraw()
+          }
+        })
       } catch (error) {
         console.error("Error calculating fit:", error)
         this.zoomLevel = 0.7
