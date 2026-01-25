@@ -191,9 +191,9 @@ export default {
       const totalContentHeight =
         this.sections.reduce((acc, section, idx) => {
           return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-        }, this.settings.SECTION_TOP_PADDING) + 100
+        }, 0) + 20 // Reducir padding inferior
 
-      // El stage debe tener el tamaño del contenido escalado
+      // La altura del stage debe ser el contenido escalado por el zoom
       const scaledHeight = totalContentHeight * this.zoomLevel
 
       return {
@@ -237,7 +237,7 @@ export default {
   methods: {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, this.settings.SECTION_TOP_PADDING)
+      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 10)
       // Center each section within the original stage width
       const maxSectionWidth = Math.max(...this.sections.map((s) => this.getSectionWidth(s)))
       return { x: (maxSectionWidth - this.getSectionWidth(section)) / 2, y }
@@ -299,7 +299,7 @@ export default {
     getSubsectionLabelBgConfig(sub, section) {
       return {
         width: sub.width || 100,
-        height: this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - this.settings.SECTION_BOTTOM_PADDING,
+        height: this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - 10,
         fill: "#424242",
         opacity: 0.3,
         strokeWidth: 2,
@@ -526,9 +526,8 @@ export default {
       }
 
       try {
-        // Usar la altura real del contenedor
-        const stageContainer = document.querySelector(".stage-container")
-        const actualHeight = stageContainer ? stageContainer.clientHeight : window.innerHeight
+        // Usar la altura disponible del viewport (descontando controles)
+        const availableHeight = window.innerHeight - 150
 
         // Calcular la altura total del contenido
         const totalContentHeight =
@@ -536,11 +535,11 @@ export default {
             return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
           }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
 
-        console.log("Actual container height:", actualHeight, "Total content height:", totalContentHeight)
+        console.log("Available viewport height:", availableHeight, "Total content height:", totalContentHeight)
 
-        if (totalContentHeight > 0 && actualHeight > 0) {
-          // Usar menos margen para aprovechar mejor el espacio disponible
-          const optimalZoom = (actualHeight - 20) / totalContentHeight
+        if (totalContentHeight > 0 && availableHeight > 0) {
+          // Calcular zoom para que el contenido quepa en la altura disponible
+          const optimalZoom = (availableHeight - 50) / totalContentHeight
           // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
           this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
         } else {

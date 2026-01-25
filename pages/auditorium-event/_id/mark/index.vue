@@ -111,7 +111,7 @@ export default {
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
-      title: `Evento Audit.`,
+      title: `Evento Auditorio`,
       icon: "mdi-theater",
     })
 
