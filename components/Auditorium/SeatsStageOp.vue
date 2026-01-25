@@ -1,25 +1,42 @@
 <template>
   <div>
-    <!-- Back to Full View Button -->
-    <v-row v-if="selectedSubsection" class="mb-3">
+    <!-- Navigation and Zoom Controls -->
+    <v-row class="mb-3">
       <v-col>
-        <span class="ml-3 text-h6">{{ selectedSubsection.name }}</span>
-        <v-btn color="primary" prepend-icon="mdi-arrow-left" @click="goBackToFullView">Todo</v-btn>
-        <v-btn color="primary" prepend-icon="mdi-arrow-left" class="ml-2" @click="previousSubsection">
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        <v-btn color="primary" prepend-icon="mdi-arrow-right" class="ml-2" @click="nextSubsection">
-          <v-icon>mdi-arrow-right</v-icon>
-        </v-btn>
+        <!-- Subsection navigation - only show when subsection is selected -->
+        <template v-if="selectedSubsection">
+          <span class="ml-3 text-h6">{{ selectedSubsection.name }}</span>
+          <v-btn color="primary" prepend-icon="mdi-arrow-left" @click="goBackToFullView">Todo</v-btn>
+          <v-btn color="primary" prepend-icon="mdi-arrow-left" class="ml-2" @click="previousSubsection">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-btn color="primary" prepend-icon="mdi-arrow-right" class="ml-2" @click="nextSubsection">
+            <v-icon>mdi-arrow-right</v-icon>
+          </v-btn>
+          <v-spacer class="d-inline-block" style="width: 20px;"></v-spacer>
+        </template>
+        
+        <!-- Zoom controls - always visible -->
+        <v-btn-group class="ml-3">
+          <v-btn color="info" size="small" @click="zoomOut" :disabled="zoomLevel <= minZoom">
+            <v-icon>mdi-minus</v-icon>
+          </v-btn>
+          <v-btn color="info" size="small" disabled class="px-3">
+            {{ Math.round(zoomLevel * 100) }}%
+          </v-btn>
+          <v-btn color="info" size="small" @click="zoomIn" :disabled="zoomLevel >= maxZoom">
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-btn-group>
       </v-col>
     </v-row>
 
     <v-sheet elevation="2" class="pa-2 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: auto; overflow-y: hidden">
-      <v-stage :config="stageConfig" @click="handleStageClick" @tap="handleStageClick">
+      <v-stage :config="adjustedStageConfig" @click="handleStageClick" @tap="handleStageClick">
         <v-layer>
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
-            <v-group :config="{ x: (stageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
+            <v-group :config="{ x: (adjustedStageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
               <v-rect
                 :config="{
                   x: -15,
@@ -129,6 +146,10 @@ export default {
   data() {
     return {
       selectedSubsection: null,
+      zoomLevel: 1,
+      minZoom: 0.3,
+      maxZoom: 3.0,
+      zoomStep: 0.1,
     }
   },
   computed: {
@@ -154,12 +175,20 @@ export default {
       if (!this.selectedSubsection || this.allSubsections.length === 0) return -1
       return this.allSubsections.findIndex((sub) => sub.id === this.selectedSubsection.id)
     },
+    
+    adjustedStageConfig() {
+      return {
+        ...this.stageConfig,
+        scaleX: this.zoomLevel,
+        scaleY: this.zoomLevel
+      }
+    }
   },
   methods: {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
       const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, this.settings.SECTION_TOP_PADDING)
-      return { x: (this.stageConfig.width - this.getSectionWidth(section)) / 2, y }
+      return { x: (this.adjustedStageConfig.width - this.getSectionWidth(section)) / 2, y }
     },
 
     getSectionBgConfig(section) {
@@ -387,6 +416,19 @@ export default {
       const prevIndex = currentIndex === 0 ? this.allSubsections.length - 1 : currentIndex - 1 // circular navigation
       this.selectedSubsection = this.allSubsections[prevIndex]
       console.log("Previous subsection:", this.selectedSubsection.name)
+    },
+
+    // Métodos de zoom
+    zoomIn() {
+      const newZoom = Math.min(this.maxZoom, this.zoomLevel + this.zoomStep)
+      this.zoomLevel = Math.round(newZoom * 10) / 10
+      console.log('Zoom in:', this.zoomLevel)
+    },
+
+    zoomOut() {
+      const newZoom = Math.max(this.minZoom, this.zoomLevel - this.zoomStep)
+      this.zoomLevel = Math.round(newZoom * 10) / 10
+      console.log('Zoom out:', this.zoomLevel)
     },
 
     findSeatById(id) {

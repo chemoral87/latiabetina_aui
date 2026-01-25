@@ -108,7 +108,7 @@ export default {
         }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
 
       // Usar exactamente el ancho del contenido más un pequeño margen de seguridad
-      const width = maxSectionWidth + 40 // Solo 40px de padding total
+      const width = maxSectionWidth + 10 // Solo 20px de padding total
       const height = Math.max(700, totalHeight)
 
       return { width, height }
