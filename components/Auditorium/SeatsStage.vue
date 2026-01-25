@@ -225,7 +225,7 @@ export default {
 
     getRowLabelConfig(rowIdx) {
       return {
-        x: -15,
+        x: -12,
         y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
         text: (rowIdx + 1).toString(),
         fontSize: 8,

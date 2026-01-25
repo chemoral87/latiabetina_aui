@@ -52,8 +52,10 @@
             <!-- <v-alert v-else type="warning" outlined>No hay configuración de asientos disponible para este evento.</v-alert> -->
           </v-card-text>
         </v-card>
+
         <v-alert v-else type="error" outlined>Evento no encontrado.</v-alert>
       </v-col>
+      {{ sections }}
     </v-row>
   </v-container>
 </template>

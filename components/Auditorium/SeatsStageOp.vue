@@ -27,11 +27,11 @@
                   <v-rect
                     :config="{
                       x: -15,
-                      y: -15,
-                      width: getSubsectionWidth(sub),
-                      height: getSubsectionHeight(sub),
-                      fill: 'pink',
-                      stroke: '',
+                      y: -17,
+                      width: getSubsectionWidth(sub) + 22,
+                      height: getSubsectionHeight(sub) + 31,
+                      fill: 'black',
+                      stroke: 'red',
                       strokeWidth: 1,
                     }"
                   />
@@ -100,7 +100,7 @@ export default {
       return {
         width: this.getSectionWidth(section),
         height: this.getSectionHeight(section),
-        fill: COLORS.SECTION_BG,
+        fill: "black", // COLORS.SECTION_BG,
         strokeWidth: 1,
         stroke: "red",
         cornerRadius: 5,
@@ -179,7 +179,7 @@ export default {
 
     getRowLabelConfig(rowIdx) {
       return {
-        x: -15,
+        x: -12,
         y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
         text: (rowIdx + 1).toString(),
         fontSize: 8,
