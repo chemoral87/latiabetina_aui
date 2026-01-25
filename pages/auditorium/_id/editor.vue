@@ -334,7 +334,7 @@ export default {
         cleanSections.forEach((section, sIdx) => {
           section.id = `${sIdx + 1}`
           section.subsections?.forEach((sub, subIdx) => {
-            sub.id = `${subIdx + 1}`
+            sub.id = `${section.id}-${subIdx + 1}`
             sub.seats?.forEach((row, rowIdx) => {
               row.forEach((seat, colIdx) => {
                 if ("state" in seat) delete seat.state
@@ -350,6 +350,9 @@ export default {
 
     async saveAuditorium() {
       try {
+        // Verify subsection IDs before saving
+        this.verifySubsectionIds()
+
         this.auditorium.config = this.configData
         const payload = {
           ...this.auditorium,
@@ -365,10 +368,63 @@ export default {
       }
     },
 
+    verifySubsectionIds() {
+      let configModified = false
+
+      this.sections.forEach((section, sIdx) => {
+        const expectedSectionId = `${sIdx + 1}`
+        if (section.id !== expectedSectionId) {
+          console.warn(`Section ID mismatch: expected ${expectedSectionId}, got ${section.id}`)
+          section.id = expectedSectionId
+          configModified = true
+        }
+
+        if (section.subsections) {
+          section.subsections.forEach((sub, subIdx) => {
+            const expectedSubId = `${section.id}-${subIdx + 1}`
+            if (sub.id !== expectedSubId) {
+              console.warn(`Subsection ID mismatch: expected ${expectedSubId}, got ${sub.id}`)
+              sub.id = expectedSubId
+              configModified = true
+            }
+
+            // Also verify seat IDs if they exist
+            if (sub.seats && Array.isArray(sub.seats)) {
+              sub.seats.forEach((row, rowIdx) => {
+                if (Array.isArray(row)) {
+                  row.forEach((seat, colIdx) => {
+                    if (seat) {
+                      const expectedSeatId = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
+                      if (seat.id !== expectedSeatId) {
+                        console.warn(`Seat ID mismatch: expected ${expectedSeatId}, got ${seat.id}`)
+                        seat.id = expectedSeatId
+                        seat.row = rowIdx
+                        seat.col = colIdx
+                        configModified = true
+                      }
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+
+      if (configModified) {
+        console.log("Configuration IDs were corrected")
+        // Update the auditorium config to reflect the changes
+        this.auditorium.config = this.configData
+        this.$forceUpdate()
+      }
+
+      return configModified
+    },
+
     // ============ OPERACIONES DE SECCIÓN ============
     addSection(isLabel) {
       const sectionIdx = this.sections.length
-      const sectionId = `section-${sectionIdx + 1}`
+      const sectionId = `${sectionIdx + 1}`
       const section = {
         id: sectionId,
         name: `${isLabel ? "Etiqueta" : "Sección"} ${sectionIdx + 1}`,
@@ -397,7 +453,7 @@ export default {
     },
 
     createSubsection(name, isLabel, rows = 3, cols = 5, sectionIdx = "", subIdx = "", sectionId = "") {
-      const subId = `sub-${sectionId}-${subIdx + 1}`
+      const subId = `${sectionId}-${subIdx + 1}`
       const sub = { id: subId, name, isLabel, seats: [] }
       if (isLabel) {
         sub.width = 100

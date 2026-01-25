@@ -125,22 +125,18 @@ export default {
 
       if (config.settings && config.sections) {
         Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-        // Reasignar IDs consecutivos
-        const cleanSections = JSON.parse(JSON.stringify(config.sections))
-        cleanSections.forEach((section, sIdx) => {
-          section.id = `${sIdx + 1}`
-          section.subsections?.forEach((sub, subIdx) => {
-            sub.id = `${subIdx + 1}`
-            sub.seats?.forEach((row, rowIdx) => {
-              row.forEach((seat, colIdx) => {
-                if ("state" in seat) delete seat.state
-                // Actualizar ID del asiento con nuevos IDs consecutivos
-                seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
-              })
-            })
-          })
-        })
-        this.sections = cleanSections
+        // Usar configuración original sin reasignar IDs
+        // const cleanSections = JSON.parse(JSON.stringify(config.sections))
+        // cleanSections.forEach((section) => {
+        //   section.subsections?.forEach((sub) => {
+        //     sub.seats?.forEach((row) => {
+        //       row.forEach((seat) => {
+        //         if ("state" in seat) delete seat.state
+        //       })
+        //     })
+        //   })
+        // })
+        this.sections = config.sections
       }
     },
   },

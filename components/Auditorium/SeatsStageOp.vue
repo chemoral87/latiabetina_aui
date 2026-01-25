@@ -1,57 +1,102 @@
 <template>
-  <v-sheet elevation="2" class="pa-2 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: auto; overflow-y: hidden">
-    <v-stage :config="stageConfig" @click="handleStageClick" @tap="handleStageClick">
-      <v-layer>
-        <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
-          <v-rect :config="getSectionBgConfig(section)" />
-          <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
-          <v-text :config="getSectionTitleConfig(section)" />
+  <div>
+    <!-- Back to Full View Button -->
+    <v-row v-if="selectedSubsection" class="mb-3">
+      <v-col>
+        <span class="ml-3 text-h6">{{ selectedSubsection.name }}</span>
+        <v-btn color="primary" prepend-icon="mdi-arrow-left" @click="goBackToFullView">Todo</v-btn>
+        <v-btn color="primary" prepend-icon="mdi-arrow-left" class="ml-2" @click="previousSubsection">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+        <v-btn color="primary" prepend-icon="mdi-arrow-right" class="ml-2" @click="nextSubsection">
+          <v-icon>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
 
-          <template v-if="!section.isLabel">
-            <v-group
-              v-for="(sub, subIdx) in section.subsections"
-              :key="`sub-${sIdx}-${subIdx}`"
-              :config="getSubsectionPosition(section, subIdx)"
-              @click="handleSubsectionClick(sIdx, subIdx)"
-              @tap="handleSubsectionClick(sIdx, subIdx)"
-              @mouseenter="handleSeatHover"
-              @mouseleave="handleSeatLeave"
-            >
-              <template v-if="sub.isLabel">
-                <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
-              </template>
+    <v-sheet elevation="2" class="pa-2 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: auto; overflow-y: hidden">
+      <v-stage :config="stageConfig" @click="handleStageClick" @tap="handleStageClick">
+        <v-layer>
+          <!-- Show only selected subsection if one is selected -->
+          <template v-if="selectedSubsection">
+            <v-group :config="{ x: (stageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
+              <v-rect
+                :config="{
+                  x: -15,
+                  y: -17,
+                  width: getSubsectionWidth(selectedSubsection) + 22,
+                  height: getSubsectionHeight(selectedSubsection) + 31,
+                  fill: 'black',
+                  stroke: 'red',
+                  strokeWidth: 1,
+                }"
+              />
+              <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+              <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
+              <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
 
-              <template v-else>
-                <v-group>
-                  <v-rect
-                    :config="{
-                      x: -15,
-                      y: -17,
-                      width: getSubsectionWidth(sub) + 22,
-                      height: getSubsectionHeight(sub) + 31,
-                      fill: 'black',
-                      stroke: 'red',
-                      strokeWidth: 1,
-                    }"
-                  />
-                  <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                  <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-                  <v-text :config="getSubsectionTitleConfig(sub)" />
+              <template v-for="seat in getSubsectionSeats(selectedSubsection)">
+                <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                  <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
                 </v-group>
-
-                <template v-for="seat in getSubsectionSeats(sub)">
-                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                  </v-group>
-                </template>
               </template>
             </v-group>
           </template>
-        </v-group>
-      </v-layer>
-    </v-stage>
-  </v-sheet>
+
+          <!-- Show all sections when no subsection is selected -->
+          <template v-else>
+            <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
+              <v-rect :config="getSectionBgConfig(section)" />
+              <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
+              <v-text :config="getSectionTitleConfig(section)" />
+
+              <template v-if="!section.isLabel">
+                <v-group
+                  v-for="(sub, subIdx) in section.subsections"
+                  :key="`sub-${sIdx}-${subIdx}`"
+                  :config="getSubsectionPosition(section, subIdx)"
+                  @click="handleSubsectionClick(sub)"
+                  @tap="handleSubsectionClick(sub)"
+                  @mouseenter="handleSeatHover"
+                  @mouseleave="handleSeatLeave"
+                >
+                  <template v-if="sub.isLabel">
+                    <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                    <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
+                  </template>
+
+                  <template v-else>
+                    <v-group>
+                      <v-rect
+                        :config="{
+                          x: -15,
+                          y: -17,
+                          width: getSubsectionWidth(sub) + 22,
+                          height: getSubsectionHeight(sub) + 31,
+                          fill: 'black',
+                          stroke: 'red',
+                          strokeWidth: 1,
+                        }"
+                      />
+                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
+                      <v-text :config="getSubsectionTitleConfig(sub)" />
+                    </v-group>
+
+                    <template v-for="seat in getSubsectionSeats(sub)">
+                      <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                        <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                      </v-group>
+                    </template>
+                  </template>
+                </v-group>
+              </template>
+            </v-group>
+          </template>
+        </v-layer>
+      </v-stage>
+    </v-sheet>
+  </div>
 </template>
 
 <script>
@@ -82,11 +127,32 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      selectedSubsection: null,
+    }
   },
   computed: {
     seatSpacing() {
       return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
+    },
+
+    allSubsections() {
+      const subsections = []
+      this.sections.forEach((section) => {
+        if (!section.isLabel && section.subsections) {
+          section.subsections.forEach((sub) => {
+            if (!sub.isLabel && sub.seats) {
+              subsections.push(sub)
+            }
+          })
+        }
+      })
+      return subsections
+    },
+
+    currentSubsectionIndex() {
+      if (!this.selectedSubsection || this.allSubsections.length === 0) return -1
+      return this.allSubsections.findIndex((sub) => sub.id === this.selectedSubsection.id)
     },
   },
   methods: {
@@ -298,9 +364,29 @@ export default {
     },
 
     // Events & interactions
-    handleSubsectionClick(sIdx, subIdx) {
-      const subsectionId = `section-${sIdx + 1}-sub-${subIdx + 1}`
-      console.log("Tomasin Subsection ID:", subsectionId)
+    handleSubsectionClick(subSection) {
+      this.selectedSubsection = subSection
+      console.log("Selected subsection:", subSection.id, subSection.name)
+    },
+
+    goBackToFullView() {
+      this.selectedSubsection = null
+    },
+
+    nextSubsection() {
+      if (!this.selectedSubsection || this.allSubsections.length === 0) return
+      const currentIndex = this.currentSubsectionIndex
+      const nextIndex = (currentIndex + 1) % this.allSubsections.length // circular navigation
+      this.selectedSubsection = this.allSubsections[nextIndex]
+      console.log("Next subsection:", this.selectedSubsection.name)
+    },
+
+    previousSubsection() {
+      if (!this.selectedSubsection || this.allSubsections.length === 0) return
+      const currentIndex = this.currentSubsectionIndex
+      const prevIndex = currentIndex === 0 ? this.allSubsections.length - 1 : currentIndex - 1 // circular navigation
+      this.selectedSubsection = this.allSubsections[prevIndex]
+      console.log("Previous subsection:", this.selectedSubsection.name)
     },
 
     findSeatById(id) {
