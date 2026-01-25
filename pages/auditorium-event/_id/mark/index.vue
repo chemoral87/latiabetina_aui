@@ -1,16 +1,12 @@
 <template>
-  <v-container fluid>
-    <v-row dense>
-      <v-col cols="12">
-        <v-card v-if="eventAuditorium && eventAuditorium.id">
-          <v-card-title>
-            <!-- <span class="text-h6">Evento: {{ eventAuditorium.event_date }}</span>
-            <v-spacer /> -->
-            <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
-          </v-card-title>
-          <v-card-text>
-            <!-- Debug info -->
-            <!-- <div class="mb-4 pa-2" style="background: #f5f5f5; border-radius: 4px">
+  <v-container fluid class="pa-0">
+    <div v-if="eventAuditorium && eventAuditorium.id">
+      <div class="pa-2 grey lighten-4">
+        <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
+      </div>
+      <div>
+        <!-- Debug info -->
+        <!-- <div class="mb-4 pa-2" style="background: #f5f5f5; border-radius: 4px">
               <h4>Debug Info:</h4>
               <p>
                 <strong>Event ID:</strong>
@@ -48,15 +44,12 @@
               </div>
             </div> -->
 
-            <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
-            <!-- <v-alert v-else type="warning" outlined>No hay configuración de asientos disponible para este evento.</v-alert> -->
-          </v-card-text>
-        </v-card>
+        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
+        <!-- <v-alert v-else type="warning" outlined>No hay configuración de asientos disponible para este evento.</v-alert> -->
+      </div>
+    </div>
 
-        <v-alert v-else type="error" outlined>Evento no encontrado.</v-alert>
-      </v-col>
-      {{ sections }}
-    </v-row>
+    <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
   </v-container>
 </template>
 
@@ -118,7 +111,7 @@ export default {
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
-      title: `Evento Auditorio - ${this.eventAuditorium?.event_date || "Cargando..."}`,
+      title: `Evento Audit.`,
       icon: "mdi-theater",
     })
 

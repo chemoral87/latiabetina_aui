@@ -13,21 +13,24 @@
           <v-btn color="primary" prepend-icon="mdi-arrow-right" class="ml-2" @click="nextSubsection">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
-          <v-spacer class="d-inline-block" style="width: 20px;"></v-spacer>
+          <v-spacer class="d-inline-block" style="width: 20px"></v-spacer>
         </template>
-        
+
         <!-- Zoom controls - always visible -->
-        <v-btn-group class="ml-3">
-          <v-btn color="info" size="small" @click="zoomOut" :disabled="zoomLevel <= minZoom">
+        <div class="d-inline-flex ml-3">
+          <v-btn color="info" size="small" :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
-          <v-btn color="info" size="small" disabled class="px-3">
-            {{ Math.round(zoomLevel * 100) }}%
-          </v-btn>
-          <v-btn color="info" size="small" @click="zoomIn" :disabled="zoomLevel >= maxZoom">
+          <v-btn color="info" size="small" disabled class="px-3 rounded-0">{{ Math.round(zoomLevel * 100) }}%</v-btn>
+          <v-btn color="info" size="small" :disabled="zoomLevel >= maxZoom" class="rounded-l-0" @click="zoomIn">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-        </v-btn-group>
+        </div>
+
+        <v-btn color="secondary" size="small" class="ml-2" @click="fitToWidth">
+          <v-icon>mdi-fit-to-page-outline</v-icon>
+          FIT
+        </v-btn>
       </v-col>
     </v-row>
 
@@ -175,14 +178,20 @@ export default {
       if (!this.selectedSubsection || this.allSubsections.length === 0) return -1
       return this.allSubsections.findIndex((sub) => sub.id === this.selectedSubsection.id)
     },
-    
+
     adjustedStageConfig() {
       return {
         ...this.stageConfig,
         scaleX: this.zoomLevel,
-        scaleY: this.zoomLevel
+        scaleY: this.zoomLevel,
       }
-    }
+    },
+  },
+  mounted() {
+    // Aplicar fit to width automáticamente al cargar
+    this.$nextTick(() => {
+      this.fitToWidth()
+    })
   },
   methods: {
     getSectionConfig(sIdx) {
@@ -422,13 +431,47 @@ export default {
     zoomIn() {
       const newZoom = Math.min(this.maxZoom, this.zoomLevel + this.zoomStep)
       this.zoomLevel = Math.round(newZoom * 10) / 10
-      console.log('Zoom in:', this.zoomLevel)
+      console.log("Zoom in:", this.zoomLevel)
     },
 
     zoomOut() {
       const newZoom = Math.max(this.minZoom, this.zoomLevel - this.zoomStep)
       this.zoomLevel = Math.round(newZoom * 10) / 10
-      console.log('Zoom out:', this.zoomLevel)
+      console.log("Zoom out:", this.zoomLevel)
+    },
+
+    fitToWidth() {
+      // Calcular el zoom óptimo basado en el ancho disponible
+      if (!this.sections || this.sections.length === 0) {
+        console.warn("No sections available for fit calculation")
+        this.zoomLevel = 0.7
+        return
+      }
+
+      try {
+        // Usar el ancho real del contenedor en lugar de window.innerWidth
+        const stageContainer = document.querySelector(".stage-container")
+        const actualWidth = stageContainer ? stageContainer.clientWidth : window.innerWidth
+
+        // Calcular el ancho real del contenido
+        const maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
+
+        console.log("Actual container width:", actualWidth, "Max content width:", maxContentWidth)
+
+        if (maxContentWidth > 0 && actualWidth > 0) {
+          // Usar menos margen para aprovechar mejor el espacio disponible
+          const optimalZoom = (actualWidth - 20) / maxContentWidth
+          // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
+          this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+        } else {
+          this.zoomLevel = 0.7 // Default más grande
+        }
+
+        console.log("Fit to width zoom level:", this.zoomLevel)
+      } catch (error) {
+        console.error("Error calculating fit:", error)
+        this.zoomLevel = 0.7
+      }
     },
 
     findSeatById(id) {
