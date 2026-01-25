@@ -28,8 +28,12 @@
         </div>
 
         <v-btn color="secondary" size="small" class="ml-2" @click="fitToWidth">
-          <v-icon>mdi-fit-to-page-outline</v-icon>
-          FIT
+          <v-icon>mdi-arrow-expand-horizontal</v-icon>
+          Fit Width
+        </v-btn>
+        <v-btn color="secondary" size="small" class="ml-2" @click="fitToHeight">
+          <v-icon>mdi-arrow-expand-vertical</v-icon>
+          Fit Height
         </v-btn>
       </v-col>
     </v-row>
@@ -181,7 +185,7 @@ export default {
 
     adjustedStageConfig() {
       // Usar el ancho completo del contenedor disponible
-      const containerWidth = typeof window !== 'undefined' ? window.innerWidth : this.stageConfig.width
+      const containerWidth = typeof window !== "undefined" ? window.innerWidth : this.stageConfig.width
       return {
         ...this.stageConfig,
         width: containerWidth,
@@ -483,6 +487,42 @@ export default {
         }
 
         console.log("Fit to width zoom level:", this.zoomLevel)
+      } catch (error) {
+        console.error("Error calculating fit:", error)
+        this.zoomLevel = 0.7
+      }
+    },
+
+    fitToHeight() {
+      // Calcular el zoom óptimo basado en la altura disponible
+      if (!this.sections || this.sections.length === 0) {
+        console.warn("No sections available for fit calculation")
+        this.zoomLevel = 0.7
+        return
+      }
+
+      try {
+        // Usar la altura real del contenedor
+        const stageContainer = document.querySelector(".stage-container")
+        const actualHeight = stageContainer ? stageContainer.clientHeight : window.innerHeight
+
+        // Calcular la altura total del contenido
+        const totalContentHeight = this.sections.reduce((acc, section, idx) => {
+          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+        }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
+
+        console.log("Actual container height:", actualHeight, "Total content height:", totalContentHeight)
+
+        if (totalContentHeight > 0 && actualHeight > 0) {
+          // Usar menos margen para aprovechar mejor el espacio disponible
+          const optimalZoom = (actualHeight - 20) / totalContentHeight
+          // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
+          this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+        } else {
+          this.zoomLevel = 0.7 // Default más grande
+        }
+
+        console.log("Fit to height zoom level:", this.zoomLevel)
       } catch (error) {
         console.error("Error calculating fit:", error)
         this.zoomLevel = 0.7
