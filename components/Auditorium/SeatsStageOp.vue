@@ -34,9 +34,9 @@
       </v-col>
     </v-row>
 
-    <v-sheet elevation="2" class="pa-2 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: auto; overflow-y: hidden">
+    <v-sheet elevation="2" class="pa-0 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: hidden; overflow-y: hidden">
       <v-stage :config="adjustedStageConfig" @click="handleStageClick" @tap="handleStageClick">
-        <v-layer>
+        <v-layer :config="{ x: contentOffsetX }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
             <v-group :config="{ x: (adjustedStageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
@@ -180,11 +180,24 @@ export default {
     },
 
     adjustedStageConfig() {
+      // Usar el ancho completo del contenedor disponible
+      const containerWidth = typeof window !== 'undefined' ? window.innerWidth : this.stageConfig.width
       return {
         ...this.stageConfig,
+        width: containerWidth,
         scaleX: this.zoomLevel,
         scaleY: this.zoomLevel,
+        x: 0, // Asegurar que el stage comienza en x=0
       }
+    },
+
+    contentOffsetX() {
+      // Calcular el offset para centrar el contenido
+      if (!this.sections || this.sections.length === 0) return 0
+      const maxSectionWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
+      const scaledWidth = maxSectionWidth * this.zoomLevel
+      const containerWidth = this.adjustedStageConfig.width
+      return Math.max(0, (containerWidth - scaledWidth) / 2)
     },
   },
   mounted() {
@@ -197,7 +210,9 @@ export default {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
       const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, this.settings.SECTION_TOP_PADDING)
-      return { x: (this.adjustedStageConfig.width - this.getSectionWidth(section)) / 2, y }
+      // Center each section within the original stage width
+      const maxSectionWidth = Math.max(...this.sections.map((s) => this.getSectionWidth(s)))
+      return { x: (maxSectionWidth - this.getSectionWidth(section)) / 2, y }
     },
 
     getSectionBgConfig(section) {
