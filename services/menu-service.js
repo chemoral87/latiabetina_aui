@@ -27,7 +27,7 @@ export class MenuService {
       if (this.hasPermission("permission-index")) menu.push({ icon: "mdi-key", title: "Permisos", to: "/permission" })
       if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-seat", title: "Auditorio", to: "/auditorium" })
 
-      if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-theater", title: "Auditorio", to: "/auditorium-event" })
+      if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-theater", title: "Eventos de Auditorio", to: "/auditorium-event" })
 
       if (this.hasPermission("store-index")) {
         menu.push({ icon: "mdi-store", title: "Tiendas", to: "/store" })
@@ -42,7 +42,7 @@ export class MenuService {
       }
 
       if (this.hasPermission("church-event-index")) {
-        menu.push({ icon: "mdi-calendar", title: "Eventos de Iglesia", to: "/church-event" })
+        menu.push({ icon: "mdi-calendar", title: "Eventos  Iglesia", to: "/church-event" })
       }
       // menu.push({
       //   icon: "mdi-chart-bar",

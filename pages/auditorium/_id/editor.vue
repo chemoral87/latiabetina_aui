@@ -16,7 +16,7 @@
     <v-row>
       <!-- Canvas de Asientos - Primero en mobile -->
       <v-col cols="12" :md="9" :order="$vuetify.breakpoint.mdAndUp ? 2 : 1">
-        <seats-stage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
+        <AuditoriumSeatsStage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
       </v-col>
 
       <!-- Panel de Control - Segundo en mobile -->
@@ -146,17 +146,17 @@
     </v-row>
 
     <!-- Debug info (hidden by default) -->
-    <div v-if="true">{{ configData }}</div>
+    <div v-if="false">{{ configData }}</div>
   </v-container>
 </template>
 
 <script>
-import Vue from "vue"
-import VueKonva from "vue-konva"
+// import Vue from "vue"
+// import VueKonva from "vue-konva"
 import JsonConfig from "~/components/JsonConfig.vue"
-import SeatsStage from "~/components/SeatsStage.vue"
+
 import { STAGE_CATEGORIES, CLASS_STROKE_MAP } from "~/constants/auditorium.js"
-Vue.use(VueKonva)
+// Vue.use(VueKonva)
 
 const DEFAULT_SETTINGS = {
   SEAT_SIZE: 12,
@@ -178,7 +178,7 @@ const COLORS = {
 }
 // reference https://codesandbox.io/p/sandbox/kind-waterfall-483dgv
 export default {
-  components: { JsonConfig, SeatsStage },
+  components: { JsonConfig },
   middleware: ["authenticated"],
 
   async asyncData({ params, app, error }) {

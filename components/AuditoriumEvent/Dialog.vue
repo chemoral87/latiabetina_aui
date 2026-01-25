@@ -14,7 +14,7 @@
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <organization-select v-model="localEvent.org_id" hide-one :permission="'auditorium-index'" :prevent-auto-select="!isEditing" outlined />
+                <organization-select v-model="localEvent.org_id" label="Organización *" hide-one :permission="'auditorium-index'" :rules="organizationRules" :prevent-auto-select="!isEditing" outlined />
               </v-col>
               <!-- Fecha del Evento -->
               <v-col cols="12" md="6">
@@ -35,7 +35,6 @@
             </v-row>
           </v-container>
         </v-form>
-        {{ localEvent }}
       </v-card-text>
       <v-card-actions>
         <v-spacer />

@@ -1,5 +1,5 @@
 <template>
-  <v-select v-model="selected" :disabled="disabled" :items="items" :loading="loading" label="Auditorio" item-text="name" item-value="id" v-bind="$attrs" />
+  <v-select v-model="selected" :disabled="disabled" :items="items" :loading="loading" :label="label" item-text="name" item-value="id" v-bind="$attrs" />
 </template>
 
 <script>
@@ -14,6 +14,10 @@ export default {
     value: {
       type: [String, Number],
       default: null,
+    },
+    label: {
+      type: String,
+      default: "Auditorio",
     },
   },
 

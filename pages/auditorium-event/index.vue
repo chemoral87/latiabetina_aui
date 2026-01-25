@@ -15,12 +15,7 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <v-data-table :headers="headers" :items="response.data" :options.sync="options" :server-items-length="response.total" :loading="loading" class="elevation-1" @update:options="getAuditoriumEvents">
-          <template slot="item.actions" slot-scope="{ item }">
-            <v-icon small class="mr-2" @click="editAuditoriumEvent(item)">mdi-pencil</v-icon>
-            <v-icon small @click="beforeDeleteAuditoriumEvent(item)">mdi-delete</v-icon>
-          </template>
-        </v-data-table>
+        <AuditoriumEventTable :response="response" :options="options" @sorting="getAuditoriumEvents" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent" @delete="beforeDeleteAuditoriumEvent" />
       </v-col>
     </v-row>
     <!-- Diálogos para crear/editar y eliminar eventos de auditorio -->
@@ -32,18 +27,17 @@
 <script>
 export default {
   middleware: ["authenticated"],
-
-  asyncData({ app }) {
+  async asyncData({ app }) {
     const options = {
-      sortBy: ["name"],
-      sortDesc: [false],
+      sortBy: ["event_date"],
+      sortDesc: [true],
       itemsPerPage: 10,
     }
 
     try {
       // Asumiendo que hay un repositorio para eventos de auditorio
-      // const response = await app.$repository.AuditoriumEvent?.index?.(options)
-      const response = { data: [], total: 0 } // Placeholder
+      const response = await app.$repository.AuditoriumEvent?.index?.(options)
+
       return { response, options }
     } catch (error) {
       // console.error("Error loading auditorium events:", error)
@@ -59,12 +53,6 @@ export default {
       response: { data: [], total: 0 },
       options: {},
       loading: false,
-      headers: [
-        { text: "Nombre", value: "name" },
-        { text: "Auditorio", value: "auditorium_name" },
-        { text: "Fecha", value: "date" },
-        { text: "Acciones", value: "actions", sortable: false },
-      ],
       auditoriumEventDialog: false,
       auditoriumEventDialogDelete: false,
       dialogDelete: {},
@@ -104,7 +92,7 @@ export default {
         this.options = options
       }
       const op = Object.assign({}, this.options)
-      this.auditoriumEvents = await this.$repository.AuditoriumEvent.index(op)
+      this.response = await this.$repository.AuditoriumEvent.index(op)
     },
 
     newAuditoriumEvent() {
@@ -116,11 +104,14 @@ export default {
       this.auditoriumEvent = { ...item }
       this.auditoriumEventDialog = true
     },
+    markAuditoriumEvent(item) {
+      this.$router.push({ path: `/auditorium-event/${item.id}/mark` })
+    },
 
     beforeDeleteAuditoriumEvent(item) {
       this.dialogDelete = {
         text: "¿Desea eliminar el Evento de Auditorio ",
-        strong: item.name + "?",
+        strong: item.auditorium_name,
         payload: item,
       }
       this.auditoriumEventDialogDelete = true
@@ -128,13 +119,9 @@ export default {
 
     async deleteAuditoriumEvent(item) {
       try {
-        if (this.$repository?.AuditoriumEvent?.destroy) {
-          await this.$repository.AuditoriumEvent.destroy(item.id)
-        }
+        await this.$repository.AuditoriumEvent.delete(item.id)
+
         await this.getAuditoriumEvents()
-        this.$store.dispatch("notify", {
-          success: "Evento de auditorio eliminado exitosamente",
-        })
       } catch (error) {
         console.error("Error deleting auditorium event:", error)
         this.$store.dispatch("notify", {

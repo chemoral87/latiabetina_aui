@@ -1,5 +1,5 @@
 <template>
-  <v-select v-show="showSelect" v-model="selected" :disabled="disabled" :items="items" label="Org" item-text="name" item-value="id" v-bind="$attrs"></v-select>
+  <v-select v-show="showSelect" v-model="selected" :disabled="disabled" :items="items" :label="label" item-text="name" item-value="id" v-bind="$attrs"></v-select>
 </template>
 <script>
 export default {
@@ -20,6 +20,10 @@ export default {
     value: {
       type: [String, Number],
       default: null,
+    },
+    label: {
+      type: String,
+      default: "Org",
     },
   },
   data() {
