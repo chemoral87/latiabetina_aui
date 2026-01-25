@@ -38,9 +38,9 @@
       </v-col>
     </v-row>
 
-    <v-sheet elevation="2" class="pa-0 stage-container" style="background: #f5f5f5; min-height: 500px; overflow-x: hidden; overflow-y: hidden">
-      <v-stage :config="adjustedStageConfig" @click="handleStageClick" @tap="handleStageClick">
-        <v-layer :config="{ x: contentOffsetX }">
+    <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: 'auto', overflowX: 'hidden', overflowY: 'auto' }">
+      <v-stage :config="adjustedStageConfig" style="background-color: pink" @click="handleStageClick" @tap="handleStageClick">
+        <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
             <v-group :config="{ x: (adjustedStageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
@@ -186,11 +186,20 @@ export default {
     adjustedStageConfig() {
       // Usar el ancho completo del contenedor disponible
       const containerWidth = typeof window !== "undefined" ? window.innerWidth : this.stageConfig.width
+
+      // Calcular altura total del contenido
+      const totalContentHeight =
+        this.sections.reduce((acc, section, idx) => {
+          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+        }, this.settings.SECTION_TOP_PADDING) + 100
+
+      // El stage debe tener el tamaño del contenido escalado
+      const scaledHeight = totalContentHeight * this.zoomLevel
+
       return {
         ...this.stageConfig,
         width: containerWidth,
-        scaleX: this.zoomLevel,
-        scaleY: this.zoomLevel,
+        height: scaledHeight, // Altura escalada para que todo sea visible
         x: 0, // Asegurar que el stage comienza en x=0
       }
     },
@@ -202,6 +211,21 @@ export default {
       const scaledWidth = maxSectionWidth * this.zoomLevel
       const containerWidth = this.adjustedStageConfig.width
       return Math.max(0, (containerWidth - scaledWidth) / 2)
+    },
+
+    containerHeight() {
+      // Calcular altura del contenedor basada en el contenido escalado
+      if (!this.sections || this.sections.length === 0) return "500px"
+
+      const totalContentHeight =
+        this.sections.reduce((acc, section, idx) => {
+          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+        }, this.settings.SECTION_TOP_PADDING) + 100
+
+      // La altura del contenedor debe ser el contenido escalado por el zoom
+      const scaledHeight = totalContentHeight * this.zoomLevel
+      // Usar altura fija suficientemente grande para mostrar todo el contenido
+      return `${Math.max(700, scaledHeight + 100)}px`
     },
   },
   mounted() {
@@ -507,9 +531,10 @@ export default {
         const actualHeight = stageContainer ? stageContainer.clientHeight : window.innerHeight
 
         // Calcular la altura total del contenido
-        const totalContentHeight = this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-        }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
+        const totalContentHeight =
+          this.sections.reduce((acc, section, idx) => {
+            return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+          }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
 
         console.log("Actual container height:", actualHeight, "Total content height:", totalContentHeight)
 
