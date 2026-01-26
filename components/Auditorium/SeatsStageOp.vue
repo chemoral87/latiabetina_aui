@@ -5,35 +5,34 @@
       <v-col>
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
-          <span class="ml-3 text-h6">{{ selectedSubsection.name }}</span>
-          <v-btn color="primary" prepend-icon="mdi-arrow-left" @click="goBackToFullView">Todo</v-btn>
-          <v-btn color="primary" prepend-icon="mdi-arrow-left" class="ml-2" @click="previousSubsection">
+          <span class="ml-3 text-body">{{ selectedSubsection.name }}</span>
+          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">Full</v-btn>
+          <v-btn color="primary" small class="ml-2" @click="previousSubsection">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          <v-btn color="primary" prepend-icon="mdi-arrow-right" class="ml-2" @click="nextSubsection">
+          <v-btn color="primary" small class="ml-2" @click="nextSubsection">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
-          <v-spacer class="d-inline-block" style="width: 20px"></v-spacer>
         </template>
 
         <!-- Zoom controls - always visible -->
         <div class="d-inline-flex ml-3">
-          <v-btn color="info" size="small" :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
+          <v-btn color="info" small :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
-          <v-btn color="info" size="small" disabled class="px-3 rounded-0">{{ Math.round(zoomLevel * 100) }}%</v-btn>
-          <v-btn color="info" size="small" :disabled="zoomLevel >= maxZoom" class="rounded-l-0" @click="zoomIn">
+          <v-btn color="info" small disabled class="px-3 rounded-0">{{ Math.round(zoomLevel * 100) }}%</v-btn>
+          <v-btn color="info" small :disabled="zoomLevel >= maxZoom" class="rounded-l-0" @click="zoomIn">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
 
-        <v-btn color="secondary" size="small" class="ml-2" @click="fitToWidth">
+        <v-btn title="Fit Width" color="secondary" small class="ml-2" @click="fitToWidth">
           <v-icon>mdi-arrow-expand-horizontal</v-icon>
-          Fit Width
+          Fit
         </v-btn>
-        <v-btn color="secondary" size="small" class="ml-2" @click="fitToHeight">
+        <v-btn title="Fit Height" color="secondary" small class="ml-2" @click="fitToHeight">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
-          Fit Height
+          Fit
         </v-btn>
       </v-col>
     </v-row>
@@ -43,7 +42,7 @@
         <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
-            <v-group :config="{ x: 10, y: 10 }">
+            <v-group :config="{ x: 17, y: 20 }">
               <v-rect
                 :config="{
                   x: -15,
@@ -460,6 +459,7 @@ export default {
 
     goBackToFullView() {
       this.selectedSubsection = null
+      this.fitToWidth()
     },
 
     nextSubsection() {
@@ -514,8 +514,8 @@ export default {
           // Calcular el ancho real del contenido según si hay subsección seleccionada o no
           let maxContentWidth
           if (this.selectedSubsection) {
-            // Si hay subsección seleccionada, usar su ancho + 20px de padding (10px left + 10px right)
-            maxContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 20
+            // Si hay subsección seleccionada, usar su ancho + 40px de padding (30px left + 10px right)
+            maxContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 40
             console.log("Subsection selected, width:", maxContentWidth)
           } else {
             // Si no hay subsección, usar el ancho máximo de las secciones
