@@ -37,8 +37,8 @@
       </v-col>
     </v-row>
 
-    <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: 'auto', overflowX: 'hidden', overflowY: 'auto' }">
-      <v-stage ref="konvaStage" :config="adjustedStageConfig" style="background-color: pink" @click="handleStageClick" @tap="handleStageClick">
+    <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: containerHeight, overflowX: 'hidden', overflowY: 'auto' }">
+      <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @click="handleStageClick" @tap="handleStageClick">
         <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
@@ -188,16 +188,17 @@ export default {
 
       let stageHeight
       if (this.selectedSubsection) {
-        // Si hay subsección seleccionada, usar innerHeight - 150px
-        stageHeight = typeof window !== "undefined" ? window.innerHeight - 180 : 500
+        // Si hay subsección seleccionada, calcular altura basada en el contenido escalado
+        const subsectionHeight = this.getSubsectionHeight(this.selectedSubsection) + 40 // margen adicional
+        stageHeight = subsectionHeight * this.zoomLevel
       } else {
         // Calcular altura total del contenido
         const totalContentHeight =
           this.sections.reduce((acc, section, idx) => {
             return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-          }, 0) + 20 // Reducir padding inferior
+          }, 0) + 40 // padding
 
-        // La altura del stage debe ser el contenido escalado por el zoom
+        // Usar la altura del contenido escalado
         stageHeight = totalContentHeight * this.zoomLevel
       }
 
@@ -223,18 +224,21 @@ export default {
     },
 
     containerHeight() {
-      // Calcular altura del contenedor basada en el contenido escalado
+      // Usar la altura del stage para que coincidan
+      if (this.selectedSubsection) {
+        const subsectionHeight = this.getSubsectionHeight(this.selectedSubsection) + 40
+        return `${subsectionHeight * this.zoomLevel}px`
+      }
+
       if (!this.sections || this.sections.length === 0) return "500px"
 
       const totalContentHeight =
         this.sections.reduce((acc, section, idx) => {
           return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-        }, this.settings.SECTION_TOP_PADDING) + 100
+        }, 0) + 40
 
-      // La altura del contenedor debe ser el contenido escalado por el zoom
       const scaledHeight = totalContentHeight * this.zoomLevel
-      // Usar altura fija suficientemente grande para mostrar todo el contenido
-      return `${Math.max(700, scaledHeight + 100)}px`
+      return `${scaledHeight}px`
     },
   },
   mounted() {
