@@ -1,22 +1,22 @@
 <template>
   <div>
     <!-- Navigation and Zoom Controls -->
-    <v-row class="mb-3">
+    <v-row>
       <v-col>
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
-          <span class="ml-3 text-body">{{ selectedSubsection.name }}</span>
+          <!-- <span class="text-body">{{ selectedSubsection.name }}</span> -->
           <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">Full</v-btn>
-          <v-btn color="primary" small class="ml-2" @click="previousSubsection">
+          <v-btn color="primary" small class="ml-1" @click="previousSubsection">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          <v-btn color="primary" small class="ml-2" @click="nextSubsection">
+          <v-btn color="primary" small class="ml-1" @click="nextSubsection">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </template>
 
         <!-- Zoom controls - always visible -->
-        <div class="d-inline-flex ml-3">
+        <div class="d-inline-flex">
           <v-btn color="info" small :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
@@ -26,11 +26,11 @@
           </v-btn>
         </div>
 
-        <v-btn title="Fit Width" color="secondary" small class="ml-2" @click="fitToWidth">
+        <v-btn title="Fit Width" color="secondary" small class="ml-0" @click="fitToWidth">
           <v-icon>mdi-arrow-expand-horizontal</v-icon>
           Fit
         </v-btn>
-        <v-btn title="Fit Height" color="secondary" small class="ml-2" @click="fitToHeight">
+        <v-btn title="Fit Height" color="secondary" small class="ml-0" @click="fitToHeight">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
