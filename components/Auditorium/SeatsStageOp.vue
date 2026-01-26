@@ -186,19 +186,25 @@ export default {
       // Usar el ancho completo del contenedor disponible
       const containerWidth = typeof window !== "undefined" ? window.innerWidth : this.stageConfig.width
 
-      // Calcular altura total del contenido
-      const totalContentHeight =
-        this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-        }, 0) + 20 // Reducir padding inferior
+      let stageHeight
+      if (this.selectedSubsection) {
+        // Si hay subsección seleccionada, usar innerHeight - 150px
+        stageHeight = typeof window !== "undefined" ? window.innerHeight - 180 : 500
+      } else {
+        // Calcular altura total del contenido
+        const totalContentHeight =
+          this.sections.reduce((acc, section, idx) => {
+            return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+          }, 0) + 20 // Reducir padding inferior
 
-      // La altura del stage debe ser el contenido escalado por el zoom
-      const scaledHeight = totalContentHeight * this.zoomLevel
+        // La altura del stage debe ser el contenido escalado por el zoom
+        stageHeight = totalContentHeight * this.zoomLevel
+      }
 
       return {
         ...this.stageConfig,
         width: containerWidth,
-        height: scaledHeight, // Altura escalada para que todo sea visible
+        height: stageHeight, // Altura escalada para que todo sea visible
         x: 0, // Asegurar que el stage comienza en x=0
         draggable: true, // Permitir arrastrar para mover la imagen
       }
@@ -559,41 +565,55 @@ export default {
         return
       }
 
-      try {
-        // Usar la altura disponible del viewport (descontando controles)
-        const availableHeight = window.innerHeight - 150
+      // Usar setTimeout para asegurar que el DOM esté completamente renderizado (especialmente en mobile)
+      setTimeout(() => {
+        try {
+          // Usar la altura disponible del viewport (descontando controles)
+          const availableHeight = window.innerHeight - 150
 
-        // Calcular la altura total del contenido
-        const totalContentHeight =
-          this.sections.reduce((acc, section, idx) => {
-            return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-          }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
-
-        console.log("Available viewport height:", availableHeight, "Total content height:", totalContentHeight)
-
-        if (totalContentHeight > 0 && availableHeight > 0) {
-          // Calcular zoom para que el contenido quepa en la altura disponible
-          const optimalZoom = (availableHeight - 50) / totalContentHeight
-          // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
-          this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
-        } else {
-          this.zoomLevel = 0.7 // Default más grande
-        }
-
-        console.log("Fit to height zoom level:", this.zoomLevel)
-
-        // Resetear la posición del stage al centro
-        this.$nextTick(() => {
-          const stage = this.$refs.konvaStage?.getStage()
-          if (stage) {
-            stage.position({ x: 0, y: 0 })
-            stage.batchDraw()
+          // Calcular la altura total del contenido según si hay subsección seleccionada o no
+          let totalContentHeight
+          if (this.selectedSubsection) {
+            // Si hay subsección seleccionada, usar su altura + 20px de padding (10px top + 10px bottom)
+            totalContentHeight = this.getSubsectionHeight(this.selectedSubsection) + 20
+            console.log("Subsection selected, height:", totalContentHeight)
+          } else {
+            // Si no hay subsección, calcular altura total de todas las secciones
+            totalContentHeight =
+              this.sections.reduce((acc, section, idx) => {
+                return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+              }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
           }
-        })
-      } catch (error) {
-        console.error("Error calculating fit:", error)
-        this.zoomLevel = 0.7
-      }
+
+          console.log("Available viewport height:", availableHeight, "Total content height:", totalContentHeight)
+
+          if (totalContentHeight > 0 && availableHeight > 0) {
+            // Ajustar margen según el dispositivo
+            const margin = availableHeight < 768 ? 20 : 50
+            let optimalZoom = (availableHeight - margin) / totalContentHeight
+            // Reducir el zoom en un 10% para que se vea mejor (de 210% a 190% aproximadamente)
+            optimalZoom = optimalZoom * 0.9
+            // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
+            this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+          } else {
+            this.zoomLevel = 0.7 // Default más grande
+          }
+
+          console.log("Fit to height zoom level:", this.zoomLevel)
+
+          // Resetear la posición del stage al centro
+          this.$nextTick(() => {
+            const stage = this.$refs.konvaStage?.getStage()
+            if (stage) {
+              stage.position({ x: 0, y: 0 })
+              stage.batchDraw()
+            }
+          })
+        } catch (error) {
+          console.error("Error calculating fit:", error)
+          this.zoomLevel = 0.7
+        }
+      }, 50) // Pequeño delay para asegurar que el DOM esté listo en mobile
     },
 
     findSeatById(id) {
