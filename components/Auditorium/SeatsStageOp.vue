@@ -43,7 +43,7 @@
         <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
           <!-- Show only selected subsection if one is selected -->
           <template v-if="selectedSubsection">
-            <v-group :config="{ x: (adjustedStageConfig.width - getSubsectionWidth(selectedSubsection)) / 2, y: 50 }">
+            <v-group :config="{ x: 10, y: 10 }">
               <v-rect
                 :config="{
                   x: -15,
@@ -155,7 +155,7 @@ export default {
       selectedSubsection: null,
       zoomLevel: 1,
       minZoom: 0.3,
-      maxZoom: 3.0,
+      maxZoom: 8.0,
       zoomStep: 0.1,
     }
   },
@@ -206,6 +206,9 @@ export default {
     },
 
     contentOffsetX() {
+      // No aplicar offset cuando hay subsección seleccionada
+      if (this.selectedSubsection) return 0
+
       // Calcular el offset para centrar el contenido
       if (!this.sections || this.sections.length === 0) return 0
       const maxSectionWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
@@ -449,6 +452,10 @@ export default {
     handleSubsectionClick(subSection) {
       this.selectedSubsection = subSection
       console.log("Selected subsection:", subSection.id, subSection.name)
+      // Automatically fit to width when a subsection is selected
+      this.$nextTick(() => {
+        this.fitToWidth()
+      })
     },
 
     goBackToFullView() {
@@ -492,39 +499,56 @@ export default {
         return
       }
 
-      try {
-        // Usar el ancho real del contenedor en lugar de window.innerWidth
-        const stageContainer = document.querySelector(".stage-container")
-        const actualWidth = stageContainer ? stageContainer.clientWidth : window.innerWidth
+      // Usar setTimeout para asegurar que el DOM esté completamente renderizado (especialmente en mobile)
+      setTimeout(() => {
+        try {
+          // Usar el ancho real del contenedor en lugar de window.innerWidth
+          const stageContainer = document.querySelector(".stage-container")
+          let actualWidth = stageContainer ? stageContainer.clientWidth : window.innerWidth
 
-        // Calcular el ancho real del contenido
-        const maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
-
-        console.log("Actual container width:", actualWidth, "Max content width:", maxContentWidth)
-
-        if (maxContentWidth > 0 && actualWidth > 0) {
-          // Usar menos margen para aprovechar mejor el espacio disponible
-          const optimalZoom = (actualWidth - 20) / maxContentWidth
-          // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
-          this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
-        } else {
-          this.zoomLevel = 0.7 // Default más grande
-        }
-
-        console.log("Fit to width zoom level:", this.zoomLevel)
-
-        // Resetear la posición del stage al centro
-        this.$nextTick(() => {
-          const stage = this.$refs.konvaStage?.getStage()
-          if (stage) {
-            stage.position({ x: 0, y: 0 })
-            stage.batchDraw()
+          // En mobile, asegurarse de usar el viewport width correcto
+          if (actualWidth === 0 || !actualWidth) {
+            actualWidth = window.innerWidth || document.documentElement.clientWidth
           }
-        })
-      } catch (error) {
-        console.error("Error calculating fit:", error)
-        this.zoomLevel = 0.7
-      }
+
+          // Calcular el ancho real del contenido según si hay subsección seleccionada o no
+          let maxContentWidth
+          if (this.selectedSubsection) {
+            // Si hay subsección seleccionada, usar su ancho + 20px de padding (10px left + 10px right)
+            maxContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 20
+            console.log("Subsection selected, width:", maxContentWidth)
+          } else {
+            // Si no hay subsección, usar el ancho máximo de las secciones
+            maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
+          }
+
+          console.log("Actual container width:", actualWidth, "Max content width:", maxContentWidth)
+
+          if (maxContentWidth > 0 && actualWidth > 0) {
+            // Ajustar margen según el dispositivo (menos margen en mobile para aprovechar mejor el espacio)
+            const margin = actualWidth < 768 ? 20 : 40
+            const optimalZoom = (actualWidth - margin) / maxContentWidth
+            // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
+            this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+          } else {
+            this.zoomLevel = 0.7 // Default más grande
+          }
+
+          console.log("Fit to width zoom level:", this.zoomLevel)
+
+          // Resetear la posición del stage al centro
+          this.$nextTick(() => {
+            const stage = this.$refs.konvaStage?.getStage()
+            if (stage) {
+              stage.position({ x: 0, y: 0 })
+              stage.batchDraw()
+            }
+          })
+        } catch (error) {
+          console.error("Error calculating fit:", error)
+          this.zoomLevel = 0.7
+        }
+      }, 50) // Pequeño delay para asegurar que el DOM esté listo en mobile
     },
 
     fitToHeight() {
