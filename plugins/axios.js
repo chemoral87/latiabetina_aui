@@ -21,6 +21,14 @@ const VALIDATION_ERROR_CODES = [HTTP_STATUS.UNPROCESSABLE_ENTITY]
 const MESSAGE_ERROR_CODES = [HTTP_STATUS.NOT_FOUND, HTTP_STATUS.METHOD_NOT_ALLOWED, ...AUTH_ERROR_CODES]
 
 export default function ({ $axios, store }) {
+  // Configurar baseURL dinámicamente según el hostname
+  if (process.client) {
+    const hostname = window.location.hostname
+    const apiPort = 8001
+    const baseURL = `http://${hostname}:${apiPort}/api`
+    $axios.setBaseURL(baseURL)
+  }
+
   /**
    * Maneja errores de red
    */

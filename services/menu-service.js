@@ -56,11 +56,11 @@ export class MenuService {
       // });
     } else {
       menu.push(
-        {
-          icon: "mdi-home",
-          title: "Inicio",
-          to: "/",
-        },
+        // {
+        //   icon: "mdi-home",
+        //   title: "Inicio",
+        //   to: "/",
+        // },
         {
           icon: "mdi-lock",
           title: "Inicia Sesión ",

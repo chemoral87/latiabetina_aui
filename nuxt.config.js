@@ -16,6 +16,7 @@ export default {
   // Server configuration
   server: {
     port,
+    host: "0.0.0.0", // Permite acceso desde cualquier IP en la red
     timing: false, // Desactiva server timing header
   },
 
@@ -133,7 +134,7 @@ export default {
 
   // Axios configuration
   axios: {
-    baseURL: process.env.BASE_URL,
+    // baseURL will be set dynamically in plugins/axios.js based on hostname
     progress: true,
     retry: {
       retries: 2,

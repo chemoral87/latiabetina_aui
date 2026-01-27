@@ -38,88 +38,95 @@
     </v-row>
 
     <div :style="{ backgroundColor: 'blueviolet', width: 'calc(100% - 70px)', height: containerOuterHeight, overflow: 'hidden' }">
-      <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: 'auto', overflowX: 'hidden', overflowY: 'auto' }">
-        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @click="handleStageClick" @tap="handleStageClick">
-          <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
-            <!-- Show only selected subsection if one is selected -->
-            <template v-if="selectedSubsection">
-              <v-group :config="{ x: 17, y: 20 }">
-                <v-rect
-                  :config="{
-                    x: -15,
-                    y: -17,
-                    width: getSubsectionWidth(selectedSubsection) + 22,
-                    height: getSubsectionHeight(selectedSubsection) + 31,
-                    fill: 'black',
-                    stroke: 'red',
-                    strokeWidth: 1,
-                  }"
-                />
-                <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
-                <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
+      <v-stage
+        ref="konvaStage"
+        :config="adjustedStageConfig"
+        :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
+        @click="handleStageClick"
+        @tap="handleStageClick"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
+      >
+        <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
+          <!-- Show only selected subsection if one is selected -->
+          <template v-if="selectedSubsection">
+            <v-group :config="{ x: 17, y: 20 }">
+              <v-rect
+                :config="{
+                  x: -15,
+                  y: -17,
+                  width: getSubsectionWidth(selectedSubsection) + 22,
+                  height: getSubsectionHeight(selectedSubsection) + 31,
+                  fill: 'black',
+                  stroke: 'red',
+                  strokeWidth: 1,
+                }"
+              />
+              <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+              <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
+              <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
 
-                <template v-for="seat in getSubsectionSeats(selectedSubsection)">
-                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                  </v-group>
-                </template>
-              </v-group>
-            </template>
+              <template v-for="seat in getSubsectionSeats(selectedSubsection)">
+                <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                  <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                </v-group>
+              </template>
+            </v-group>
+          </template>
 
-            <!-- Show all sections when no subsection is selected -->
-            <template v-else>
-              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
-                <v-rect :config="getSectionBgConfig(section)" />
-                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
-                <v-text :config="getSectionTitleConfig(section)" />
+          <!-- Show all sections when no subsection is selected -->
+          <template v-else>
+            <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
+              <v-rect :config="getSectionBgConfig(section)" />
+              <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
+              <v-text :config="getSectionTitleConfig(section)" />
 
-                <template v-if="!section.isLabel">
-                  <v-group
-                    v-for="(sub, subIdx) in section.subsections"
-                    :key="`sub-${sIdx}-${subIdx}`"
-                    :config="getSubsectionPosition(section, subIdx)"
-                    @click="handleSubsectionClick(sub)"
-                    @tap="handleSubsectionClick(sub)"
-                    @mouseenter="handleSeatHover"
-                    @mouseleave="handleSeatLeave"
-                  >
-                    <template v-if="sub.isLabel">
-                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
-                    </template>
+              <template v-if="!section.isLabel">
+                <v-group
+                  v-for="(sub, subIdx) in section.subsections"
+                  :key="`sub-${sIdx}-${subIdx}`"
+                  :config="getSubsectionPosition(section, subIdx)"
+                  @click="handleSubsectionClick(sub)"
+                  @tap="handleSubsectionClick(sub)"
+                  @mouseenter="handleSeatHover"
+                  @mouseleave="handleSeatLeave"
+                >
+                  <template v-if="sub.isLabel">
+                    <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                    <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
+                  </template>
 
-                    <template v-else>
-                      <v-group>
-                        <v-rect
-                          :config="{
-                            x: -15,
-                            y: -17,
-                            width: getSubsectionWidth(sub) + 22,
-                            height: getSubsectionHeight(sub) + 31,
-                            fill: 'black',
-                            stroke: 'red',
-                            strokeWidth: 1,
-                          }"
-                        />
-                        <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                        <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-                        <v-text :config="getSubsectionTitleConfig(sub)" />
+                  <template v-else>
+                    <v-group>
+                      <v-rect
+                        :config="{
+                          x: -15,
+                          y: -17,
+                          width: getSubsectionWidth(sub) + 22,
+                          height: getSubsectionHeight(sub) + 31,
+                          fill: 'black',
+                          stroke: 'red',
+                          strokeWidth: 1,
+                        }"
+                      />
+                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
+                      <v-text :config="getSubsectionTitleConfig(sub)" />
+                    </v-group>
+
+                    <template v-for="seat in getSubsectionSeats(sub)">
+                      <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                        <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
                       </v-group>
-
-                      <template v-for="seat in getSubsectionSeats(sub)">
-                        <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                          <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                        </v-group>
-                      </template>
                     </template>
-                  </v-group>
-                </template>
-              </v-group>
-            </template>
-          </v-layer>
-        </v-stage>
-      </v-sheet>
+                  </template>
+                </v-group>
+              </template>
+            </v-group>
+          </template>
+        </v-layer>
+      </v-stage>
     </div>
   </div>
 </template>
@@ -160,6 +167,8 @@ export default {
       zoomStep: 0.1,
       dragMode: null, // 'x', 'y', or null for both axes
       cachedControlHeight: 50, // altura inicial del control row
+      lastDistance: 0, // distancia entre dedos en el último evento touch
+      lastCenter: null, // centro del pinch en el último evento
     }
   },
   computed: {
@@ -187,31 +196,13 @@ export default {
     },
 
     adjustedStageConfig() {
-      // Usar el ancho completo del contenedor disponible
-      const containerWidth = typeof window !== "undefined" ? window.innerWidth : this.stageConfig.width
-
-      let stageHeight
-      if (this.selectedSubsection) {
-        // Si hay subsección seleccionada, calcular altura basada en el contenido escalado
-        const subsectionHeight = this.getSubsectionHeight(this.selectedSubsection) + 40 // margen adicional
-        stageHeight = subsectionHeight * this.zoomLevel
-      } else {
-        // Calcular altura total del contenido
-        const totalContentHeight =
-          this.sections.reduce((acc, section, idx) => {
-            return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-          }, 0) + 40 // padding
-
-        // Usar la altura del contenido escalado
-        stageHeight = totalContentHeight * this.zoomLevel
-      }
-
+      // Usar las dimensiones exactas del contenedor padre
       return {
         ...this.stageConfig,
-        width: containerWidth,
-        height: stageHeight, // Altura escalada para que todo sea visible
-        x: 0, // Asegurar que el stage comienza en x=0
-        draggable: true, // Permitir arrastrar para mover la imagen
+        width: this.containerWidth,
+        height: this.containerHeightPx,
+        x: 0,
+        draggable: true,
         dragBoundFunc: this.selectedSubsection && this.dragMode ? this.getDragBoundFunc() : undefined,
       }
     },
@@ -262,6 +253,20 @@ export default {
       const controlH = this.controlHeight
       const appBarH = this.appBarHeight
       return `calc(100vh - ${controlH}px - ${appBarH}px - 34px)`
+    },
+
+    containerWidth() {
+      // Ancho del contenedor: 100% - 70px
+      if (typeof window === "undefined") return 800
+      return window.innerWidth - 70
+    },
+
+    containerHeightPx() {
+      // Altura del contenedor en píxeles
+      if (typeof window === "undefined") return 600
+      const controlH = this.controlHeight
+      const appBarH = this.appBarHeight
+      return window.innerHeight - controlH - appBarH - 34
     },
   },
   watch: {
@@ -577,14 +582,8 @@ export default {
       // Usar setTimeout para asegurar que el DOM esté completamente renderizado (especialmente en mobile)
       setTimeout(() => {
         try {
-          // Usar el ancho real del contenedor en lugar de window.innerWidth
-          const stageContainer = document.querySelector(".stage-container")
-          let actualWidth = stageContainer ? stageContainer.clientWidth : window.innerWidth
-
-          // En mobile, asegurarse de usar el viewport width correcto
-          if (actualWidth === 0 || !actualWidth) {
-            actualWidth = window.innerWidth || document.documentElement.clientWidth
-          }
+          // Usar el ancho del contenedor calculado
+          const actualWidth = this.containerWidth
 
           // Calcular el ancho real del contenido según si hay subsección seleccionada o no
           let maxContentWidth
@@ -593,28 +592,29 @@ export default {
             maxContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 40
             console.log("Subsection selected, width:", maxContentWidth)
           } else {
-            // Si no hay subsección, usar el ancho máximo de las secciones
+            // Si no hay subsección, calcular el ancho total considerando TODAS las secciones
+            // Necesitamos el ancho máximo entre todas las secciones (ya que están una debajo de la otra)
             maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
+            // Agregar padding adicional para el contenido completo
+            maxContentWidth += 20 // padding lateral
+            console.log("Full view, max section width:", maxContentWidth)
           }
 
           console.log("Actual container width:", actualWidth, "Max content width:", maxContentWidth)
 
           if (maxContentWidth > 0 && actualWidth > 0) {
-            // Ajustar margen según el dispositivo (menos margen en mobile para aprovechar mejor el espacio)
-            const margin = actualWidth < 768 ? 20 : 40
-            const optimalZoom = (actualWidth - margin) / maxContentWidth
-            // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
-            this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+            // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
+            const optimalZoom = actualWidth / maxContentWidth
+            // Establecer un mínimo de 0.3 y máximo según maxZoom
+            this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
           } else {
             this.zoomLevel = 0.7 // Default más grande
           }
 
           console.log("Fit to width zoom level:", this.zoomLevel)
 
-          // Establecer modo de arrastre en X cuando hay subsección seleccionada
-          if (this.selectedSubsection) {
-            this.dragMode = "x"
-          }
+          // Establecer modo de arrastre en X (permite solo movimiento vertical Y)
+          this.dragMode = "x"
 
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
@@ -642,8 +642,8 @@ export default {
       // Usar setTimeout para asegurar que el DOM esté completamente renderizado (especialmente en mobile)
       setTimeout(() => {
         try {
-          // Usar la altura disponible del viewport (descontando controles)
-          const availableHeight = window.innerHeight - 150
+          // Usar la altura del contenedor calculado
+          const availableHeight = this.containerHeightPx
 
           // Calcular la altura total del contenido según si hay subsección seleccionada o no
           let totalContentHeight
@@ -656,29 +656,25 @@ export default {
             totalContentHeight =
               this.sections.reduce((acc, section, idx) => {
                 return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-              }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
+              }, 0) + 40 // padding extra
+            console.log("Full view, total content height:", totalContentHeight)
           }
 
-          console.log("Available viewport height:", availableHeight, "Total content height:", totalContentHeight)
+          console.log("Available container height:", availableHeight, "Total content height:", totalContentHeight)
 
           if (totalContentHeight > 0 && availableHeight > 0) {
-            // Ajustar margen según el dispositivo
-            const margin = availableHeight < 768 ? 20 : 50
-            let optimalZoom = (availableHeight - margin) / totalContentHeight
-            // Reducir el zoom en un 10% para que se vea mejor (de 210% a 190% aproximadamente)
-            optimalZoom = optimalZoom * 0.9
-            // Establecer un mínimo de 0.6 para que no se vea demasiado pequeño
-            this.zoomLevel = Math.max(0.6, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
+            // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
+            const optimalZoom = availableHeight / totalContentHeight
+            // Establecer un mínimo de 0.3 y máximo según maxZoom
+            this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, Math.round(optimalZoom * 10) / 10))
           } else {
             this.zoomLevel = 0.7 // Default más grande
           }
 
           console.log("Fit to height zoom level:", this.zoomLevel)
 
-          // Establecer modo de arrastre en Y cuando hay subsección seleccionada
-          if (this.selectedSubsection) {
-            this.dragMode = "y"
-          }
+          // Establecer modo de arrastre en Y (permite solo movimiento horizontal X)
+          this.dragMode = "y"
 
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
@@ -737,6 +733,83 @@ export default {
 
     handleStageClick(e) {
       // Optional: handle stage background clicks if needed
+    },
+
+    handleTouchStart(e) {
+      const touches = e.evt.touches
+      if (touches && touches.length === 2) {
+        // Inicio del gesto de pinch con dos dedos
+        const touch1 = touches[0]
+        const touch2 = touches[1]
+
+        this.lastDistance = this.getDistance(touch1, touch2)
+        this.lastCenter = this.getCenter(touch1, touch2)
+      }
+    },
+
+    handleTouchMove(e) {
+      const touches = e.evt.touches
+      if (touches && touches.length === 2) {
+        e.evt.preventDefault()
+
+        const touch1 = touches[0]
+        const touch2 = touches[1]
+
+        const currentDistance = this.getDistance(touch1, touch2)
+        const currentCenter = this.getCenter(touch1, touch2)
+
+        if (this.lastDistance > 0) {
+          // Calcular el factor de zoom basado en el cambio de distancia
+          const scale = currentDistance / this.lastDistance
+          const newZoom = this.zoomLevel * scale
+
+          // Aplicar el zoom dentro de los límites
+          this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, newZoom))
+
+          // Ajustar la posición del stage para hacer zoom hacia el centro del pinch
+          const stage = this.$refs.konvaStage?.getStage()
+          if (stage) {
+            const oldPos = stage.position()
+            const mousePointTo = {
+              x: currentCenter.x - oldPos.x,
+              y: currentCenter.y - oldPos.y,
+            }
+
+            const newPos = {
+              x: currentCenter.x - mousePointTo.x * scale,
+              y: currentCenter.y - mousePointTo.y * scale,
+            }
+
+            stage.position(newPos)
+            stage.batchDraw()
+          }
+        }
+
+        this.lastDistance = currentDistance
+        this.lastCenter = currentCenter
+      }
+    },
+
+    handleTouchEnd(e) {
+      // Resetear cuando se levanten los dedos
+      const touches = e.evt.touches
+      if (!touches || touches.length < 2) {
+        this.lastDistance = 0
+        this.lastCenter = null
+      }
+    },
+
+    getDistance(touch1, touch2) {
+      const dx = touch1.clientX - touch2.clientX
+      const dy = touch1.clientY - touch2.clientY
+      return Math.sqrt(dx * dx + dy * dy)
+    },
+
+    getCenter(touch1, touch2) {
+      return {
+        x: (touch1.clientX + touch2.clientX) / 2,
+        y: (touch1.clientY + touch2.clientY) / 2,
+      }
     },
 
     handleSeatHover(e) {
