@@ -20,7 +20,17 @@ const VALIDATION_ERROR_CODES = [HTTP_STATUS.UNPROCESSABLE_ENTITY]
 // Códigos de estado que muestran mensaje de error
 const MESSAGE_ERROR_CODES = [HTTP_STATUS.NOT_FOUND, HTTP_STATUS.METHOD_NOT_ALLOWED, ...AUTH_ERROR_CODES]
 
-export default function ({ $axios, store }) {
+export default function ({ $axios, store, $config }) {
+  // Configurar baseURL dinámicamente según el hostname (solo en desarrollo)
+  const isDev = process.env.NODE_ENV !== "production"
+
+  if (process.client && isDev) {
+    const hostname = window.location.hostname
+    const suffixUrl = $config.SUFFIX_URL
+    const baseURL = `http://${hostname}${suffixUrl}`
+    $axios.setBaseURL(baseURL)
+  }
+
   /**
    * Maneja errores de red
    */

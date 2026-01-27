@@ -26,6 +26,12 @@ export default {
     ...env.parsed,
   },
 
+  // Public runtime config (accessible via $config)
+  publicRuntimeConfig: {
+    SUFFIX_URL: process.env.SUFFIX_URL || ":8000/api",
+    BASE_URL: process.env.BASE_URL,
+  },
+
   ssr: false,
   target: "server",
   telemetry: false,
@@ -134,7 +140,8 @@ export default {
 
   // Axios configuration
   axios: {
-    baseURL: process.env.BASE_URL,
+    // En producción usar BASE_URL del .env, en desarrollo se configura dinámicamente en plugins/axios.js
+    ...(isDev ? {} : { baseURL: process.env.BASE_URL }),
     progress: true,
     retry: {
       retries: 2,
