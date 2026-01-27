@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Navigation and Zoom Controls -->
-    <v-row>
+    <v-row ref="controlRow" dense>
       <v-col>
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
@@ -37,88 +37,90 @@
       </v-col>
     </v-row>
 
-    <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: containerHeight, overflowX: 'hidden', overflowY: 'auto' }">
-      <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @click="handleStageClick" @tap="handleStageClick">
-        <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
-          <!-- Show only selected subsection if one is selected -->
-          <template v-if="selectedSubsection">
-            <v-group :config="{ x: 17, y: 20 }">
-              <v-rect
-                :config="{
-                  x: -15,
-                  y: -17,
-                  width: getSubsectionWidth(selectedSubsection) + 22,
-                  height: getSubsectionHeight(selectedSubsection) + 31,
-                  fill: 'black',
-                  stroke: 'red',
-                  strokeWidth: 1,
-                }"
-              />
-              <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-              <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
-              <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
+    <div :style="{ backgroundColor: 'blueviolet', width: 'calc(100% - 70px)', height: containerOuterHeight, overflow: 'hidden' }">
+      <v-sheet elevation="2" class="pa-0 stage-container" :style="{ background: 'green', height: 'auto', overflowX: 'hidden', overflowY: 'auto' }">
+        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @click="handleStageClick" @tap="handleStageClick">
+          <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
+            <!-- Show only selected subsection if one is selected -->
+            <template v-if="selectedSubsection">
+              <v-group :config="{ x: 17, y: 20 }">
+                <v-rect
+                  :config="{
+                    x: -15,
+                    y: -17,
+                    width: getSubsectionWidth(selectedSubsection) + 22,
+                    height: getSubsectionHeight(selectedSubsection) + 31,
+                    fill: 'black',
+                    stroke: 'red',
+                    strokeWidth: 1,
+                  }"
+                />
+                <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
+                <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
 
-              <template v-for="seat in getSubsectionSeats(selectedSubsection)">
-                <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                  <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                </v-group>
-              </template>
-            </v-group>
-          </template>
+                <template v-for="seat in getSubsectionSeats(selectedSubsection)">
+                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                  </v-group>
+                </template>
+              </v-group>
+            </template>
 
-          <!-- Show all sections when no subsection is selected -->
-          <template v-else>
-            <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
-              <v-rect :config="getSectionBgConfig(section)" />
-              <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
-              <v-text :config="getSectionTitleConfig(section)" />
+            <!-- Show all sections when no subsection is selected -->
+            <template v-else>
+              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
+                <v-rect :config="getSectionBgConfig(section)" />
+                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
+                <v-text :config="getSectionTitleConfig(section)" />
 
-              <template v-if="!section.isLabel">
-                <v-group
-                  v-for="(sub, subIdx) in section.subsections"
-                  :key="`sub-${sIdx}-${subIdx}`"
-                  :config="getSubsectionPosition(section, subIdx)"
-                  @click="handleSubsectionClick(sub)"
-                  @tap="handleSubsectionClick(sub)"
-                  @mouseenter="handleSeatHover"
-                  @mouseleave="handleSeatLeave"
-                >
-                  <template v-if="sub.isLabel">
-                    <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                    <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
-                  </template>
-
-                  <template v-else>
-                    <v-group>
-                      <v-rect
-                        :config="{
-                          x: -15,
-                          y: -17,
-                          width: getSubsectionWidth(sub) + 22,
-                          height: getSubsectionHeight(sub) + 31,
-                          fill: 'black',
-                          stroke: 'red',
-                          strokeWidth: 1,
-                        }"
-                      />
-                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-                      <v-text :config="getSubsectionTitleConfig(sub)" />
-                    </v-group>
-
-                    <template v-for="seat in getSubsectionSeats(sub)">
-                      <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                        <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                      </v-group>
+                <template v-if="!section.isLabel">
+                  <v-group
+                    v-for="(sub, subIdx) in section.subsections"
+                    :key="`sub-${sIdx}-${subIdx}`"
+                    :config="getSubsectionPosition(section, subIdx)"
+                    @click="handleSubsectionClick(sub)"
+                    @tap="handleSubsectionClick(sub)"
+                    @mouseenter="handleSeatHover"
+                    @mouseleave="handleSeatLeave"
+                  >
+                    <template v-if="sub.isLabel">
+                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
                     </template>
-                  </template>
-                </v-group>
-              </template>
-            </v-group>
-          </template>
-        </v-layer>
-      </v-stage>
-    </v-sheet>
+
+                    <template v-else>
+                      <v-group>
+                        <v-rect
+                          :config="{
+                            x: -15,
+                            y: -17,
+                            width: getSubsectionWidth(sub) + 22,
+                            height: getSubsectionHeight(sub) + 31,
+                            fill: 'black',
+                            stroke: 'red',
+                            strokeWidth: 1,
+                          }"
+                        />
+                        <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                        <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
+                        <v-text :config="getSubsectionTitleConfig(sub)" />
+                      </v-group>
+
+                      <template v-for="seat in getSubsectionSeats(sub)">
+                        <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                          <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                        </v-group>
+                      </template>
+                    </template>
+                  </v-group>
+                </template>
+              </v-group>
+            </template>
+          </v-layer>
+        </v-stage>
+      </v-sheet>
+    </div>
   </div>
 </template>
 
@@ -156,6 +158,8 @@ export default {
       minZoom: 0.3,
       maxZoom: 8.0,
       zoomStep: 0.1,
+      dragMode: null, // 'x', 'y', or null for both axes
+      cachedControlHeight: 50, // altura inicial del control row
     }
   },
   computed: {
@@ -208,6 +212,7 @@ export default {
         height: stageHeight, // Altura escalada para que todo sea visible
         x: 0, // Asegurar que el stage comienza en x=0
         draggable: true, // Permitir arrastrar para mover la imagen
+        dragBoundFunc: this.selectedSubsection && this.dragMode ? this.getDragBoundFunc() : undefined,
       }
     },
 
@@ -240,14 +245,66 @@ export default {
       const scaledHeight = totalContentHeight * this.zoomLevel
       return `${scaledHeight}px`
     },
+
+    controlHeight() {
+      // Retornar el valor cacheado que se actualiza con watcher
+      return this.cachedControlHeight
+    },
+
+    appBarHeight() {
+      // v-app-bar de Vuetify tiene altura de 64px en desktop y 56px en mobile
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+      return isMobile ? 56 : 64
+    },
+
+    containerOuterHeight() {
+      // Calcular: 100vh - altura del controlRow - altura del v-app-bar
+      const controlH = this.controlHeight
+      const appBarH = this.appBarHeight
+      return `calc(100vh - ${controlH}px - ${appBarH}px - 34px)`
+    },
+  },
+  watch: {
+    selectedSubsection() {
+      // Cuando cambia la subsección, esperar a que el DOM se actualice y medir la nueva altura
+      this.$nextTick(() => {
+        // Agregar un pequeño delay para asegurar que Vuetify termine de renderizar
+        setTimeout(() => {
+          this.cachedControlHeight = this.getControlRowHeight()
+        }, 100)
+      })
+    },
   },
   mounted() {
     // Aplicar fit to width automáticamente al cargar
     this.$nextTick(() => {
-      this.fitToWidth()
+      setTimeout(() => {
+        this.cachedControlHeight = this.getControlRowHeight()
+
+        this.fitToWidth()
+      }, 100)
     })
   },
   methods: {
+    getControlRowHeight() {
+      // Intentar obtener la altura real del elemento v-row
+      if (this.$refs.controlRow) {
+        // Vuetify v-row puede ser accedido directamente o a través de $el
+        const element = this.$refs.controlRow.$el || this.$refs.controlRow
+
+        if (element && element.offsetHeight) {
+          const height = element.offsetHeight
+
+          return height > 0 ? height : 50
+        }
+      }
+
+      // Fallback basado en viewport si el elemento no está disponible
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+      const fallback = isMobile ? 52 : 48
+      return fallback
+    },
+
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
       const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 10)
@@ -463,13 +520,21 @@ export default {
       console.log("Selected subsection:", subSection.id, subSection.name)
       // Automatically fit to width when a subsection is selected
       this.$nextTick(() => {
-        this.fitToWidth()
+        setTimeout(() => {
+          this.cachedControlHeight = this.getControlRowHeight()
+          this.fitToWidth()
+        }, 100)
       })
     },
 
     goBackToFullView() {
       this.selectedSubsection = null
-      this.fitToWidth()
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.cachedControlHeight = this.getControlRowHeight()
+          this.fitToWidth()
+        }, 100)
+      })
     },
 
     nextSubsection() {
@@ -546,6 +611,11 @@ export default {
 
           console.log("Fit to width zoom level:", this.zoomLevel)
 
+          // Establecer modo de arrastre en X cuando hay subsección seleccionada
+          if (this.selectedSubsection) {
+            this.dragMode = "x"
+          }
+
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
             const stage = this.$refs.konvaStage?.getStage()
@@ -605,6 +675,11 @@ export default {
 
           console.log("Fit to height zoom level:", this.zoomLevel)
 
+          // Establecer modo de arrastre en Y cuando hay subsección seleccionada
+          if (this.selectedSubsection) {
+            this.dragMode = "y"
+          }
+
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
             const stage = this.$refs.konvaStage?.getStage()
@@ -618,6 +693,27 @@ export default {
           this.zoomLevel = 0.7
         }
       }, 50) // Pequeño delay para asegurar que el DOM esté listo en mobile
+    },
+
+    getDragBoundFunc() {
+      const mode = this.dragMode
+      return function (pos) {
+        if (mode === "y") {
+          // Solo permitir movimiento en eje X
+          return {
+            x: pos.x,
+            y: 0,
+          }
+        } else if (mode === "x") {
+          // Solo permitir movimiento en eje Y
+          return {
+            x: 0,
+            y: pos.y,
+          }
+        }
+        // Si no hay modo, permitir ambos ejes
+        return pos
+      }
     },
 
     findSeatById(id) {
@@ -669,7 +765,7 @@ export default {
 <style scoped>
 .stage-container {
   position: relative;
-  width: 100%;
+  /* width: 100%; */
 }
 
 /* Mejorar scroll en mobile */
