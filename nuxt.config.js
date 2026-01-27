@@ -134,7 +134,7 @@ export default {
 
   // Axios configuration
   axios: {
-    // baseURL will be set dynamically in plugins/axios.js based on hostname
+    baseURL: process.env.BASE_URL,
     progress: true,
     retry: {
       retries: 2,
