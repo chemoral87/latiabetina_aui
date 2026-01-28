@@ -133,7 +133,7 @@
 
       <div :style="{ backgroundColor: 'lightblue', width: '70px', minWidth: '70px', overflow: 'auto', height: containerOuterHeight }">
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px">
-          <h3 style="margin: 0; ">Seats</h3>
+          <h4 style="margin: 0; ">Selected Seats</h4>
         </div>
 
         <p style="margin: 0; font-weight: bold;  padding: 0 5px">
