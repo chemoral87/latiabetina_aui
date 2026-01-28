@@ -93,7 +93,7 @@ export default {
     redirect: {
       login: "/login",
       logout: "/login",
-      home: "/dashboard",
+      home: "/",
       callback: false,
     },
     strategies: {

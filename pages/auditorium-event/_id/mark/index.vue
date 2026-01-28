@@ -74,6 +74,7 @@ export default {
   middleware: ["authenticated"],
   async asyncData({ app, params }) {
     const res = await app.$repository.AuditoriumEvent.show(params.id).catch((e) => {})
+
     const eventAuditorium = res || {}
     return { eventAuditorium }
   },
@@ -151,6 +152,16 @@ export default {
         //   })
         // })
         this.sections = config.sections
+
+        // Update seat statuses from eventAuditorium.seats
+        if (this.eventAuditorium.seats && Array.isArray(this.eventAuditorium.seats)) {
+          this.eventAuditorium.seats.forEach((seatData) => {
+            const seat = this.findSeatById(seatData.seat_id)
+            if (seat) {
+              this.$set(seat, "status", seatData.status)
+            }
+          })
+        }
       }
     },
 
@@ -193,26 +204,31 @@ export default {
       this.loading = true
 
       try {
-        // Update local state first
-        seatIds.forEach((seatId) => {
-          const seat = this.findSeatById(seatId)
-          if (seat) {
-            seat.status = status
-          }
-        })
-
         // Prepare payload for API
         const updatePayload = {
-          seats: seatIds.map((seatId) => ({
-            seat_id: seatId,
-            status,
-          })),
+          auditorium_event_id: this.eventAuditorium.id,
+          seat_ids: seatIds,
+          status,
         }
 
         // Call API to update seats using custom endpoint
+        const response = await this.$repository.AuditoriumEventSeat.create(updatePayload)
 
-        await this.$repository.AuditoriumEvent.create(updatePayload)
+        // Update local state with response data
+        if (response && response.seats) {
+          response.seats.forEach((seatData) => {
+            const seat = this.findSeatById(seatData.seat_id)
+            if (seat) {
+              // Use Vue.set to ensure reactivity in nested objects
+              this.$set(seat, "status", seatData.status)
+            }
+          })
+        }
+
+        this.$notify.success(response.success || `${seatIds.length} seat(s) updated successfully`)
       } catch (error) {
+        console.error("Error updating seats:", error)
+        this.$handleError(error)
       } finally {
         this.loading = false
       }

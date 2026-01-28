@@ -1,15 +1,12 @@
 <template>
   <v-container fluid>
-    <span class="text-h6 ml-2">Bienvenidos {{ NAME_SECRET }}</span>
+    <span class="text-h6 ml-2">Bienvenidos Inicio {{ NAME_SECRET }}</span>
     <!-- authenticated {{ authenticated }}
     <div v-if="user">user {{ user.name }}</div>
     <div v-else>Cargando usuario...</div> -->
 
     <!-- {{permissions}} -->
     <!-- {{user}} -->
-    <v-row>
-      <template v-if="hasPermission('consolidador-index')"></template>
-    </v-row>
   </v-container>
 </template>
 <script>

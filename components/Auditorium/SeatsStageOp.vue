@@ -523,6 +523,7 @@ export default {
       const isSelected = seat.state === "selected"
       const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
       const category = seat.category ? String(seat.category).toLowerCase() : null
+      const status = seat.status ? String(seat.status).toLowerCase() : null
       const classStrokeMap = CLASS_STROKE_MAP
 
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
@@ -548,6 +549,16 @@ export default {
       if (isInSelectedArray) {
         fill = this.blinkState ? "#ffeb3b" : "#f44336" // Yellow and Red blinking
         strokeWidth = 0
+      } else if (status) {
+        // Set fill color based on status
+        const statusColors = {
+          ocupado: "#0000ff",
+          adulto: "#6B7280",
+          adolescente: "#8B5CF6",
+          niño: "#EC4899",
+          porteador: "#F97316",
+        }
+        fill = statusColors[status] || fill
       }
 
       return {
