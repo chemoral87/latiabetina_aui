@@ -611,8 +611,13 @@ export default {
           // Calcular el ancho real del contenido según si hay subsección seleccionada o no
           let maxContentWidth
           if (this.selectedSubsection) {
-            // Si hay subsección seleccionada, usar su ancho + 40px de padding (30px left + 10px right)
-            maxContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 40
+            // Si hay subsección seleccionada, incluir todos los offsets y elementos adicionales
+            // - v-group offset x: 17
+            // - rectangle offset x: -15
+            // - rectangle width: getSubsectionWidth + 22
+            // Total: 17 + (getSubsectionWidth + 22) = 17 + width + 22
+            const subsectionContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 22 // rectangle width
+            maxContentWidth = 5 + subsectionContentWidth // group x + content width
             console.log("Subsection selected, width:", maxContentWidth)
           } else {
             // Si no hay subsección, calcular el ancho total considerando TODAS las secciones
@@ -671,8 +676,13 @@ export default {
           // Calcular la altura total del contenido según si hay subsección seleccionada o no
           let totalContentHeight
           if (this.selectedSubsection) {
-            // Si hay subsección seleccionada, usar su altura + 20px de padding (10px top + 10px bottom)
-            totalContentHeight = this.getSubsectionHeight(this.selectedSubsection) + 20
+            // Si hay subsección seleccionada, incluir todos los offsets y elementos adicionales
+            // - v-group offset y: 20
+            // - rectangle offset y: -17
+            // - rectangle height: getSubsectionHeight + 31
+            // - column labels below: ~15px
+            const subsectionContentHeight = this.getSubsectionHeight(this.selectedSubsection) + 31 // rectangle height
+            totalContentHeight = 0 + subsectionContentHeight + 5 // group y + content + column labels
             console.log("Subsection selected, height:", totalContentHeight)
           } else {
             // Si no hay subsección, calcular altura total de todas las secciones
