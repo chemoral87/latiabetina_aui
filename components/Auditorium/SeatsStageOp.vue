@@ -312,7 +312,20 @@ export default {
 
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      const y = this.sections.slice(0, sIdx).reduce((acc, s) => acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN, 10)
+      let y = this.sections.slice(0, sIdx).reduce((acc, s, idx) => {
+        return acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN
+      }, 10)
+
+      // Add extra spacing between major sections
+      if (sIdx > 0) {
+        y += 20
+      }
+
+      // Add 10px top margin for label sections (like "Altar")
+      if (section.isLabel) {
+        y += 10
+      }
+
       // Center each section within the original stage width
       const maxSectionWidth = Math.max(...this.sections.map((s) => this.getSectionWidth(s)))
       return { x: (maxSectionWidth - this.getSectionWidth(section)) / 2, y }
@@ -323,8 +336,8 @@ export default {
         width: this.getSectionWidth(section),
         height: this.getSectionHeight(section),
         fill: "black", // COLORS.SECTION_BG,
-        strokeWidth: 1,
-        stroke: "red",
+        strokeWidth: 0,
+        stroke: "transparent",
         cornerRadius: 5,
       }
     },
@@ -332,14 +345,14 @@ export default {
     getSectionTitleConfig(section) {
       return {
         x: 0,
-        y: section.isLabel ? 0 : this.settings.SECTION_TOP_PADDING / 4,
+        y: 4,
         text: section.name,
         fontSize: section.isLabel ? 24 : 20,
         fill: section.isLabel ? "#1976d2" : "#fff",
         fontStyle: "bold",
         fontFamily: "Arial",
-        align: section.isLabel ? "left" : "center",
-        width: section.isLabel ? undefined : this.getSectionWidth(section),
+        align: "center",
+        width: section.isLabel ? this.getSectionWidth(section) : this.getSectionWidth(section),
       }
     },
 
@@ -360,14 +373,14 @@ export default {
 
     getSubsectionTitleConfig(sub) {
       return {
-        x: 0,
+        x: -13,
         y: -15,
         text: sub.name,
         fontSize: 11,
         fill: "#fff",
         fontFamily: "Arial",
         align: "left",
-        width: this.getSubsectionWidth(sub),
+        width: this.getSubsectionWidth(sub) + 13,
       }
     },
 
@@ -464,17 +477,12 @@ export default {
           // Do NOT apply border when the matched category represents "Ninguno" (value === null)
           if (def && typeof def.value !== "undefined" && def.value !== null && def.fill) {
             stroke = def.fill
-            strokeWidth = 4
+            strokeWidth = 2
           } else if (classStrokeMap[category]) {
             stroke = classStrokeMap[category]
-            strokeWidth = 4
+            strokeWidth = 2
           }
-        } catch (err) {
-          if (classStrokeMap[category]) {
-            stroke = classStrokeMap[category]
-            strokeWidth = 4
-          }
-        }
+        } catch (err) {}
       }
 
       return {
@@ -502,7 +510,22 @@ export default {
     },
 
     getSectionWidth(section) {
-      if (section.isLabel) return 0
+      if (section.isLabel) {
+        // Calculate the max width of all regular sections to center the label
+        const maxSectionWidth = Math.max(
+          ...this.sections
+            .filter((s) => !s.isLabel)
+            .map((s) => {
+              if (!s.subsections.length) return 0
+              return (
+                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sub)), 0) +
+                (s.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
+                this.settings.SECTION_SIDE_PADDING * 2
+              )
+            })
+        )
+        return maxSectionWidth || 800 // Use max section width or default
+      }
       if (!section.subsections.length) return 0
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +

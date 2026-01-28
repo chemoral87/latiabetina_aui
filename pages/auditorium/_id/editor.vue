@@ -50,7 +50,7 @@
 
           <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label dense class="mb-1" />
 
-          <v-slider v-model="settings.SEATS_DISTANCE" :min="5" :max="12" :step="1" label="Distancia entre asientos" thumb-label dense class="mb-1" />
+          <v-slider v-model="settings.SEATS_DISTANCE" :min="2" :max="8" :step="1" label="Distancia entre asientos" thumb-label dense class="mb-1" />
 
           <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5" label="Padding superior sección" thumb-label dense class="mb-0" />
         </v-card>
