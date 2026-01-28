@@ -16,7 +16,7 @@
         </template>
 
         <!-- Zoom controls - always visible -->
-        <div class="d-inline-flex">
+        <!-- <div class="d-inline-flex">
           <v-btn color="info" small :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
@@ -24,7 +24,7 @@
           <v-btn color="info" small :disabled="zoomLevel >= maxZoom" class="rounded-l-0" @click="zoomIn">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-        </div>
+        </div> -->
 
         <v-btn title="Fit Width" color="secondary" small class="ml-0" @click="fitToWidth">
           <v-icon>mdi-arrow-expand-horizontal</v-icon>
@@ -145,23 +145,23 @@
         </p>
 
         <div v-if="selectedSeatsArray.length > 0" class="mt-3" style="padding: 5px; display: flex; flex-wrap: wrap; gap: 3px; justify-content: center">
-          <v-btn class="mb-2"  icon title="Disponible" style="background-color: #ffeb3b !important; color: black">
-            <v-icon >mdi-check</v-icon>
-          </v-btn>
-          <v-btn class="mb-2"  icon title="Ocupado" style="background-color: #3B82F6 !important; color: white">
-            <v-icon >mdi-account</v-icon>
-          </v-btn>
-          <v-btn class="mb-2"  icon title="Adulto" style="background-color: #6B7280 !important; color: white">
-            <v-icon >mdi-account</v-icon>
-          </v-btn>
-          <v-btn class="mb-2"  icon title="Adolescente" style="background-color: #8B5CF6 !important; color: white">
+          <v-btn class="mb-2" icon  title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)">
             <v-icon >mdi-account-outline</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon title="Niño" style="background-color: #EC4899 !important; color: white">
+          <v-btn class="mb-6"  icon  title="Ocupado" style="background-color: #0000ff  !important; color: white" @click="setEventSeat('ocupado')">
+            <v-icon >mdi-account</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon  title="Adulto" style="background-color: #6B7280 !important; color: white" @click="setEventSeat('adulto')">
+            <v-icon >mdi-human</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #8B5CF6 !important; color: white" @click="setEventSeat('adolescente')">
+            <v-icon >mdi-human-scooter</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #EC4899 !important; color: white" @click="setEventSeat('niño')">
             <v-icon >mdi-human-child</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon title="Porteador" style="background-color: #F97316 !important; color: white">
-            <v-icon >mdi-bag-checked</v-icon>
+          <v-btn  icon title="Porteador" style="background-color: #F97316 !important; color: white" @click="setEventSeat('porteador')">
+            <v-icon >mdi-human-male-child</v-icon>
           </v-btn>
         </div>
 
@@ -862,6 +862,23 @@ export default {
       }
 
       console.log("Selected seats array:", this.selectedSeatsArray)
+    },
+
+    setEventSeat(status) {
+      if (this.selectedSeatsArray.length === 0) {
+        console.warn("No seats selected")
+        return
+      }
+
+      // Emit event with selected seats and category
+      this.$emit("setEventSeat", {
+        seatIds: [...this.selectedSeatsArray],
+        status,
+      })
+
+      // Clear selection after emitting
+      this.selectedSeatsArray = []
+      
     },
 
     handleTouchStart(e) {

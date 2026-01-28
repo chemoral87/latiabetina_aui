@@ -44,7 +44,7 @@
               </div>
             </div> -->
 
-        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
+        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" @setEventSeat="handleSetEventSeat" />
         <!-- <v-alert v-else type="warning" outlined>No hay configuración de asientos disponible para este evento.</v-alert> -->
       </div>
     </div>
@@ -83,6 +83,7 @@ export default {
       sections: [],
       settings: { ...DEFAULT_SETTINGS },
       stageCategories: STAGE_CATEGORIES,
+      loading: false,
     }
   },
   computed: {
@@ -178,6 +179,62 @@ export default {
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
       const seatSpacing = this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
       return maxCols * seatSpacing - this.settings.SEATS_DISTANCE
+    },
+
+    async handleSetEventSeat(payload) {
+      const { seatIds, status } = payload
+      console.log("handleSetEventSeat called with:", { seatIds, status })
+
+      if (!seatIds || seatIds.length === 0) {
+        this.$notify.error("No seats selected")
+        return
+      }
+
+      this.loading = true
+
+      try {
+        // Update local state first
+        seatIds.forEach((seatId) => {
+          const seat = this.findSeatById(seatId)
+          if (seat) {
+            seat.status = status
+          }
+        })
+
+        // Prepare payload for API
+        const updatePayload = {
+          seats: seatIds.map((seatId) => ({
+            seat_id: seatId,
+            status,
+          })),
+        }
+
+        // Call API to update seats using custom endpoint
+
+        await this.$repository.AuditoriumEvent.create(updatePayload)
+      } catch (error) {
+      } finally {
+        this.loading = false
+      }
+    },
+
+    findSeatById(seatId) {
+      for (const section of this.sections) {
+        if (section.subsections) {
+          for (const subsection of section.subsections) {
+            if (subsection.seats) {
+              for (const row of subsection.seats) {
+                for (const seat of row) {
+                  if (seat.id === seatId) {
+                    return seat
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return null
     },
   },
 }
