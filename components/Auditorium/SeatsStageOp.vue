@@ -133,16 +133,37 @@
 
       <div :style="{ backgroundColor: 'lightblue', width: '70px', minWidth: '70px', overflow: 'auto', height: containerOuterHeight }">
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px">
-          <h3 style="margin: 0; font-size: 12px">Seats</h3>
+          <h3 style="margin: 0; ">Seats</h3>
         </div>
 
-        <p style="margin: 0; font-weight: bold; font-size: 14px; padding: 0 5px">
+        <p style="margin: 0; font-weight: bold;  padding: 0 5px">
           {{ selectedSeatsArray.length }}
 
           <v-btn v-if="selectedSeatsArray.length > 0" outlined fab x-small icon color="error" title="Clear all" @click="selectedSeatsArray = []">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </p>
+
+        <div v-if="selectedSeatsArray.length > 0" class="mt-3" style="padding: 5px; display: flex; flex-wrap: wrap; gap: 3px; justify-content: center">
+          <v-btn class="mb-2"  icon title="Disponible" style="background-color: #ffeb3b !important; color: black">
+            <v-icon >mdi-check</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon title="Ocupado" style="background-color: #3B82F6 !important; color: white">
+            <v-icon >mdi-account</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon title="Adulto" style="background-color: #6B7280 !important; color: white">
+            <v-icon >mdi-account</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon title="Adolescente" style="background-color: #8B5CF6 !important; color: white">
+            <v-icon >mdi-account-outline</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon title="Niño" style="background-color: #EC4899 !important; color: white">
+            <v-icon >mdi-human-child</v-icon>
+          </v-btn>
+          <v-btn class="mb-2"  icon title="Porteador" style="background-color: #F97316 !important; color: white">
+            <v-icon >mdi-bag-checked</v-icon>
+          </v-btn>
+        </div>
 
         <!-- <div v-for="seatId in selectedSeatsArray" :key="seatId" style="padding: 3px; margin: 3px; background: white; border-radius: 3px; font-size: 10px; word-break: break-all">
           {{ seatId }} -->
