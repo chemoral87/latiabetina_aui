@@ -65,8 +65,8 @@
       </v-menu>
     </v-app-bar>
 
-    <v-main>
-      <v-container fluid class="pa-0">
+    <v-main class="no-drag">
+      <v-container fluid class="pa-0 no-drag">
         <Nuxt />
       </v-container>
       <MyLoading :value="loading_display"></MyLoading>
@@ -210,5 +210,22 @@ export default {
 }
 .back_white {
   background-color: #f5f5f5 !important;
+}
+.no-drag {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Prevent pull-to-refresh in PWA */
+.v-main.no-drag {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
 }
 </style>
