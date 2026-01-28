@@ -34,7 +34,7 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
-        {{ selectedSeatsArray }}
+        
       </v-col>
     </v-row>
 
@@ -144,8 +144,8 @@
           </v-btn>
         </p>
 
-        <div v-for="seatId in selectedSeatsArray" :key="seatId" style="padding: 3px; margin: 3px; background: white; border-radius: 3px; font-size: 10px; word-break: break-all">
-          {{ seatId }}
+        <!-- <div v-for="seatId in selectedSeatsArray" :key="seatId" style="padding: 3px; margin: 3px; background: white; border-radius: 3px; font-size: 10px; word-break: break-all">
+          {{ seatId }} -->
         </div>
       </div>
     </div>
