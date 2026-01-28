@@ -34,99 +34,120 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
+        {{ selectedSeatsArray }}
       </v-col>
     </v-row>
 
-    <div :style="{ backgroundColor: 'blueviolet', width: 'calc(100% - 70px)', height: containerOuterHeight, overflow: 'hidden' }">
-      <v-stage
-        ref="konvaStage"
-        :config="adjustedStageConfig"
-        :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
-        @click="handleStageClick"
-        @tap="handleStageClick"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd"
-      >
-        <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
-          <!-- Show only selected subsection if one is selected -->
-          <template v-if="selectedSubsection">
-            <v-group :config="{ x: 17, y: 20 }">
-              <v-rect
-                :config="{
-                  x: -15,
-                  y: -17,
-                  width: getSubsectionWidth(selectedSubsection) + 22,
-                  height: getSubsectionHeight(selectedSubsection) + 31,
-                  fill: 'black',
-                  stroke: 'red',
-                  strokeWidth: 1,
-                }"
-              />
-              <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-              <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
-              <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
+    <div style="display: flex; gap: 2px">
+      <div :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
+        <v-stage
+          ref="konvaStage"
+          :config="adjustedStageConfig"
+          :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
+          @click="handleStageClick"
+          @tap="handleStageClick"
+          @touchstart="handleTouchStart"
+          @touchmove="handleTouchMove"
+          @touchend="handleTouchEnd"
+        >
+          <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
+            <!-- Show only selected subsection if one is selected -->
+            <template v-if="selectedSubsection">
+              <v-group :config="{ x: 17, y: 20 }">
+                <v-rect
+                  :config="{
+                    x: -15,
+                    y: -17,
+                    width: getSubsectionWidth(selectedSubsection) + 22,
+                    height: getSubsectionHeight(selectedSubsection) + 31,
+                    fill: 'black',
+                    stroke: 'red',
+                    strokeWidth: 1,
+                  }"
+                />
+                <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
+                <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
 
-              <template v-for="seat in getSubsectionSeats(selectedSubsection)">
-                <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                  <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                </v-group>
-              </template>
-            </v-group>
-          </template>
+                <template v-for="seat in getSubsectionSeats(selectedSubsection)">
+                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat)" @tap="handleSeatClick(seat)" @touchend="handleSeatClick(seat)" />
+                  </v-group>
+                </template>
+              </v-group>
+            </template>
 
-          <!-- Show all sections when no subsection is selected -->
-          <template v-else>
-            <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
-              <v-rect :config="getSectionBgConfig(section)" />
-              <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
-              <v-text :config="getSectionTitleConfig(section)" />
+            <!-- Show all sections when no subsection is selected -->
+            <template v-else>
+              <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
+                <v-rect :config="getSectionBgConfig(section)" />
+                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
+                <v-text :config="getSectionTitleConfig(section)" />
 
-              <template v-if="!section.isLabel">
-                <v-group
-                  v-for="(sub, subIdx) in section.subsections"
-                  :key="`sub-${sIdx}-${subIdx}`"
-                  :config="getSubsectionPosition(section, subIdx)"
-                  @click="handleSubsectionClick(sub)"
-                  @tap="handleSubsectionClick(sub)"
-                  @mouseenter="handleSeatHover"
-                  @mouseleave="handleSeatLeave"
-                >
-                  <template v-if="sub.isLabel">
-                    <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                    <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
-                  </template>
-
-                  <template v-else>
-                    <v-group>
-                      <v-rect
-                        :config="{
-                          x: -15,
-                          y: -17,
-                          width: getSubsectionWidth(sub) + 22,
-                          height: getSubsectionHeight(sub) + 31,
-                          fill: 'black',
-                          stroke: 'red',
-                          strokeWidth: 1,
-                        }"
-                      />
-                      <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                      <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-                      <v-text :config="getSubsectionTitleConfig(sub)" />
-                    </v-group>
-
-                    <template v-for="seat in getSubsectionSeats(sub)">
-                      <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                        <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
-                      </v-group>
+                <template v-if="!section.isLabel">
+                  <v-group
+                    v-for="(sub, subIdx) in section.subsections"
+                    :key="`sub-${sIdx}-${subIdx}`"
+                    :config="getSubsectionPosition(section, subIdx)"
+                    @click="handleSubsectionClick(sub)"
+                    @tap="handleSubsectionClick(sub)"
+                    @mouseenter="handleSeatHover"
+                    @mouseleave="handleSeatLeave"
+                  >
+                    <template v-if="sub.isLabel">
+                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
+                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
                     </template>
-                  </template>
-                </v-group>
-              </template>
-            </v-group>
-          </template>
-        </v-layer>
-      </v-stage>
+
+                    <template v-else>
+                      <v-group>
+                        <v-rect
+                          :config="{
+                            x: -15,
+                            y: -17,
+                            width: getSubsectionWidth(sub) + 22,
+                            height: getSubsectionHeight(sub) + 31,
+                            fill: 'black',
+                            stroke: 'red',
+                            strokeWidth: 1,
+                          }"
+                        />
+                        <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+                        <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
+                        <v-text :config="getSubsectionTitleConfig(sub)" />
+                      </v-group>
+
+                      <template v-for="seat in getSubsectionSeats(sub)">
+                        <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
+                          <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                        </v-group>
+                      </template>
+                    </template>
+                  </v-group>
+                </template>
+              </v-group>
+            </template>
+          </v-layer>
+        </v-stage>
+      </div>
+
+      <div :style="{ backgroundColor: 'lightblue', width: '70px', minWidth: '70px', overflow: 'auto', height: containerOuterHeight }">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px">
+          <h3 style="margin: 0; font-size: 12px">Seats</h3>
+        </div>
+
+        <p style="margin: 0; font-weight: bold; font-size: 14px; padding: 0 5px">
+          {{ selectedSeatsArray.length }}
+
+          <v-btn v-if="selectedSeatsArray.length > 0" outlined fab x-small icon color="error" title="Clear all" @click="selectedSeatsArray = []">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </p>
+
+        <div v-for="seatId in selectedSeatsArray" :key="seatId" style="padding: 3px; margin: 3px; background: white; border-radius: 3px; font-size: 10px; word-break: break-all">
+          {{ seatId }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -169,6 +190,9 @@ export default {
       cachedControlHeight: 50, // altura inicial del control row
       lastDistance: 0, // distancia entre dedos en el último evento touch
       lastCenter: null, // centro del pinch en el último evento
+      selectedSeatsArray: [], // Array of selected seat IDs
+      blinkState: false, // Toggle for blinking animation
+      blinkInterval: null, // Interval reference
     }
   },
   computed: {
@@ -256,9 +280,10 @@ export default {
     },
 
     containerWidth() {
-      // Ancho del contenedor: 100% - 70px
+      // Ancho del contenedor: 100% - 70px (sidebar) - gap
       if (typeof window === "undefined") return 800
-      return window.innerWidth - 70
+      const gap = 2 // gap between panels (matches template gap: 2px)
+      return window.innerWidth - 70 - gap
     },
 
     containerHeightPx() {
@@ -289,6 +314,17 @@ export default {
         this.fitToWidth()
       }, 100)
     })
+
+    // Start blinking interval for selected seats
+    this.blinkInterval = setInterval(() => {
+      this.blinkState = !this.blinkState
+    }, 500) // Toggle every second
+  },
+  beforeDestroy() {
+    // Clean up interval
+    if (this.blinkInterval) {
+      clearInterval(this.blinkInterval)
+    }
   },
   methods: {
     getControlRowHeight() {
@@ -464,6 +500,7 @@ export default {
     getSeatConfig(seat) {
       const isReserved = seat.state === "reserved"
       const isSelected = seat.state === "selected"
+      const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
       const category = seat.category ? String(seat.category).toLowerCase() : null
       const classStrokeMap = CLASS_STROKE_MAP
 
@@ -485,11 +522,18 @@ export default {
         } catch (err) {}
       }
 
+      // Apply blinking effect for seats in selectedSeatsArray
+      let fill = isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE
+      if (isInSelectedArray) {
+        fill = this.blinkState ? "#ffeb3b" : "#f44336" // Yellow and Red blinking
+        strokeWidth = 0
+      }
+
       return {
         x: seat.x,
         y: seat.y,
         radius: this.settings.SEAT_SIZE / 2,
-        fill: isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE,
+        fill,
         stroke,
         strokeWidth,
         opacity: isReserved ? 0.6 : 1,
@@ -766,6 +810,37 @@ export default {
 
     handleStageClick(e) {
       // Optional: handle stage background clicks if needed
+    },
+
+    handleSeatClick(seat, event) {
+      // Stop event propagation to prevent stage drag
+      if (event && event.cancelBubble !== undefined) {
+        event.cancelBubble = true
+      }
+      if (event && event.evt) {
+        event.evt.stopPropagation()
+        event.evt.preventDefault()
+      }
+
+      // Only allow selection when a subsection is selected
+      if (!this.selectedSubsection) {
+        return
+      }
+
+      const seatId = seat.id
+      const index = this.selectedSeatsArray.indexOf(seatId)
+
+      if (index > -1) {
+        // Seat is already selected, remove it
+        this.selectedSeatsArray.splice(index, 1)
+        console.log("Seat removed from selection:", seatId)
+      } else {
+        // Seat is not selected, add it
+        this.selectedSeatsArray.push(seatId)
+        console.log("Seat added to selection:", seatId)
+      }
+
+      console.log("Selected seats array:", this.selectedSeatsArray)
     },
 
     handleTouchStart(e) {
