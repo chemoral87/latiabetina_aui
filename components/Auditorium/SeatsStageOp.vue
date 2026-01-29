@@ -68,6 +68,17 @@
                 <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
                 <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
                 <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
+                <v-text
+                  :config="{
+                    x: -13,
+                    y: -28,
+                    text: `${subsectionStats.withStatus}/${subsectionStats.total}    ${subsectionStats.percent}%`,
+                    fontSize: 10,
+                    fill: '#FF9800',
+                    fontStyle: 'bold',
+                    fontFamily: 'Arial',
+                  }"
+                />
 
                 <template v-for="seat in getSubsectionSeats(selectedSubsection)">
                   <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
@@ -115,6 +126,17 @@
                         <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
                         <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
                         <v-text :config="getSubsectionTitleConfig(sub)" />
+                        <v-text
+                          :config="{
+                            x: -13,
+                            y: -28,
+                            text: `${getSubsectionStatsFor(sub).withStatus}/${getSubsectionStatsFor(sub).total}    ${getSubsectionStatsFor(sub).percent}%`,
+                            fontSize: 10,
+                            fill: '#FF9800',
+                            fontStyle: 'bold',
+                            fontFamily: 'Arial',
+                          }"
+                        />
                       </v-group>
 
                       <template v-for="seat in getSubsectionSeats(sub)">
@@ -314,6 +336,30 @@ export default {
       const appBarH = this.appBarHeight
       return window.innerHeight - controlH - appBarH - 34
     },
+
+    subsectionStats() {
+      if (!this.selectedSubsection || !this.selectedSubsection.seats) {
+        return { withStatus: 0, total: 0, percent: 0 }
+      }
+
+      let total = 0
+      let withStatus = 0
+
+      this.selectedSubsection.seats.forEach((row) => {
+        row.forEach((seat) => {
+          if (seat && seat.state !== 'invisible') {
+            total++
+            if (seat.status && seat.status !== null) {
+              withStatus++
+            }
+          }
+        })
+      })
+
+      const percent = total > 0 ? Math.round((withStatus / total) * 100) : 0
+
+      return { withStatus, total, percent }
+    },
   },
   watch: {
     selectedSubsection() {
@@ -339,7 +385,7 @@ export default {
     // Start blinking interval for selected seats
     this.blinkInterval = setInterval(() => {
       this.blinkState = !this.blinkState
-    }, 500) // Toggle every second
+    }, 400) // Toggle every second
   },
   beforeDestroy() {
     // Clean up interval
@@ -348,6 +394,30 @@ export default {
     }
   },
   methods: {
+    getSubsectionStatsFor(sub) {
+      if (!sub || !sub.seats) {
+        return { withStatus: 0, total: 0, percent: 0 }
+      }
+
+      let total = 0
+      let withStatus = 0
+
+      sub.seats.forEach((row) => {
+        row.forEach((seat) => {
+          if (seat && seat.state !== 'invisible') {
+            total++
+            if (seat.status && seat.status !== null) {
+              withStatus++
+            }
+          }
+        })
+      })
+
+      const percent = total > 0 ? Math.round((withStatus / total) * 100) : 0
+
+      return { withStatus, total, percent }
+    },
+
     getControlRowHeight() {
       // Intentar obtener la altura real del elemento v-row
       if (this.$refs.controlRow) {
