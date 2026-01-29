@@ -78,6 +78,7 @@ export default {
     "./plugins/notify.js",
     { src: "./plugins/vuetify-lang.js", mode: "client" },
     { src: "./plugins/localstorage.js", mode: "client" },
+    { src: "./plugins/echo.js", mode: "client" },
   ],
 
   // Auto import components
@@ -340,8 +341,8 @@ export default {
 
     // Filenames con hash para cache
     filenames: {
-      app: ({ isDev }) => (isDev ? "[name].js" : `[name].[contenthash:7].${BUILD_TIMESTAMP}.js`),
-      chunk: ({ isDev }) => (isDev ? "[name].js" : `[id].[contenthash:7].${BUILD_TIMESTAMP}.js`),
+      app: ({ isDev }) => (isDev ? `[name].${BUILD_TIMESTAMP}.js` : `[name].[contenthash:7].${BUILD_TIMESTAMP}.js`),
+      chunk: ({ isDev }) => (isDev ? `[name].${BUILD_TIMESTAMP}.js` : `[id].[contenthash:7].${BUILD_TIMESTAMP}.js`),
       css: ({ isDev }) => (isDev ? "[name].css" : `[name].[contenthash:7].${BUILD_TIMESTAMP}.css`),
       img: ({ isDev }) => (isDev ? "[path][name].[ext]" : `img/[name].[contenthash:7].${BUILD_TIMESTAMP}.[ext]`),
       font: ({ isDev }) => (isDev ? "[path][name].[ext]" : `fonts/[name].[contenthash:7].${BUILD_TIMESTAMP}.[ext]`),
@@ -358,7 +359,7 @@ export default {
     },
 
     // Transpila Vuetify correctamente
-    transpile: ["vuetify/lib"],
+    transpile: ["vuetify/lib", "laravel-echo"],
 
     // Babel optimizado
     babel: {

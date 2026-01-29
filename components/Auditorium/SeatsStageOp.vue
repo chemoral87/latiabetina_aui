@@ -810,11 +810,10 @@ export default {
             maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
             // Agregar padding adicional para el contenido completo
             maxContentWidth += 20 // padding lateral
-            console.log("Full view, max section width:", maxContentWidth)
+            
           }
 
-          console.log("Actual container width:", actualWidth, "Max content width:", maxContentWidth)
-
+    
           if (maxContentWidth > 0 && actualWidth > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = actualWidth / maxContentWidth
@@ -824,7 +823,6 @@ export default {
             this.zoomLevel = 0.7 // Default más grande
           }
 
-          console.log("Fit to width zoom level:", this.zoomLevel)
 
           // Establecer modo de arrastre en X (permite solo movimiento vertical Y)
           this.dragMode = "x"
@@ -849,7 +847,7 @@ export default {
       this.fitstate = 'height'
       // Calcular el zoom óptimo basado en la altura disponible
       if (!this.sections || this.sections.length === 0) {
-        console.warn("No sections available for fit calculation")
+        
         this.zoomLevel = 0.7
         return
       }
@@ -976,14 +974,14 @@ export default {
       if (index > -1) {
         // Seat is already selected, remove it
         this.selectedSeatsArray.splice(index, 1)
-        console.log("Seat removed from selection:", seatId)
+        
       } else {
         // Seat is not selected, add it
         this.selectedSeatsArray.push(seatId)
-        console.log("Seat added to selection:", seatId)
+        
       }
 
-      console.log("Selected seats array:", this.selectedSeatsArray)
+      
     },
 
     setEventSeat(status) {

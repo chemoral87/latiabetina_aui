@@ -53,6 +53,7 @@
     </div>
 
     <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
+    {{ notificationRealTimeArray }}
   </v-container>
 </template>
 
@@ -83,11 +84,13 @@ export default {
   },
   data() {
     return {
+      notificationRealTimeArray: [],
       eventAuditorium: {},
       sections: [],
       settings: { ...DEFAULT_SETTINGS },
       stageCategories: STAGE_CATEGORIES,
       loading: false,
+      echoChannel: null,
     }
   },
   computed: {
@@ -163,6 +166,17 @@ export default {
 
     // Load the auditorium configuration
     this.loadConfiguration()
+
+    // Set up real-time notifications listener
+    this.setupRealtimeListeners()
+  },
+
+  beforeDestroy() {
+    // Clean up Echo channel when component is destroyed
+    if (this.echoChannel) {
+      this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
+      this.echoChannel = null
+    }
   },
 
   methods: {
@@ -238,7 +252,6 @@ export default {
 
     async handleSetEventSeat(payload) {
       const { seatIds, status } = payload
-      console.log("handleSetEventSeat called with:", { seatIds, status })
 
       if (!seatIds || seatIds.length === 0) {
         this.$notify.error("No seats selected")
@@ -295,6 +308,36 @@ export default {
         }
       }
       return null
+    },
+
+    setupRealtimeListeners() {
+      if (!this.$echo || !this.eventAuditorium?.id) {
+        console.warn("Echo not available or event ID missing")
+        return
+      }
+
+      // Subscribe to the auditorium event channel
+      const channelName = `auditorium-event.${this.eventAuditorium.id}`
+      console.log(`📡 Subscribing to channel: ${channelName}`)
+
+      this.echoChannel = this.$echo.channel(channelName)
+
+      // Listen for seat updates
+      this.echoChannel.listen(".seat.updated", (data) => {
+        console.log("🔔 Seat update received:", data)
+
+        this.notificationRealTimeArray.push(data)
+
+        // Update local seats with the real-time data
+        if (data.seats && Array.isArray(data.seats)) {
+          data.seats.forEach((seatData) => {
+            const seat = this.findSeatById(seatData.seat_id)
+            if (seat) {
+              this.$set(seat, "status", seatData.status)
+            }
+          })
+        }
+      })
     },
   },
 }
