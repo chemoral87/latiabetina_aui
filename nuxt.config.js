@@ -3,6 +3,7 @@ const colors = require("vuetify/lib/util/colors").default
 const isDev = process.env.NODE_ENV !== "production"
 const port = 3001
 const APP_VERSION = "1.0.26"
+const BUILD_TIMESTAMP = Date.now()
 
 // Carga de variables de entorno
 let env
@@ -339,12 +340,12 @@ export default {
 
     // Filenames con hash para cache
     filenames: {
-      app: ({ isDev }) => (isDev ? "[name].js" : "[name].[contenthash:7].js"),
-      chunk: ({ isDev }) => (isDev ? "[name].js" : "[id].[contenthash:7].js"),
-      css: ({ isDev }) => (isDev ? "[name].css" : "[name].[contenthash:7].css"),
-      img: ({ isDev }) => (isDev ? "[path][name].[ext]" : "img/[name].[contenthash:7].[ext]"),
-      font: ({ isDev }) => (isDev ? "[path][name].[ext]" : "fonts/[name].[contenthash:7].[ext]"),
-      video: ({ isDev }) => (isDev ? "[path][name].[ext]" : "videos/[name].[contenthash:7].[ext]"),
+      app: ({ isDev }) => (isDev ? "[name].js" : `[name].[contenthash:7].${BUILD_TIMESTAMP}.js`),
+      chunk: ({ isDev }) => (isDev ? "[name].js" : `[id].[contenthash:7].${BUILD_TIMESTAMP}.js`),
+      css: ({ isDev }) => (isDev ? "[name].css" : `[name].[contenthash:7].${BUILD_TIMESTAMP}.css`),
+      img: ({ isDev }) => (isDev ? "[path][name].[ext]" : `img/[name].[contenthash:7].${BUILD_TIMESTAMP}.[ext]`),
+      font: ({ isDev }) => (isDev ? "[path][name].[ext]" : `fonts/[name].[contenthash:7].${BUILD_TIMESTAMP}.[ext]`),
+      video: ({ isDev }) => (isDev ? "[path][name].[ext]" : `videos/[name].[contenthash:7].${BUILD_TIMESTAMP}.[ext]`),
     },
 
     // Compila assets con loaders optimizados
