@@ -31,7 +31,7 @@ export default {
 
       if (error) {
         this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
-        window.location.href = "/login"
+        this.$router.push("/login")
         return
       }
 
@@ -56,12 +56,12 @@ export default {
         } catch (error) {
           if (!error.message.includes("Navigation cancelled")) {
             this.$store.dispatch("notify", { error: "Error al iniciar sesión con Google" })
-            window.location.href = "/login"
+            this.$router.push("/login")
           }
         }
       } else {
         // No hay token, redirige al login
-        window.location.href = "/login"
+        this.$router.push("/login")
       }
     },
   },
