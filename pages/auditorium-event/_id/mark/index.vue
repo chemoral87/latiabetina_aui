@@ -292,8 +292,6 @@ export default {
             }
           })
         }
-
-        this.$notify.success(response.success || `${seatIds.length} seat(s) updated successfully`)
       } catch (error) {
         console.error("Error updating seats:", error)
         this.$handleError(error)

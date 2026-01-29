@@ -442,14 +442,13 @@ export default {
     },
 
     getPercentageColor(percent) {
-      if (percent >= 0 && percent <= 60) {
-        return '#4CAF50' // Verde
-      } else if (percent >= 61 && percent <= 90) {
+      if (percent >= 86) {
+           return '#F44336' // Rojo
+        // Verde
+      } else if (percent >= 57 ) {
         return '#FF9800' // Naranja
-      } else if (percent >= 91) {
-        return '#F44336' // Rojo
-      }
-      return '#000000' // Negro por defecto
+      } 
+     return '#4CAF50'
     },
 
     getControlRowHeight() {
