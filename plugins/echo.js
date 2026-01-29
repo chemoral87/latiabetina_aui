@@ -5,18 +5,15 @@ export default ({ app, store }, inject) => {
   // Configure Pusher
   window.Pusher = Pusher
 
-  // Create Echo instance
+  // Create Echo instance with Laravel Reverb configuration
   const echo = new Echo({
-    broadcaster: "pusher",
-    key: "latiabetina-key",
-    // wsHost: "127.0.0.1",
+    broadcaster: "reverb",
+    key: "c4k4ojg6jh3olvof8pgo",
     wsHost: window.location.hostname,
     wsPort: 6001,
     wssPort: 6001,
     forceTLS: false,
-    disableStats: true,
     enabledTransports: ["ws", "wss"],
-    cluster: "mt1",
     // Auth configuration for private/presence channels if needed
     authEndpoint: `${process.env.BASE_URL}${process.env.SUFFIX_URL}/broadcasting/auth`,
     auth: {
