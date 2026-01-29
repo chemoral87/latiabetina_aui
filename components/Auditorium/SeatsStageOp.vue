@@ -81,8 +81,8 @@
                 />
 
                 <template v-for="seat in getSubsectionSeats(selectedSubsection)">
-                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat, $event)" @tap="handleSeatClick(seat, $event)"  />
+                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
+                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0, listening: true, draggable: false })" @click="handleSeatClick(seat, $event)" @tap="handleSeatClick(seat, $event)" @mousedown="(e) => e.cancelBubble = true" />
                   </v-group>
                 </template>
               </v-group>
