@@ -6,12 +6,15 @@ export default ({ app, store }, inject) => {
   window.Pusher = Pusher
 
   // Create Echo instance with Laravel Reverb configuration
+  const reverbKey = process.env.REVERB_APP_KEY
+  const reverbPort = parseInt(process.env.REVERB_PORT)
+
   const echo = new Echo({
     broadcaster: "reverb",
-    key: "c4k4ojg6jh3olvof8pgo",
+    key: reverbKey,
     wsHost: window.location.hostname,
-    wsPort: 6001,
-    wssPort: 6001,
+    wsPort: reverbPort,
+    wssPort: reverbPort,
     forceTLS: false,
     enabledTransports: ["ws", "wss"],
     // Auth configuration for private/presence channels if needed
