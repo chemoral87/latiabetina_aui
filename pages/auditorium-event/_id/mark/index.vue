@@ -53,7 +53,6 @@
     </div>
 
     <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
-    {{ notificationRealTimeArray }}
   </v-container>
 </template>
 
@@ -326,7 +325,7 @@ export default {
       this.echoChannel.listen(".seat.updated", (data) => {
         console.log("🔔 Seat update received:", data)
 
-        this.notificationRealTimeArray.push(data)
+        // this.notificationRealTimeArray.push(data)
 
         // Update local seats with the real-time data
         if (data.seats && Array.isArray(data.seats)) {
