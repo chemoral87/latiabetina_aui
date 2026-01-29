@@ -5,7 +5,7 @@
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
-        <span class="text-subtitle-2 ml-3 mr-3">{{ percentajeTotalSeats }}%</span>
+        <span class="text-subtitle-2 ml-3 mr-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
       </div>
       <div>
         <!-- Debug info -->
@@ -153,6 +153,18 @@ export default {
     percentajeTotalSeats() {
       if (this.totalSeats === 0) return 0
       return ((this.totalSeatsWithStatus / this.totalSeats) * 100).toFixed(1)
+    },
+
+    percentageColor() {
+      const percentage = parseFloat(this.percentajeTotalSeats)
+      if (percentage >= 0 && percentage <= 60) {
+        return "#4CAF50" // Verde
+      } else if (percentage >= 61 && percentage <= 90) {
+        return "#FF9800" // Naranja
+      } else if (percentage >= 91) {
+        return "#F44336" // Rojo
+      }
+      return "#000000" // Negro por defecto
     },
   },
 

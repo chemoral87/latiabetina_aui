@@ -72,9 +72,20 @@
                   :config="{
                     x: -13,
                     y: -28,
-                    text: `${subsectionStats.withStatus}/${subsectionStats.total}    ${subsectionStats.percent}%`,
+                    text: `${subsectionStats.withStatus}/${subsectionStats.total}`,
                     fontSize: 10,
-                    fill: '#FF9800',
+                    fill: 'white',
+                    fontStyle: 'bold',
+                    fontFamily: 'Arial',
+                  }"
+                />
+                <v-text
+                  :config="{
+                    x: 20,
+                    y: -28,
+                    text: `${subsectionStats.percent}%`,
+                    fontSize: 10,
+                    fill: getPercentageColor(subsectionStats.percent),
                     fontStyle: 'bold',
                     fontFamily: 'Arial',
                   }"
@@ -130,9 +141,20 @@
                           :config="{
                             x: -13,
                             y: -28,
-                            text: `${getSubsectionStatsFor(sub).withStatus}/${getSubsectionStatsFor(sub).total}    ${getSubsectionStatsFor(sub).percent}%`,
+                            text: `${getSubsectionStatsFor(sub).withStatus}/${getSubsectionStatsFor(sub).total}`,
                             fontSize: 10,
-                            fill: '#FF9800',
+                            fill: 'white',
+                            fontStyle: 'bold',
+                            fontFamily: 'Arial',
+                          }"
+                        />
+                        <v-text
+                          :config="{
+                            x: 20,
+                            y: -28,
+                            text: `${getSubsectionStatsFor(sub).percent}%`,
+                            fontSize: 10,
+                            fill: getPercentageColor(getSubsectionStatsFor(sub).percent),
                             fontStyle: 'bold',
                             fontFamily: 'Arial',
                           }"
@@ -417,6 +439,17 @@ export default {
       const percent = total > 0 ? Math.round((withStatus / total) * 100) : 0
 
       return { withStatus, total, percent }
+    },
+
+    getPercentageColor(percent) {
+      if (percent >= 0 && percent <= 60) {
+        return '#4CAF50' // Verde
+      } else if (percent >= 61 && percent <= 90) {
+        return '#FF9800' // Naranja
+      } else if (percent >= 91) {
+        return '#F44336' // Rojo
+      }
+      return '#000000' // Negro por defecto
     },
 
     getControlRowHeight() {
