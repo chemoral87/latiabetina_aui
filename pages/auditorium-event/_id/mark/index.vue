@@ -1,8 +1,11 @@
 <template>
   <v-container fluid class="pa-0">
     <div v-if="eventAuditorium && eventAuditorium.id">
-      <div class="pa-2 grey lighten-4">
+      <div class="pa-2 grey lighten-4 d-flex align-center">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
+        <v-spacer></v-spacer>
+        <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
+        <span class="text-subtitle-2 ml-3 mr-3">{{ percentajeTotalSeats }}%</span>
       </div>
       <div>
         <!-- Debug info -->
@@ -107,6 +110,47 @@ export default {
       const height = Math.max(700, totalHeight)
 
       return { width, height }
+    },
+
+    totalSeats() {
+      let count = 0
+      this.sections.forEach((section) => {
+        if (section.subsections) {
+          section.subsections.forEach((subsection) => {
+            if (subsection.seats) {
+              subsection.seats.forEach((row) => {
+                count += row.length
+              })
+            }
+          })
+        }
+      })
+      return count
+    },
+
+    totalSeatsWithStatus() {
+      let count = 0
+      this.sections.forEach((section) => {
+        if (section.subsections) {
+          section.subsections.forEach((subsection) => {
+            if (subsection.seats) {
+              subsection.seats.forEach((row) => {
+                row.forEach((seat) => {
+                  if (seat.status) {
+                    count++
+                  }
+                })
+              })
+            }
+          })
+        }
+      })
+      return count
+    },
+
+    percentajeTotalSeats() {
+      if (this.totalSeats === 0) return 0
+      return ((this.totalSeatsWithStatus / this.totalSeats) * 100).toFixed(1)
     },
   },
 

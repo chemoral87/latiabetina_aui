@@ -236,6 +236,7 @@ export default {
       selectedSeatsArray: [], // Array of selected seat IDs
       blinkState: false, // Toggle for blinking animation
       blinkInterval: null, // Interval reference
+      fitstate: null, // 'width' or 'height' - tracks current fit mode
     }
   },
   computed: {
@@ -692,21 +693,25 @@ export default {
     handleSubsectionClick(subSection) {
       this.selectedSubsection = subSection
       console.log("Selected subsection:", subSection.id, subSection.name)
-      // Automatically fit to width when a subsection is selected
+      // Set fitstate to 'width' if null, then apply the current fitstate
+      if (this.fitstate === null) {
+        this.fitstate = 'width'
+      }
       this.$nextTick(() => {
         setTimeout(() => {
           this.cachedControlHeight = this.getControlRowHeight()
-          this.fitToWidth()
+          this.applyCurrentFit()
         }, 100)
       })
     },
 
     goBackToFullView() {
       this.selectedSubsection = null
+      // Maintain the current fitstate
       this.$nextTick(() => {
         setTimeout(() => {
           this.cachedControlHeight = this.getControlRowHeight()
-          this.fitToWidth()
+          this.applyCurrentFit()
         }, 100)
       })
     },
@@ -717,6 +722,12 @@ export default {
       const nextIndex = (currentIndex + 1) % this.allSubsections.length // circular navigation
       this.selectedSubsection = this.allSubsections[nextIndex]
       console.log("Next subsection:", this.selectedSubsection.name)
+      // Apply current fitstate
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.applyCurrentFit()
+        }, 100)
+      })
     },
 
     previousSubsection() {
@@ -725,6 +736,12 @@ export default {
       const prevIndex = currentIndex === 0 ? this.allSubsections.length - 1 : currentIndex - 1 // circular navigation
       this.selectedSubsection = this.allSubsections[prevIndex]
       console.log("Previous subsection:", this.selectedSubsection.name)
+      // Apply current fitstate
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.applyCurrentFit()
+        }, 100)
+      })
     },
 
     // Métodos de zoom
@@ -740,7 +757,18 @@ export default {
       console.log("Zoom out:", this.zoomLevel)
     },
 
+    applyCurrentFit() {
+      // Apply fit based on current fitstate
+      if (this.fitstate === 'height') {
+        this.fitToHeight()
+      } else {
+        this.fitToWidth()
+      }
+    },
+
     fitToWidth() {
+      // Set fitstate to 'width'
+      this.fitstate = 'width'
       // Calcular el zoom óptimo basado en el ancho disponible
       if (!this.sections || this.sections.length === 0) {
         console.warn("No sections available for fit calculation")
@@ -806,6 +834,8 @@ export default {
     },
 
     fitToHeight() {
+      // Set fitstate to 'height'
+      this.fitstate = 'height'
       // Calcular el zoom óptimo basado en la altura disponible
       if (!this.sections || this.sections.length === 0) {
         console.warn("No sections available for fit calculation")
