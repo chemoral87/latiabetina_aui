@@ -386,7 +386,7 @@ export default {
     // Start blinking interval for selected seats
     this.blinkInterval = setInterval(() => {
       this.blinkState = !this.blinkState
-    }, 400) // Toggle every second
+    }, 330) // Toggle every second
   },
   beforeDestroy() {
     // Clean up interval
@@ -618,7 +618,18 @@ export default {
       // Apply blinking effect for seats in selectedSeatsArray
       let fill = isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE
       if (isInSelectedArray) {
-        fill = this.blinkState ? "#ffeb3b" : "#f44336" // Yellow and Red blinking
+        let baseColor = "#ffeb3b" // default yellow for no status
+        if (status) {
+          const statusColors = {
+            ocupado: "#0000ff",
+            adulto: "#6B7280",
+            adolescente: "#8B5CF6",
+            niño: "#EC4899",
+            porteador: "#F97316",
+          }
+          baseColor = statusColors[status] || "#ffeb3b"
+        }
+        fill = this.blinkState ? baseColor : "#f44336" // Blink between status color (or yellow) and red
         strokeWidth = 0
       } else if (status) {
         // Set fill color based on status
