@@ -7,15 +7,20 @@ export default ({ app, store }, inject) => {
 
   // Create Echo instance with Laravel Reverb configuration
   const reverbKey = process.env.REVERB_APP_KEY
-  const reverbPort = parseInt(process.env.REVERB_PORT)
+  const reverbHost = process.env.REVERB_HOST || window.location.hostname
+  const reverbPort = parseInt(process.env.REVERB_PORT || "6001")
+  const reverbScheme = process.env.REVERB_SCHEME || "http"
+  const useTLS = reverbScheme === "https"
+
+  console.log("🔧 Reverb Config:", { key: reverbKey, host: reverbHost, port: reverbPort, scheme: reverbScheme, forceTLS: useTLS })
 
   const echo = new Echo({
     broadcaster: "reverb",
     key: reverbKey,
-    wsHost: window.location.hostname,
+    wsHost: reverbHost,
     wsPort: reverbPort,
     wssPort: reverbPort,
-    forceTLS: false,
+    forceTLS: useTLS,
     enabledTransports: ["ws", "wss"],
     // Auth configuration for private/presence channels if needed
     authEndpoint: `${process.env.BASE_URL}${process.env.SUFFIX_URL}/broadcasting/auth`,

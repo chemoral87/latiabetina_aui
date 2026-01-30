@@ -32,7 +32,9 @@ export default {
     SUFFIX_URL: process.env.SUFFIX_URL || ":8000/api",
     BASE_URL: process.env.BASE_URL,
     REVERB_APP_KEY: process.env.REVERB_APP_KEY,
+    REVERB_HOST: process.env.REVERB_HOST,
     REVERB_PORT: process.env.REVERB_PORT || "6001",
+    REVERB_SCHEME: process.env.REVERB_SCHEME || "http",
   },
 
   ssr: false,
