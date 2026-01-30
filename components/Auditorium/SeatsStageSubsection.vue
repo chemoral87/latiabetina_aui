@@ -159,14 +159,6 @@ export default {
       return allSeats
     },
   },
-  watch: {
-    subsection: {
-      deep: true,
-      handler() {
-        this.$forceUpdate()
-      },
-    },
-  },
   methods: {
     getRowLabelConfig(rowIdx) {
       return {

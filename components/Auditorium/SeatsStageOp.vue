@@ -53,7 +53,7 @@
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :key="selectedSubsection.id" :subsection="selectedSubsection" :settings="settings" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :settings="settings" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
