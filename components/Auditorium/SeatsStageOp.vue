@@ -120,7 +120,7 @@
 
                       <template v-for="seat in getSubsectionSeats(sub)">
                         <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                          <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" />
+                          <!-- <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" /> -->
                         </v-group>
                       </template>
                     </template>
@@ -149,19 +149,19 @@
           <v-btn class="mb-2" icon  title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)">
             <v-icon >mdi-account-outline</v-icon>
           </v-btn>
-          <v-btn class="mb-6"  icon  title="Ocupado" style="background-color: #0000ff  !important; color: white" @click="setEventSeat('ocupado')">
+          <v-btn class="mb-6"  icon  title="Ocupado" style="background-color: #0000ff  !important; color: white" @click="setEventSeat('ocu')">
             <v-icon >mdi-account</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon  title="Adulto" style="background-color: #6B7280 !important; color: white" @click="setEventSeat('adulto')">
+          <v-btn class="mb-2"  icon  title="Adulto" style="background-color: #6B7280 !important; color: white" @click="setEventSeat('adu')">
             <v-icon >mdi-human</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #8B5CF6 !important; color: white" @click="setEventSeat('adolescente')">
+          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #8B5CF6 !important; color: white" @click="setEventSeat('ado')">
             <v-icon >mdi-human-scooter</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #EC4899 !important; color: white" @click="setEventSeat('niño')">
+          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #EC4899 !important; color: white" @click="setEventSeat('niñ')">
             <v-icon >mdi-human-child</v-icon>
           </v-btn>
-          <v-btn  icon title="Porteador" style="background-color: #F97316 !important; color: white" @click="setEventSeat('porteador')">
+          <v-btn  icon title="Porteador" style="background-color: #F97316 !important; color: white" @click="setEventSeat('por')">
             <v-icon >mdi-human-male-child</v-icon>
           </v-btn>
         </div>
@@ -175,14 +175,15 @@
 </template>
 
 <script>
+
 import Vue from "vue"
 import VueKonva from "vue-konva"
+import { STATUS_COLORS } from "./constants.js"
 import { CLASS_STROKE_MAP } from "~/constants/auditorium.js"
 Vue.use(VueKonva)
 
 const COLORS = {
   SEAT_SELECTED: "#1976d2",
-
   SEAT_FREE: "#ffeb3b", // "#1b728d",
   SEAT_RESERVED: "lightgrey",
   SECTION_BG: "#222d3b",
@@ -609,27 +610,13 @@ export default {
       if (isInSelectedArray) {
         let baseColor = "#ffeb3b" // default yellow for no status
         if (status) {
-          const statusColors = {
-            ocupado: "#0000ff",
-            adulto: "#6B7280",
-            adolescente: "#8B5CF6",
-            niño: "#EC4899",
-            porteador: "#F97316",
-          }
-          baseColor = statusColors[status] || "#ffeb3b"
+          baseColor = STATUS_COLORS[status] || "#ffeb3b"
         }
         fill = this.blinkState ? baseColor : "#f44336" // Blink between status color (or yellow) and red
         strokeWidth = 0
       } else if (status) {
         // Set fill color based on status
-        const statusColors = {
-          ocupado: "#0000ff",
-          adulto: "#6B7280",
-          adolescente: "#8B5CF6",
-          niño: "#EC4899",
-          porteador: "#F97316",
-        }
-        fill = statusColors[status] || fill
+        fill = STATUS_COLORS[status] || fill
       }
 
       return {

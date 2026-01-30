@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import { STATUS_COLORS } from "./constants.js"
+
 export default {
   name: "SeatsStageSubsection",
   props: {
@@ -199,6 +201,9 @@ export default {
         // Add your stroke map here if needed
       }
 
+      // Unified statusColors at file scope
+      const statusColors = STATUS_COLORS
+
       const isReserved = seat.state === "reserved"
       const isSelected = seat.state === "selected"
       const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
@@ -225,25 +230,11 @@ export default {
       if (isInSelectedArray) {
         let baseColor = "#ffeb3b"
         if (status) {
-          const statusColors = {
-            ocupado: "#0000ff",
-            adulto: "#6B7280",
-            adolescente: "#8B5CF6",
-            niño: "#EC4899",
-            porteador: "#F97316",
-          }
           baseColor = statusColors[status] || "#ffeb3b"
         }
         fill = this.blinkState ? baseColor : "#f44336"
         strokeWidth = 0
       } else if (status) {
-        const statusColors = {
-          ocupado: "#0000ff",
-          adulto: "#6B7280",
-          adolescente: "#8B5CF6",
-          niño: "#EC4899",
-          porteador: "#F97316",
-        }
         fill = statusColors[status] || fill
       }
 
