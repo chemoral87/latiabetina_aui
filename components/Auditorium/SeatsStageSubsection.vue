@@ -24,7 +24,7 @@
     <!-- Stats: Count -->
     <v-text
       :config="{
-        x: 4,
+        x: 2,
         y: -7,
         text: `${stats.withStatus}/${stats.total}`,
         fontSize: 10,
@@ -37,7 +37,7 @@
     <!-- Stats: Percentage -->
     <v-text
       :config="{
-        x: 39,
+        x: 32,
         y: -7,
         text: `${stats.percent}%`,
         fontSize: 10,

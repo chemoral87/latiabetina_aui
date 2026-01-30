@@ -606,17 +606,21 @@ export default {
               return (
                 s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sub)), 0) +
                 (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
-                DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
+                DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
+                20 // Extra padding to cover last subsection
               )
             })
         )
         return maxSectionWidth || 800 // Use max section width or default
       }
       if (!section.subsections.length) return 0
+      // Calculate extra width: subsection border (2px) + title padding (13px) + safety margin (5px) = 20px
+      const extraWidthPadding = 20
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
         (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
-        DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
+        DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
+        extraWidthPadding
       )
     },
 
@@ -625,7 +629,9 @@ export default {
       if (!section.subsections?.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
       if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
-      return maxRows * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
+      // Calculate extra height: column label offset (5px) + font size (8px) + spacing (7px) + stats area (20px) = 40px
+      const extraHeightPadding = 40
+      return maxRows * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + extraHeightPadding
     },
 
     // Events & interactions
