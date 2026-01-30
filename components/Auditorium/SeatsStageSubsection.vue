@@ -111,7 +111,7 @@ export default {
 
       this.subsection.seats.forEach((row) => {
         row.forEach((seat) => {
-          if (seat && seat.state !== "invisible") {
+          if (seat) {
             total++
             if (seat.status && seat.status !== null) {
               withStatus++
@@ -196,7 +196,7 @@ export default {
       const status = seat.status ? String(seat.status).toLowerCase() : null
 
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
-      let strokeWidth = 1
+      let strokeWidth = 0.3
 
       if (category) {
         try {
@@ -206,7 +206,7 @@ export default {
             strokeWidth = 2
           } else if (CLASS_STROKE_MAP[category]) {
             stroke = CLASS_STROKE_MAP[category]
-            strokeWidth = 2
+            strokeWidth = 0
           }
         } catch (err) {}
       }
