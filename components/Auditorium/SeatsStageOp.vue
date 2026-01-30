@@ -44,11 +44,7 @@
           ref="konvaStage"
           :config="adjustedStageConfig"
           :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
-          @click="handleStageClick"
-          @tap="handleStageClick"
-          @touchstart="handleTouchStart"
-          @touchmove="handleTouchMove"
-          @touchend="handleTouchEnd"
+    
         >
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
@@ -168,8 +164,6 @@ export default {
       zoomStep: 0.1,
       dragMode: null, // 'x', 'y', or null for both axes
       cachedControlHeight: 50, // altura inicial del control row
-      lastDistance: 0, // distancia entre dedos en el último evento touch
-      lastCenter: null, // centro del pinch en el último evento
       selectedSeatsArray: [], // Array of selected seat IDs
       blinkState: false, // Toggle for blinking animation
       blinkInterval: null, // Interval reference
@@ -285,7 +279,7 @@ export default {
 
       this.selectedSubsection.seats.forEach((row) => {
         row.forEach((seat) => {
-          if (seat && seat.state !== 'invisible') {
+          if (seat) {
             total++
             if (seat.status && seat.status !== null) {
               withStatus++
@@ -342,7 +336,7 @@ export default {
 
       sub.seats.forEach((row) => {
         row.forEach((seat) => {
-          if (seat && seat.state !== 'invisible') {
+          if (seat) {
             total++
             if (seat.status && seat.status !== null) {
               withStatus++
@@ -381,7 +375,7 @@ export default {
 
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      let y = 10
+      let y = 0
       
       // Calculate y position by summing heights of all previous sections
       for (let i = 0; i < sIdx; i++) {
@@ -395,7 +389,7 @@ export default {
 
       // Add 10px top margin for label sections (like "Altar")
       if (section.isLabel) {
-        y += 10
+        // y += 10
       }
 
       // Center each section within the original stage width
@@ -419,7 +413,7 @@ export default {
         x: 0,
         y: 4,
         text: section.name,
-        fontSize: section.isLabel ? 24 : 20,
+        fontSize: 22,
         fill: section.isLabel ? "#1976d2" : "#fff",
         fontStyle: "bold",
         fontFamily: "Arial",
@@ -505,7 +499,7 @@ export default {
       const allSeats = []
       sub.seats.forEach((row, rowIdx) => {
         row.forEach((seat, colIdx) => {
-          if (seat.state !== "invisible") {
+          if (seat) {
             allSeats.push({
               ...seat,
               x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
@@ -518,14 +512,12 @@ export default {
     },
 
     getSeatConfig(seat) {
-      const isReserved = seat.state === "reserved"
-      const isSelected = seat.state === "selected"
       const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
       const category = seat.category ? String(seat.category).toLowerCase() : null
       const status = seat.status ? String(seat.status).toLowerCase() : null
       const classStrokeMap = CLASS_STROKE_MAP
 
-      let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
+      let stroke = "#757575"
       let strokeWidth = 1
 
       if (category) {
@@ -544,7 +536,7 @@ export default {
       }
 
       // Apply blinking effect for seats in selectedSeatsArray
-      let fill = isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE
+      let fill = COLORS.SEAT_FREE
       if (isInSelectedArray) {
         let baseColor = "#ffeb3b" // default yellow for no status
         if (status) {
@@ -564,7 +556,7 @@ export default {
         fill,
         stroke,
         strokeWidth,
-        opacity: isReserved ? 0.6 : 1,
+        opacity: 1,
       }
     },
 
@@ -861,11 +853,6 @@ export default {
       }
       return null
     },
-
-    handleStageClick(e) {
-      // Optional: handle stage background clicks if needed
-    },
-
     handleSeatClick(payload) {
       const { seat, event } = payload
       // Stop event propagation to prevent stage drag
@@ -909,83 +896,6 @@ export default {
       // Clear selection after emitting
       this.selectedSeatsArray = []
       
-    },
-
-    handleTouchStart(e) {
-      const touches = e.evt.touches
-      if (touches && touches.length === 2) {
-        // Inicio del gesto de pinch con dos dedos
-        const touch1 = touches[0]
-        const touch2 = touches[1]
-
-        this.lastDistance = this.getDistance(touch1, touch2)
-        this.lastCenter = this.getCenter(touch1, touch2)
-      }
-    },
-
-    handleTouchMove(e) {
-      const touches = e.evt.touches
-      if (touches && touches.length === 2) {
-        e.evt.preventDefault()
-
-        const touch1 = touches[0]
-        const touch2 = touches[1]
-
-        const currentDistance = this.getDistance(touch1, touch2)
-        const currentCenter = this.getCenter(touch1, touch2)
-
-        if (this.lastDistance > 0) {
-          // Calcular el factor de zoom basado en el cambio de distancia
-          const scale = currentDistance / this.lastDistance
-          const newZoom = this.zoomLevel * scale
-
-          // Aplicar el zoom dentro de los límites
-          this.zoomLevel = Math.max(this.minZoom, Math.min(this.maxZoom, newZoom))
-
-          // Ajustar la posición del stage para hacer zoom hacia el centro del pinch
-          const stage = this.$refs.konvaStage?.getStage()
-          if (stage) {
-            const oldPos = stage.position()
-            const mousePointTo = {
-              x: currentCenter.x - oldPos.x,
-              y: currentCenter.y - oldPos.y,
-            }
-
-            const newPos = {
-              x: currentCenter.x - mousePointTo.x * scale,
-              y: currentCenter.y - mousePointTo.y * scale,
-            }
-
-            stage.position(newPos)
-            stage.batchDraw()
-          }
-        }
-
-        this.lastDistance = currentDistance
-        this.lastCenter = currentCenter
-      }
-    },
-
-    handleTouchEnd(e) {
-      // Resetear cuando se levanten los dedos
-      const touches = e.evt.touches
-      if (!touches || touches.length < 2) {
-        this.lastDistance = 0
-        this.lastCenter = null
-      }
-    },
-
-    getDistance(touch1, touch2) {
-      const dx = touch1.clientX - touch2.clientX
-      const dy = touch1.clientY - touch2.clientY
-      return Math.sqrt(dx * dx + dy * dy)
-    },
-
-    getCenter(touch1, touch2) {
-      return {
-        x: (touch1.clientX + touch2.clientX) / 2,
-        y: (touch1.clientY + touch2.clientY) / 2,
-      }
     },
 
     handleSeatHover(e) {
