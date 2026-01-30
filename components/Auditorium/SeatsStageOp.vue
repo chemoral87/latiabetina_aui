@@ -131,18 +131,8 @@
 
 import Vue from "vue"
 import VueKonva from "vue-konva"
-import { STATUS_COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
-import { CLASS_STROKE_MAP } from "~/constants/auditorium.js"
+import { getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
 Vue.use(VueKonva)
-
-const COLORS = {
-  SEAT_SELECTED: "#1976d2",
-  SEAT_FREE: "#ffeb3b", // "#1b728d",
-  SEAT_RESERVED: "lightgrey",
-  SECTION_BG: "#222d3b",
-  SUBSECTION_BG: "#e0e0e0",
-  LABEL_TEXT: "#ff9800",
-}
 
 export default {
   name: "SeatsStageOpCopy",
@@ -439,29 +429,6 @@ export default {
       return { x, y: DEFAULT_SETTINGS.SECTION_TOP_PADDING }
     },
 
-    getSubsectionRectConfig(sub) {
-      return {
-        width: this.getSubsectionWidth(sub),
-        height: this.getSubsectionHeight(sub),
-        fill: COLORS.SUBSECTION_BG,
-        stroke: "green",
-        strokeWidth: 2,
-      }
-    },
-
-    getSubsectionTitleConfig(sub) {
-      return {
-        x: -13,
-        y: -15,
-        text: sub.name,
-        fontSize: 11,
-        fill: "#fff",
-        fontFamily: "Arial",
-        align: "left",
-        width: this.getSubsectionWidth(sub) + 13,
-      }
-    },
-
     getRowLabelConfig(rowIdx) {
       return {
         x: -12,
@@ -473,90 +440,6 @@ export default {
         align: "right",
         verticalAlign: "middle",
         offsetY: 3,
-      }
-    },
-
-    getMaxColumns(sub) {
-      if (!sub || !Array.isArray(sub.seats) || sub.seats.length === 0) return 0
-      return Math.max(...sub.seats.map((row) => (row ? row.length : 0)))
-    },
-
-    getColLabelConfig(colIdx, sub) {
-      const labelSpacing = this.seatSpacing // small extra gap between column letters
-      return {
-        x: colIdx * labelSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
-        y: this.getSubsectionHeight(sub) + 5,
-        text: String.fromCharCode(65 + colIdx),
-        fontSize: 8,
-        fill: "yellow",
-        fontFamily: "Arial",
-        align: "center",
-        offsetX: 3,
-      }
-    },
-
-    getSubsectionSeats(sub) {
-      const allSeats = []
-      sub.seats.forEach((row, rowIdx) => {
-        row.forEach((seat, colIdx) => {
-          if (seat) {
-            allSeats.push({
-              ...seat,
-              x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
-              y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
-            })
-          }
-        })
-      })
-      return allSeats
-    },
-
-    getSeatConfig(seat) {
-      const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
-      const category = seat.category ? String(seat.category).toLowerCase() : null
-      const status = seat.status ? String(seat.status).toLowerCase() : null
-      const classStrokeMap = CLASS_STROKE_MAP
-
-      let stroke = "#757575"
-      let strokeWidth = 1
-
-      if (category) {
-        // prefer category color from passed `categories` prop when available
-        try {
-          const def = (this.categories || []).find((c) => String(c.label).toLowerCase() === category || String(c.value).toLowerCase() === category)
-          // Do NOT apply border when the matched category represents "Ninguno" (value === null)
-          if (def && typeof def.value !== "undefined" && def.value !== null && def.fill) {
-            stroke = def.fill
-            strokeWidth = 2
-          } else if (classStrokeMap[category]) {
-            stroke = classStrokeMap[category]
-            strokeWidth = 2
-          }
-        } catch (err) {}
-      }
-
-      // Apply blinking effect for seats in selectedSeatsArray
-      let fill = COLORS.SEAT_FREE
-      if (isInSelectedArray) {
-        let baseColor = "#ffeb3b" // default yellow for no status
-        if (status) {
-          baseColor = STATUS_COLORS[status] || "#ffeb3b"
-        }
-        fill = this.blinkState ? baseColor : "#f44336" // Blink between status color (or yellow) and red
-        strokeWidth = 0
-      } else if (status) {
-        // Set fill color based on status
-        fill = STATUS_COLORS[status] || fill
-      }
-
-      return {
-        x: seat.x,
-        y: seat.y,
-        radius: DEFAULT_SETTINGS.SEAT_SIZE / 2,
-        fill,
-        stroke,
-        strokeWidth,
-        opacity: 1,
       }
     },
 
@@ -834,25 +717,6 @@ export default {
         return pos
       }
     },
-
-    findSeatById(id) {
-      if (!id) return null
-      for (let s = 0; s < this.sections.length; s++) {
-        const section = this.sections[s]
-        for (let subIdx = 0; subIdx < (section.subsections?.length || 0); subIdx++) {
-          const sub = section.subsections[subIdx]
-          if (!sub.seats) continue
-          for (let r = 0; r < sub.seats.length; r++) {
-            const row = sub.seats[r]
-            for (let c = 0; c < row.length; c++) {
-              const seat = row[c]
-              if (seat && seat.id === id) return seat
-            }
-          }
-        }
-      }
-      return null
-    },
     handleSeatClick(payload) {
       const { seat, event } = payload
       // Stop event propagation to prevent stage drag
@@ -905,17 +769,6 @@ export default {
 
     handleSeatLeave(e) {
       e.target.getStage().container().style.cursor = "default"
-    },
-
-    // Parse seat id robustly: extract numeric parts and map to section/sub indexes
-    parseSeatId(id) {
-      if (!id) return { sectionIdx: 0, subIdx: 0 }
-      const nums = String(id).match(/\d+/g)
-      if (!nums || nums.length === 0) return { sectionIdx: 0, subIdx: 0 }
-      // Expecting at least [section, subsection, row, col] or ['section','1','2','3'] formats
-      const sectionIdx = Math.max(0, parseInt(nums[0], 10) - 1)
-      const subIdx = Math.max(0, parseInt(nums[1] || 1, 10) - 1)
-      return { sectionIdx, subIdx }
     },
   },
 }
