@@ -6,13 +6,12 @@ export default ({ app, store }, inject) => {
   window.Pusher = Pusher
 
   // Create Echo instance with Laravel Reverb configuration
-  const reverbKey = process.env.REVERB_APP_KEY
-  const reverbHost = process.env.REVERB_HOST || window.location.hostname
-  const reverbPort = parseInt(process.env.REVERB_PORT || "6001")
-  const reverbScheme = process.env.REVERB_SCHEME || "http"
+  const reverbKey = app.$config.REVERB_APP_KEY
+  // Use current hostname for flexibility (localhost or network IP)
+  const reverbHost = app.$config.REVERB_HOST
+  const reverbPort = parseInt(app.$config.REVERB_PORT || "6001")
+  const reverbScheme = app.$config.REVERB_SCHEME || "http"
   const useTLS = reverbScheme === "https"
-
-  console.log("🔧 Reverb Config:", { key: reverbKey, host: reverbHost, port: reverbPort, scheme: reverbScheme, forceTLS: useTLS })
 
   const echo = new Echo({
     broadcaster: "reverb",

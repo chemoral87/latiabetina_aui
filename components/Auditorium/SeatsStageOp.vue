@@ -53,50 +53,7 @@
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <v-group :config="{ x: 17, y: 20 }">
-                <v-rect
-                  :config="{
-                    x: -15,
-                    y: -17,
-                    width: getSubsectionWidth(selectedSubsection) + 22,
-                    height: getSubsectionHeight(selectedSubsection) + 31,
-                    fill: 'black',
-                    stroke: 'red',
-                    strokeWidth: 1,
-                  }"
-                />
-                <v-text v-for="rowIdx in selectedSubsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                <v-text v-for="colIdx in getMaxColumns(selectedSubsection)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, selectedSubsection)" />
-                <v-text :config="getSubsectionTitleConfig(selectedSubsection)" />
-                <v-text
-                  :config="{
-                    x: -13,
-                    y: -28,
-                    text: `${subsectionStats.withStatus}/${subsectionStats.total}`,
-                    fontSize: 10,
-                    fill: 'white',
-                    fontStyle: 'bold',
-                    fontFamily: 'Arial',
-                  }"
-                />
-                <v-text
-                  :config="{
-                    x: 20,
-                    y: -28,
-                    text: `${subsectionStats.percent}%`,
-                    fontSize: 10,
-                    fill: getPercentageColor(subsectionStats.percent),
-                    fontStyle: 'bold',
-                    fontFamily: 'Arial',
-                  }"
-                />
-
-                <template v-for="seat in getSubsectionSeats(selectedSubsection)">
-                  <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
-                    <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0, listening: true, draggable: false })" @click="handleSeatClick(seat, $event)" @tap="handleSeatClick(seat, $event)" @mousedown="(e) => e.cancelBubble = true" />
-                  </v-group>
-                </template>
-              </v-group>
+              <AuditoriumSeatsStageSubsection :key="selectedSubsection.id" :subsection="selectedSubsection" :settings="settings" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
@@ -985,7 +942,8 @@ export default {
       // Optional: handle stage background clicks if needed
     },
 
-    handleSeatClick(seat, event) {
+    handleSeatClick(payload) {
+      const { seat, event } = payload
       // Stop event propagation to prevent stage drag
       if (event && event.cancelBubble !== undefined) {
         event.cancelBubble = true
@@ -1006,14 +964,10 @@ export default {
       if (index > -1) {
         // Seat is already selected, remove it
         this.selectedSeatsArray.splice(index, 1)
-        
       } else {
         // Seat is not selected, add it
         this.selectedSeatsArray.push(seatId)
-        
       }
-
-      
     },
 
     setEventSeat(status) {
