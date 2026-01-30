@@ -74,8 +74,7 @@
                     @mouseleave="handleSeatLeave"
                   >
                     <template v-if="sub.isLabel">
-                      <v-rect :config="getSubsectionLabelBgConfig(sub, section)" />
-                      <v-text :config="getSubsectionLabelTextConfig(sub, section)" />
+                      <AuditoriumSeatsStageSubsectionLabel :subsection="sub" :section-height="getSectionHeight(section)" />
                     </template>
 
                     <template v-else>
@@ -236,7 +235,7 @@ export default {
 
       const totalContentHeight =
         this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
+          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTION_TOP_MARGIN : 0)
         }, 0) + 40
 
       const scaledHeight = totalContentHeight * this.zoomLevel
@@ -382,13 +381,16 @@ export default {
 
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
-      let y = this.sections.slice(0, sIdx).reduce((acc, s, idx) => {
-        return acc + this.getSectionHeight(s) + DEFAULT_SETTINGS.SECTIONS_MARGIN
-      }, 10)
-
-      // Add extra spacing between major sections
+      let y = 10
+      
+      // Calculate y position by summing heights of all previous sections
+      for (let i = 0; i < sIdx; i++) {
+        y += this.getSectionHeight(this.sections[i])
+      }
+      
+      // Add spacing between sections (not for the first section)
       if (sIdx > 0) {
-        y += 20
+        y += sIdx * 20 // 20px spacing between each section
       }
 
       // Add 10px top margin for label sections (like "Altar")
@@ -427,7 +429,19 @@ export default {
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * DEFAULT_SETTINGS.SUBSECTION_PADDING + DEFAULT_SETTINGS.SECTION_SIDE_PADDING
+      // Calculate x position by summing widths and padding of previous subsections
+      let x = DEFAULT_SETTINGS.SECTION_SIDE_PADDING
+      
+      for (let i = 0; i < subIdx; i++) {
+        const s = section.subsections[i]
+        // Add subsection width (use explicit width for labels with -20 reduction, calculate for regular subsections)
+        // Labels use (width || 40) - 20 to make them more compact (20px instead of 40px)
+        const width = s.isLabel ? ((s.width || 40) - 20) : this.getSubsectionWidth(s)
+        x += width
+        // Add padding after each subsection
+        x += DEFAULT_SETTINGS.SUBSECTION_SPACING
+      }
+      
       return { x, y: DEFAULT_SETTINGS.SECTION_TOP_PADDING }
     },
 
@@ -451,34 +465,6 @@ export default {
         fontFamily: "Arial",
         align: "left",
         width: this.getSubsectionWidth(sub) + 13,
-      }
-    },
-
-    getSubsectionLabelBgConfig(sub, section) {
-      return {
-        width: sub.width || 100,
-        height: this.getSectionHeight(section) - DEFAULT_SETTINGS.SECTION_TOP_PADDING - 10,
-        fill: "#424242",
-        opacity: 0.3,
-        strokeWidth: 2,
-        stroke: COLORS.LABEL_TEXT,
-        strokeDashArray: [5, 5],
-      }
-    },
-
-    getSubsectionLabelTextConfig(sub, section) {
-      const width = sub.width || 100
-      const height = this.getSectionHeight(section) - DEFAULT_SETTINGS.SECTION_TOP_PADDING - DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
-      return {
-        x: width / 2,
-        y: height / 2,
-        text: sub.name,
-        fontSize: 14,
-        fill: COLORS.LABEL_TEXT,
-        fontStyle: "bold",
-        align: "center",
-        offsetX: width / 2 - 5,
-        offsetY: 7,
       }
     },
 
@@ -583,7 +569,7 @@ export default {
     },
 
     getSubsectionWidth(sub) {
-      if (sub.isLabel) return sub.width || 100
+      if (sub.isLabel) return sub.width || 40
       if (!sub.seats?.length) return 0
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
       return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
@@ -604,8 +590,8 @@ export default {
             .map((s) => {
               if (!s.subsections.length) return 0
               return (
-                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sub)), 0) +
-                (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? ((sub.width || 40) - 20) : this.getSubsectionWidth(sub)), 0) +
+                (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
                 DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
                 20 // Extra padding to cover last subsection
               )
@@ -617,8 +603,8 @@ export default {
       // Calculate extra width: subsection border (2px) + title padding (13px) + safety margin (5px) = 20px
       const extraWidthPadding = 20
       return (
-        section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+        section.subsections.reduce((acc, s) => acc + (s.isLabel ? ((s.width || 40) - 20) : this.getSubsectionWidth(s)), 0) +
+        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
         DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
         extraWidthPadding
       )
@@ -731,19 +717,17 @@ export default {
           let maxContentWidth
           if (this.selectedSubsection) {
             // Si hay subsección seleccionada, incluir todos los offsets y elementos adicionales
-            // - v-group offset x: 17
-            // - rectangle offset x: -15
-            // - rectangle width: getSubsectionWidth + 22
-            // Total: 17 + (getSubsectionWidth + 22) = 17 + width + 22
-            const subsectionContentWidth = this.getSubsectionWidth(this.selectedSubsection) + 22 // rectangle width
-            maxContentWidth = 5 + subsectionContentWidth // group x + content width
+            // - v-group x: 0
+            // - v-rect x: 1, width: subsectionWidth + 18
+            // - Total width: 1 + subsectionWidth + 18 + small margin (5px) = subsectionWidth + 24
+            const subsectionContentWidth = this.getSubsectionWidth(this.selectedSubsection)
+            maxContentWidth =  subsectionContentWidth + 20  // rect x + content + rect extra + margin
             console.log("Subsection selected, width:", maxContentWidth)
           } else {
             // Si no hay subsección, calcular el ancho total considerando TODAS las secciones
             // Necesitamos el ancho máximo entre todas las secciones (ya que están una debajo de la otra)
-            maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
-            // Agregar padding adicional para el contenido completo
-            maxContentWidth += 20 // padding lateral
+            // getSectionWidth ya incluye extraWidthPadding, no agregar padding adicional
+            maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section))) + 25
             
           }
 
@@ -795,25 +779,20 @@ export default {
           // Calcular la altura total del contenido según si hay subsección seleccionada o no
           let totalContentHeight
           if (this.selectedSubsection) {
-            // Si hay subsección seleccionada, incluir todos los offsets y elementos adicionales
-            // - v-group offset y: 20
-            // - rectangle offset y: -17
-            // - rectangle height: getSubsectionHeight + 31
-            // - column labels below: ~15px
-            const subsectionContentHeight = this.getSubsectionHeight(this.selectedSubsection) + 31 // rectangle height
-            totalContentHeight = 0 + subsectionContentHeight + 5 // group y + content + column labels
-            console.log("Subsection selected, height:", totalContentHeight)
+     
+            const subsectionContentHeight = this.getSubsectionHeight(this.selectedSubsection)
+            totalContentHeight =  subsectionContentHeight + 35  // rect y + content + rect extra + label space
+          
           } else {
             // Si no hay subsección, calcular altura total de todas las secciones
             totalContentHeight =
               this.sections.reduce((acc, section, idx) => {
-                return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
+                return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTION_TOP_MARGIN : 0)
               }, 0) + 40 // padding extra
-            console.log("Full view, total content height:", totalContentHeight)
+     
           }
 
-          console.log("Available container height:", availableHeight, "Total content height:", totalContentHeight)
-
+   
           if (totalContentHeight > 0 && availableHeight > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = availableHeight / totalContentHeight

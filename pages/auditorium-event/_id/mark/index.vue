@@ -53,8 +53,6 @@
     </div>
 
     <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
-
-    {{ settings }}
   </v-container>
 </template>
 
@@ -97,7 +95,7 @@ export default {
       // Calcular la altura total necesaria
       const totalHeight =
         this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
+          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTION_TOP_MARGIN : 0)
         }, DEFAULT_SETTINGS.SECTION_TOP_PADDING) + 100 // padding extra
 
       // Usar exactamente el ancho del contenido más un pequeño margen de seguridad
@@ -222,7 +220,7 @@ export default {
       if (!section.subsections || section.subsections.length === 0) return 0
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
         DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
       )
     },

@@ -161,7 +161,7 @@ import { STAGE_CATEGORIES, CLASS_STROKE_MAP } from "~/constants/auditorium.js"
 const DEFAULT_SETTINGS = {
   SEAT_SIZE: 12,
   SEATS_DISTANCE: 8,
-  SUBSECTION_PADDING: 30,
+  SUBSECTION_SPACING: 30,
   SECTIONS_MARGIN: 10,
   SECTION_TOP_PADDING: 80,
   SECTION_SIDE_PADDING: 20,
@@ -668,7 +668,7 @@ export default {
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_PADDING + this.settings.SECTION_SIDE_PADDING
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_SPACING + this.settings.SECTION_SIDE_PADDING
 
       return { x, y: this.settings.SECTION_TOP_PADDING }
     },
@@ -815,7 +815,7 @@ export default {
 
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
+        (section.subsections.length - 1) * this.settings.SUBSECTION_SPACING +
         this.settings.SECTION_SIDE_PADDING * 2
       )
     },

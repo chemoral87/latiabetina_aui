@@ -168,7 +168,7 @@ export default {
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_PADDING + this.settings.SECTION_SIDE_PADDING
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_SPACING + this.settings.SECTION_SIDE_PADDING
       return { x, y: this.settings.SECTION_TOP_PADDING }
     },
 
@@ -330,7 +330,7 @@ export default {
       if (!section.subsections.length) return 0
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
+        (section.subsections.length - 1) * this.settings.SUBSECTION_SPACING +
         this.settings.SECTION_SIDE_PADDING * 2
       )
     },

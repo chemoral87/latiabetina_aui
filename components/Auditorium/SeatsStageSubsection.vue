@@ -37,7 +37,7 @@
     <!-- Stats: Percentage -->
     <v-text
       :config="{
-        x: 32,
+        x: 36,
         y: -7,
         text: `${stats.percent}%`,
         fontSize: 10,

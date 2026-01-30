@@ -348,7 +348,7 @@ Vue.use(VueKonva)
 const DEFAULT_SETTINGS = {
   SEAT_SIZE: 12,
   SEATS_DISTANCE: 8,
-  SUBSECTION_PADDING: 30,
+  SUBSECTION_SPACING: 30,
   SECTIONS_MARGIN: 10,
   SECTION_TOP_PADDING: 40,
   SECTION_SIDE_PADDING: 20,
@@ -899,7 +899,7 @@ export default {
       // Determine section index for calls that require it
       const sIdx = this.sections.indexOf(section)
       section.subsections.forEach((sub, idx) => {
-        if (idx > 0) totalWidth += this.settings.SUBSECTION_PADDING
+        if (idx > 0) totalWidth += this.settings.SUBSECTION_SPACING
         totalWidth += sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sIdx, sub)
       })
 
@@ -943,7 +943,7 @@ export default {
       let x = this.settings.SECTION_SIDE_PADDING
       for (let i = 0; i < subIdx; i++) {
         const sub = section.subsections[i]
-        x += (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sIdx, sub)) + this.settings.SUBSECTION_PADDING
+        x += (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sIdx, sub)) + this.settings.SUBSECTION_SPACING
       }
 
       const y = this.settings.SECTION_TOP_PADDING
