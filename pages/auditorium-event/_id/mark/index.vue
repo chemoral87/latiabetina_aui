@@ -53,6 +53,8 @@
     </div>
 
     <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
+
+    {{ settings }}
   </v-container>
 </template>
 
@@ -60,18 +62,9 @@
 import Vue from "vue"
 import VueKonva from "vue-konva"
 import { STAGE_CATEGORIES } from "~/constants/auditorium"
+import { DEFAULT_SETTINGS } from "~/components/Auditorium/constants"
 
 Vue.use(VueKonva)
-
-const DEFAULT_SETTINGS = {
-  SEAT_SIZE: 12,
-  SEATS_DISTANCE: 8,
-  SUBSECTION_PADDING: 30,
-  SECTIONS_MARGIN: 10,
-  SECTION_TOP_PADDING: 80,
-  SECTION_SIDE_PADDING: 20,
-  SECTION_BOTTOM_PADDING: 20,
-}
 
 export default {
   middleware: ["authenticated"],
@@ -104,8 +97,8 @@ export default {
       // Calcular la altura total necesaria
       const totalHeight =
         this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
-        }, this.settings.SECTION_TOP_PADDING) + 100 // padding extra
+          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
+        }, DEFAULT_SETTINGS.SECTION_TOP_PADDING) + 100 // padding extra
 
       // Usar exactamente el ancho del contenido más un pequeño margen de seguridad
       const width = maxSectionWidth + 10 // Solo 20px de padding total
@@ -209,17 +202,7 @@ export default {
 
       if (config.settings && config.sections) {
         Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-        // Usar configuración original sin reasignar IDs
-        // const cleanSections = JSON.parse(JSON.stringify(config.sections))
-        // cleanSections.forEach((section) => {
-        //   section.subsections?.forEach((sub) => {
-        //     sub.seats?.forEach((row) => {
-        //       row.forEach((seat) => {
-        //         if ("state" in seat) delete seat.state
-        //       })
-        //     })
-        //   })
-        // })
+
         this.sections = config.sections
 
         // Update seat statuses from eventAuditorium.seats
@@ -239,26 +222,26 @@ export default {
       if (!section.subsections || section.subsections.length === 0) return 0
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
-        this.settings.SECTION_SIDE_PADDING * 2
+        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+        DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
       )
     },
 
     getSectionHeight(section) {
       if (section.isLabel) return 30
-      if (!section.subsections || section.subsections.length === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
+      if (!section.subsections || section.subsections.length === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
-      if (maxRows === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING + 40
-      const seatSpacing = this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
-      return maxRows * seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
+      if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
+      const seatSpacing = DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
+      return maxRows * seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
     },
 
     getSubsectionWidth(sub) {
       if (sub.isLabel) return sub.width || 100
       if (!sub.seats || sub.seats.length === 0) return 0
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
-      const seatSpacing = this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
-      return maxCols * seatSpacing - this.settings.SEATS_DISTANCE
+      const seatSpacing = DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
+      return maxCols * seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     async handleSetEventSeat(payload) {

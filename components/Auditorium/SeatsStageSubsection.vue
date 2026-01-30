@@ -1,12 +1,9 @@
 <template>
-  <v-group :config="{ x: 17, y: 20 }">
-    <!-- Background rectangle -->
+  <v-group :config="{ x: 0, y: 0 }">
     <v-rect
       :config="{
-        x: -15,
-        y: -17,
-        // x: 0,
-        // y: 0,
+        x: 1,
+        y: 3,
         width: subsectionWidth + 18,
         height: subsectionHeight + 31,
         fill: 'black',
@@ -27,8 +24,8 @@
     <!-- Stats: Count -->
     <v-text
       :config="{
-        x: -13,
-        y: -28,
+        x: 4,
+        y: -7,
         text: `${stats.withStatus}/${stats.total}`,
         fontSize: 10,
         fill: 'white',
@@ -40,8 +37,8 @@
     <!-- Stats: Percentage -->
     <v-text
       :config="{
-        x: 20,
-        y: -28,
+        x: 39,
+        y: -7,
         text: `${stats.percent}%`,
         fontSize: 10,
         fill: percentageColor,
@@ -51,45 +48,39 @@
     />
 
     <!-- Seats -->
-    <template v-for="seat in seats">
-      <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
-        <v-circle
-          :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true, draggable: false })"
-          @click="handleSeatClick(seat, $event)"
-          @tap="handleSeatClick(seat, $event)"
-          @mousedown="(e) => (e.cancelBubble = true)"
-        />
-      </v-group>
-    </template>
+
+    <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
+      <v-circle :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true, draggable: false })" @click="handleSeatClick(seat, $event, 'click')" @tap="handleSeatClick(seat, $event, 'tap')" />
+    </v-group>
   </v-group>
 </template>
 
 <script>
-import { STATUS_COLORS } from "./constants.js"
+import { STATUS_COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
 
 export default {
   name: "SeatsStageSubsection",
   props: {
     subsection: { type: Object, required: true },
-    settings: { type: Object, required: true },
+
     categories: { type: Array, default: () => [] },
     selectedSeatsArray: { type: Array, default: () => [] },
     blinkState: { type: Boolean, default: false },
   },
   computed: {
     seatSpacing() {
-      return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
+      return DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     subsectionWidth() {
       if (!this.subsection.seats?.length) return 0
       const maxCols = Math.max(...this.subsection.seats.map((row) => row.length))
-      return maxCols * this.seatSpacing - this.settings.SEATS_DISTANCE
+      return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     subsectionHeight() {
       if (!this.subsection.seats?.length) return 40
-      return this.subsection.seats.length * this.seatSpacing - this.settings.SEATS_DISTANCE
+      return this.subsection.seats.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     maxColumns() {
@@ -99,8 +90,8 @@ export default {
 
     subsectionTitleConfig() {
       return {
-        x: -13,
-        y: -15,
+        x: 4,
+        y: 5,
         text: this.subsection.name,
         fontSize: 11,
         fill: "#fff",
@@ -135,13 +126,7 @@ export default {
     },
 
     percentageColor() {
-      const percent = this.stats.percent
-      if (percent >= 86) {
-        return "#F44336" // Rojo
-      } else if (percent >= 57) {
-        return "#FF9800" // Naranja
-      }
-      return "#4CAF50" // Verde
+      return getPercentageColor(this.stats.percent)
     },
 
     seats() {
@@ -151,8 +136,8 @@ export default {
           if (seat.state !== "invisible") {
             allSeats.push({
               ...seat,
-              x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
-              y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+              x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 14,
+              y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 20,
               config: this.getSeatConfig(seat),
             })
           }
@@ -164,8 +149,8 @@ export default {
   methods: {
     getRowLabelConfig(rowIdx) {
       return {
-        x: -12,
-        y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+        x: 3,
+        y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 20,
         text: (rowIdx + 1).toString(),
         fontSize: 8,
         fill: "yellow",
@@ -179,8 +164,8 @@ export default {
     getColLabelConfig(colIdx) {
       const labelSpacing = this.seatSpacing
       return {
-        x: colIdx * labelSpacing + this.settings.SEAT_SIZE / 2,
-        y: this.subsectionHeight + 5,
+        x: colIdx * labelSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 12,
+        y: this.subsectionHeight + 25,
         text: String.fromCharCode(65 + colIdx),
         fontSize: 8,
         fill: "yellow",
@@ -239,7 +224,7 @@ export default {
       }
 
       return {
-        radius: this.settings.SEAT_SIZE / 2,
+        radius: DEFAULT_SETTINGS.SEAT_SIZE / 2,
         fill,
         stroke,
         strokeWidth,
@@ -247,7 +232,8 @@ export default {
       }
     },
 
-    handleSeatClick(seat, event) {
+    handleSeatClick(seat, event, actionType) {
+      // console.log("Seat clicked:", seat, "Action Type:", actionType)
       this.$emit("seat-click", { seat, event })
     },
   },

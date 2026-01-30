@@ -53,7 +53,7 @@
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :settings="settings" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection"  :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
@@ -79,50 +79,8 @@
                     </template>
 
                     <template v-else>
-                      <v-group>
-                        <v-rect
-                          :config="{
-                            x: -15,
-                            y: -17,
-                            width: getSubsectionWidth(sub) + 22,
-                            height: getSubsectionHeight(sub) + 31,
-                            fill: 'black',
-                            stroke: 'red',
-                            strokeWidth: 1,
-                          }"
-                        />
-                        <v-text v-for="rowIdx in sub.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
-                        <v-text v-for="colIdx in getMaxColumns(sub)" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1, sub)" />
-                        <v-text :config="getSubsectionTitleConfig(sub)" />
-                        <v-text
-                          :config="{
-                            x: -13,
-                            y: -28,
-                            text: `${getSubsectionStatsFor(sub).withStatus}/${getSubsectionStatsFor(sub).total}`,
-                            fontSize: 10,
-                            fill: 'white',
-                            fontStyle: 'bold',
-                            fontFamily: 'Arial',
-                          }"
-                        />
-                        <v-text
-                          :config="{
-                            x: 20,
-                            y: -28,
-                            text: `${getSubsectionStatsFor(sub).percent}%`,
-                            fontSize: 10,
-                            fill: getPercentageColor(getSubsectionStatsFor(sub).percent),
-                            fontStyle: 'bold',
-                            fontFamily: 'Arial',
-                          }"
-                        />
-                      </v-group>
-
-                      <template v-for="seat in getSubsectionSeats(sub)">
-                        <v-group :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-                          <!-- <v-circle :config="Object.assign({}, getSeatConfig(seat), { x: 0, y: 0 })" /> -->
-                        </v-group>
-                      </template>
+                     <!-- general  -->
+                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" />
                     </template>
                   </v-group>
                 </template>
@@ -178,7 +136,7 @@
 
 import Vue from "vue"
 import VueKonva from "vue-konva"
-import { STATUS_COLORS } from "./constants.js"
+import { STATUS_COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
 import { CLASS_STROKE_MAP } from "~/constants/auditorium.js"
 Vue.use(VueKonva)
 
@@ -195,7 +153,7 @@ export default {
   name: "SeatsStageOpCopy",
   props: {
     sections: { type: Array, required: true },
-    settings: { type: Object, required: true },
+
     stageConfig: { type: Object, required: true },
     categories: {
       type: Array,
@@ -221,7 +179,7 @@ export default {
   },
   computed: {
     seatSpacing() {
-      return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
+      return DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     allSubsections() {
@@ -278,7 +236,7 @@ export default {
 
       const totalContentHeight =
         this.sections.reduce((acc, section, idx) => {
-          return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+          return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
         }, 0) + 40
 
       const scaledHeight = totalContentHeight * this.zoomLevel
@@ -400,13 +358,7 @@ export default {
     },
 
     getPercentageColor(percent) {
-      if (percent >= 86) {
-           return '#F44336' // Rojo
-        // Verde
-      } else if (percent >= 57 ) {
-        return '#FF9800' // Naranja
-      } 
-     return '#4CAF50'
+      return getPercentageColor(percent)
     },
 
     getControlRowHeight() {
@@ -431,7 +383,7 @@ export default {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
       let y = this.sections.slice(0, sIdx).reduce((acc, s, idx) => {
-        return acc + this.getSectionHeight(s) + this.settings.SECTIONS_MARGIN
+        return acc + this.getSectionHeight(s) + DEFAULT_SETTINGS.SECTIONS_MARGIN
       }, 10)
 
       // Add extra spacing between major sections
@@ -475,8 +427,8 @@ export default {
     },
 
     getSubsectionPosition(section, subIdx) {
-      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * this.settings.SUBSECTION_PADDING + this.settings.SECTION_SIDE_PADDING
-      return { x, y: this.settings.SECTION_TOP_PADDING }
+      const x = section.subsections.slice(0, subIdx).reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) + subIdx * DEFAULT_SETTINGS.SUBSECTION_PADDING + DEFAULT_SETTINGS.SECTION_SIDE_PADDING
+      return { x, y: DEFAULT_SETTINGS.SECTION_TOP_PADDING }
     },
 
     getSubsectionRectConfig(sub) {
@@ -505,7 +457,7 @@ export default {
     getSubsectionLabelBgConfig(sub, section) {
       return {
         width: sub.width || 100,
-        height: this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - 10,
+        height: this.getSectionHeight(section) - DEFAULT_SETTINGS.SECTION_TOP_PADDING - 10,
         fill: "#424242",
         opacity: 0.3,
         strokeWidth: 2,
@@ -516,7 +468,7 @@ export default {
 
     getSubsectionLabelTextConfig(sub, section) {
       const width = sub.width || 100
-      const height = this.getSectionHeight(section) - this.settings.SECTION_TOP_PADDING - this.settings.SECTION_BOTTOM_PADDING
+      const height = this.getSectionHeight(section) - DEFAULT_SETTINGS.SECTION_TOP_PADDING - DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       return {
         x: width / 2,
         y: height / 2,
@@ -533,7 +485,7 @@ export default {
     getRowLabelConfig(rowIdx) {
       return {
         x: -12,
-        y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+        y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
         text: (rowIdx + 1).toString(),
         fontSize: 8,
         fill: "yellow",
@@ -552,7 +504,7 @@ export default {
     getColLabelConfig(colIdx, sub) {
       const labelSpacing = this.seatSpacing // small extra gap between column letters
       return {
-        x: colIdx * labelSpacing + this.settings.SEAT_SIZE / 2,
+        x: colIdx * labelSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
         y: this.getSubsectionHeight(sub) + 5,
         text: String.fromCharCode(65 + colIdx),
         fontSize: 8,
@@ -570,8 +522,8 @@ export default {
           if (seat.state !== "invisible") {
             allSeats.push({
               ...seat,
-              x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
-              y: rowIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
+              x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
+              y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2,
             })
           }
         })
@@ -622,7 +574,7 @@ export default {
       return {
         x: seat.x,
         y: seat.y,
-        radius: this.settings.SEAT_SIZE / 2,
+        radius: DEFAULT_SETTINGS.SEAT_SIZE / 2,
         fill,
         stroke,
         strokeWidth,
@@ -634,13 +586,13 @@ export default {
       if (sub.isLabel) return sub.width || 100
       if (!sub.seats?.length) return 0
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
-      return maxCols * this.seatSpacing - this.settings.SEATS_DISTANCE
+      return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
       if (sub.isLabel) return 0
       if (!sub.seats?.length) return 40
-      return sub.seats.length * this.seatSpacing - this.settings.SEATS_DISTANCE
+      return sub.seats.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSectionWidth(section) {
@@ -653,8 +605,8 @@ export default {
               if (!s.subsections.length) return 0
               return (
                 s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? sub.width || 100 : this.getSubsectionWidth(sub)), 0) +
-                (s.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
-                this.settings.SECTION_SIDE_PADDING * 2
+                (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+                DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
               )
             })
         )
@@ -663,23 +615,23 @@ export default {
       if (!section.subsections.length) return 0
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * this.settings.SUBSECTION_PADDING +
-        this.settings.SECTION_SIDE_PADDING * 2
+        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_PADDING +
+        DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
       )
     },
 
     getSectionHeight(section) {
       if (section.isLabel) return 30
-      if (!section.subsections?.length) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
+      if (!section.subsections?.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
-      if (maxRows === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING + 40
-      return maxRows * this.seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
+      if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
+      return maxRows * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
     },
 
     // Events & interactions
     handleSubsectionClick(subSection) {
       this.selectedSubsection = subSection
-      console.log("Selected subsection:", subSection.id, subSection.name)
+  
       // Set fitstate to 'width' if null, then apply the current fitstate
       if (this.fitstate === null) {
         this.fitstate = 'width'
@@ -849,7 +801,7 @@ export default {
             // Si no hay subsección, calcular altura total de todas las secciones
             totalContentHeight =
               this.sections.reduce((acc, section, idx) => {
-                return acc + this.getSectionHeight(section) + (idx > 0 ? this.settings.SECTIONS_MARGIN : 0)
+                return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTIONS_MARGIN : 0)
               }, 0) + 40 // padding extra
             console.log("Full view, total content height:", totalContentHeight)
           }
