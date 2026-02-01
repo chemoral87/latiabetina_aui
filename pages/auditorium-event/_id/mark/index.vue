@@ -3,7 +3,7 @@
     <div v-if="eventAuditorium && eventAuditorium.id">
       <div class="pa-2 grey lighten-4 d-flex align-center">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
-        {{ last_timestamp }}
+        {{ notificationRealTimeArray }} {{ last_timestamp }}
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
         <span class="text-subtitle-2 ml-3 mr-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
@@ -31,7 +31,7 @@ export default {
     const res = await app.$repository.AuditoriumEvent.show(params.id).catch((e) => {})
 
     const eventAuditorium = res || {}
-    return { eventAuditorium }
+    return { eventAuditorium, last_timestamp: res.timestamp || null }
   },
   data() {
     return {
@@ -133,6 +133,10 @@ export default {
 
     // Set up real-time notifications listener
     this.setupRealtimeListeners()
+
+    // Set up visibility change handler for mobile
+    document.addEventListener("visibilitychange", this.handleVisibilityChange)
+    this.notificationRealTimeArray.push("visibilitychange mounted")
   },
 
   beforeDestroy() {
@@ -141,6 +145,10 @@ export default {
       this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
       this.echoChannel = null
     }
+
+    // Remove visibility change listener
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange)
+    this.notificationRealTimeArray.push("visibilitychange")
   },
 
   methods: {
@@ -264,6 +272,39 @@ export default {
         }
       }
       return null
+    },
+
+    async handleVisibilityChange() {
+      if (!document.hidden && this.eventAuditorium?.id) {
+        console.log("📱 Page visible again, syncing updates...")
+        try {
+          // hide next loadinng
+          this.$store.dispatch("hideNextLoading")
+          const response = await this.$repository.AuditoriumEventSeat.index({ auditorium_event_id: this.eventAuditorium.id, last_timestamp: this.last_timestamp })
+
+          if (response?.timestamp) {
+            if (!this.last_timestamp || response.timestamp > this.last_timestamp) {
+              this.last_timestamp = response.timestamp
+            }
+          }
+
+          // Update seats from response
+          if (response?.seats_log && Array.isArray(response.seats_log)) {
+            response.seats_log.forEach((logEntry) => {
+              if (logEntry.seat_ids && Array.isArray(logEntry.seat_ids)) {
+                logEntry.seat_ids.forEach((seatId) => {
+                  const seat = this.findSeatById(seatId)
+                  if (seat) {
+                    this.$set(seat, "status", logEntry.status)
+                  }
+                })
+              }
+            })
+          }
+        } catch (error) {
+          console.error("Error syncing seat updates:", error)
+        }
+      }
     },
 
     setupRealtimeListeners() {
