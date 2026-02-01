@@ -3,7 +3,7 @@
     <div v-if="eventAuditorium && eventAuditorium.id">
       <div class="pa-2 grey lighten-4 d-flex align-center">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
-        {{ notificationRealTimeArray }} {{ last_timestamp }}
+
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
         <span class="text-subtitle-2 ml-3 mr-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
@@ -136,7 +136,6 @@ export default {
 
     // Set up visibility change handler for mobile
     document.addEventListener("visibilitychange", this.handleVisibilityChange)
-    this.notificationRealTimeArray.push("visibilitychange mounted")
   },
 
   beforeDestroy() {
@@ -148,7 +147,6 @@ export default {
 
     // Remove visibility change listener
     document.removeEventListener("visibilitychange", this.handleVisibilityChange)
-    this.notificationRealTimeArray.push("visibilitychange")
   },
 
   methods: {
