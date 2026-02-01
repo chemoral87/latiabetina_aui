@@ -3,52 +3,13 @@
     <div v-if="eventAuditorium && eventAuditorium.id">
       <div class="pa-2 grey lighten-4 d-flex align-center">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
+        {{ last_timestamp }}
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
         <span class="text-subtitle-2 ml-3 mr-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
       </div>
       <div>
-        <!-- Debug info -->
-        <!-- <div class="mb-4 pa-2" style="background: #f5f5f5; border-radius: 4px">
-              <h4>Debug Info:</h4>
-              <p>
-                <strong>Event ID:</strong>
-                {{ eventAuditorium.id || "No ID" }}
-              </p>
-              <p>
-                <strong>Config exists:</strong>
-                {{ !!eventAuditorium.config }}
-              </p>
-              <p>
-                <strong>Config type:</strong>
-                {{ typeof eventAuditorium.config }}
-              </p>
-              <p>
-                <strong>StageConfig exists:</strong>
-                {{ !!stageConfig }}
-              </p>
-              <p>
-                <strong>Sections count:</strong>
-                {{ sections.length }}
-              </p>
-              <p>
-                <strong>Settings:</strong>
-                {{ JSON.stringify(settings) }}
-              </p>
-              <div v-if="stageConfig">
-                <p>
-                  <strong>Stage dimensions:</strong>
-                  {{ stageConfig.width }}x{{ stageConfig.height }}
-                </p>
-                <details>
-                  <summary><strong>Full Config:</strong></summary>
-                  <pre style="font-size: 10px">{{ JSON.stringify(stageConfig, null, 2) }}</pre>
-                </details>
-              </div>
-            </div> -->
-
         <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" @setEventSeat="handleSetEventSeat" />
-        <!-- <v-alert v-else type="warning" outlined>No hay configuración de asientos disponible para este evento.</v-alert> -->
       </div>
     </div>
 
@@ -75,6 +36,7 @@ export default {
   data() {
     return {
       notificationRealTimeArray: [],
+      last_timestamp: null,
       eventAuditorium: {},
       sections: [],
       settings: { ...DEFAULT_SETTINGS },
@@ -263,6 +225,10 @@ export default {
         // Call API to update seats using custom endpoint
         const response = await this.$repository.AuditoriumEventSeat.create(updatePayload)
 
+        if (!this.last_timestamp || response.timestamp > this.last_timestamp) {
+          this.last_timestamp = response.timestamp
+        }
+
         // Update local state with response data
         if (response && response.seats) {
           response.seats.forEach((seatData) => {
@@ -316,7 +282,9 @@ export default {
       this.echoChannel.listen(".seat.updated", (data) => {
         console.log("🔔 Seat update received:", data)
 
-        // this.notificationRealTimeArray.push(data)
+        if (!this.last_timestamp || data.timestamp > this.last_timestamp) {
+          this.last_timestamp = data.timestamp
+        }
 
         // Update local seats with the real-time data
         if (data.seats && Array.isArray(data.seats)) {
