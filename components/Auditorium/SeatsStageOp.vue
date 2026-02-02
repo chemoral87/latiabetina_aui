@@ -44,7 +44,7 @@
           ref="konvaStage"
           :config="adjustedStageConfig"
           :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
-    
+          @wheel="handleWheel"
         >
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
@@ -776,6 +776,55 @@ export default {
 
     handleSeatLeave(e) {
       e.target.getStage().container().style.cursor = "default"
+    },
+
+    handleWheel(e) {
+      // Prevent default scroll behavior
+      e.evt.preventDefault()
+
+      const stage = this.$refs.konvaStage?.getStage()
+      if (!stage) return
+
+      const oldScale = this.zoomLevel
+      const pointer = stage.getPointerPosition()
+
+      // Calculate zoom direction and amount
+      const scaleBy = 1.05
+      const direction = e.evt.deltaY > 0 ? -1 : 1
+
+      // Calculate new zoom level
+      let newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy
+      
+      // Clamp to min/max zoom
+      newScale = Math.max(this.minZoom, Math.min(this.maxZoom, newScale))
+      newScale = Math.round(newScale * 100) / 100
+
+      // Only update if scale changed
+      if (newScale === oldScale) return
+
+      // Get mouse point relative to stage
+      const mousePointTo = {
+        x: (pointer.x - stage.x()) / oldScale,
+        y: (pointer.y - stage.y()) / oldScale,
+      }
+
+      // Calculate new position to keep mouse point stable
+      const newPos = {
+        x: pointer.x - mousePointTo.x * newScale,
+        y: pointer.y - mousePointTo.y * newScale,
+      }
+
+      // Update zoom level
+      this.zoomLevel = newScale
+
+      // Update stage position to zoom toward mouse
+      this.$nextTick(() => {
+        stage.position(newPos)
+        stage.batchDraw()
+      })
+
+      // Clear fitstate since user is manually zooming
+      this.fitstate = null
     },
   },
 }
