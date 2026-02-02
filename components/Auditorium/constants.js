@@ -12,6 +12,7 @@
 
 export const STATUS_COLORS = {
   nue: "#2E7D32", // nuevo
+  nua: "#CE93D8",
   hom: "#1976D2", // hombre
   muj: "#E91E63", // mujer
 

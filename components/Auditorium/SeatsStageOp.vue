@@ -109,7 +109,10 @@
             <v-icon >mdi-human-female</v-icon>
           </v-btn>
                <v-btn class="mb-2"  icon  title="Nuevo" style="background-color: #2E7D32  !important; color: white" @click="setEventSeat('nue')">
-            <v-icon >mdi-star</v-icon>
+            <v-icon >mdi-face-man-shimmer</v-icon>
+          </v-btn> 
+            <v-btn class="mb-2"  icon  title="Nueva" style="background-color: #CE93D8  !important; color: white" @click="setEventSeat('nua')">
+            <v-icon >mdi-face-woman-shimmer</v-icon>
           </v-btn> 
          
           <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #F57C00 !important; color: white" @click="setEventSeat('ado')">
