@@ -34,22 +34,16 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
-        
       </v-col>
     </v-row>
 
     <div style="display: flex; gap: 2px">
-      <div :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage
-          ref="konvaStage"
-          :config="adjustedStageConfig"
-          :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }"
-          @wheel="handleWheel"
-        >
+      <div id="subsectionPanel" :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
+        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection"  :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
@@ -74,7 +68,7 @@
                     </template>
 
                     <template v-else>
-                     <!-- general  -->
+                      <!-- general  -->
                       <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" />
                     </template>
                   </v-group>
@@ -84,58 +78,77 @@
           </v-layer>
         </v-stage>
       </div>
+    </div>
 
-      <div :style="{ backgroundColor: 'lightblue', width: '70px', minWidth: '70px', overflow: 'auto', height: containerOuterHeight }">
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px">
-          <h4 style="margin: 0; ">Selected Seats</h4>
+    <!-- Floating mark panel - only shown when seats are selected -->
+    <div v-if="selectedSeatsArray.length > 0" id="markPanel" class="floating-mark-panel">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 5px; background-color: #1976d2; color: white; position: relative; z-index: 1">
+        <h4 style="margin: 0; font-size: 14px">Seats: {{ selectedSeatsArray.length }}</h4>
+        <v-btn outlined fab x-small icon color="white" title="Clear all" @click="selectedSeatsArray = []">
+          <v-icon small>mdi-close</v-icon>
+        </v-btn>
+      </div>
+
+      <div class="mt-2" style="padding: 5px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; position: relative; z-index: 1">
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)"></v-btn>
+          <span style="font-size: 9px; text-align: center">Vacio</span>
         </div>
 
-        <p style="margin: 0; font-weight: bold;  padding: 0 5px">
-          {{ selectedSeatsArray.length }}
-
-          <v-btn v-if="selectedSeatsArray.length > 0" outlined fab x-small icon color="error" title="Clear all" @click="selectedSeatsArray = []">
-            <v-icon>mdi-delete</v-icon>
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Hombre" style="background-color: #1976d2 !important; color: white" @click="setEventSeat('hom')">
+            <v-icon>mdi-human-male</v-icon>
           </v-btn>
-        </p>
-
-        <div v-if="selectedSeatsArray.length > 0" class="mt-3" style="padding: 5px; display: flex; flex-wrap: wrap; gap: 3px; justify-content: center">
-          <v-btn class="mb-2" icon  title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)">
-            <v-icon >mdi-account-outline</v-icon>
-          </v-btn>
-           <v-btn class="mb-2"  icon  title="Hombre" style="background-color: #1976D2  !important; color: white" @click="setEventSeat('hom')">
-            <v-icon >mdi-human-male</v-icon>
-          </v-btn> 
-           <v-btn class="mb-4"  icon  title="Mujer" style="background-color: #E91E63 !important; color: white" @click="setEventSeat('muj')">
-            <v-icon >mdi-human-female</v-icon>
-          </v-btn>
-               <v-btn class="mb-2"  icon  title="Nuevo" style="background-color: #2E7D32  !important; color: white" @click="setEventSeat('nue')">
-            <v-icon >mdi-face-man-shimmer</v-icon>
-          </v-btn> 
-            <v-btn class="mb-2"  icon  title="Nueva" style="background-color: #CE93D8  !important; color: white" @click="setEventSeat('nua')">
-            <v-icon >mdi-face-woman-shimmer</v-icon>
-          </v-btn> 
-         
-          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #F57C00 !important; color: white" @click="setEventSeat('ado')">
-            <v-icon >mdi-human-scooter</v-icon>
-          </v-btn>
-          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #00BCD4 !important; color: white" @click="setEventSeat('niñ')">
-            <v-icon >mdi-human-child</v-icon>
-          </v-btn>
-          <v-btn  icon title="Porteador" style="background-color: #7B1FA2 !important; color: white" @click="setEventSeat('por')">
-            <v-icon >mdi-human-male-child</v-icon>
-          </v-btn>
+          <span style="font-size: 9px; text-align: center">Hombre</span>
         </div>
 
-        <!-- <div v-for="seatId in selectedSeatsArray" :key="seatId" style="padding: 3px; margin: 3px; background: white; border-radius: 3px; font-size: 10px; word-break: break-all">
-          {{ seatId }} -->
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Mujer" style="background-color: #e91e63 !important; color: white" @click="setEventSeat('muj')">
+            <v-icon>mdi-human-female</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Mujer</span>
         </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Nuevo" style="background-color: #2e7d32; color: white" @click="setEventSeat('nue')">
+            <v-icon>mdi-face-man-shimmer</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Nuevo</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Nueva" style="background-color: #ce93d8; color: white" @click="setEventSeat('nua')">
+            <v-icon>mdi-face-woman-shimmer</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Nueva</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Adolescente" style="background-color: #f57c00; color: white" @click="setEventSeat('ado')">
+            <v-icon>mdi-human-scooter</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Teen</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Niño" style="background-color: #00bcd4; color: white" @click="setEventSeat('niñ')">
+            <v-icon>mdi-human-child</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Niño</span>
+        </div>
+
+        <!-- <div style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon title="Porteador" style="background-color: #7b1fa2; color: white" @click="setEventSeat('por')">
+            <v-icon>mdi-human-male-child</v-icon>
+          </v-btn>
+          <span style="font-size: 9px; text-align: center">Portead.</span>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 import Vue from "vue"
 import VueKonva from "vue-konva"
 import { getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
@@ -252,10 +265,9 @@ export default {
     },
 
     containerWidth() {
-      // Ancho del contenedor: 100% - 70px (sidebar) - gap
+      // Ancho del contenedor: 100%
       if (typeof window === "undefined") return 800
-      const gap = 2 // gap between panels (matches template gap: 2px)
-      return window.innerWidth - 70 - gap
+      return window.innerWidth
     },
 
     containerHeightPx() {
@@ -373,12 +385,12 @@ export default {
     getSectionConfig(sIdx) {
       const section = this.sections[sIdx]
       let y = 0
-      
+
       // Calculate y position by summing heights of all previous sections
       for (let i = 0; i < sIdx; i++) {
         y += this.getSectionHeight(this.sections[i])
       }
-      
+
       // Add spacing between sections (not for the first section)
       if (sIdx > 0) {
         y += sIdx * 20 // 20px spacing between each section
@@ -422,17 +434,17 @@ export default {
     getSubsectionPosition(section, subIdx) {
       // Calculate x position by summing widths and padding of previous subsections
       let x = DEFAULT_SETTINGS.SECTION_SIDE_PADDING
-      
+
       for (let i = 0; i < subIdx; i++) {
         const s = section.subsections[i]
         // Add subsection width (use explicit width for labels with -20 reduction, calculate for regular subsections)
         // Labels use (width || 40) - 20 to make them more compact (20px instead of 40px)
-        const width = s.isLabel ? ((s.width || 40) - 20) : this.getSubsectionWidth(s)
+        const width = s.isLabel ? (s.width || 40) - 20 : this.getSubsectionWidth(s)
         x += width
         // Add padding after each subsection
         x += DEFAULT_SETTINGS.SUBSECTION_SPACING
       }
-      
+
       return { x, y: DEFAULT_SETTINGS.SECTION_TOP_PADDING }
     },
 
@@ -472,7 +484,7 @@ export default {
             .map((s) => {
               if (!s.subsections.length) return 0
               return (
-                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? ((sub.width || 40) - 20) : this.getSubsectionWidth(sub)), 0) +
+                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? (sub.width || 40) - 20 : this.getSubsectionWidth(sub)), 0) +
                 (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
                 DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
                 20 // Extra padding to cover last subsection
@@ -485,7 +497,7 @@ export default {
       // Calculate extra width: subsection border (2px) + title padding (13px) + safety margin (5px) = 20px
       const extraWidthPadding = 20
       return (
-        section.subsections.reduce((acc, s) => acc + (s.isLabel ? ((s.width || 40) - 20) : this.getSubsectionWidth(s)), 0) +
+        section.subsections.reduce((acc, s) => acc + (s.isLabel ? (s.width || 40) - 20 : this.getSubsectionWidth(s)), 0) +
         (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
         DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
         extraWidthPadding
@@ -505,10 +517,10 @@ export default {
     // Events & interactions
     handleSubsectionClick(subSection) {
       this.selectedSubsection = subSection
-  
+
       // Set fitstate to 'width' if null, then apply the current fitstate
       if (this.fitstate === null) {
-        this.fitstate = 'width'
+        this.fitstate = "width"
       }
       this.$nextTick(() => {
         setTimeout(() => {
@@ -572,7 +584,7 @@ export default {
 
     applyCurrentFit() {
       // Apply fit based on current fitstate
-      if (this.fitstate === 'height') {
+      if (this.fitstate === "height") {
         this.fitToHeight()
       } else {
         this.fitToWidth()
@@ -581,7 +593,7 @@ export default {
 
     fitToWidth() {
       // Set fitstate to 'width'
-      this.fitstate = 'width'
+      this.fitstate = "width"
       // Calcular el zoom óptimo basado en el ancho disponible
       if (!this.sections || this.sections.length === 0) {
         console.warn("No sections available for fit calculation")
@@ -603,17 +615,15 @@ export default {
             // - v-rect x: 1, width: subsectionWidth + 18
             // - Total width: 1 + subsectionWidth + 18 + small margin (5px) = subsectionWidth + 24
             const subsectionContentWidth = this.getSubsectionWidth(this.selectedSubsection)
-            maxContentWidth =  subsectionContentWidth + 20  // rect x + content + rect extra + margin
+            maxContentWidth = subsectionContentWidth + 20 // rect x + content + rect extra + margin
             console.log("Subsection selected, width:", maxContentWidth)
           } else {
             // Si no hay subsección, calcular el ancho total considerando TODAS las secciones
             // Necesitamos el ancho máximo entre todas las secciones (ya que están una debajo de la otra)
             // getSectionWidth ya incluye extraWidthPadding, no agregar padding adicional
             maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section))) + 25
-            
           }
 
-    
           if (maxContentWidth > 0 && actualWidth > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = actualWidth / maxContentWidth
@@ -622,7 +632,6 @@ export default {
           } else {
             this.zoomLevel = 0.7 // Default más grande
           }
-
 
           // Establecer modo de arrastre en X (permite solo movimiento vertical Y)
           this.dragMode = "x"
@@ -644,10 +653,9 @@ export default {
 
     fitToHeight() {
       // Set fitstate to 'height'
-      this.fitstate = 'height'
+      this.fitstate = "height"
       // Calcular el zoom óptimo basado en la altura disponible
       if (!this.sections || this.sections.length === 0) {
-        
         this.zoomLevel = 0.7
         return
       }
@@ -661,20 +669,16 @@ export default {
           // Calcular la altura total del contenido según si hay subsección seleccionada o no
           let totalContentHeight
           if (this.selectedSubsection) {
-     
             const subsectionContentHeight = this.getSubsectionHeight(this.selectedSubsection)
-            totalContentHeight =  subsectionContentHeight + 35  // rect y + content + rect extra + label space
-          
+            totalContentHeight = subsectionContentHeight + 35 // rect y + content + rect extra + label space
           } else {
             // Si no hay subsección, calcular altura total de todas las secciones
             totalContentHeight =
               this.sections.reduce((acc, section, idx) => {
                 return acc + this.getSectionHeight(section) + (idx > 0 ? DEFAULT_SETTINGS.SECTION_TOP_MARGIN : 0)
               }, 0) + 40 // padding extra
-     
           }
 
-   
           if (totalContentHeight > 0 && availableHeight > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = availableHeight / totalContentHeight
@@ -766,7 +770,6 @@ export default {
 
       // Clear selection after emitting
       this.selectedSeatsArray = []
-      
     },
 
     handleSeatHover(e) {
@@ -794,7 +797,7 @@ export default {
 
       // Calculate new zoom level
       let newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy
-      
+
       // Clamp to min/max zoom
       newScale = Math.max(this.minZoom, Math.min(this.maxZoom, newScale))
       newScale = Math.round(newScale * 100) / 100
@@ -841,5 +844,19 @@ export default {
   .stage-container {
     -webkit-overflow-scrolling: touch;
   }
+}
+</style>
+
+<style>
+/* Floating mark panel - unscoped for proper z-index */
+.floating-mark-panel {
+  position: fixed;
+  top: 60px;
+  right: 0px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  pointer-events: auto;
 }
 </style>
