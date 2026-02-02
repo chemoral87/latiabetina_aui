@@ -50,7 +50,7 @@
     <!-- Seats -->
 
     <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
-      <v-circle :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true, draggable: false })" @click="handleSeatClick(seat, $event, 'click')" @tap="handleSeatClick(seat, $event, 'tap')" />
+      <v-circle :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true, draggable: false })" @click="handleSeatClick(seat, $event, 'click')" @tap="handleSeatClick(seat, $event, 'tap')" @mousedown="preventDrag" @touchstart="preventDrag" />
     </v-group>
   </v-group>
 </template>
@@ -235,6 +235,14 @@ export default {
     handleSeatClick(seat, event, actionType) {
       // console.log("Seat clicked:", seat, "Action Type:", actionType)
       this.$emit("seat-click", { seat, event })
+    },
+
+    preventDrag(event) {
+      // Prevent the stage from starting a drag when clicking on a seat
+      event.cancelBubble = true
+      if (event.evt) {
+        event.evt.stopPropagation()
+      }
     },
   },
 }
