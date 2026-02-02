@@ -102,19 +102,23 @@
           <v-btn class="mb-2" icon  title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)">
             <v-icon >mdi-account-outline</v-icon>
           </v-btn>
-          <v-btn class="mb-6"  icon  title="Ocupado" style="background-color: #0000ff  !important; color: white" @click="setEventSeat('ocu')">
-            <v-icon >mdi-account</v-icon>
+           <v-btn class="mb-2"  icon  title="Hombre" style="background-color: #1976D2  !important; color: white" @click="setEventSeat('hom')">
+            <v-icon >mdi-human-male</v-icon>
+          </v-btn> 
+           <v-btn class="mb-4"  icon  title="Mujer" style="background-color: #E91E63 !important; color: white" @click="setEventSeat('muj')">
+            <v-icon >mdi-human-female</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon  title="Adulto" style="background-color: #6B7280 !important; color: white" @click="setEventSeat('adu')">
-            <v-icon >mdi-human</v-icon>
-          </v-btn>
-          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #8B5CF6 !important; color: white" @click="setEventSeat('ado')">
+               <v-btn class="mb-2"  icon  title="Nuevo" style="background-color: #2E7D32  !important; color: white" @click="setEventSeat('nue')">
+            <v-icon >mdi-star</v-icon>
+          </v-btn> 
+         
+          <v-btn class="mb-2"  icon  title="Adolescente" style="background-color: #F57C00 !important; color: white" @click="setEventSeat('ado')">
             <v-icon >mdi-human-scooter</v-icon>
           </v-btn>
-          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #EC4899 !important; color: white" @click="setEventSeat('niñ')">
+          <v-btn class="mb-2"  icon  title="Niño" style="background-color: #00BCD4 !important; color: white" @click="setEventSeat('niñ')">
             <v-icon >mdi-human-child</v-icon>
           </v-btn>
-          <v-btn  icon title="Porteador" style="background-color: #F97316 !important; color: white" @click="setEventSeat('por')">
+          <v-btn  icon title="Porteador" style="background-color: #7B1FA2 !important; color: white" @click="setEventSeat('por')">
             <v-icon >mdi-human-male-child</v-icon>
           </v-btn>
         </div>
