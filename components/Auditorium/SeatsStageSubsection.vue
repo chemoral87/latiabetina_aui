@@ -57,12 +57,13 @@
         @mousedown="preventDrag"
         @touchstart="preventDrag"
       />
+      <v-path v-if="seat.iconPath" :config="seat.iconPathConfig" />
     </v-group>
   </v-group>
 </template>
 
 <script>
-import { STATUS_COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
+import { STATUS_COLORS, STATUS_ICONS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
 
 export default {
   name: "SeatsStageSubsection",
@@ -140,12 +141,21 @@ export default {
       this.subsection.seats.forEach((row, rowIdx) => {
         row.forEach((seat, colIdx) => {
           if (seat.state !== "invisible") {
-            allSeats.push({
+            const seatData = {
               ...seat,
               x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 14,
               y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 20,
               config: this.getSeatConfig(seat),
-            })
+            }
+
+            // Add icon path if seat has status
+            const status = seat.status ? String(seat.status).toLowerCase() : null
+            if (status && STATUS_ICONS[status]) {
+              seatData.iconPath = STATUS_ICONS[status]
+              seatData.iconPathConfig = this.getIconPathConfig(seat)
+            }
+
+            allSeats.push(seatData)
           }
         })
       })
@@ -235,6 +245,39 @@ export default {
         stroke,
         strokeWidth,
         opacity: isReserved ? 0.6 : 1,
+      }
+    },
+
+    getIconPathConfig(seat) {
+      const status = seat.status ? String(seat.status).toLowerCase() : null
+      const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
+
+      // Determine icon color based on seat background
+      let iconColor = "#FFFFFF" // white by default
+
+      // For light backgrounds (yellow), use dark icon
+      if (!status) {
+        iconColor = "#000000"
+      }
+
+      // If blinking, adjust color
+      if (isInSelectedArray && !this.blinkState) {
+        iconColor = "#FFFFFF" // white on red background
+      }
+
+      const radius = DEFAULT_SETTINGS.SEAT_SIZE / 2
+      const scale = (radius * 1.8) / 24 // Scale to fit within seat (increased from 1.4 to 1.8)
+      // Properly center the icon: 24 (original icon size) * scale / 2
+      const offset = (24 * scale) / 2
+
+      return {
+        data: STATUS_ICONS[status] || "",
+        fill: iconColor,
+        scaleX: scale,
+        scaleY: scale,
+        x: -offset,
+        y: -offset,
+        listening: false, // Don't capture events on icon
       }
     },
 
