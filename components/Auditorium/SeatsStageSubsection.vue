@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { STATUS_COLORS, STATUS_ICONS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
+import { STATUS_COLORS, STATUS_ICONS, STATUS_CONFIG, COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
 
 export default {
   name: "SeatsStageSubsection",
@@ -192,12 +192,6 @@ export default {
     },
 
     getSeatConfig(seat) {
-      const COLORS = {
-        SEAT_SELECTED: "#1976d2",
-        SEAT_FREE: "#ffeb3b",
-        SEAT_RESERVED: "lightgrey",
-      }
-
       const CLASS_STROKE_MAP = {
         // Add your stroke map here if needed
       }
@@ -233,7 +227,7 @@ export default {
         if (status) {
           baseColor = statusColors[status] || "#ffeb3b"
         }
-        fill = this.blinkState ? baseColor : "#f44336"
+        fill = this.blinkState ? baseColor : "#808080"
         strokeWidth = 0
       } else if (status) {
         fill = statusColors[status] || fill
@@ -266,7 +260,9 @@ export default {
       }
 
       const radius = DEFAULT_SETTINGS.SEAT_SIZE / 2
-      const scale = (radius * 1.8) / 24 // Scale to fit within seat (increased from 1.4 to 1.8)
+      // Get icon_scale from STATUS_CONFIG, default to 1.8
+      const iconScale = STATUS_CONFIG[status]?.icon_scale || 1.8
+      const scale = (radius * iconScale) / 24 // Scale to fit within seat
       // Properly center the icon: 24 (original icon size) * scale / 2
       const offset = (24 * scale) / 2
 

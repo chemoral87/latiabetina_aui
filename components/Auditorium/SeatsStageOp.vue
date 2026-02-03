@@ -15,16 +15,6 @@
           </v-btn>
         </template>
 
-        <!-- Zoom controls - always visible -->
-        <!-- <div class="d-inline-flex">
-          <v-btn color="info" small :disabled="zoomLevel <= minZoom" class="rounded-r-0" @click="zoomOut">
-            <v-icon>mdi-minus</v-icon>
-          </v-btn>
-          <v-btn color="info" small disabled class="px-3 rounded-0">{{ Math.round(zoomLevel * 100) }}%</v-btn>
-          <v-btn color="info" small :disabled="zoomLevel >= maxZoom" class="rounded-l-0" @click="zoomIn">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </div> -->
 
         <v-btn title="Fit Width" color="secondary" small class="ml-0" @click="fitToWidth">
           <v-icon>mdi-arrow-expand-horizontal</v-icon>
@@ -89,60 +79,15 @@
         </v-btn>
       </div>
 
-      <div class="mt-2" style="padding: 5px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; position: relative; z-index: 1">
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Disponible" style="background-color: #ffeb3b !important; color: black" @click="setEventSeat(null)"></v-btn>
-          <span style="font-size: 9px; text-align: center">Vacio</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Hombre" style="background-color: #1976d2 !important; color: white" @click="setEventSeat('hom')">
-            <v-icon>mdi-human-male</v-icon>
+      <div class="mt-0" style="padding: 2px 4px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; ">
+        <!-- Loop through active status configs -->
+        <div v-for="(config, key) in activeStatusConfig" :key="key" style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon :title="config.label" :style="`background-color: ${config.color} !important; color: white`" @click="setEventSeat(key == 'vac' ? null : key)">
+            <v-icon>{{ getIconName(key) }}</v-icon>
           </v-btn>
-          <span style="font-size: 9px; text-align: center">Hombre</span>
+          <span style="font-size: 9px; text-align: center">{{ config.label }}</span>
         </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Mujer" style="background-color: #e91e63 !important; color: white" @click="setEventSeat('muj')">
-            <v-icon>mdi-human-female</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Mujer</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Nuevo" style="background-color: #2e7d32; color: white" @click="setEventSeat('nue')">
-            <v-icon>mdi-face-man-shimmer</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Nuevo</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Nueva" style="background-color: #ce93d8; color: white" @click="setEventSeat('nua')">
-            <v-icon>mdi-face-woman-shimmer</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Nueva</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Adolescente" style="background-color: #f57c00; color: white" @click="setEventSeat('ado')">
-            <v-icon>mdi-human-scooter</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Teen</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Niño" style="background-color: #00bcd4; color: white" @click="setEventSeat('niñ')">
-            <v-icon>mdi-human-child</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Niño</span>
-        </div>
-
-        <!-- <div style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon title="Porteador" style="background-color: #7b1fa2; color: white" @click="setEventSeat('por')">
-            <v-icon>mdi-human-male-child</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">Portead.</span>
-        </div> -->
+      </div>
       </div>
     </div>
   </div>
@@ -151,7 +96,7 @@
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
-import { getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
+import { getPercentageColor, DEFAULT_SETTINGS, STATUS_CONFIG } from "./constants.js"
 Vue.use(VueKonva)
 
 export default {
@@ -181,6 +126,16 @@ export default {
     }
   },
   computed: {
+    activeStatusConfig() {
+      // Filter STATUS_CONFIG to only include active items
+      return Object.keys(STATUS_CONFIG)
+        .filter(key => STATUS_CONFIG[key].active !== false)
+        .reduce((acc, key) => {
+          acc[key] = STATUS_CONFIG[key]
+          return acc
+        }, {})
+    },
+
     seatSpacing() {
       return DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
     },
@@ -335,6 +290,19 @@ export default {
     }
   },
   methods: {
+    getIconName(key) {
+      const iconMap = {
+        hom: "mdi-human-male",
+        muj: "mdi-human-female",
+        nue: "mdi-face-man-shimmer",
+        nua: "mdi-face-woman-shimmer",
+        ado: "mdi-human-scooter",
+        niñ: "mdi-human-child",
+        por: "mdi-human-male-child"
+      }
+      return iconMap[key] || ""
+    },
+
     getSubsectionStatsFor(sub) {
       if (!sub || !sub.seats) {
         return { withStatus: 0, total: 0, percent: 0 }
