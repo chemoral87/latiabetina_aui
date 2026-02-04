@@ -6,11 +6,11 @@
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
           <!-- <span class="text-body">{{ selectedSubsection.name }}</span> -->
-          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">Full</v-btn>
-          <v-btn color="primary" small class="ml-1" @click="previousSubsection">
+          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">All</v-btn>
+          <v-btn color="primary" x-small fab class="ml-1" @click="previousSubsection">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          <v-btn color="primary" small class="ml-1" @click="nextSubsection">
+          <v-btn color="primary" x-small fab class="ml-1" @click="nextSubsection">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </template>
@@ -29,7 +29,7 @@
 
     <div style="display: flex; gap: 2px">
       <div id="subsectionPanel" :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
+        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" @dragstart="handleDragStart" @dragend="handleDragEnd">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
@@ -71,10 +71,15 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <div v-if="selectedSeatsArray.length > 0" id="markPanel" class="floating-mark-panel">
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 5px; background-color: #1976d2; color: white; position: relative; z-index: 1">
+    <div v-if="selectedSeatsArray.length > 0" id="markPanel" class="floating-mark-panel" :style="panelStyle">
+      <div 
+        class="panel-title"
+        style="display: flex; align-items: center; justify-content: space-between; padding: 2px 5px; background-color: #1976d2; color: white; position: relative; z-index: 1; cursor: move"
+        @mousedown="startPanelDrag"
+        @touchstart="startPanelDrag"
+      >
         <h4 style="margin: 0; font-size: 14px">Seats: {{ selectedSeatsArray.length }}</h4>
-        <v-btn outlined fab x-small icon color="white" title="Clear all" @click="selectedSeatsArray = []">
+        <v-btn outlined fab x-small icon color="white" title="Clear all" @click.stop="clearSelectedSeats" @mousedown.stop @touchstart.stop>
           <v-icon small>mdi-close</v-icon>
         </v-btn>
       </div>
@@ -126,6 +131,11 @@ export default {
       lastDist: 0, // Last distance between two touch points for pinch zoom
       lastCenter: null, // Last center point between two touches
       isTwoFingerGesture: false, // Track if two fingers are active
+      isDraggingStage: false, // Track if user is dragging the stage
+      dragStartPos: null, // Starting position of potential drag
+      isPanelDragging: false, // Track if floating panel is being dragged
+      panelDragOffset: { x: 0, y: 0 }, // Offset for panel dragging
+      panelPosition: null, // Custom position for dragged panel (null = use default CSS)
     }
   },
   computed: {
@@ -258,6 +268,18 @@ export default {
       const percent = total > 0 ? Math.round((withStatus / total) * 100) : 0
 
       return { withStatus, total, percent }
+    },
+
+    panelStyle() {
+      if (this.panelPosition) {
+        return {
+          left: `${this.panelPosition.x}px`,
+          top: `${this.panelPosition.y}px`,
+          transform: 'none',
+          right: 'auto',
+        }
+      }
+      return {}
     },
   },
   watch: {
@@ -700,21 +722,36 @@ export default {
       }
     },
     handleSeatClick(payload) {
-      const { seat, event } = payload
-      // Stop event propagation to prevent stage drag
-      if (event && event.cancelBubble !== undefined) {
-        event.cancelBubble = true
-      }
-      if (event && event.evt) {
-        event.evt.stopPropagation()
-        event.evt.preventDefault()
-      }
-
+      const { seat } = payload
+      
       // Only allow selection when a subsection is selected
       if (!this.selectedSubsection) {
         return
       }
 
+      // Only check for drag if we actually detected a drag happening
+      // isDraggingStage indicates an active drag, not just small movements
+      if (this.isDraggingStage) {
+        return
+      }
+
+      // Check if this was a significant drag operation after drag ended
+      const stage = this.$refs.konvaStage?.getStage()
+      if (stage && this.dragStartPos) {
+        const currentPos = stage.position()
+        const dragDistance = Math.sqrt(
+          Math.pow(currentPos.x - this.dragStartPos.x, 2) + 
+          Math.pow(currentPos.y - this.dragStartPos.y, 2)
+        )
+        
+        // Use threshold from constants to be more mobile-friendly
+        // Small movements during taps shouldn't prevent selection
+        if (dragDistance > DEFAULT_SETTINGS.DRAG_THRESHOLD) {
+          return
+        }
+      }
+
+      // It was a click/tap, toggle seat selection
       const seatId = seat.id
       const index = this.selectedSeatsArray.indexOf(seatId)
 
@@ -740,6 +777,10 @@ export default {
       })
 
       // Clear selection after emitting
+      this.selectedSeatsArray = []
+    },
+
+    clearSelectedSeats() {
       this.selectedSeatsArray = []
     },
 
@@ -887,6 +928,79 @@ export default {
         y: (touch1.clientY + touch2.clientY) / 2,
       }
     },
+
+    handleDragStart() {
+      // Store initial position when drag starts
+      const stage = this.$refs.konvaStage?.getStage()
+      if (stage) {
+        this.dragStartPos = { ...stage.position() }
+        this.isDraggingStage = true
+      }
+    },
+
+    handleDragEnd() {
+      // Mark drag as complete
+      this.isDraggingStage = false
+      // Keep dragStartPos for a short time to detect clicks after drag
+      setTimeout(() => {
+        this.dragStartPos = null
+      }, 100)
+    },
+
+    startPanelDrag(e) {
+      e.preventDefault()
+      this.isPanelDragging = true
+
+      const panel = document.getElementById('markPanel')
+      if (!panel) return
+
+      // Get current position of panel
+      const rect = panel.getBoundingClientRect()
+      
+      // Determine if mouse or touch event
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY
+
+      // Store offset from cursor to panel top-left
+      this.panelDragOffset = {
+        x: clientX - rect.left,
+        y: clientY - rect.top,
+      }
+
+      // Add global listeners
+      document.addEventListener('mousemove', this.movePanelDrag)
+      document.addEventListener('touchmove', this.movePanelDrag)
+      document.addEventListener('mouseup', this.endPanelDrag)
+      document.addEventListener('touchend', this.endPanelDrag)
+    },
+
+    movePanelDrag(e) {
+      if (!this.isPanelDragging) return
+
+      // Determine if mouse or touch event
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY
+
+      // Calculate new position
+      const newX = clientX - this.panelDragOffset.x
+      const newY = clientY - this.panelDragOffset.y
+
+      // Set panel position
+      this.panelPosition = {
+        x: Math.max(0, Math.min(window.innerWidth - 200, newX)),
+        y: Math.max(0, Math.min(window.innerHeight - 100, newY)),
+      }
+    },
+
+    endPanelDrag() {
+      this.isPanelDragging = false
+
+      // Remove global listeners
+      document.removeEventListener('mousemove', this.movePanelDrag)
+      document.removeEventListener('touchmove', this.movePanelDrag)
+      document.removeEventListener('mouseup', this.endPanelDrag)
+      document.removeEventListener('touchend', this.endPanelDrag)
+    },
   },
 }
 </script>
@@ -910,8 +1024,8 @@ export default {
 .floating-mark-panel {
   position: fixed;
   top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0px;
+  transform: none;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -922,6 +1036,9 @@ export default {
 @media (min-width: 768px) {
   .floating-mark-panel {
     top: 75px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
   }
 }
 </style>

@@ -120,6 +120,7 @@ export const DEFAULT_SETTINGS = {
   SECTION_TOP_PADDING: 32,
   SECTION_SIDE_PADDING: 0,
   SECTION_BOTTOM_PADDING: 0,
+  DRAG_THRESHOLD: 18, // Pixels threshold to differentiate drag from click/tap
 }
 
 // Default export for auto-import compatibility
