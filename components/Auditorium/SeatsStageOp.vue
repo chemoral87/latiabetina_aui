@@ -820,11 +820,18 @@ export default {
 .floating-mark-panel {
   position: fixed;
   top: 60px;
-  right: 0px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
   pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .floating-mark-panel {
+    top: 75px;
+  }
 }
 </style>
