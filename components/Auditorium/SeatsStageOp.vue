@@ -601,8 +601,8 @@ export default {
             this.zoomLevel = 0.7 // Default más grande
           }
 
-          // Establecer modo de arrastre en X (permite solo movimiento vertical Y)
-          this.dragMode = "x"
+          // Establecer modo de arrastre en ambos ejes (permite movimiento en X e Y)
+          this.dragMode = null
 
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
@@ -658,8 +658,8 @@ export default {
 
           console.log("Fit to height zoom level:", this.zoomLevel)
 
-          // Establecer modo de arrastre en Y (permite solo movimiento horizontal X)
-          this.dragMode = "y"
+          // Establecer modo de arrastre en ambos ejes (permite movimiento en X e Y)
+          this.dragMode = null
 
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
