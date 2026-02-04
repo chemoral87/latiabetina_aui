@@ -29,7 +29,7 @@
 
     <div style="display: flex; gap: 2px">
       <div id="subsectionPanel" :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel">
+        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
@@ -123,6 +123,9 @@ export default {
       blinkState: false, // Toggle for blinking animation
       blinkInterval: null, // Interval reference
       fitstate: null, // 'width' or 'height' - tracks current fit mode
+      lastDist: 0, // Last distance between two touch points for pinch zoom
+      lastCenter: null, // Last center point between two touches
+      isTwoFingerGesture: false, // Track if two fingers are active
     }
   },
   computed: {
@@ -166,7 +169,7 @@ export default {
         width: this.containerWidth,
         height: this.containerHeightPx,
         x: 0,
-        draggable: true,
+        draggable: !this.isTwoFingerGesture,
         dragBoundFunc: this.selectedSubsection && this.dragMode ? this.getDragBoundFunc() : undefined,
       }
     },
@@ -796,6 +799,93 @@ export default {
 
       // Clear fitstate since user is manually zooming
       this.fitstate = null
+    },
+
+    handleTouchStart(e) {
+      const touch1 = e.evt.touches[0]
+      const touch2 = e.evt.touches[1]
+
+      if (touch1 && touch2) {
+        // Two fingers detected - prepare for pinch zoom
+        this.isTwoFingerGesture = true
+        this.lastDist = this.getDistance(touch1, touch2)
+        this.lastCenter = this.getCenter(touch1, touch2)
+      } else {
+        this.isTwoFingerGesture = false
+      }
+    },
+
+    handleTouchMove(e) {
+      const touch1 = e.evt.touches[0]
+      const touch2 = e.evt.touches[1]
+
+      if (touch1 && touch2) {
+        // Prevent default to avoid page scroll
+        e.evt.preventDefault()
+
+        const stage = this.$refs.konvaStage?.getStage()
+        if (!stage) return
+
+        const dist = this.getDistance(touch1, touch2)
+        const center = this.getCenter(touch1, touch2)
+
+        if (!this.lastDist) {
+          this.lastDist = dist
+        }
+
+        const oldScale = this.zoomLevel
+        const pointTo = {
+          x: (center.x - stage.x()) / oldScale,
+          y: (center.y - stage.y()) / oldScale,
+        }
+
+        // Calculate scale change
+        const scale = dist / this.lastDist
+        let newScale = oldScale * scale
+
+        // Clamp to min/max zoom
+        newScale = Math.max(this.minZoom, Math.min(this.maxZoom, newScale))
+        newScale = Math.round(newScale * 100) / 100
+
+        // Update zoom level
+        this.zoomLevel = newScale
+
+        // Calculate new position to zoom toward center of pinch
+        const newPos = {
+          x: center.x - pointTo.x * newScale,
+          y: center.y - pointTo.y * newScale,
+        }
+
+        // Update stage position
+        stage.position(newPos)
+        stage.batchDraw()
+
+        this.lastDist = dist
+        this.lastCenter = center
+
+        // Clear fitstate since user is manually zooming
+        this.fitstate = null
+      }
+    },
+
+    handleTouchEnd() {
+      // Reset touch tracking
+      this.lastDist = 0
+      this.lastCenter = null
+      this.isTwoFingerGesture = false
+    },
+
+    getDistance(touch1, touch2) {
+      const dx = touch1.clientX - touch2.clientX
+      const dy = touch1.clientY - touch2.clientY
+      return Math.sqrt(dx * dx + dy * dy)
+    },
+
+    getCenter(touch1, touch2) {
+      return {
+        x: (touch1.clientX + touch2.clientX) / 2,
+        y: (touch1.clientY + touch2.clientY) / 2,
+      }
     },
   },
 }

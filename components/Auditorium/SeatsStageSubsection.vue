@@ -49,9 +49,9 @@
 
     <!-- Seats -->
 
-    <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y, draggable: false }">
+    <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y }">
       <v-circle
-        :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true, draggable: false })"
+        :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })"
         @click="handleSeatClick(seat, $event, 'click')"
         @tap="handleSeatClick(seat, $event, 'tap')"
         @mousedown="preventDrag"
