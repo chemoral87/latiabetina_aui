@@ -508,10 +508,10 @@ export default {
     bundleRenderer: {
       shouldPreload: (file, type) => {
         // Don't preload hot-update files
-        if (file.includes('.hot-update.')) {
+        if (file.includes(".hot-update.")) {
           return false
         }
-        return ['script', 'style', 'font'].includes(type)
+        return ["script", "style", "font"].includes(type)
       },
     },
 
