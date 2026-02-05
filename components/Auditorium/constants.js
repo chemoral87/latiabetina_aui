@@ -112,7 +112,7 @@ export const COLORS = {
 
 // Default stage settings
 export const DEFAULT_SETTINGS = {
-  SEAT_SIZE: 9,
+  SEAT_SIZE: 12,
   SEATS_DISTANCE: 2,
   SUBSECTION_SPACING: 30,
   SECTION_TOP_MARGIN: 0,

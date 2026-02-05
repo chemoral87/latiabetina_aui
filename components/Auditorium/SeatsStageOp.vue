@@ -729,7 +729,7 @@ export default {
     this.isIOS = this.$uaParser.isIOS()
       this.isAndroid = this.$uaParser.isAndroid()
       const deviceInfo = this.$uaParser.getDeviceInfo()
-      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS)
+      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, " SeatId:", seat.id)
 
       this.eventArrays.push(  "handleSeatClick " + deviceInfo?.os.name + " " + this.isIOS + "/" + this.isAndroid + " " + seat.id)
       

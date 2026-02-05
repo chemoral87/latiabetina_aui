@@ -504,6 +504,17 @@ export default {
     // Resource hints
     resourceHints: true,
 
+    // Bundle renderer
+    bundleRenderer: {
+      shouldPreload: (file, type) => {
+        // Don't preload hot-update files
+        if (file.includes('.hot-update.')) {
+          return false
+        }
+        return ['script', 'style', 'font'].includes(type)
+      },
+    },
+
     // Static cache
     static: {
       maxAge: isDev ? 0 : 1000 * 60 * 60 * 24 * 7, // 7 días en producción
