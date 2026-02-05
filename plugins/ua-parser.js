@@ -2,7 +2,7 @@ export default (context, inject) => {
   // Only run on client side
   if (process.client) {
     const getDeviceInfo = () => {
-      if (typeof window !== 'undefined' && typeof window.UAParser !== 'undefined') {
+      if (typeof window !== "undefined" && typeof window.UAParser !== "undefined") {
         const parser = new window.UAParser()
         return parser.getResult()
       }
@@ -11,16 +11,16 @@ export default (context, inject) => {
 
     const isIOS = () => {
       const result = getDeviceInfo()
-      return result ? result.os.name === 'iOS' : false
+      return result ? result.os.name === "iOS" : false
     }
 
     const isAndroid = () => {
       const result = getDeviceInfo()
-      return result ? result.os.name === 'Android' : false
+      return result ? result.os.name === "Android" : false
     }
 
     // Inject functions into Vue, context, and store
-    inject('uaParser', {
+    inject("uaParser", {
       getDeviceInfo,
       isIOS,
       isAndroid,

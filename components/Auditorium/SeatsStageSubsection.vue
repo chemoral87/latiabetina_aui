@@ -51,7 +51,8 @@
 
     <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y }">
       <v-circle v-if="isIOS" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
-      <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
+      <v-circle v-else-if="isAndroid" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
+      <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat, $event)" />
       <v-path v-if="seat.iconPath" :config="seat.iconPathConfig" />
     </v-group>
   </v-group>
@@ -72,6 +73,7 @@ export default {
   data() {
     return {
       isIOS: false,
+      isAndroid: false,
     }
   },
   computed: {
@@ -163,11 +165,12 @@ export default {
     },
   },
   mounted() {
-    // Detect iOS using UAParser plugin
+    // Detect iOS and Android using UAParser plugin
     if (this.$uaParser) {
       this.isIOS = this.$uaParser.isIOS()
+      this.isAndroid = this.$uaParser.isAndroid()
       const deviceInfo = this.$uaParser.getDeviceInfo()
-      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS)
+      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, "isAndroid:", this.isAndroid)
     }
   },
   methods: {

@@ -727,10 +727,11 @@ export default {
       const { seat } = payload
 
     this.isIOS = this.$uaParser.isIOS()
+      this.isAndroid = this.$uaParser.isAndroid()
       const deviceInfo = this.$uaParser.getDeviceInfo()
       console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS)
 
-      this.eventArrays.push(  "handleSeatClick " + deviceInfo?.os.name)
+      this.eventArrays.push(  "handleSeatClick " + deviceInfo?.os.name + " " + this.isIOS + "/" + this.isAndroid + " " + seat.id)
       
       // Only allow selection when a subsection is selected
       if (!this.selectedSubsection) {
