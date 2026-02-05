@@ -2,6 +2,7 @@
   <div>
     <!-- Navigation and Zoom Controls -->
     <v-row ref="controlRow" dense>
+      {{ eventArrays }}
       <v-col>
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
@@ -117,6 +118,7 @@ export default {
   },
   data() {
     return {
+      eventArrays : [],
       selectedSubsection: null,
       zoomLevel: 1,
       minZoom: 0.3,
@@ -723,6 +725,12 @@ export default {
     },
     handleSeatClick(payload) {
       const { seat } = payload
+
+    this.isIOS = this.$uaParser.isIOS()
+      const deviceInfo = this.$uaParser.getDeviceInfo()
+      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS)
+
+      this.eventArrays.push(  "handleSeatClick " + deviceInfo?.os.name)
       
       // Only allow selection when a subsection is selected
       if (!this.selectedSubsection) {

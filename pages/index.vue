@@ -11,6 +11,7 @@
 </template>
 <script>
 export default {
+  middleware: ["authenticated"],
   props: {},
   data() {
     return {

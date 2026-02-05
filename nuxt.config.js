@@ -64,6 +64,12 @@ export default {
           ]
         : []),
     ],
+    script: [
+      {
+        src: "https://cdn.jsdelivr.net/npm/ua-parser-js/dist/ua-parser.min.js",
+        body: true,
+      },
+    ],
   },
 
   // Global CSS
@@ -83,6 +89,7 @@ export default {
     { src: "./plugins/vuetify-lang.js", mode: "client" },
     { src: "./plugins/localstorage.js", mode: "client" },
     { src: "./plugins/echo.js", mode: "client" },
+    { src: "./plugins/ua-parser.js", mode: "client" },
   ],
 
   // Auto import components

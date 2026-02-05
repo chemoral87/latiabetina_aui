@@ -50,7 +50,8 @@
     <!-- Seats -->
 
     <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-      <v-circle :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat, $event, 'click')" @tap="handleSeatClick(seat, $event, 'tap')" />
+      <v-circle v-if="isIOS" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
+      <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
       <v-path v-if="seat.iconPath" :config="seat.iconPathConfig" />
     </v-group>
   </v-group>
@@ -67,6 +68,11 @@ export default {
     categories: { type: Array, default: () => [] },
     selectedSeatsArray: { type: Array, default: () => [] },
     blinkState: { type: Boolean, default: false },
+  },
+  data() {
+    return {
+      isIOS: false,
+    }
   },
   computed: {
     seatSpacing() {
@@ -155,6 +161,14 @@ export default {
       })
       return allSeats
     },
+  },
+  mounted() {
+    // Detect iOS using UAParser plugin
+    if (this.$uaParser) {
+      this.isIOS = this.$uaParser.isIOS()
+      const deviceInfo = this.$uaParser.getDeviceInfo()
+      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS)
+    }
   },
   methods: {
     getRowLabelConfig(rowIdx) {
@@ -271,8 +285,8 @@ export default {
       }
     },
 
-    handleSeatClick(seat, event, actionType) {
-      // console.log("Seat clicked:", seat, "Action Type:", actionType)
+    handleSeatClick(seat, event) {
+      // console.log("Seat clicked:", seat)
       this.$emit("seat-click", { seat, event })
     },
   },
