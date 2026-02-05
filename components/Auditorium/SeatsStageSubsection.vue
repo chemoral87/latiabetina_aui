@@ -191,14 +191,14 @@ export default {
     getColLabelConfig(colIdx) {
       const labelSpacing = this.seatSpacing
       return {
-        x: colIdx * labelSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 12,
+        x: colIdx * labelSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 11,
         y: this.subsectionHeight + 25,
         text: String.fromCharCode(65 + colIdx),
         fontSize: 8,
         fill: "yellow",
         fontFamily: "Arial",
         align: "center",
-        offsetX: 3,
+        offsetX: 0,
       }
     },
 
@@ -295,3 +295,21 @@ export default {
   },
 }
 </script>
+<style scoped>
+/* Deshabilitar selección de texto y comportamientos táctiles por defecto */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* Para el contenedor de Konva */
+canvas {
+  display: block;
+  touch-action: none; /* IMPORTANTE: Previene gestos del navegador */
+}
+</style>
