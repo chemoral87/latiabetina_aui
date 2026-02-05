@@ -2,7 +2,7 @@
   <div>
     <!-- Navigation and Zoom Controls -->
     <v-row ref="controlRow" dense>
-      {{ eventArrays }}
+      <!-- {{ eventArrays }} -->
       <v-col>
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
