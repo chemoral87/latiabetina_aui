@@ -28,13 +28,5 @@ export default {
       this.$auth.fetchUser()
     }
   },
-  methods: {
-    hasPermission(permission) {
-      if (!this.permissions || typeof this.permissions !== "object") {
-        return false
-      }
-      return Object.prototype.hasOwnProperty.call(this.permissions, permission)
-    },
-  },
 }
 </script>

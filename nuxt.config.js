@@ -78,6 +78,7 @@ export default {
   // Plugins
   plugins: [
     "./plugins/mixins/user.js",
+    "./plugins/mixins/permissions.js",
     "./plugins/mixins/utils.js",
     "./plugins/mixins/validation.js",
     "./plugins/filters.js",

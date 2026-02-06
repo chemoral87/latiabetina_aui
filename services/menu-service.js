@@ -5,10 +5,7 @@ export class MenuService {
   }
 
   hasPermission(permission) {
-    if (!this.permissions || typeof this.permissions !== "object") {
-      return false
-    }
-    return Object.prototype.hasOwnProperty.call(this.permissions, permission)
+    return !!(this.permissions && permission in this.permissions)
   }
 
   getMenu() {

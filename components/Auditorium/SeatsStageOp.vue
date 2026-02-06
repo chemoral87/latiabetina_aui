@@ -7,7 +7,7 @@
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
           <!-- <span class="text-body">{{ selectedSubsection.name }}</span> -->
-          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">All</v-btn>
+          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">Main</v-btn>
           <v-btn color="primary" x-small fab class="ml-1" @click="previousSubsection">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
