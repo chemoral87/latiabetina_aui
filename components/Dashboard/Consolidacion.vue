@@ -1,17 +1,12 @@
 <template>
   <div>
-    <div v-if="!events || events.length === 0" class="text-caption grey--text">No hay eventos disponibles</div>
-    <v-card v-for="event in events" :key="event.id" class="mb-3" hover style="cursor: pointer" @click="goToEvent(event.id)">
-      <v-card-title class="text-subtitle-1">
-        {{ event.name || "Evento sin nombre" }}
-      </v-card-title>
-      <v-card-subtitle v-if="event.event_date">
-        {{ $moment(event.event_date).format("DD MMM YYYY") }}
-      </v-card-subtitle>
-      <v-card-text v-if="event.auditorium_name">
-        <v-icon small class="mr-1">mdi-seat</v-icon>
-        {{ event.auditorium_name }}
+    <!-- <div v-if="!events || events.length === 0" class="text-caption grey--text">No hay eventos disponibles</div> -->
+    <v-card v-for="event in events" :key="event.id" class="mb-3 text-center" hover outlined style="cursor: pointer; border: 6px solid #87ceeb" @click="goToEvent(event.id)">
+      <v-card-text v-if="event.auditorium_name" class="d-flex flex-column align-center">
+        <v-icon large class="mb-2">mdi-theater</v-icon>
+        <div>{{ event.auditorium_name }}</div>
       </v-card-text>
+      <v-card-title v-if="event.event_date" class="justify-center">Evento {{ $moment(event.event_date).format("DD MMM YYYY") }}</v-card-title>
     </v-card>
   </div>
 </template>

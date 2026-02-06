@@ -21,7 +21,13 @@ export const getters = {
   },
 
   permissions(state) {
-    return state.auth?.user?.permissions_org ?? []
+    const perms = state.auth?.user?.permissions_org
+    return perms && typeof perms === "object" && !Array.isArray(perms) ? perms : {}
+  },
+
+  hasPermission: (state) => (permission) => {
+    const perms = state.auth?.user?.permissions_org ?? {}
+    return permission in perms
   },
 
   orgs(state) {
@@ -107,7 +113,8 @@ export const actions = {
   validatePermission({ state }, { permission, error }) {
     if (!state.auth?.user) return false
 
-    if (!Object.prototype.hasOwnProperty.call(state.auth.user.permissions_org, permission)) {
+    const perms = state.auth.user.permissions_org ?? {}
+    if (!(permission in perms)) {
       error({
         statusCode: 403,
         message: `Permiso requerido <span class="error-message">${permission}</span>`,
@@ -115,7 +122,7 @@ export const actions = {
       return false
     }
 
-    return state.auth.user.permissions_org[permission]
+    return perms[permission]
   },
 
   notify({ commit, state }, data) {

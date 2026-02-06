@@ -1,17 +1,8 @@
 <template>
-  <v-container fluid>
-    <span class="text-h6 ml-2">Bienvenidos Inicio {{ NAME_SECRET }}</span>
-    <!-- authenticated {{ authenticated }}
-    <div v-if="user">user {{ user.name }}</div>
-    <div v-else>Cargando usuario...</div> -->
-
-    <!-- {{permissions}} -->
-    <!-- {{user}} -->
-  </v-container>
+  <v-container fluid></v-container>
 </template>
 <script>
 export default {
-  middleware: ["authenticated"],
   props: {},
   data() {
     return {
@@ -19,14 +10,8 @@ export default {
     }
   },
   mounted() {
-    const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Dashboard", icon: "mdi-view-dashboard" })
-
-    // Si está autenticado pero no tiene usuario, intentar obtenerlo
-    if (this.$auth.loggedIn && !this.$auth.user) {
-      console.log("Usuario no cargado, obteniendo del backend...")
-      this.$auth.fetchUser()
-    }
+    // Redirect to dashboard
+    this.$router.replace("/dashboard")
   },
 }
 </script>

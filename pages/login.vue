@@ -1,42 +1,58 @@
 <template>
   <v-container>
     <v-layout align-center justify-center>
-      <v-flex xs12 md5 lg6>
-        <v-form @submit.prevent="submitLogin">
-          <v-row dense>
-            <v-col cols="12">
-              <span class="text-h5">Inicio Sesión</span>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field v-model="email" hide-details outlined autocomplete="username" label="Correo Electrónico" placeholder=" " persistent-placeholder :error-messages="errors ? errors?.email : []"></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="password"
-                outlined
-                autocomplete="current-password"
-                label="Contraseña"
-                placeholder=" "
-                persistent-placeholder
-                :error-messages="errors ? errors?.password : []"
-                :append-icon="showned ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showned ? 'text' : 'password'"
-                @click:append="showned = !showned"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-btn type="submit" color="primary" class="mr-2 mb-8">Iniciar Sesión</v-btn>
-              <v-btn outlined color="primary" class="mr-2 mb-8" @click="$router.push('/forgot-password')">Recuperar contraseña</v-btn>
-            </v-col>
-            <v-col cols="12">
-              <v-divider class="mb-4"></v-divider>
-              <v-btn outlined color="red darken-1" block class="text-none" @click="loginWithGoogle">
-                <v-icon left>mdi-google</v-icon>
-                Continuar con Google
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
+      <v-flex xs12 sm8 md6 lg4>
+        <v-card flat class="pa-6">
+          <v-form @submit.prevent="submitLogin">
+            <v-row dense>
+              <v-col cols="12" class="text-center mb-4">
+                <span class="text-h5">Inicio de Sesión</span>
+              </v-col>
+
+              <!-- Botón de Google primero -->
+              <v-col cols="12">
+                <v-btn outlined block large class="text-none mb-4" style="border-color: #dadce0; color: #3c4043; background-color: white" @click="loginWithGoogle">
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px; margin-right: 12px" />
+                  Acceder con Google
+                </v-btn>
+              </v-col>
+
+              <!-- Separador -->
+              <v-col cols="12" class="d-flex align-center my-3">
+                <v-divider></v-divider>
+                <span class="px-3 grey--text text--darken-1">o</span>
+                <v-divider></v-divider>
+              </v-col>
+
+              <!-- Campos de login -->
+              <v-col cols="12">
+                <v-text-field v-model="email" outlined dense autocomplete="username" label="Dirección de correo electrónico" :error-messages="errors ? errors?.email : []"></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                  v-model="password"
+                  outlined
+                  dense
+                  autocomplete="current-password"
+                  label="Contraseña"
+                  :error-messages="errors ? errors?.password : []"
+                  :append-icon="showned ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showned ? 'text' : 'password'"
+                  @click:append="showned = !showned"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" class="text-right">
+                <a href="#" class="text-decoration-none" @click.prevent="$router.push('/forgot-password')">Olvidé mi contraseña</a>
+              </v-col>
+
+              <v-col cols="12" class="">
+                <v-btn type="submit" color="primary" block large class="text-none">Ingresar</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-container>

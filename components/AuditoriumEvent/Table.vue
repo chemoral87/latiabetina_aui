@@ -9,7 +9,7 @@
     :items="items"
     :options.sync="optionsTable"
     :server-items-length="total"
-    class="elevation-1"
+    class="elevation-1 xwidth800"
     @page-count="pageCount = $event"
   >
     <template #[`item.marks`]="{ item }">
