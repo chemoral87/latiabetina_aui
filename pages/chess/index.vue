@@ -1,9 +1,9 @@
 <template>
-  <v-container fluid class="chess-container pa-4">
+  <v-container fluid class="chess-container pa-2">
     <v-row justify="center">
       <v-col cols="12" xl="10">
-        <div class="text-center mb-4">
-          <span class="chess-title text-h5 font-weight-medium">
+        <div class="text-center">
+          <span class="chess-title text-h6 font-weight-medium">
             Tablero de Ajedrez
           </span>
         </div>
@@ -44,6 +44,7 @@
               :is-rotated="isRotated"
               :selected-square="selectedSquare"
               :valid-moves="validMoves"
+              :hints="boardHints"
               @square-click="handleSquareClick"
             />
           </v-col>
@@ -65,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ChessHistory from '~/components/Chess/History.vue'
 import ChessControls from '~/components/Chess/Controls.vue'
 import ChessIndicator from '~/components/Chess/Indicator.vue'
@@ -167,6 +168,35 @@ const notationToIndex = (notation) => {
   const rank = 8 - parseInt(notation[1]) // 8->0
   return rank * 8 + file
 }
+
+const boardHints = computed(() => {
+  const hints = []
+
+    // Lichess (Verde)
+  if (bestMovesLichess.value) {
+    bestMovesLichess.value.forEach(move => {
+      hints.push({
+        from: notationToIndex(move.lan.substring(0, 2)),
+        to: notationToIndex(move.lan.substring(2, 4)),
+        color: '#4caf50' // Verde
+      })
+    })
+  }
+  
+  // Stockfish (Rojo)
+  if (bestMoveStockfish.value && bestMoveStockfish.value.lan) {
+    const lan = bestMoveStockfish.value.lan 
+    hints.push({
+      from: notationToIndex(lan.substring(0, 2)),
+      to: notationToIndex(lan.substring(2, 4)),
+      color: '#ff5252' // Rojo
+    })
+  }
+
+
+  
+  return hints
+})
 
 const getStockfishMove = async (fen) => {
   loadingStockfish.value = true

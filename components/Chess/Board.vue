@@ -23,6 +23,40 @@
         </div>
       </div>
       
+      <!-- Overlay SVG para hints -->
+      <svg class="board-overlay" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowhead-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#ff5252" />
+          </marker>
+          <marker id="arrowhead-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#4caf50" />
+          </marker>
+        </defs>
+        
+        <g v-for="(hint, i) in processedHints" :key="i">
+          <!-- Círculo en origen -->
+          <circle 
+            :cx="hint.x1" :cy="hint.y1" 
+            r="40" 
+            :stroke="hint.color" 
+            stroke-width="5" 
+            fill="none" 
+            opacity="0.7"
+          />
+          <!-- Flecha a destino -->
+          <!-- Calculamos puntos ligeramente ajustados para que la flecha no tape todo -->
+          <line 
+            :x1="hint.x1" :y1="hint.y1" 
+            :x2="hint.x2" :y2="hint.y2" 
+            :stroke="hint.color" 
+            stroke-width="12" 
+            :marker-end="hint.color === '#ff5252' ? 'url(#arrowhead-red)' : 'url(#arrowhead-green)'"
+            opacity="0.7"
+          />
+        </g>
+      </svg>
+
       <!-- Coordenadas -->
       <div class="coordinates">
         <div class="files">
@@ -55,6 +89,10 @@ export default {
     validMoves: {
       type: Array,
       default: () => []
+    },
+    hints: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -75,6 +113,22 @@ export default {
       return this.isRotated 
         ? ['1', '2', '3', '4', '5', '6', '7', '8'] 
         : ['8', '7', '6', '5', '4', '3', '2', '1']
+    },
+    processedHints() {
+      return this.hints.map(hint => {
+        const fromRow = Math.floor(hint.from / 8)
+        const fromCol = hint.from % 8
+        const toRow = Math.floor(hint.to / 8)
+        const toCol = hint.to % 8
+        
+        return {
+          x1: fromCol * 100 + 50,
+          y1: fromRow * 100 + 50,
+          x2: toCol * 100 + 50,
+          y2: toRow * 100 + 50,
+          color: hint.color
+        }
+      })
     }
   },
   methods: {
@@ -199,6 +253,16 @@ export default {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+.board-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15; /* Encima de piezas pero debajo de interacciones si fuera necesario, pero pointer-events:none lo arregla */
 }
 
 .files {
