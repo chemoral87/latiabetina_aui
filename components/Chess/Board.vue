@@ -13,7 +13,8 @@
           :class="[
             getSquareColor(index),
             { 'highlighted': isHighlighted(index) },
-            { 'selected': selectedSquare === index }
+            { 'selected': selectedSquare === index },
+            { 'in-check': checkSquare === index }
           ]"
           @click="$emit('square-click', index)"
         >
@@ -92,6 +93,10 @@ export default {
     hints: {
       type: Array,
       default: () => []
+    },
+    checkSquare: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -210,6 +215,11 @@ export default {
 .square.highlighted {
   background: #ffd54f !important;
   box-shadow: inset 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.square.in-check {
+  background: radial-gradient(circle, #ff5252 0%, #ff1744 40%, transparent 80%) !important;
+  box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.8);
 }
 
 .square.selected {
