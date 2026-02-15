@@ -85,6 +85,11 @@ const bestMovesLichess = ref([])
 const loadingStockfish = ref(false)
 const loadingLichess = ref(false)
 
+const castlingRights = ref({
+  w: { k: true, q: true },
+  b: { k: true, q: true }
+})
+
 // Historial de movimientos
 const moveHistory = ref([])
 const currentMoveIndex = ref(-1)
@@ -136,6 +141,10 @@ const resetBoard = () => {
   currentTurn.value = 'white'
   bestMoveStockfish.value = null
   bestMovesLichess.value = []
+  castlingRights.value = {
+    w: { k: true, q: true },
+    b: { k: true, q: true }
+  }
 }
 
 const boardToFen = () => {
@@ -159,7 +168,15 @@ const boardToFen = () => {
   }
   
   fen += ` ${currentTurn.value.charAt(0)}`
-  fen += ' - - 0 1' 
+  
+  // Castling rights for FEN
+  let rights = ''
+  if (castlingRights.value.w.k) rights += 'K'
+  if (castlingRights.value.w.q) rights += 'Q'
+  if (castlingRights.value.b.k) rights += 'k'
+  if (castlingRights.value.b.q) rights += 'q'
+  
+  fen += ` ${rights || '-'} - 0 1` 
   return fen
 }
 
@@ -269,6 +286,79 @@ const getPieceSymbol = (piece) => {
   return pieceSymbols[piece] || ''
 }
 
+const canCastle = (isWhite, isShort) => {
+  const color = isWhite ? 'w' : 'b'
+  const side = isShort ? 'k' : 'q'
+  
+  if (!castlingRights.value[color][side]) return false
+
+  const row = isWhite ? 7 : 0
+  
+  if (isShort) {
+    if (squares.value[row * 8 + 5] || squares.value[row * 8 + 6]) return false
+  } else if (squares.value[row * 8 + 1] || squares.value[row * 8 + 2] || squares.value[row * 8 + 3]) {
+    return false
+  }
+  
+  return true
+}
+
+const updateCastlingRights = (from, to) => {
+  const piece = squares.value[to] // Ya movida
+  const isWhite = (piece === piece.toUpperCase())
+  const color = isWhite ? 'w' : 'b'
+  const row = isWhite ? 7 : 0
+  
+  // Si se mueve el rey
+  if (piece.toLowerCase() === 'k') {
+    castlingRights.value[color].k = false
+    castlingRights.value[color].q = false
+  }
+  
+  // Si se mueve una torre
+  if (piece.toLowerCase() === 'r') {
+    if (from === row * 8 + 0) castlingRights.value[color].q = false
+    if (from === row * 8 + 7) castlingRights.value[color].k = false
+  }
+  
+  // Si una torre es capturada
+  const oppColor = isWhite ? 'b' : 'w'
+  const oppRow = isWhite ? 0 : 7
+  if (to === oppRow * 8 + 0) castlingRights.value[oppColor].q = false
+  if (to === oppRow * 8 + 7) castlingRights.value[oppColor].k = false
+}
+
+const getKingMoves = (row, col, isWhite) => {
+  const moves = []
+  const kingMoves = [
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1], [0, 1],
+    [1, -1], [1, 0], [1, 1]
+  ]
+
+  for (const [dr, dc] of kingMoves) {
+    const newRow = row + dr
+    const newCol = col + dc
+    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+      const index = newRow * 8 + newCol
+      const targetPiece = squares.value[index]
+      if (!targetPiece || (targetPiece === targetPiece.toUpperCase()) !== isWhite) {
+        moves.push(index)
+      }
+    }
+  }
+
+  // Enroque
+  if (row === (isWhite ? 7 : 0) && col === 4) {
+    // Corto
+    if (canCastle(isWhite, true)) moves.push(row * 8 + 6)
+    // Largo
+    if (canCastle(isWhite, false)) moves.push(row * 8 + 2)
+  }
+
+  return moves
+}
+
 const handleSquareClick = (index) => {
   // Si hay una casilla seleccionada y clickeamos en un movimiento válido
   if (selectedSquare.value !== null && validMoves.value.includes(index)) {
@@ -281,6 +371,28 @@ const handleSquareClick = (index) => {
     // Mover la pieza
     squares.value[index] = squares.value[selectedSquare.value]
     squares.value[selectedSquare.value] = ''
+    
+    // Manejar enroque (Mover torre)
+    if (piece.toLowerCase() === 'k' && Math.abs(index - selectedSquare.value) === 2) {
+      const row = Math.floor(index / 8)
+      // Corto
+      if (index > selectedSquare.value) {
+        const rookFrom = row * 8 + 7
+        const rookTo = row * 8 + 5
+        squares.value[rookTo] = squares.value[rookFrom]
+        squares.value[rookFrom] = ''
+      } 
+      // Largo
+      else {
+        const rookFrom = row * 8 + 0
+        const rookTo = row * 8 + 3
+        squares.value[rookTo] = squares.value[rookFrom]
+        squares.value[rookFrom] = ''
+      }
+    }
+    
+    // Actualizar derechos de enroque
+    updateCastlingRights(selectedSquare.value, index)
     
     // Guardar en el historial
     // Si estamos en medio del historial, eliminar movimientos futuros
@@ -477,28 +589,7 @@ const getSlidingMoves = (row, col, isWhite, directions) => {
   return moves
 }
 
-const getKingMoves = (row, col, isWhite) => {
-  const moves = []
-  const kingMoves = [
-    [-1, -1], [-1, 0], [-1, 1],
-    [0, -1], [0, 1],
-    [1, -1], [1, 0], [1, 1]
-  ]
 
-  for (const [dr, dc] of kingMoves) {
-    const newRow = row + dr
-    const newCol = col + dc
-    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-      const index = newRow * 8 + newCol
-      const targetPiece = squares.value[index]
-      if (!targetPiece || (targetPiece === targetPiece.toUpperCase()) !== isWhite) {
-        moves.push(index)
-      }
-    }
-  }
-
-  return moves
-}
 </script>
 
 <style scoped>
