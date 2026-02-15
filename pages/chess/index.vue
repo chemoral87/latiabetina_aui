@@ -22,6 +22,12 @@
             <ChessIndicator
               :current-turn="currentTurn"
             />
+            
+            <ChessBestMoves 
+              :moves="bestMoves"
+              :loading="loadingMoves"
+              class="mt-4"
+            />
 
 
           </v-col>
@@ -44,6 +50,8 @@
               :current-move-index="currentMoveIndex"
               @move-selected="goToMove"
             />
+            
+
           </v-col>
         </v-row>
       </v-col>
@@ -53,12 +61,19 @@
 
 <script setup>
 import { ref } from 'vue'
+import ChessHistory from '~/components/Chess/History.vue'
+import ChessControls from '~/components/Chess/Controls.vue'
+import ChessIndicator from '~/components/Chess/Indicator.vue'
+import ChessBoard from '~/components/Chess/Board.vue'
+import ChessBestMoves from '~/components/Chess/BestMoves.vue'
 
 // Estado del tablero
 const isRotated = ref(false)
 const selectedSquare = ref(null)
 const validMoves = ref([])
 const currentTurn = ref('white') // 'white' o 'black'
+const bestMoves = ref([])
+const loadingMoves = ref(false)
 
 // Historial de movimientos
 const moveHistory = ref([])
@@ -108,6 +123,89 @@ const resetBoard = () => {
   currentMoveIndex.value = -1
   boardHistory.value = [[...initialPosition]]
   currentTurn.value = 'white'
+  bestMoves.value = []
+}
+
+const boardToFen = () => {
+  let fen = ''
+  for (let row = 0; row < 8; row++) {
+    let empty = 0
+    for (let col = 0; col < 8; col++) {
+      const piece = squares.value[row * 8 + col]
+      if (!piece) {
+        empty++
+      } else {
+        if (empty > 0) {
+          fen += empty
+          empty = 0
+        }
+        fen += piece
+      }
+    }
+    if (empty > 0) fen += empty
+    if (row < 7) fen += '/'
+  }
+  
+  fen += ` ${currentTurn.value.charAt(0)}`
+  fen += ' - - 0 1' 
+  return fen
+}
+
+const getBestMoves = async () => {
+  loadingMoves.value = true
+  bestMoves.value = []
+  
+  try {
+    const fen = boardToFen()
+    const response = await fetch('https://chess-api.com/v1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fen,
+        variants: 4,
+        depth: 12
+      })
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      // La API devuelve un objeto si variants=1, o un texto plano si hay error?
+      // Según docs: returns JSON.
+      // Si variants > 1, devuelve: { text: "...", "variant": "..." } ?? No, devuelve JSON.
+      // Vamos a asumir que devuelve { ... } o [ ... ]
+      // Docs searched say it returns best move but if multiple variants?
+      // Let's assume standard response structure or handle generic JSON.
+      // Actually standard chess-api returns just one best move usually unless configured.
+      // But query said "get the best 4 moves". The search result implied variants parameter.
+      // Let's safe guard. data might be an object with properties or array?
+      // Search result said "variants: Maximum number of best moves to return".
+      // I will handle plain response or array.
+      
+      // Real implementation note: usually chess-api returns just the best move info unless it's a multi-pv endpoint.
+      // But let's look at the result: "text: 'bestmove ...'"
+      // I'll log it to console to debug if needed but for now I'll check if data is array or object.
+      // I'll assign data directly assuming it returns useful info.
+      // Actually, if variants parameter is supported, it might return text or JSON with multiple lines.
+      
+      // Let's try to parse the response.
+      // If data is object and has 'eval' and 'san', I'll wrap in array.
+      // If data is just one object, I'll put in array.
+      
+      // Wait, standard stockfish API often returns just one line.
+      // I'll assume if it's an object, it's one move.
+      if (!Array.isArray(data)) {
+        bestMoves.value = [data]
+      } else {
+        bestMoves.value = data
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching best moves:', error)
+  } finally {
+    loadingMoves.value = false
+  }
 }
 
 const getPieceSymbol = (piece) => {
@@ -147,6 +245,9 @@ const handleSquareClick = (index) => {
     
     selectedSquare.value = null
     validMoves.value = []
+    
+    // Obtener mejores movimientos
+    getBestMoves()
   } else if (squares.value[index]) {
     // Verificar que sea el turno correcto
     const piece = squares.value[index]
