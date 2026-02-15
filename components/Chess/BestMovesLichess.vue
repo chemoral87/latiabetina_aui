@@ -1,11 +1,12 @@
 <template>
   <v-card outlined class="mt-4 pa-3">
-    <div class="text-subtitle-2 font-weight-medium mb-2">
-      Mejores Movimientos (Stockfish 17)
+    <div class="text-subtitle-2 font-weight-medium mb-2 d-flex align-center">
+      <v-icon small left color="secondary">mdi-cloud-search</v-icon>
+      Análisis Lichess (2 opciones)
     </div>
     
     <div v-if="loading" class="d-flex justify-center pa-4">
-      <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
+      <v-progress-circular indeterminate color="secondary" size="24"></v-progress-circular>
     </div>
     
     <div v-else-if="moves.length > 0" class="d-flex flex-column ga-2">
@@ -13,21 +14,15 @@
         v-for="(move, index) in moves" 
         :key="index"
         class="best-move-item pa-2 rounded"
-        :class="getScoreClass(move.eval)"
       >
         <div class="d-flex align-center justify-space-between mb-1">
           <div class="d-flex align-center ga-2">
             <span v-if="index === 0" class="text-h6">🥇</span>
             <span v-else-if="index === 1" class="text-h6">🥈</span>
-            <span v-else-if="index === 2" class="text-h6">🥉</span>
             <span v-else class="font-weight-bold grey--text text--darken-2 pl-1">#{{ index + 1 }}</span>
-            
             <span class="text-body-2 font-weight-bold primary--text">{{ move.san }}</span>
           </div>
           <div class="d-flex align-center ga-2">
-            <span v-if="move.winChance" class="text-caption success--text font-weight-medium">
-              {{ move.winChance.toFixed(1) }}% Vic.
-            </span>
             <v-chip x-small label :color="getScoreColor(move.eval)" dark>
               {{ formatEval(move.eval, move.mate) }}
             </v-chip>
@@ -44,14 +39,14 @@
     </div>
     
     <div v-else class="text-caption grey--text text-center pa-2">
-      Realiza un movimiento para ver el análisis
+      No hay datos de Lichess.
     </div>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: 'ChessBestMoves',
+  name: 'ChessBestMovesLichess',
   props: {
     moves: {
       type: Array,
@@ -64,12 +59,8 @@ export default {
   },
   methods: {
     formatEval(cp, mate) {
-      if (mate) return `Mate en ${mate}`
+      if (mate) return `M${mate}`
       return (cp / 100).toFixed(2)
-    },
-    getScoreClass(cp) {
-      // Background styling based on advantage could be added here
-      return ''
     },
     getScoreColor(cp) {
       if (cp > 50) return 'success'
