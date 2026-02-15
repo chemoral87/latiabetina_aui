@@ -37,7 +37,7 @@
             <!-- Círculo en origen -->
             <circle 
               :cx="hint.x1" :cy="hint.y1" 
-              r="24" 
+              r="38" 
               :stroke="hint.color" 
               stroke-width="5" 
               fill="none" 
