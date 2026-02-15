@@ -175,11 +175,30 @@ const boardToFen = () => {
   let rights = ''
   if (castlingRights.value.w.k) rights += 'K'
   if (castlingRights.value.w.q) rights += 'Q'
-  if (castlingRights.value.b.k) rights += 'k'
   if (castlingRights.value.b.q) rights += 'q'
   
-  const ep = enPassantTarget.value !== null ? indexToNotation(enPassantTarget.value) : '-'
-  fen += ` ${rights || '-'} ${ep} 0 1` 
+  // Validar si el EP es realmente capturable para evitar errores en APIs estrictas
+  let epNotation = '-'
+  if (enPassantTarget.value !== null) {
+     const epIndex = enPassantTarget.value
+     const epCol = epIndex % 8
+     // Si es turno blancas, los peones blancos están en fila 3 (Rank 5). Si negras, fila 4 (Rank 4).
+     const attackRow = currentTurn.value === 'white' ? 3 : 4
+     const pawnChar = currentTurn.value === 'white' ? 'P' : 'p'
+     
+     // Verificar vecinos en esa fila
+     let canCapture = false
+     // Izquierda
+     if (epCol > 0 && squares.value[attackRow * 8 + (epCol - 1)] === pawnChar) canCapture = true
+     // Derecha
+     if (epCol < 7 && squares.value[attackRow * 8 + (epCol + 1)] === pawnChar) canCapture = true
+     
+     if (canCapture) {
+         epNotation = indexToNotation(epIndex)
+     }
+  }
+
+  fen += ` ${rights || '-'} ${epNotation} 0 1` 
   return fen
 }
 
