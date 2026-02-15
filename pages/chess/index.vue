@@ -89,6 +89,7 @@ const castlingRights = ref({
   w: { k: true, q: true },
   b: { k: true, q: true }
 })
+const enPassantTarget = ref(null) // Índice de la casilla de captura al paso
 
 // Historial de movimientos
 const moveHistory = ref([])
@@ -145,6 +146,7 @@ const resetBoard = () => {
     w: { k: true, q: true },
     b: { k: true, q: true }
   }
+  enPassantTarget.value = null
 }
 
 const boardToFen = () => {
@@ -176,7 +178,8 @@ const boardToFen = () => {
   if (castlingRights.value.b.k) rights += 'k'
   if (castlingRights.value.b.q) rights += 'q'
   
-  fen += ` ${rights || '-'} - 0 1` 
+  const ep = enPassantTarget.value !== null ? indexToNotation(enPassantTarget.value) : '-'
+  fen += ` ${rights || '-'} ${ep} 0 1` 
   return fen
 }
 
@@ -368,11 +371,18 @@ const handleSquareClick = (index) => {
     const toNotation = indexToNotation(index)
     const moveNotation = `${getPieceSymbol(piece)}${fromNotation}-${toNotation}`
     
+    // Manejar captura al paso (antes de mover visualmente comprobamos si es el target)
+    if (piece.toLowerCase() === 'p' && index === enPassantTarget.value) {
+       const isWhite = piece === 'P'
+       const capturePos = index - (isWhite ? -8 : 8)
+       squares.value[capturePos] = ''
+    }
+
     // Mover la pieza
     squares.value[index] = squares.value[selectedSquare.value]
     squares.value[selectedSquare.value] = ''
     
-    // Manejar enroque (Mover torre)
+    // Manejar enroque (Mover torre logic...)
     if (piece.toLowerCase() === 'k' && Math.abs(index - selectedSquare.value) === 2) {
       const row = Math.floor(index / 8)
       // Corto
@@ -393,6 +403,10 @@ const handleSquareClick = (index) => {
     
     // Actualizar derechos de enroque
     updateCastlingRights(selectedSquare.value, index)
+
+    // Actualizar En Passant Target
+    const isDoublePawnPush = piece.toLowerCase() === 'p' && Math.abs(index - selectedSquare.value) === 16
+    enPassantTarget.value = isDoublePawnPush ? (index + selectedSquare.value) / 2 : null
     
     // Guardar en el historial
     // Si estamos en medio del historial, eliminar movimientos futuros
@@ -517,6 +531,16 @@ const getPawnMoves = (row, col, isWhite) => {
       if (targetPiece && (targetPiece === targetPiece.toUpperCase()) !== isWhite) {
         moves.push(captureIndex)
       }
+    }
+  }
+
+  // Captura al paso
+  if (enPassantTarget.value !== null) {
+    const epRow = Math.floor(enPassantTarget.value / 8)
+    const epCol = enPassantTarget.value % 8
+    // Si la casilla EP está en la fila destino (row + direction) y columna adyacente
+    if (epRow === row + direction && Math.abs(epCol - col) === 1) {
+       moves.push(enPassantTarget.value)
     }
   }
 
