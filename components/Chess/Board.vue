@@ -120,17 +120,10 @@ export default {
     },
     processedHints() {
       return this.hints.map(hint => {
-        let fromRow = Math.floor(hint.from / 8)
-        let fromCol = hint.from % 8
-        let toRow = Math.floor(hint.to / 8)
-        let toCol = hint.to % 8
-        
-        if (this.isRotated) {
-          fromRow = 7 - fromRow
-          fromCol = 7 - fromCol
-          toRow = 7 - toRow
-          toCol = 7 - toCol
-        }
+        const fromRow = Math.floor(hint.from / 8)
+        const fromCol = hint.from % 8
+        const toRow = Math.floor(hint.to / 8)
+        const toCol = hint.to % 8
         
         return {
           x1: fromCol * 100 + 50,

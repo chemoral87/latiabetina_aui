@@ -99,13 +99,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import ChessHistory from '~/components/Chess/History.vue'
-import ChessControls from '~/components/Chess/Controls.vue'
-import ChessIndicator from '~/components/Chess/Indicator.vue'
-import ChessBoard from '~/components/Chess/Board.vue'
-import ChessBestMovesStockfish from '~/components/Chess/BestMovesStockfish.vue'
-import ChessBestMovesLichess from '~/components/Chess/BestMovesLichess.vue'
+import { ref, computed, watch } from 'vue'
 
 // Estado del tablero
 const isRotated = ref(false)
@@ -267,13 +261,15 @@ const boardHints = computed(() => {
   }
   
   // Stockfish (Rojo)
-  if (bestMoveStockfish.value && bestMoveStockfish.value.lan) {
-    const lan = bestMoveStockfish.value.lan 
-    hints.push({
-      from: notationToIndex(lan.substring(0, 2)),
-      to: notationToIndex(lan.substring(2, 4)),
-      color: '#ff5252' // Rojo
-    })
+  if (bestMoveStockfish.value) {
+    const lan = bestMoveStockfish.value.lan || bestMoveStockfish.value.move
+    if (lan && lan.length >= 4) {
+      hints.push({
+        from: notationToIndex(lan.substring(0, 2)),
+        to: notationToIndex(lan.substring(2, 4)),
+        color: '#ff5252' // Rojo
+      })
+    }
   }
 
 
@@ -347,9 +343,11 @@ const getBestMoves = () => {
   const playerColor = isRotated.value ? 'black' : 'white'
   const shouldAnalyze = analyzeAllMoves.value || (currentTurn.value === playerColor)
 
+  // Limpiar antes de pedir nuevos para no mostrar flechas viejas
+  bestMoveStockfish.value = null
+  bestMovesLichess.value = []
+  
   if (!shouldAnalyze) {
-    bestMoveStockfish.value = null
-    bestMovesLichess.value = []
     loadingStockfish.value = false
     loadingLichess.value = false
     return
@@ -653,6 +651,11 @@ const calculateValidMoves = (index) => {
     return !isKingInCheck(isWhite ? 'white' : 'black', nextBoard)
   })
 }
+
+// Reactividad para actualizar hints al rotar o cambiar modo
+watch([isRotated, analyzeAllMoves], () => {
+  getBestMoves()
+})
 
 // Lógica de Jaque
 const isKingInCheck = (color, board) => {
