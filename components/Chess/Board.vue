@@ -52,7 +52,7 @@
               :x1="hint.x1" :y1="hint.y1" 
               :x2="hint.x2" :y2="hint.y2" 
               :stroke="hint.color" 
-              stroke-width="12" 
+              :stroke-width="12 * (hint.arrowScale || 1)" 
               :marker-end="getMarker(hint.color)"
               opacity="0.7"
             />
@@ -137,7 +137,8 @@ export default {
           x2: toCol * 100 + 50 + visualOffset,
           y2: toRow * 100 + 50,
           color: hint.color,
-          radius: hint.radius || 38
+          radius: hint.radius || 38,
+          arrowScale: hint.arrowScale || 1
         }
       })
     }
