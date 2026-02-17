@@ -32,13 +32,16 @@
           <marker id="arrowhead-green" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
             <path d="M0,0 L5,2.5 L0,5 z" fill="#4caf50" />
           </marker>
+          <marker id="arrowhead-blue" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+            <path d="M0,0 L5,2.5 L0,5 z" fill="#2196f3" />
+          </marker>
           </defs>
           
           <g v-for="(hint, i) in processedHints" :key="i">
             <!-- Círculo en origen -->
             <circle 
               :cx="hint.x1" :cy="hint.y1" 
-              r="38" 
+              :r="hint.radius" 
               :stroke="hint.color" 
               stroke-width="5" 
               fill="none" 
@@ -50,7 +53,7 @@
               :x2="hint.x2" :y2="hint.y2" 
               :stroke="hint.color" 
               stroke-width="12" 
-              :marker-end="hint.color === '#ff5252' ? 'url(#arrowhead-red)' : 'url(#arrowhead-green)'"
+              :marker-end="getMarker(hint.color)"
               opacity="0.7"
             />
           </g>
@@ -124,18 +127,27 @@ export default {
         const fromCol = hint.from % 8
         const toRow = Math.floor(hint.to / 8)
         const toCol = hint.to % 8
+
+        // Aplicar offset compensando la rotación
+        const visualOffset = this.isRotated ? -(hint.xOffset || 0) : (hint.xOffset || 0)
         
         return {
-          x1: fromCol * 100 + 50,
+          x1: fromCol * 100 + 50 + visualOffset,
           y1: fromRow * 100 + 50,
-          x2: toCol * 100 + 50,
+          x2: toCol * 100 + 50 + visualOffset,
           y2: toRow * 100 + 50,
-          color: hint.color
+          color: hint.color,
+          radius: hint.radius || 38
         }
       })
     }
   },
   methods: {
+    getMarker(color) {
+      if (color === '#ff5252') return 'url(#arrowhead-red)'
+      if (color === '#2196f3') return 'url(#arrowhead-blue)'
+      return 'url(#arrowhead-green)'
+    },
     getSquareColor(index) {
       const row = Math.floor(index / 8)
       const col = index % 8

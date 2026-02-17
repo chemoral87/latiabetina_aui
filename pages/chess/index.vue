@@ -264,7 +264,9 @@ const boardHints = computed(() => {
       hints.push({
         from: notationToIndex(move.lan.substring(0, 2)),
         to: notationToIndex(move.lan.substring(2, 4)),
-        color: '#4caf50' // Verde
+        color: '#4caf50', // Verde
+        xOffset: 0,
+        radius: 30
       })
     })
   }
@@ -276,7 +278,9 @@ const boardHints = computed(() => {
       hints.push({
         from: notationToIndex(lan.substring(0, 2)),
         to: notationToIndex(lan.substring(2, 4)),
-        color: '#ff5252' // Rojo
+        color: '#ff5252', // Rojo
+        xOffset: -9,
+        radius: 30
       })
     }
   }
@@ -287,7 +291,9 @@ const boardHints = computed(() => {
       hints.push({
         from: notationToIndex(move.lan.substring(0, 2)),
         to: notationToIndex(move.lan.substring(2, 4)),
-        color: '#2196f3' // Azul
+        color: '#2196f3', // Azul
+        xOffset: 9,
+        radius: 30
       })
     })
   }
