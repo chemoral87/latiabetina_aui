@@ -26,12 +26,12 @@
         <!-- Overlay SVG para hints (Movido dentro del tablero para alinear coordenadas) -->
         <svg class="board-overlay" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <marker id="arrowhead-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L6,3 z" fill="#ff5252" />
-            </marker>
-            <marker id="arrowhead-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L6,3 z" fill="#4caf50" />
-            </marker>
+          <marker id="arrowhead-red" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+            <path d="M0,0 L5,2.5 L0,5 z" fill="#ff5252" />
+          </marker>
+          <marker id="arrowhead-green" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+            <path d="M0,0 L5,2.5 L0,5 z" fill="#4caf50" />
+          </marker>
           </defs>
           
           <g v-for="(hint, i) in processedHints" :key="i">
