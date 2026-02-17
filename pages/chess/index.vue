@@ -38,6 +38,12 @@
               :loading="loadingStockfish"
               class="mt-4"
             />
+            <ChessBestMovesL0c
+              title="Mejor Opción (L0c)"
+              :moves="bestMovesL0c"
+              :loading="loadingL0c"
+              class="mt-4"
+            />
             <ChessBestMovesLichess
               :moves="bestMovesLichess"
               :loading="loadingLichess"
@@ -108,8 +114,10 @@ const validMoves = ref([])
 const currentTurn = ref('white') // 'white' o 'black'
 // Estados para análisis
 const bestMoveStockfish = ref(null)
+const bestMovesL0c = ref([])
 const bestMovesLichess = ref([])
 const loadingStockfish = ref(false)
+const loadingL0c = ref(false)
 const loadingLichess = ref(false)
 const analyzeAllMoves = ref(true) // Switch para controlar análisis
 
@@ -174,6 +182,7 @@ const resetBoard = () => {
   currentTurn.value = 'white'
   currentTurn.value = 'white'
   bestMoveStockfish.value = null
+  bestMovesL0c.value = []
   bestMovesLichess.value = []
   castlingRights.value = {
     w: { k: true, q: true },
@@ -272,6 +281,17 @@ const boardHints = computed(() => {
     }
   }
 
+  // L0c (Azul)
+  if (bestMovesL0c.value) {
+    bestMovesL0c.value.forEach(move => {
+      hints.push({
+        from: notationToIndex(move.lan.substring(0, 2)),
+        to: notationToIndex(move.lan.substring(2, 4)),
+        color: '#2196f3' // Azul
+      })
+    })
+  }
+
 
   
   return hints
@@ -296,6 +316,44 @@ const getStockfishMove = async (fen) => {
     console.error('Stockfish API Error:', error)
   } finally {
     loadingStockfish.value = false
+  }
+}
+
+const getL0cMove = async (fen) => {
+  loadingL0c.value = true
+  bestMovesL0c.value = []
+  
+  try {
+    const response = await fetch(`http://127.0.0.1:2002/best-move?fen=${encodeURIComponent(fen)}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    })
+    
+    if (response.ok) {
+      const data = await response.json()
+      if (data.status === 'success' && data.best_moves) {
+        bestMovesL0c.value = data.best_moves.map(m => {
+          const moveLan = m.move
+          const from = moveLan.substring(0, 2)
+          const to = moveLan.substring(2, 4)
+          const index = notationToIndex(from)
+          const piece = squares.value[index]
+          const pieceLetter = (piece && piece.toUpperCase() !== 'P') ? piece.toUpperCase() : ''
+          const san = `${pieceLetter}${to}`
+          
+          return {
+            san,
+            lan: moveLan,
+            eval: parseInt(m.score) || 0,
+            depth: m.depth
+          }
+        })
+      }
+    }
+  } catch (error) {
+    console.error('L0c API Error:', error)
+  } finally {
+    loadingL0c.value = false
   }
 }
 
@@ -355,6 +413,7 @@ const getBestMoves = () => {
 
   const fen = boardToFen()
   getStockfishMove(fen)
+  getL0cMove(fen)
   getLichessMoves(fen)
 }
 

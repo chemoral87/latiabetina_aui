@@ -2,7 +2,7 @@
   <v-card outlined class="mt-4 pa-3">
     <div class="text-subtitle-2 font-weight-medium mb-2 d-flex align-center">
       <v-icon small left color="primary">mdi-robot</v-icon>
-      Mejor Opción (Stockfish)
+      {{ title }}
     </div>
     
     <div v-if="loading" class="d-flex justify-center pa-4">
@@ -45,6 +45,10 @@
 export default {
   name: 'ChessBestMovesStockfish',
   props: {
+    title: {
+      type: String,
+      default: 'Mejor Opción (Stockfish)'
+    },
     move: {
       type: Object,
       default: null

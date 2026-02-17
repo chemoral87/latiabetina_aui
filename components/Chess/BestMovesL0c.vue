@@ -1,12 +1,12 @@
 <template>
   <v-card outlined class="mt-4 pa-3">
     <div class="text-subtitle-2 font-weight-medium mb-2 d-flex align-center">
-      <v-icon small left color="secondary">mdi-cloud-search</v-icon>
+      <v-icon small left color="blue">mdi-robot</v-icon>
       {{ title }}
     </div>
     
     <div v-if="loading" class="d-flex justify-center pa-4">
-      <v-progress-circular indeterminate color="secondary" size="24"></v-progress-circular>
+      <v-progress-circular indeterminate color="blue" size="24"></v-progress-circular>
     </div>
     
     <div v-else-if="moves.length > 0" class="d-flex flex-column ga-2">
@@ -20,7 +20,7 @@
             <span v-if="index === 0" class="text-h6">🥇</span>
             <span v-else-if="index === 1" class="text-h6">🥈</span>
             <span v-else class="font-weight-bold grey--text text--darken-2 pl-1">#{{ index + 1 }}</span>
-            <span class="text-body-2 font-weight-bold primary--text">{{ move.san }}</span>
+            <span class="text-body-2 font-weight-bold blue--text">{{ move.san }}</span>
           </div>
           <div class="d-flex align-center ga-2">
             <v-chip x-small label :color="getScoreColor(move.eval)" dark>
@@ -39,18 +39,18 @@
     </div>
     
     <div v-else class="text-caption grey--text text-center pa-2">
-      No hay datos de Lichess.
+      Esperando análisis de L0c...
     </div>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: 'ChessBestMovesLichess',
+  name: 'ChessBestMovesL0c',
   props: {
     title: {
       type: String,
-      default: 'Análisis Lichess'
+      default: 'Mejor Opción (L0c)'
     },
     moves: {
       type: Array,
