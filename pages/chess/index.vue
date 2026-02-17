@@ -119,7 +119,8 @@ const bestMovesLichess = ref([])
 const loadingStockfish = ref(false)
 const loadingL0c = ref(false)
 const loadingLichess = ref(false)
-const analyzeAllMoves = ref(true) // Switch para controlar análisis
+const analyzeAllMoves = ref(true) 
+const lastAnalysisFen = ref('')
 
 const castlingRights = ref({
   w: { k: true, q: true },
@@ -180,16 +181,19 @@ const resetBoard = () => {
   currentMoveIndex.value = -1
   boardHistory.value = [[...initialPosition]]
   currentTurn.value = 'white'
-  currentTurn.value = 'white'
   bestMoveStockfish.value = null
   bestMovesL0c.value = []
   bestMovesLichess.value = []
+  lastAnalysisFen.value = ''
   castlingRights.value = {
     w: { k: true, q: true },
     b: { k: true, q: true }
   }
   enPassantTarget.value = null
   checkSquare.value = null
+  
+  // Iniciar análisis de la nueva partida
+  getBestMoves()
 }
 
 const boardToFen = () => {
@@ -317,7 +321,7 @@ const getStockfishMove = async (fen) => {
       body: JSON.stringify({ fen, variants: 1, depth: 12 })
     })
     
-    if (response.ok) {
+    if (response.ok && fen === lastAnalysisFen.value) {
       const data = await response.json()
       bestMoveStockfish.value = Array.isArray(data) ? data[0] : data
     }
@@ -338,10 +342,10 @@ const getL0cMove = async (fen) => {
       headers: { 'Accept': 'application/json' }
     })
     
-    if (response.ok) {
+    if (response.ok && fen === lastAnalysisFen.value) {
       const data = await response.json()
-      if (data.status === 'success' && data.best_moves) {
-        bestMovesL0c.value = data.best_moves.map(m => {
+      if (data.status === 'success' && data.best_moves && fen === lastAnalysisFen.value) {
+        const mappedMoves = data.best_moves.map(m => {
           const moveLan = m.move
           const from = moveLan.substring(0, 2)
           const to = moveLan.substring(2, 4)
@@ -357,6 +361,11 @@ const getL0cMove = async (fen) => {
             depth: m.depth
           }
         })
+
+        // Ordenar por score descendente (el mejor movimiento primero)
+        mappedMoves.sort((a, b) => b.eval - a.eval)
+        
+        bestMovesL0c.value = mappedMoves
       }
     }
   } catch (error) {
@@ -372,9 +381,9 @@ const getLichessMoves = async (fen) => {
   
   try {
     const lichessRes = await fetch(`https://lichess.org/api/cloud-eval?fen=${encodeURIComponent(fen)}&multiPv=2`)
-    if (lichessRes.ok) {
+    if (lichessRes.ok && fen === lastAnalysisFen.value) {
       const data = await lichessRes.json()
-      if (data.pvs && data.pvs.length > 0) {
+      if (data.pvs && data.pvs.length > 0 && fen === lastAnalysisFen.value) {
         bestMovesLichess.value = data.pvs.map(pv => {
            const moves = pv.moves.split(' ')
            const bestMoveLan = moves[0]
@@ -412,15 +421,19 @@ const getBestMoves = () => {
 
   // Limpiar antes de pedir nuevos para no mostrar flechas viejas
   bestMoveStockfish.value = null
+  bestMovesL0c.value = []
   bestMovesLichess.value = []
+  lastAnalysisFen.value = ''
   
   if (!shouldAnalyze) {
     loadingStockfish.value = false
+    loadingL0c.value = false
     loadingLichess.value = false
     return
   }
 
   const fen = boardToFen()
+  lastAnalysisFen.value = fen
   getStockfishMove(fen)
   getL0cMove(fen)
   getLichessMoves(fen)
