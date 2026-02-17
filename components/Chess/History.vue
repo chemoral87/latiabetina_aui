@@ -4,6 +4,22 @@
       Historial de Movimientos
     </div>
 
+    <!-- Navegación -->
+    <div class="history-navigation d-flex justify-center ga-2 mb-2">
+      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(-1)" :disabled="currentMoveIndex === -1">
+        <v-icon size="small">mdi-skip-backward</v-icon>
+      </v-btn>
+      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(currentMoveIndex - 1)" :disabled="currentMoveIndex <= -1">
+        <v-icon size="small">mdi-chevron-left</v-icon>
+      </v-btn>
+      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(currentMoveIndex + 1)" :disabled="currentMoveIndex >= moves.length - 1">
+        <v-icon size="small">mdi-chevron-right</v-icon>
+      </v-btn>
+      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(moves.length - 1)" :disabled="currentMoveIndex >= moves.length - 1">
+        <v-icon size="small">mdi-skip-forward</v-icon>
+      </v-btn>
+    </div>
+
     <div class="history-table">
       <!-- Header -->
       <div class="history-row header-row">
@@ -70,8 +86,33 @@ export default {
       return pairs
     }
   },
+  watch: {
+    currentMoveIndex() {
+      this.scrollToActive()
+    },
+    moves() {
+      this.scrollToActive()
+    }
+  },
   methods: {
+    scrollToActive() {
+      this.$nextTick(() => {
+        const container = this.$el.querySelector('.history-table')
+        if (!container) return
+
+        if (this.currentMoveIndex === -1) {
+          container.scrollTo({ top: 0, behavior: 'smooth' })
+        } else {
+          const activeItem = this.$el.querySelector('.move-cell.active')
+          if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          }
+        }
+      })
+    },
     handleMoveClick(moveIndex) {
+      if (moveIndex < -1) moveIndex = -1
+      if (moveIndex >= this.moves.length) moveIndex = this.moves.length - 1
       this.$emit('move-selected', moveIndex)
     }
   }
@@ -82,8 +123,7 @@ export default {
 .history-panel {
   background: white !important;
   border-radius: 8px !important;
-  min-height: 400px;
-  max-height: 600px;
+  height: 80vh;
   display: flex;
   flex-direction: column;
 }
@@ -92,6 +132,13 @@ export default {
   color: #424242;
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 8px;
+}
+
+.history-navigation {
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0 -12px;
+  padding: 4px;
 }
 
 .history-table {
