@@ -72,6 +72,8 @@
               :moves="moveHistory" 
               :current-move-index="currentMoveIndex"
               @move-selected="goToMove"
+              @export-history="exportHistory"
+              @import-history="importHistory"
             />
             
 
@@ -502,6 +504,49 @@ const goToMove = (moveIndex) => {
   selectedSquare.value = null
   validMoves.value = []
   currentTurn.value = (moveIndex + 1) % 2 === 0 ? 'white' : 'black'
+}
+
+const exportHistory = () => {
+  const data = {
+    moveHistory: moveHistory.value,
+    boardHistory: boardHistory.value,
+    currentMoveIndex: currentMoveIndex.value,
+    squares: squares.value,
+    currentTurn: currentTurn.value,
+    castlingRights: castlingRights.value,
+    enPassantTarget: enPassantTarget.value,
+    checkSquare: checkSquare.value
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `partida_ajedrez_${new Date().getTime()}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+const importHistory = (data) => {
+  try {
+    moveHistory.value = data.moveHistory || []
+    boardHistory.value = data.boardHistory || [[...initialPosition]]
+    currentMoveIndex.value = data.currentMoveIndex ?? -1
+    squares.value = data.squares || [...initialPosition]
+    currentTurn.value = data.currentTurn || 'white'
+    castlingRights.value = data.castlingRights || {
+      w: { k: true, q: true },
+      b: { k: true, q: true }
+    }
+    enPassantTarget.value = data.enPassantTarget ?? null
+    checkSquare.value = data.checkSquare ?? null
+    
+    selectedSquare.value = null
+    validMoves.value = []
+    
+    getBestMoves()
+  } catch (err) {
+    console.error('Error al restaurar partida:', err)
+  }
 }
 
 watch([isRotated, analyzeAllMoves], () => {

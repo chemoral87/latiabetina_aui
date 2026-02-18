@@ -18,6 +18,14 @@
       <v-btn icon small density="compact" variant="text" @click="handleMoveClick(moves.length - 1)" :disabled="currentMoveIndex >= moves.length - 1">
         <v-icon size="small">mdi-skip-forward</v-icon>
       </v-btn>
+      <v-divider vertical class="mx-1"></v-divider>
+      <v-btn icon small density="compact" variant="text" @click="$emit('export-history')" title="Exportar JSON">
+        <v-icon size="small">mdi-download</v-icon>
+      </v-btn>
+      <v-btn icon small density="compact" variant="text" @click="triggerFileInput" title="Importar JSON">
+        <v-icon size="small">mdi-upload</v-icon>
+      </v-btn>
+      <input type="file" ref="fileInput" hidden accept=".json" @change="handleFileImport">
     </div>
 
     <div class="history-table">
@@ -114,6 +122,26 @@ export default {
       if (moveIndex < -1) moveIndex = -1
       if (moveIndex >= this.moves.length) moveIndex = this.moves.length - 1
       this.$emit('move-selected', moveIndex)
+    },
+    triggerFileInput() {
+      this.$refs.fileInput.click()
+    },
+    handleFileImport(event) {
+      const file = event.target.files[0]
+      if (!file) return
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result)
+          this.$emit('import-history', data)
+        } catch (err) {
+          console.error('Error al importar:', err)
+          alert('Archivo JSON inválido')
+        }
+      }
+      reader.readAsText(file)
+      event.target.value = '' // Reset input
     }
   }
 }
