@@ -301,7 +301,7 @@ export default {
       setTimeout(() => {
         this.cachedControlHeight = this.getControlRowHeight()
 
-        this.fitToWidth()
+        this.fitToHeight()
       }, 100)
     })
 
