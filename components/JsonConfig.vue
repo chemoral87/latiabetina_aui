@@ -26,6 +26,12 @@ export default {
     exportConfiguration() {
       // Deep clone and remove category: "Ninguno" if present
       const cleaned = JSON.parse(JSON.stringify(this.configData))
+      
+      // Remove metadata and settings as requested
+      delete cleaned.version
+      delete cleaned.timestamp
+      delete cleaned.settings
+
       if (Array.isArray(cleaned.sections)) {
         cleaned.sections.forEach((section) => {
           if (!Array.isArray(section.subsections)) return

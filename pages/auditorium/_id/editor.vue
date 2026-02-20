@@ -229,9 +229,6 @@ export default {
       // Return a cleaned copy so transient values like category="Ninguno" are not persisted
       const cleaned = JSON.parse(
         JSON.stringify({
-          version: "1.0",
-          timestamp: new Date().toISOString(),
-          settings: this.settings,
           sections: this.sections,
         })
       )
@@ -327,8 +324,10 @@ export default {
         }
       }
 
-      if (config.settings && config.sections) {
-        Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+      if (config.sections) {
+        if (config.settings) {
+          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+        }
         // Reasignar IDs consecutivos
         const cleanSections = JSON.parse(JSON.stringify(config.sections))
         cleanSections.forEach((section, sIdx) => {
@@ -834,13 +833,17 @@ export default {
     // Handle configuration object emitted by JsonConfig component
     handleImportedConfig(config) {
       try {
-        if (!config || !config.sections || !config.settings) {
-          alert("Archivo JSON inválido: falta estructura requerida")
+        if (!config || !config.sections) {
+          alert("Archivo JSON inválido: falta estructura requerida (sections)")
           return
         }
 
         this.auditorium.config = config
-        Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+        
+        // Settings are now optional on import
+        if (config.settings) {
+          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+        }
 
         // Reasignar IDs consecutivos al importar
         const cleanSections = JSON.parse(JSON.stringify(config.sections))
