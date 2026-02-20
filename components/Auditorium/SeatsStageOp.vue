@@ -88,7 +88,7 @@
       <div class="mt-0" style="padding: 2px 4px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; ">
         <!-- Loop through active status configs -->
         <div v-for="(config, key) in activeStatusConfig" :key="key" style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon :title="config.label" :style="`background-color: ${config.color} !important; color: white`" @click="setEventSeat(key == 'vac' ? null : key)">
+          <v-btn class="mb-1" icon :title="config.label" :style="`background-color: ${config.color} !important; color: white`" @click="setEventSeat(key == 'e' ? null : key)">
             <v-icon>{{ getIconName(key) }}</v-icon>
           </v-btn>
           <span style="font-size: 9px; text-align: center">{{ config.label }}</span>
@@ -324,16 +324,7 @@ export default {
   },
   methods: {
     getIconName(key) {
-      const iconMap = {
-        hom: "mdi-human-male",
-        muj: "mdi-human-female",
-        nue: "mdi-face-man-shimmer",
-        nua: "mdi-face-woman-shimmer",
-        ado: "mdi-human-scooter",
-        niñ: "mdi-human-child",
-        por: "mdi-human-male-child"
-      }
-      return iconMap[key] || ""
+      return STATUS_CONFIG[key]?.mdi || ""
     },
 
     getSubsectionStatsFor(sub) {
