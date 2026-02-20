@@ -230,11 +230,16 @@ export default {
         this.sections = cleanSections
 
         // Update seat statuses from eventAuditorium.seats
-        if (this.eventAuditorium.seats && Array.isArray(this.eventAuditorium.seats)) {
-          this.eventAuditorium.seats.forEach((seatData) => {
-            const seat = this.findSeatById(seatData.seat_id)
-            if (seat) {
-              this.$set(seat, "status", seatData.status)
+        if (this.eventAuditorium.seats && !Array.isArray(this.eventAuditorium.seats)) {
+          // New format: { "status_key": ["id1", "id2", ...] }
+          Object.entries(this.eventAuditorium.seats).forEach(([status, seatIds]) => {
+            if (Array.isArray(seatIds)) {
+              seatIds.forEach((seatId) => {
+                const seat = this.findSeatById(seatId)
+                if (seat) {
+                  this.$set(seat, "status", status)
+                }
+              })
             }
           })
         }
