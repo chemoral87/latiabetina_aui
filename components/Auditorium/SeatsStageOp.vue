@@ -41,12 +41,12 @@
             <template v-else>
               <v-group v-for="(section, sIdx) in sections" :key="`section-${sIdx}`" :config="getSectionConfig(sIdx)">
                 <v-rect :config="getSectionBgConfig(section)" />
-                <v-rect v-if="!section.isLabel" :config="getSectionBgConfig(section)" />
+                <v-rect v-if="!(section.l || section.isLabel)" :config="getSectionBgConfig(section)" />
                 <v-text :config="getSectionTitleConfig(section)" />
 
-                <template v-if="!section.isLabel">
+                <template v-if="!(section.l || section.isLabel)">
                   <v-group
-                    v-for="(sub, subIdx) in section.subsections"
+                    v-for="(sub, subIdx) in (section.ss || section.subsections)"
                     :key="`sub-${sIdx}-${subIdx}`"
                     :config="getSubsectionPosition(section, subIdx)"
                     @click="handleSubsectionClick(sub)"
@@ -54,7 +54,7 @@
                     @mouseenter="handleSeatHover"
                     @mouseleave="handleSeatLeave"
                   >
-                    <template v-if="sub.isLabel">
+                    <template v-if="sub.l || sub.isLabel">
                       <AuditoriumSeatsStageSubsectionLabel :subsection="sub" :section-height="getSectionHeight(section)" />
                     </template>
 
@@ -158,9 +158,13 @@ export default {
     allSubsections() {
       const subsections = []
       this.sections.forEach((section) => {
-        if (!section.isLabel && section.subsections) {
-          section.subsections.forEach((sub) => {
-            if (!sub.isLabel && sub.seats) {
+        const isLabel = section.l || section.isLabel
+        const rawSubs = section.ss || section.subsections
+        if (!isLabel && rawSubs) {
+          rawSubs.forEach((sub) => {
+            const isSubLabel = sub.l || sub.isLabel
+            const seatsSource = sub.s || sub.seats
+            if (!isSubLabel && seatsSource) {
               subsections.push(sub)
             }
           })
@@ -171,7 +175,8 @@ export default {
 
     currentSubsectionIndex() {
       if (!this.selectedSubsection || this.allSubsections.length === 0) return -1
-      return this.allSubsections.findIndex((sub) => sub.id === this.selectedSubsection.id)
+      const selectedId = this.selectedSubsection.i || this.selectedSubsection.id
+      return this.allSubsections.findIndex((sub) => (sub.i || sub.id) === selectedId)
     },
 
     adjustedStageConfig() {
@@ -249,14 +254,15 @@ export default {
     },
 
     subsectionStats() {
-      if (!this.selectedSubsection || !this.selectedSubsection.seats) {
+      const seatsSource = this.selectedSubsection?.s || this.selectedSubsection?.seats
+      if (!this.selectedSubsection || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
       let total = 0
       let withStatus = 0
 
-      this.selectedSubsection.seats.forEach((row) => {
+      seatsSource.forEach((row) => {
         row.forEach((seat) => {
           if (seat) {
             total++
@@ -331,14 +337,15 @@ export default {
     },
 
     getSubsectionStatsFor(sub) {
-      if (!sub || !sub.seats) {
+      const seatsSource = sub?.s || sub?.seats
+      if (!sub || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
       let total = 0
       let withStatus = 0
 
-      sub.seats.forEach((row) => {
+      seatsSource.forEach((row) => {
         row.forEach((seat) => {
           if (seat) {
             total++
@@ -413,28 +420,30 @@ export default {
     },
 
     getSectionTitleConfig(section) {
+      const name = section.n || section.name
+      const isLabel = section.l || section.isLabel
       return {
         x: 0,
         y: 4,
-        text: section.name,
+        text: name,
         fontSize: 22,
-        fill: section.isLabel ? "#1976d2" : "#fff",
+        fill: isLabel ? "#1976d2" : "#fff",
         fontStyle: "bold",
         fontFamily: "Arial",
         align: "center",
-        width: section.isLabel ? this.getSectionWidth(section) : this.getSectionWidth(section),
+        width: this.getSectionWidth(section),
       }
     },
 
     getSubsectionPosition(section, subIdx) {
       // Calculate x position by summing widths and padding of previous subsections
       let x = DEFAULT_SETTINGS.SECTION_SIDE_PADDING
+      const rawSubs = section.ss || section.subsections
 
       for (let i = 0; i < subIdx; i++) {
-        const s = section.subsections[i]
-        // Add subsection width (use explicit width for labels with -20 reduction, calculate for regular subsections)
-        // Labels use (width || 40) - 20 to make them more compact (20px instead of 40px)
-        const width = s.isLabel ? (s.width || 40) - 20 : this.getSubsectionWidth(s)
+        const s = rawSubs[i]
+        const isLabel = s.l || s.isLabel
+        const width = isLabel ? (s.w || s.width || 40) - 20 : this.getSubsectionWidth(s)
         x += width
         // Add padding after each subsection
         x += DEFAULT_SETTINGS.SUBSECTION_SPACING
@@ -458,29 +467,38 @@ export default {
     },
 
     getSubsectionWidth(sub) {
-      if (sub.isLabel) return sub.width || 40
-      if (!sub.seats?.length) return 0
-      const maxCols = Math.max(...sub.seats.map((row) => row.length))
+      const isLabel = sub.l || sub.isLabel
+      if (isLabel) return sub.w || sub.width || 40
+      const seatsSource = sub.s || sub.seats
+      if (!seatsSource?.length) return 0
+      const maxCols = Math.max(...seatsSource.map((row) => row.length))
       return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
-      if (sub.isLabel) return 0
-      if (!sub.seats?.length) return 40
-      return sub.seats.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
+      const isLabel = sub.l || sub.isLabel
+      if (isLabel) return 0
+      const seatsSource = sub.s || sub.seats
+      if (!seatsSource?.length) return 40
+      return seatsSource.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSectionWidth(section) {
-      if (section.isLabel) {
+      const isLabel = section.l || section.isLabel
+      if (isLabel) {
         // Calculate the max width of all regular sections to center the label
         const maxSectionWidth = Math.max(
           ...this.sections
-            .filter((s) => !s.isLabel)
+            .filter((s) => !(s.l || s.isLabel))
             .map((s) => {
-              if (!s.subsections.length) return 0
+              const rawSubs = s.ss || s.subsections
+              if (!rawSubs || !rawSubs.length) return 0
               return (
-                s.subsections.reduce((acc, sub) => acc + (sub.isLabel ? (sub.width || 40) - 20 : this.getSubsectionWidth(sub)), 0) +
-                (s.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
+                rawSubs.reduce((acc, sub) => {
+                  const isSubLabel = sub.l || sub.isLabel
+                  return acc + (isSubLabel ? (sub.w || sub.width || 40) - 20 : this.getSubsectionWidth(sub))
+                }, 0) +
+                (rawSubs.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
                 DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
                 20 // Extra padding to cover last subsection
               )
@@ -488,21 +506,31 @@ export default {
         )
         return maxSectionWidth || 800 // Use max section width or default
       }
-      if (!section.subsections.length) return 0
+      const rawSubs = section.ss || section.subsections
+      if (!rawSubs || !rawSubs.length) return 0
       // Calculate extra width: subsection border (2px) + title padding (13px) + safety margin (5px) = 20px
       const extraWidthPadding = 20
       return (
-        section.subsections.reduce((acc, s) => acc + (s.isLabel ? (s.width || 40) - 20 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
+        rawSubs.reduce((acc, s) => {
+          const isSubLabel = s.l || s.isLabel
+          return acc + (isSubLabel ? (s.w || s.width || 40) - 20 : this.getSubsectionWidth(s))
+        }, 0) +
+        (rawSubs.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
         DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2 +
         extraWidthPadding
       )
     },
 
     getSectionHeight(section) {
-      if (section.isLabel) return 30
-      if (!section.subsections?.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
-      const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
+      const isLabel = section.l || section.isLabel
+      if (isLabel) return 30
+      const rawSubs = section.ss || section.subsections
+      if (!rawSubs || !rawSubs.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
+      const maxRows = Math.max(...rawSubs.map((sub) => {
+        const isSubLabel = sub.l || sub.isLabel
+        const seatsSource = sub.s || sub.seats
+        return (isSubLabel ? 0 : seatsSource?.length || 0)
+      }))
       if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
       // Calculate extra height: column label offset (5px) + font size (8px) + spacing (7px) + stats area (20px) = 40px
       const extraHeightPadding = 40

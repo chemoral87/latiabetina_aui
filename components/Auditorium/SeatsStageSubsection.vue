@@ -13,7 +13,7 @@
     />
 
     <!-- Row labels -->
-    <v-text v-for="rowIdx in subsection.seats.length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+    <v-text v-for="rowIdx in (subsection.s || subsection.seats || []).length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
 
     <!-- Column labels -->
     <v-text v-for="colIdx in maxColumns" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1)" />
@@ -82,26 +82,29 @@ export default {
     },
 
     subsectionWidth() {
-      if (!this.subsection.seats?.length) return 0
-      const maxCols = Math.max(...this.subsection.seats.map((row) => row.length))
+      const seatsSource = this.subsection.s || this.subsection.seats
+      if (!seatsSource?.length) return 0
+      const maxCols = Math.max(...seatsSource.map((row) => row.length))
       return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     subsectionHeight() {
-      if (!this.subsection.seats?.length) return 40
-      return this.subsection.seats.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
+      const seatsSource = this.subsection.s || this.subsection.seats
+      if (!seatsSource?.length) return 40
+      return seatsSource.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     maxColumns() {
-      if (!this.subsection || !Array.isArray(this.subsection.seats) || this.subsection.seats.length === 0) return 0
-      return Math.max(...this.subsection.seats.map((row) => (row ? row.length : 0)))
+      const seatsSource = this.subsection.s || this.subsection.seats
+      if (!this.subsection || !Array.isArray(seatsSource) || seatsSource.length === 0) return 0
+      return Math.max(...seatsSource.map((row) => (row ? row.length : 0)))
     },
 
     subsectionTitleConfig() {
       return {
         x: 4,
         y: 5,
-        text: this.subsection.name,
+        text: this.subsection.n || this.subsection.name,
         fontSize: 11,
         fill: "#fff",
         fontFamily: "Arial",
@@ -111,14 +114,15 @@ export default {
     },
 
     stats() {
-      if (!this.subsection || !this.subsection.seats) {
+      const seatsSource = this.subsection.s || this.subsection.seats
+      if (!this.subsection || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
       let total = 0
       let withStatus = 0
 
-      this.subsection.seats.forEach((row) => {
+      seatsSource.forEach((row) => {
         row.forEach((seat) => {
           if (seat) {
             total++
@@ -140,27 +144,34 @@ export default {
 
     seats() {
       const allSeats = []
-      this.subsection.seats.forEach((row, rowIdx) => {
-        row.forEach((seat, colIdx) => {
-          if (seat.state !== "invisible") {
-            const seatData = {
-              ...seat,
-              x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 14,
-              y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 20,
-              config: this.getSeatConfig(seat),
-            }
+      const seatsSource = this.subsection.s || this.subsection.seats
+      if (seatsSource) {
+        seatsSource.forEach((row, rowIdx) => {
+          row.forEach((seat, colIdx) => {
+            if (seat && seat.state !== "invisible") {
+              const seatData = {
+                ...seat,
+                id: seat.i || seat.id,
+                row: seat.r !== undefined ? seat.r : seat.row,
+                col: seat.c !== undefined ? seat.c : seat.col,
+                category: seat.k || seat.category,
+                x: colIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 14,
+                y: rowIdx * this.seatSpacing + DEFAULT_SETTINGS.SEAT_SIZE / 2 + 20,
+                config: this.getSeatConfig(seat),
+              }
 
-            // Add icon path if seat has status
-            const status = seat.status ? String(seat.status).toLowerCase() : null
-            if (status && STATUS_ICONS[status]) {
-              seatData.iconPath = STATUS_ICONS[status]
-              seatData.iconPathConfig = this.getIconPathConfig(seat)
-            }
+              // Add icon path if seat has status
+              const status = seat.status ? String(seat.status).toLowerCase() : null
+              if (status && STATUS_ICONS[status]) {
+                seatData.iconPath = STATUS_ICONS[status]
+                seatData.iconPathConfig = this.getIconPathConfig(seat)
+              }
 
-            allSeats.push(seatData)
-          }
+              allSeats.push(seatData)
+            }
+          })
         })
-      })
+      }
       return allSeats
     },
   },
@@ -212,8 +223,9 @@ export default {
 
       const isReserved = seat.state === "reserved"
       const isSelected = seat.state === "selected"
-      const isInSelectedArray = this.selectedSeatsArray.includes(seat.id)
-      const category = seat.category ? String(seat.category).toLowerCase() : null
+      const seatId = seat.i || seat.id
+      const isInSelectedArray = this.selectedSeatsArray.includes(seatId)
+      const category = (seat.k || seat.category) ? String(seat.k || seat.category).toLowerCase() : null
       const status = seat.status ? String(seat.status).toLowerCase() : null
 
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"

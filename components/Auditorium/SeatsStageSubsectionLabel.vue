@@ -29,7 +29,7 @@ export default {
       return {
         x: 0,
         y: 0,
-        width: this.subsection.width || 40,
+        width: this.subsection.w || this.subsection.width || 40,
         height: this.sectionHeight - DEFAULT_SETTINGS.SECTION_TOP_PADDING - 30,
         fill: "#424242",
         opacity: 0.3,
@@ -40,12 +40,12 @@ export default {
     },
 
     labelTextConfig() {
-      const width = this.subsection.width || 40
+      const width = this.subsection.w || this.subsection.width || 40
       const height = this.sectionHeight - DEFAULT_SETTINGS.SECTION_TOP_PADDING - DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       return {
         x: width / 2,
         y: height / 2,
-        text: this.subsection.name,
+        text: this.subsection.n || this.subsection.name,
         fontSize: 14,
         fill: COLORS.LABEL_TEXT,
         fontStyle: "bold",

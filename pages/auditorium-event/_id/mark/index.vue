@@ -70,10 +70,12 @@ export default {
     totalSeats() {
       let count = 0
       this.sections.forEach((section) => {
-        if (section.subsections) {
-          section.subsections.forEach((subsection) => {
-            if (subsection.seats) {
-              subsection.seats.forEach((row) => {
+        const rawSubs = section.ss || section.subsections
+        if (rawSubs) {
+          rawSubs.forEach((subsection) => {
+            const seatsSource = subsection.s || subsection.seats
+            if (seatsSource) {
+              seatsSource.forEach((row) => {
                 count += row.length
               })
             }
@@ -86,10 +88,12 @@ export default {
     totalSeatsWithStatus() {
       let count = 0
       this.sections.forEach((section) => {
-        if (section.subsections) {
-          section.subsections.forEach((subsection) => {
-            if (subsection.seats) {
-              subsection.seats.forEach((row) => {
+        const rawSubs = section.ss || section.subsections
+        if (rawSubs) {
+          rawSubs.forEach((subsection) => {
+            const seatsSource = subsection.s || subsection.seats
+            if (seatsSource) {
+              seatsSource.forEach((row) => {
                 row.forEach((seat) => {
                   if (seat.status) {
                     count++
@@ -166,10 +170,55 @@ export default {
         }
       }
 
-      if (config.settings && config.sections) {
-        Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+      if (config.s || config.sections) {
+        if (config.settings) {
+          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
+        }
 
-        this.sections = config.sections
+        const rawSections = config.s || config.sections
+        const cleanSections = rawSections.map((section, sIdx) => {
+          const s = {
+            id: section.i || section.id || `${sIdx + 1}`,
+            name: section.n || section.name,
+            isLabel: !!(section.l || section.isLabel),
+            subsections: [],
+          }
+
+          if (section.ss || section.subsections) {
+            const rawSubs = section.ss || section.subsections
+            s.subsections = rawSubs.map((sub, subIdx) => {
+              const ss = {
+                id: sub.i || sub.id || `${s.id}-${subIdx + 1}`,
+                name: sub.n || sub.name,
+                isLabel: !!(sub.l || sub.isLabel),
+              }
+              if (ss.isLabel) {
+                ss.width = sub.w || sub.width
+              } else {
+                ss.tempRows = sub.tr || sub.tempRows
+                ss.tempCols = sub.tc || sub.tempCols
+                const rawSeats = sub.s || sub.seats
+                if (rawSeats) {
+                  ss.seats = rawSeats.map((row, rowIdx) => {
+                    return row.map((seat, colIdx) => {
+                      if (!seat) return null
+                      return {
+                        id: seat.i || seat.id || `${ss.id}-${rowIdx + 1}-${colIdx + 1}`,
+                        row: seat.r !== undefined ? seat.r : seat.row,
+                        col: seat.c !== undefined ? seat.c : seat.col,
+                        category: seat.k || seat.category,
+                      }
+                    })
+                  })
+                }
+              }
+              return ss
+            })
+          }
+          return s
+        })
+
+        this.sections = cleanSections
 
         // Update seat statuses from eventAuditorium.seats
         if (this.eventAuditorium.seats && Array.isArray(this.eventAuditorium.seats)) {
@@ -184,28 +233,41 @@ export default {
     },
 
     getSectionWidth(section) {
-      if (section.isLabel) return 0
-      if (!section.subsections || section.subsections.length === 0) return 0
+      const isLabel = section.l || section.isLabel
+      if (isLabel) return 0
+      const rawSubs = section.ss || section.subsections
+      if (!rawSubs || rawSubs.length === 0) return 0
       return (
-        section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
-        (section.subsections.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
+        rawSubs.reduce((acc, s) => {
+          const isSubLabel = s.l || s.isLabel
+          return acc + (isSubLabel ? s.w || s.width || 100 : this.getSubsectionWidth(s))
+        }, 0) +
+        (rawSubs.length - 1) * DEFAULT_SETTINGS.SUBSECTION_SPACING +
         DEFAULT_SETTINGS.SECTION_SIDE_PADDING * 2
       )
     },
 
     getSectionHeight(section) {
-      if (section.isLabel) return 30
-      if (!section.subsections || section.subsections.length === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
-      const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
+      const isLabel = section.l || section.isLabel
+      if (isLabel) return 30
+      const rawSubs = section.ss || section.subsections
+      if (!rawSubs || rawSubs.length === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
+      const maxRows = Math.max(...rawSubs.map((sub) => {
+        const isSubLabel = sub.l || sub.isLabel
+        const seatsSource = sub.s || sub.seats
+        return (isSubLabel ? 0 : seatsSource?.length || 0)
+      }))
       if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
       const seatSpacing = DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
       return maxRows * seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
     },
 
     getSubsectionWidth(sub) {
-      if (sub.isLabel) return sub.width || 100
-      if (!sub.seats || sub.seats.length === 0) return 0
-      const maxCols = Math.max(...sub.seats.map((row) => row.length))
+      const isLabel = sub.l || sub.isLabel
+      if (isLabel) return sub.w || sub.width || 100
+      const seatsSource = sub.s || sub.seats
+      if (!seatsSource || seatsSource.length === 0) return 0
+      const maxCols = Math.max(...seatsSource.map((row) => row.length))
       const seatSpacing = DEFAULT_SETTINGS.SEAT_SIZE + DEFAULT_SETTINGS.SEATS_DISTANCE
       return maxCols * seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
@@ -255,12 +317,15 @@ export default {
 
     findSeatById(seatId) {
       for (const section of this.sections) {
-        if (section.subsections) {
-          for (const subsection of section.subsections) {
-            if (subsection.seats) {
-              for (const row of subsection.seats) {
+        const rawSubs = section.ss || section.subsections
+        if (rawSubs) {
+          for (const subsection of rawSubs) {
+            const seatsSource = subsection.s || subsection.seats
+            if (seatsSource) {
+              for (const row of seatsSource) {
                 for (const seat of row) {
-                  if (seat.id === seatId) {
+                  const id = seat.i || seat.id
+                  if (id === seatId) {
                     return seat
                   }
                 }

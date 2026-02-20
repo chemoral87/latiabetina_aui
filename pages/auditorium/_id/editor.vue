@@ -234,28 +234,47 @@ export default {
       )
 
       if (Array.isArray(cleaned.sections)) {
-        cleaned.sections.forEach((section) => {
-          if (!Array.isArray(section.subsections)) return
-          section.subsections.forEach((sub) => {
-            if (!Array.isArray(sub.seats)) return
-            // Normalize each seat to only the minimal persisted fields
-            sub.seats.forEach((row, rowIdx) => {
-              if (!Array.isArray(row)) return
-              row.forEach((seat, colIdx) => {
-                if (!seat) return
-                // remove transient props
-                if (seat.category === "Ninguno") delete seat.category
-                if ("state" in seat) delete seat.state
+        const sections = cleaned.sections.map((section) => {
+          const s = {
+            i: section.id,
+            n: section.name,
+            l: section.isLabel ? 1 : 0,
+            ss: [],
+          }
 
-                // replace seat object with minimal persisted shape
-                const minimal = { id: seat.id, row: seat.row, col: seat.col }
-                if (seat.category) minimal.category = seat.category
-                // assign back into cleaned structure
-                row[colIdx] = minimal
-              })
+          if (Array.isArray(section.subsections)) {
+            s.ss = section.subsections.map((sub) => {
+              const ss = {
+                i: sub.id,
+                n: sub.name,
+                l: sub.isLabel ? 1 : 0,
+                tr: sub.tempRows,
+                tc: sub.tempCols,
+              }
+              if (sub.isLabel) {
+                ss.w = sub.width
+              } else if (Array.isArray(sub.seats)) {
+                ss.s = sub.seats.map((row) => {
+                  return row.map((seat) => {
+                    if (!seat) return null
+                    const rs = {
+                      i: seat.id,
+                      r: seat.row,
+                      c: seat.col,
+                    }
+                    if (seat.category && seat.category !== "Ninguno") {
+                      rs.k = seat.category
+                    }
+                    return rs
+                  })
+                })
+              }
+              return ss
             })
-          })
+          }
+          return s
         })
+        return { s: sections }
       }
 
       return cleaned
@@ -324,24 +343,48 @@ export default {
         }
       }
 
-      if (config.sections) {
-        if (config.settings) {
-          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-        }
-        // Reasignar IDs consecutivos
-        const cleanSections = JSON.parse(JSON.stringify(config.sections))
-        cleanSections.forEach((section, sIdx) => {
-          section.id = `${sIdx + 1}`
-          section.subsections?.forEach((sub, subIdx) => {
-            sub.id = `${section.id}-${subIdx + 1}`
-            sub.seats?.forEach((row, rowIdx) => {
-              row.forEach((seat, colIdx) => {
-                if ("state" in seat) delete seat.state
-                // Actualizar ID del asiento con nuevos IDs consecutivos
-                seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
-              })
+      if (config.s || config.sections) {
+        const rawSections = config.s || config.sections
+        const cleanSections = rawSections.map((section, sIdx) => {
+          const s = {
+            id: section.i || section.id || `${sIdx + 1}`,
+            name: section.n || section.name,
+            isLabel: !!(section.l || section.isLabel),
+            subsections: [],
+          }
+
+          if (section.ss || section.subsections) {
+            const rawSubs = section.ss || section.subsections
+            s.subsections = rawSubs.map((sub, subIdx) => {
+              const ss = {
+                id: sub.i || sub.id || `${s.id}-${subIdx + 1}`,
+                name: sub.n || sub.name,
+                isLabel: !!(sub.l || sub.isLabel),
+              }
+              if (ss.isLabel) {
+                ss.width = sub.w || sub.width
+              } else {
+                ss.tempRows = sub.tr || sub.tempRows
+                ss.tempCols = sub.tc || sub.tempCols
+                const rawSeats = sub.s || sub.seats
+                if (rawSeats) {
+                  ss.seats = rawSeats.map((row, rowIdx) => {
+                    return row.map((seat, colIdx) => {
+                      if (!seat) return null
+                      return {
+                        id: seat.i || seat.id || `${ss.id}-${rowIdx + 1}-${colIdx + 1}`,
+                        row: seat.r !== undefined ? seat.r : seat.row,
+                        col: seat.c !== undefined ? seat.c : seat.col,
+                        category: seat.k || seat.category,
+                      }
+                    })
+                  })
+                }
+              }
+              return ss
             })
-          })
+          }
+          return s
         })
         this.sections = cleanSections
       }
@@ -833,33 +876,15 @@ export default {
     // Handle configuration object emitted by JsonConfig component
     handleImportedConfig(config) {
       try {
-        if (!config || !config.sections) {
-          alert("Archivo JSON inválido: falta estructura requerida (sections)")
+        if (!config || (!config.s && !config.sections)) {
+          alert("Archivo JSON inválido: falta estructura requerida (s/sections)")
           return
         }
 
+        // Use loadConfiguration logic to handle both old and new formats
         this.auditorium.config = config
-        
-        // Settings are now optional on import
-        if (config.settings) {
-          Object.assign(this.settings, DEFAULT_SETTINGS, config.settings)
-        }
+        this.loadConfiguration()
 
-        // Reasignar IDs consecutivos al importar
-        const cleanSections = JSON.parse(JSON.stringify(config.sections))
-        cleanSections.forEach((section, sIdx) => {
-          section.id = `${sIdx + 1}`
-          section.subsections?.forEach((sub, subIdx) => {
-            sub.id = `${section.id}-${subIdx + 1}`
-            sub.seats?.forEach((row, rowIdx) => {
-              row.forEach((seat, colIdx) => {
-                if ("state" in seat) delete seat.state
-                seat.id = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
-              })
-            })
-          })
-        })
-        this.sections = cleanSections
         this.$forceUpdate()
         alert("Configuración importada correctamente")
       } catch (error) {
