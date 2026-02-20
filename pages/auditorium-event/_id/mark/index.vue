@@ -166,32 +166,38 @@ export default {
     // ── CSV helpers (mirrors editor.vue logic) ─────────────────────────────
 
     /**
-     * Returns true when the raw config value is our flat CSV format.
-     * Detection is done by checking for the expected header line.
+     * Returns true when the raw config is a CSV string.
+     * Supports both the legacy 'type,id,name,...' header and the new 'csv_format' header.
      */
     _isCsvConfig(raw) {
-      return typeof raw === "string" && raw.trimStart().startsWith("type,id,name,")
+      if (typeof raw !== 'string') return false
+      const trimmed = raw.trimStart()
+      return trimmed.startsWith('csv_format') || trimmed.startsWith('type,id,name,')
     },
 
     /**
-     * Parse a flat CSV config string back into the internal `sections` array.
-     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     * Parse a CSV config string back into the internal `sections` array.
      *
-     * type values:
-     *   s    = section
-     *   ss   = subsection
-     *   seat = individual seat
+     * New hierarchical format (rows separated by '|'):
+     *   csv_format                    – header
+     *   s,{name}[,1]                  – section  (,1 = isLabel)
+     *   ss,{name},{tr},{tc}[,1]       – subsection (,1 = isLabel)
+     *   z,{id},{r},{c}[,{k}]          – seat
+     *
+     * Legacy format (still supported):
+     *   type,id,name,level,parent,tr,tc,r,c,k  – header
+     *   s / ss / seat rows
      */
     _parseCsvConfig(csvString) {
       const lines = csvString
-        .split("|")
+        .split('|')
         .map((l) => l.trim())
         .filter(Boolean)
       if (lines.length < 2) return []
 
       const parseCsvLine = (line) => {
         const fields = []
-        let current = ""
+        let current = ''
         let inQuotes = false
         for (let i = 0; i < line.length; i++) {
           const ch = line[i]
@@ -202,9 +208,9 @@ export default {
             } else {
               inQuotes = !inQuotes
             }
-          } else if (ch === "," && !inQuotes) {
+          } else if (ch === ',' && !inQuotes) {
             fields.push(current)
-            current = ""
+            current = ''
           } else {
             current += ch
           }
@@ -213,35 +219,79 @@ export default {
         return fields
       }
 
-      const header = lines[0].split(",")
-      const idx = {}
-      header.forEach((h, i) => {
-        idx[h.trim()] = i
-      })
+      const isNewFormat = lines[0].trim() === 'csv_format'
 
+      // ── Legacy format path ──────────────────────────────────────────────
+      if (!isNewFormat) {
+        const header = lines[0].split(',')
+        const idx = {}
+        header.forEach((h, i) => { idx[h.trim()] = i })
+
+        const sections = []
+        let currentSection = null
+        let currentSub = null
+
+        for (let li = 1; li < lines.length; li++) {
+          const f = parseCsvLine(lines[li])
+          const type  = f[idx.type]  || ''
+          const id    = f[idx.id]    || ''
+          const name  = f[idx.name]  || ''
+          const level = parseInt(f[idx.level] || '0', 10)
+          const tr    = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
+          const tc    = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
+          const r     = f[idx.r]  !== '' && f[idx.r]  !== undefined ? parseInt(f[idx.r],  10) : undefined
+          const c     = f[idx.c]  !== '' && f[idx.c]  !== undefined ? parseInt(f[idx.c],  10) : undefined
+          const k     = (f[idx.k] || '').trim()
+
+          if (type === 's') {
+            currentSection = { id, name, isLabel: level === 1, subsections: [] }
+            currentSub = null
+            sections.push(currentSection)
+          } else if (type === 'ss' && currentSection) {
+            currentSub = { id, name, isLabel: level === 1 }
+            if (currentSub.isLabel) { currentSub.width = 100 }
+            else { currentSub.tempRows = tr; currentSub.tempCols = tc; currentSub.seats = [] }
+            currentSection.subsections.push(currentSub)
+          } else if (type === 'seat' && currentSub && !currentSub.isLabel) {
+            while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
+            const seat = { id, row: r, col: c }
+            if (k) seat.category = k
+            currentSub.seats[r].push(seat)
+          }
+        }
+        return sections
+      }
+
+      // ── New hierarchical format path ─────────────────────────────────────
       const sections = []
       let currentSection = null
       let currentSub = null
+      let sectionCounter = 0
+      let subCounter = 0
 
       for (let li = 1; li < lines.length; li++) {
         const f = parseCsvLine(lines[li])
-        const type = f[idx.type] || ""
-        const id = f[idx.id] || ""
-        const name = f[idx.name] || ""
-        const level = parseInt(f[idx.level] || "0", 10)
-        const tr = f[idx.tr] !== "" && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
-        const tc = f[idx.tc] !== "" && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
-        const r = f[idx.r] !== "" && f[idx.r] !== undefined ? parseInt(f[idx.r], 10) : undefined
-        const c = f[idx.c] !== "" && f[idx.c] !== undefined ? parseInt(f[idx.c], 10) : undefined
-        const k = (f[idx.k] || "").trim()
+        const type = f[0] || ''
 
-        if (type === "s") {
-          currentSection = { id, name, isLabel: level === 1, subsections: [] }
+        if (type === 's') {
+          // s,name[,1]
+          sectionCounter++
+          subCounter = 0
+          const name    = f[1] || ''
+          const isLabel = f[2] === '1'
+          currentSection = { id: String(sectionCounter), name, isLabel, subsections: [] }
           currentSub = null
           sections.push(currentSection)
-        } else if (type === "ss" && currentSection) {
-          currentSub = { id, name, isLabel: level === 1 }
-          if (currentSub.isLabel) {
+        } else if (type === 'ss' && currentSection) {
+          // ss,name,tr,tc[,1]
+          subCounter++
+          const name    = f[1] || ''
+          const tr      = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : undefined
+          const tc      = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : undefined
+          const isLabel = f[4] === '1'
+          const subId   = `${currentSection.id}-${subCounter}`
+          currentSub = { id: subId, name, isLabel }
+          if (isLabel) {
             currentSub.width = 100
           } else {
             currentSub.tempRows = tr
@@ -249,14 +299,16 @@ export default {
             currentSub.seats = []
           }
           currentSection.subsections.push(currentSub)
-        } else if (type === "seat" && currentSub && !currentSub.isLabel) {
-          const rowIdx = r
-          while (currentSub.seats.length <= rowIdx) {
-            currentSub.seats.push([])
-          }
+        } else if (type === 'z' && currentSub && !currentSub.isLabel) {
+          // z,id,r,c[,k]
+          const id = f[1] || ''
+          const r  = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : 0
+          const c  = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : 0
+          const k  = (f[4] || '').trim()
+          while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
           const seat = { id, row: r, col: c }
           if (k) seat.category = k
-          currentSub.seats[rowIdx].push(seat)
+          currentSub.seats[r].push(seat)
         }
       }
 

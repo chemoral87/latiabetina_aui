@@ -306,13 +306,16 @@ export default {
     },
 
     /**
-     * Flat CSV representation of the auditorium configuration.
-     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     * Hierarchical CSV representation of the auditorium configuration.
      *
-     * type values:
-     *   s    = section
-     *   ss   = subsection
-     *   seat = individual seat
+     * Format (rows separated by '|'):
+     *   csv_format              – single header token
+     *   s,{name}                – section (no id/level columns needed)
+     *   ss,{name},{tr},{tc}     – subsection with grid dimensions
+     *   z,{id},{r},{c},{k}      – seat (z = seat row; belongs to last ss)
+     *
+     * Sections with isLabel flag use:  s,{name},1
+     * Subsections with isLabel use:    ss,{name},,,1
      */
     configDataCsv() {
       const csvEscape = (v) => {
@@ -324,45 +327,37 @@ export default {
         return s
       }
 
-      const rows = ['type,id,name,level,parent,tr,tc,r,c,k']
+      const rows = ['csv_format']
 
       this.sections.forEach((section) => {
-        rows.push([
-          's',
-          csvEscape(section.id),
-          csvEscape(section.name),
-          csvEscape(section.isLabel ? 1 : 0),
-          '', '', '', '', '', ''
-        ].join(','))
+        // s,name  or  s,name,1  when isLabel
+        const sRow = ['s', csvEscape(section.name)]
+        if (section.isLabel) sRow.push('1')
+        rows.push(sRow.join(','))
 
         if (Array.isArray(section.subsections)) {
           section.subsections.forEach((sub) => {
-            rows.push([
-              'ss',
-              csvEscape(sub.id),
-              csvEscape(sub.name),
-              csvEscape(sub.isLabel ? 1 : 0),
-              csvEscape(section.id),
-              csvEscape(sub.isLabel ? '' : (sub.tempRows !== undefined ? sub.tempRows : '')),
-              csvEscape(sub.isLabel ? '' : (sub.tempCols !== undefined ? sub.tempCols : '')),
-              '', '', ''
-            ].join(','))
+            if (sub.isLabel) {
+              // ss,name,,,1
+              rows.push(['ss', csvEscape(sub.name), '', '', '1'].join(','))
+            } else {
+              // ss,name,tr,tc
+              const tr = sub.tempRows !== undefined ? sub.tempRows : ''
+              const tc = sub.tempCols !== undefined ? sub.tempCols : ''
+              rows.push(['ss', csvEscape(sub.name), csvEscape(tr), csvEscape(tc)].join(','))
 
-            if (!sub.isLabel && Array.isArray(sub.seats)) {
-              sub.seats.forEach((row) => {
-                row.forEach((seat) => {
-                  if (!seat) return
-                  const cat = seat.category && seat.category !== 'Ninguno' ? seat.category : ''
-                  rows.push([
-                    'seat',
-                    csvEscape(seat.id),
-                    '', '', '', '', '',
-                    csvEscape(seat.row),
-                    csvEscape(seat.col),
-                    csvEscape(cat)
-                  ].join(','))
+              if (Array.isArray(sub.seats)) {
+                sub.seats.forEach((row) => {
+                  row.forEach((seat) => {
+                    if (!seat) return
+                    const cat = seat.category && seat.category !== 'Ninguno' ? seat.category : ''
+                    // z,id,r,c[,k]  — k omitted when empty to save space
+                    const zRow = ['z', csvEscape(seat.id), csvEscape(seat.row), csvEscape(seat.col)]
+                    if (cat) zRow.push(csvEscape(cat))
+                    rows.push(zRow.join(','))
+                  })
                 })
-              })
+              }
             }
           })
         }
@@ -420,14 +415,26 @@ export default {
 
     /**
      * Returns true when the raw config value is a CSV string (starts with our header).
+     * Supports both the legacy 'type,id,name,...' header and the new 'csv_format' header.
      */
     _isCsvConfig(raw) {
-      return typeof raw === 'string' && raw.trimStart().startsWith('type,id,name,')
+      if (typeof raw !== 'string') return false
+      const trimmed = raw.trimStart()
+      return trimmed.startsWith('csv_format') || trimmed.startsWith('type,id,name,')
     },
 
     /**
-     * Parse a flat CSV config string back into the internal `sections` array.
-     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     * Parse a hierarchical CSV config string back into the internal `sections` array.
+     *
+     * New format (rows separated by '|'):
+     *   csv_format                    – header
+     *   s,{name}[,1]                  – section  (,1 = isLabel)
+     *   ss,{name},{tr},{tc}[,1]       – subsection (,1 = isLabel)
+     *   z,{id},{r},{c}[,{k}]          – seat
+     *
+     * Legacy format (still supported):
+     *   type,id,name,level,parent,tr,tc,r,c,k  – header
+     *   s / ss / seat rows
      */
     _parseCsvConfig(csvString) {
       const lines = csvString.split('|').map(l => l.trim()).filter(Boolean)
@@ -452,33 +459,79 @@ export default {
         return fields
       }
 
-      const header = lines[0].split(',')
-      const idx = {}
-      header.forEach((h, i) => { idx[h.trim()] = i })
+      const isNewFormat = lines[0].trim() === 'csv_format'
 
+      // ── Legacy format path ──────────────────────────────────────────────
+      if (!isNewFormat) {
+        const header = lines[0].split(',')
+        const idx = {}
+        header.forEach((h, i) => { idx[h.trim()] = i })
+
+        const sections = []
+        let currentSection = null
+        let currentSub = null
+
+        for (let li = 1; li < lines.length; li++) {
+          const f = parseCsvLine(lines[li])
+          const type  = f[idx.type]  || ''
+          const id    = f[idx.id]    || ''
+          const name  = f[idx.name]  || ''
+          const level = parseInt(f[idx.level] || '0', 10)
+          const tr    = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
+          const tc    = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
+          const r     = f[idx.r]  !== '' && f[idx.r]  !== undefined ? parseInt(f[idx.r],  10) : undefined
+          const c     = f[idx.c]  !== '' && f[idx.c]  !== undefined ? parseInt(f[idx.c],  10) : undefined
+          const k     = (f[idx.k] || '').trim()
+
+          if (type === 's') {
+            currentSection = { id, name, isLabel: level === 1, subsections: [] }
+            currentSub = null
+            sections.push(currentSection)
+          } else if (type === 'ss' && currentSection) {
+            currentSub = { id, name, isLabel: level === 1 }
+            if (currentSub.isLabel) { currentSub.width = 100 }
+            else { currentSub.tempRows = tr; currentSub.tempCols = tc; currentSub.seats = [] }
+            currentSection.subsections.push(currentSub)
+          } else if (type === 'seat' && currentSub && !currentSub.isLabel) {
+            while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
+            const seat = { id, row: r, col: c }
+            if (k) seat.category = k
+            currentSub.seats[r].push(seat)
+          }
+        }
+        return sections
+      }
+
+      // ── New hierarchical format path ─────────────────────────────────────
       const sections = []
       let currentSection = null
       let currentSub = null
+      let sectionCounter = 0
+      let subCounter = 0
 
       for (let li = 1; li < lines.length; li++) {
         const f = parseCsvLine(lines[li])
-        const type   = f[idx.type]   || ''
-        const id     = f[idx.id]     || ''
-        const name   = f[idx.name]   || ''
-        const level  = parseInt(f[idx.level]  || '0', 10)
-        const tr     = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
-        const tc     = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
-        const r      = f[idx.r]  !== '' && f[idx.r]  !== undefined ? parseInt(f[idx.r],  10) : undefined
-        const c      = f[idx.c]  !== '' && f[idx.c]  !== undefined ? parseInt(f[idx.c],  10) : undefined
-        const k      = (f[idx.k] || '').trim()
+        const type = f[0] || ''
 
         if (type === 's') {
-          currentSection = { id, name, isLabel: level === 1, subsections: [] }
+          // s,name[,1]
+          sectionCounter++
+          subCounter = 0
+          const name    = f[1] || ''
+          const isLabel = f[2] === '1'
+          currentSection = { id: String(sectionCounter), name, isLabel, subsections: [] }
           currentSub = null
           sections.push(currentSection)
         } else if (type === 'ss' && currentSection) {
-          currentSub = { id, name, isLabel: level === 1 }
-          if (currentSub.isLabel) {
+          // ss,name,tr,tc[,1]
+          subCounter++
+          const name    = f[1] || ''
+          const tr      = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : undefined
+          const tc      = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : undefined
+          const isLabel = f[4] === '1'
+          const subId   = `${currentSection.id}-${subCounter}`
+          currentSub = { id: subId, name, isLabel }
+          if (isLabel) {
             currentSub.width = 100
           } else {
             currentSub.tempRows = tr
@@ -486,12 +539,16 @@ export default {
             currentSub.seats = []
           }
           currentSection.subsections.push(currentSub)
-        } else if (type === 'seat' && currentSub && !currentSub.isLabel) {
-          const rowIdx = r
-          while (currentSub.seats.length <= rowIdx) { currentSub.seats.push([]) }
+        } else if (type === 'z' && currentSub && !currentSub.isLabel) {
+          // z,id,r,c[,k]
+          const id = f[1] || ''
+          const r  = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : 0
+          const c  = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : 0
+          const k  = (f[4] || '').trim()
+          while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
           const seat = { id, row: r, col: c }
           if (k) seat.category = k
-          currentSub.seats[rowIdx].push(seat)
+          currentSub.seats[r].push(seat)
         }
       }
 
