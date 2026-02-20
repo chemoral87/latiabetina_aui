@@ -299,7 +299,7 @@ const getL0cMove = async (fen) => {
       }
     }
   } catch (error) {
-    console.error('L0c API Error:', error)
+    console.log('L0c local engine unavailable')
   } finally {
     loadingL0c.value = false
   }
