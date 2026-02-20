@@ -1,13 +1,54 @@
 <template>
   <v-container fluid class="pa-0">
     <div v-if="eventAuditorium && eventAuditorium.id">
-      <div class="pa-2 grey lighten-4 d-flex align-center">
+      <!-- Top bar -->
+      <div class="pa-2 grey lighten-4 d-flex align-center" style="position: relative">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
 
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
-        <span class="text-subtitle-2 ml-3 mr-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
+        <span class="text-subtitle-2 ml-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
+
+        <!-- Stats toggle button -->
+        <v-btn icon x-small class="ml-1" title="Ver desglose por estatus" @click="statsPanel = !statsPanel">
+          <v-icon small :color="statsPanel ? 'primary' : 'grey darken-1'">mdi-chart-bar</v-icon>
+        </v-btn>
+
+        <!-- Floating stats panel -->
+        <div 
+          v-if="statsPanel" 
+          class="stats-floating-panel elevation-8"
+          :style="statsPanelStyle"
+        >
+          <div 
+            class="stats-panel-header"
+            style="cursor: move"
+            @mousedown="startStatsDrag"
+            @touchstart="startStatsDrag"
+          >
+            <span class="text-caption font-weight-bold">Desglose de asientos</span>
+            <v-btn icon x-small @click.stop="statsPanel = false">
+              <v-icon x-small color="white">mdi-close</v-icon>
+            </v-btn>
+          </div>
+
+          <div class="stats-panel-body">
+            <!-- One row per active status -->
+            <div v-for="(cfg, key) in activeStatusCfg" :key="key" class="stats-row">
+              <span class="stats-dot" :style="{ background: cfg.color }"></span>
+              <span class="stats-label">{{ cfg.label }}</span>
+              <span class="stats-count">{{ statusBreakdown[key] || 0 }}</span>
+            </div>
+            <!-- Total -->
+            <div class="stats-row stats-total">
+              <span class="stats-dot" style="background:transparent"></span>
+              <span class="stats-label font-weight-bold">Total</span>
+              <span class="stats-count font-weight-bold">{{ totalSeats }}</span>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div>
         <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" @setEventSeat="handleSetEventSeat" />
       </div>
@@ -21,7 +62,7 @@
 import Vue from "vue"
 import VueKonva from "vue-konva"
 import { STAGE_CATEGORIES } from "~/constants/auditorium"
-import { DEFAULT_SETTINGS } from "~/components/Auditorium/constants"
+import { DEFAULT_SETTINGS, STATUS_CONFIG } from "~/components/Auditorium/constants"
 
 Vue.use(VueKonva)
 
@@ -43,9 +84,44 @@ export default {
       stageCategories: STAGE_CATEGORIES,
       loading: false,
       echoChannel: null,
+      statsPanel: false,
+      isDraggingStats: false,
+      statsPanelPos: { x: 0, y: 0 },
+      statsDragOffset: { x: 0, y: 0 },
     }
   },
   computed: {
+    /** Active status entries (same filter as SeatsStageOp) */
+    activeStatusCfg() {
+      return Object.keys(STATUS_CONFIG)
+        .filter((k) => STATUS_CONFIG[k].active !== false)
+        .reduce((acc, k) => { acc[k] = STATUS_CONFIG[k]; return acc }, {})
+    },
+
+    /** Count of seats per status key across all sections */
+    statusBreakdown() {
+      const counts = {}
+      // Initialise with 0 for every known status
+      Object.keys(STATUS_CONFIG).forEach((k) => { counts[k] = 0 })
+
+      this.sections.forEach((section) => {
+        const rawSubs = section.ss || section.subsections
+        if (!rawSubs) return
+        rawSubs.forEach((sub) => {
+          const seatsSource = sub.s || sub.seats
+          if (!seatsSource) return
+          seatsSource.forEach((row) => {
+            row.forEach((seat) => {
+              if (!seat) return
+              const status = seat.status || 'e' // Treat unassigned as 'Vacio' (e)
+              counts[status] = (counts[status] || 0) + 1
+            })
+          })
+        })
+      })
+      return counts
+    },
+
     stageConfig() {
       if (!this.sections || this.sections.length === 0) {
         return { width: 900, height: 700 }
@@ -65,6 +141,19 @@ export default {
       const height = Math.max(700, totalHeight)
 
       return { width, height }
+    },
+
+    statsPanelStyle() {
+      if (this.statsPanelPos.x === 0 && this.statsPanelPos.y === 0) {
+        return {} // Let CSS handle the default position initially
+      }
+      return {
+        left: `${this.statsPanelPos.x}px`,
+        top: `${this.statsPanelPos.y}px`,
+        right: 'auto',
+        bottom: 'auto',
+        transform: 'none'
+      }
     },
 
     totalSeats() {
@@ -138,24 +227,27 @@ export default {
     // Set up real-time notifications listener
     this.setupRealtimeListeners()
 
+    // Add global mouse/touch events for dragging
+    window.addEventListener('mousemove', this.handleStatsDrag)
+    window.addEventListener('touchmove', this.handleStatsDrag, { passive: false })
+    window.addEventListener('mouseup', this.stopStatsDrag)
+    window.addEventListener('touchend', this.stopStatsDrag)
+
     // Set up visibility change handler for mobile
     document.addEventListener("visibilitychange", this.handleVisibilityChange)
   },
-  beforeUnmount() {
-   // Clean up Echo channel when component is destroyed
-    if (this.echoChannel) {
-      this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
-      this.echoChannel = null
-      this.isListening = false
-    }
-},
 
   beforeDestroy() {
+    // Remove global listeners
+    window.removeEventListener('mousemove', this.handleStatsDrag)
+    window.removeEventListener('touchmove', this.handleStatsDrag)
+    window.removeEventListener('mouseup', this.stopStatsDrag)
+    window.removeEventListener('touchend', this.stopStatsDrag)
+
     // Clean up Echo channel when component is destroyed
     if (this.echoChannel) {
       this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
       this.echoChannel = null
-      this.isListening = false
     }
     
     // Remove visibility change listener
@@ -598,6 +690,121 @@ export default {
         }
       })
     },
+
+    // ── Drag & Drop for Stats Panel ──────────────────────────────────────────
+
+    startStatsDrag(e) {
+      this.isDraggingStats = true
+      
+      const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX
+      const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY
+      
+      const panel = this.$el.querySelector('.stats-floating-panel')
+      if (panel) {
+        const rect = panel.getBoundingClientRect()
+        
+        // If it's the first time dragging, initialize the position
+        if (this.statsPanelPos.x === 0 && this.statsPanelPos.y === 0) {
+          // We need to set it relative to the parent top bar if we want absolute to work
+          const parentRect = panel.offsetParent.getBoundingClientRect()
+          this.statsPanelPos.x = rect.left - parentRect.left
+          this.statsPanelPos.y = rect.top - parentRect.top
+        }
+        
+        this.statsDragOffset.x = clientX - rect.left
+        this.statsDragOffset.y = clientY - rect.top
+      }
+    },
+
+    handleStatsDrag(e) {
+      if (!this.isDraggingStats) return
+      
+      if (e.type === 'touchmove') e.preventDefault()
+      
+      const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX
+      const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY
+      
+      const panel = this.$el.querySelector('.stats-floating-panel')
+      if (panel && panel.offsetParent) {
+        const parentRect = panel.offsetParent.getBoundingClientRect()
+        
+        this.statsPanelPos.x = clientX - parentRect.left - this.statsDragOffset.x
+        this.statsPanelPos.y = clientY - parentRect.top - this.statsDragOffset.y
+      }
+    },
+
+    stopStatsDrag() {
+      this.isDraggingStats = false
+    },
   },
 }
 </script>
+
+<style scoped>
+/* ── Stats floating panel ──────────────────────────────────────────────── */
+.stats-floating-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 200;
+  min-width: 190px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+}
+
+.stats-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 12px;
+  background: #1976d2;
+  color: #fff;
+}
+
+.stats-panel-body {
+  padding: 6px 0 4px;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  padding: 3px 12px;
+  gap: 8px;
+  transition: background 0.15s;
+}
+
+.stats-row:hover {
+  background: #f5f5f5;
+}
+
+.stats-total {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.stats-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.stats-label {
+  flex: 1;
+  font-size: 12px;
+  color: #333;
+}
+
+.stats-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111;
+  min-width: 24px;
+  text-align: right;
+}
+</style>
