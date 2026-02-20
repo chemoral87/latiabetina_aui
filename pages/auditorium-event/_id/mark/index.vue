@@ -347,6 +347,9 @@ export default {
     },
 
     async handleVisibilityChange() {
+      // Solo ejecutar en dispositivos móviles usando uaParser
+      if (!this.$uaParser || !this.$uaParser.isMobile()) return
+
       if (!document.hidden && this.eventAuditorium?.id) {
         console.log("📱 Page visible again, syncing updates...")
         try {

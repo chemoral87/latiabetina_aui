@@ -228,7 +228,7 @@ export default {
 
     appBarHeight() {
       // v-app-bar de Vuetify tiene altura de 64px en desktop y 56px en mobile
-      const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+      const isMobile = this.$uaParser ? this.$uaParser.isMobile() : (typeof window !== "undefined" && window.innerWidth < 768)
       return isMobile ? 56 : 64
     },
 

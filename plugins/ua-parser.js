@@ -19,11 +19,29 @@ export default (context, inject) => {
       return result ? result.os.name === "Android" : false
     }
 
+    const isMobile = () => {
+      const result = getDeviceInfo()
+      return result ? result.device.type === "mobile" : false
+    }
+
+    const isTablet = () => {
+      const result = getDeviceInfo()
+      return result ? result.device.type === "tablet" : false
+    }
+
+    const device = () => {
+      const result = getDeviceInfo()
+      return result ? result.device : {}
+    }
+
     // Inject functions into Vue, context, and store
     inject("uaParser", {
       getDeviceInfo,
       isIOS,
       isAndroid,
+      isMobile,
+      isTablet,
+      device,
     })
   }
 }
