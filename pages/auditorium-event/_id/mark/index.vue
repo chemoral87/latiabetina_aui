@@ -163,13 +163,125 @@ export default {
   },
 
   methods: {
+    // ── CSV helpers (mirrors editor.vue logic) ─────────────────────────────
+
+    /**
+     * Returns true when the raw config value is our flat CSV format.
+     * Detection is done by checking for the expected header line.
+     */
+    _isCsvConfig(raw) {
+      return typeof raw === "string" && raw.trimStart().startsWith("type,id,name,")
+    },
+
+    /**
+     * Parse a flat CSV config string back into the internal `sections` array.
+     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     *
+     * type values:
+     *   s    = section
+     *   ss   = subsection
+     *   seat = individual seat
+     */
+    _parseCsvConfig(csvString) {
+      const lines = csvString
+        .split("|")
+        .map((l) => l.trim())
+        .filter(Boolean)
+      if (lines.length < 2) return []
+
+      const parseCsvLine = (line) => {
+        const fields = []
+        let current = ""
+        let inQuotes = false
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i]
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              current += '"'
+              i++
+            } else {
+              inQuotes = !inQuotes
+            }
+          } else if (ch === "," && !inQuotes) {
+            fields.push(current)
+            current = ""
+          } else {
+            current += ch
+          }
+        }
+        fields.push(current)
+        return fields
+      }
+
+      const header = lines[0].split(",")
+      const idx = {}
+      header.forEach((h, i) => {
+        idx[h.trim()] = i
+      })
+
+      const sections = []
+      let currentSection = null
+      let currentSub = null
+
+      for (let li = 1; li < lines.length; li++) {
+        const f = parseCsvLine(lines[li])
+        const type = f[idx.type] || ""
+        const id = f[idx.id] || ""
+        const name = f[idx.name] || ""
+        const level = parseInt(f[idx.level] || "0", 10)
+        const tr = f[idx.tr] !== "" && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
+        const tc = f[idx.tc] !== "" && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
+        const r = f[idx.r] !== "" && f[idx.r] !== undefined ? parseInt(f[idx.r], 10) : undefined
+        const c = f[idx.c] !== "" && f[idx.c] !== undefined ? parseInt(f[idx.c], 10) : undefined
+        const k = (f[idx.k] || "").trim()
+
+        if (type === "s") {
+          currentSection = { id, name, isLabel: level === 1, subsections: [] }
+          currentSub = null
+          sections.push(currentSection)
+        } else if (type === "ss" && currentSection) {
+          currentSub = { id, name, isLabel: level === 1 }
+          if (currentSub.isLabel) {
+            currentSub.width = 100
+          } else {
+            currentSub.tempRows = tr
+            currentSub.tempCols = tc
+            currentSub.seats = []
+          }
+          currentSection.subsections.push(currentSub)
+        } else if (type === "seat" && currentSub && !currentSub.isLabel) {
+          const rowIdx = r
+          while (currentSub.seats.length <= rowIdx) {
+            currentSub.seats.push([])
+          }
+          const seat = { id, row: r, col: c }
+          if (k) seat.category = k
+          currentSub.seats[rowIdx].push(seat)
+        }
+      }
+
+      return sections
+    },
+
+    // ── Configuration loader ───────────────────────────────────────────────
+
     loadConfiguration() {
       if (!this.eventAuditorium?.config) {
         console.warn("No se encontró configuración para cargar")
         return
       }
 
-      let config = this.eventAuditorium.config
+      const raw = this.eventAuditorium.config
+
+      // ── CSV path ────────────────────────────────────────────────────────
+      if (this._isCsvConfig(raw)) {
+        this.sections = this._parseCsvConfig(raw)
+        this._applyInitialSeatStatuses()
+        return
+      }
+
+      // ── JSON path ───────────────────────────────────────────────────────
+      let config = raw
       if (typeof config === "string") {
         try {
           config = JSON.parse(config)
@@ -228,21 +340,27 @@ export default {
         })
 
         this.sections = cleanSections
+        this._applyInitialSeatStatuses()
+      }
+    },
 
-        // Update seat statuses from eventAuditorium.seats
-        if (this.eventAuditorium.seats && !Array.isArray(this.eventAuditorium.seats)) {
-          // New format: { "status_key": ["id1", "id2", ...] }
-          Object.entries(this.eventAuditorium.seats).forEach(([status, seatIds]) => {
-            if (Array.isArray(seatIds)) {
-              seatIds.forEach((seatId) => {
-                const seat = this.findSeatById(seatId)
-                if (seat) {
-                  this.$set(seat, "status", status)
-                }
-              })
-            }
-          })
-        }
+    /**
+     * After sections are loaded (from either CSV or JSON), apply the
+     * pre-existing seat statuses stored in eventAuditorium.seats.
+     */
+    _applyInitialSeatStatuses() {
+      if (this.eventAuditorium.seats && !Array.isArray(this.eventAuditorium.seats)) {
+        // Format: { "status_key": ["id1", "id2", ...] }
+        Object.entries(this.eventAuditorium.seats).forEach(([status, seatIds]) => {
+          if (Array.isArray(seatIds)) {
+            seatIds.forEach((seatId) => {
+              const seat = this.findSeatById(seatId)
+              if (seat) {
+                this.$set(seat, "status", status)
+              }
+            })
+          }
+        })
       }
     },
 

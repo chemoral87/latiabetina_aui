@@ -46,7 +46,30 @@
         <!-- Configuración -->
         <v-card outlined class="mb-3 pa-2">
           <div class="text-subtitle-2 mb-2">Configuración</div>
-          <json-config :config-data="configData" @imported="handleImportedConfig" @import-error="$toast?.error('Error al importar JSON')" />
+
+          <!-- Save Format Toggle -->
+          <div class="d-flex align-center mb-2">
+            <span class="text-caption mr-2">Formato:</span>
+            <v-btn-toggle v-model="saveFormat" mandatory dense borderless>
+              <v-btn x-small value="csv" color="primary">
+                <v-icon x-small left>mdi-file-delimited</v-icon>CSV
+              </v-btn>
+              <v-btn x-small value="json" color="primary">
+                <v-icon x-small left>mdi-code-json</v-icon>JSON
+              </v-btn>
+            </v-btn-toggle>
+            <v-chip x-small :color="saveFormat === 'csv' ? 'success' : 'info'" class="ml-2">
+              {{ saveFormat === 'csv' ? 'Plano CSV' : 'JSON anidado' }}
+            </v-chip>
+          </div>
+
+          <json-config
+            :config-data="configData"
+            :config-data-csv="configDataCsv"
+            :save-format="saveFormat"
+            @imported="handleImportedConfig"
+            @import-error="$toast?.error('Error al importar configuración')"
+          />
 
           <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label dense class="mb-1" />
 
@@ -200,6 +223,8 @@ export default {
       sections: [],
       selectedRow: {},
       settings: { ...DEFAULT_SETTINGS },
+      // 'csv' | 'json' — toggle to switch between flat CSV and nested JSON persistence
+      saveFormat: 'csv',
     }
   },
 
@@ -279,6 +304,72 @@ export default {
 
       return cleaned
     },
+
+    /**
+     * Flat CSV representation of the auditorium configuration.
+     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     *
+     * type values:
+     *   s    = section
+     *   ss   = subsection
+     *   seat = individual seat
+     */
+    configDataCsv() {
+      const csvEscape = (v) => {
+        if (v === null || v === undefined) return ''
+        const s = String(v)
+        if (s.includes(',') || s.includes('"') || s.includes('|')) {
+          return '"' + s.replace(/"/g, '""') + '"'
+        }
+        return s
+      }
+
+      const rows = ['type,id,name,level,parent,tr,tc,r,c,k']
+
+      this.sections.forEach((section) => {
+        rows.push([
+          's',
+          csvEscape(section.id),
+          csvEscape(section.name),
+          csvEscape(section.isLabel ? 1 : 0),
+          '', '', '', '', '', ''
+        ].join(','))
+
+        if (Array.isArray(section.subsections)) {
+          section.subsections.forEach((sub) => {
+            rows.push([
+              'ss',
+              csvEscape(sub.id),
+              csvEscape(sub.name),
+              csvEscape(sub.isLabel ? 1 : 0),
+              csvEscape(section.id),
+              csvEscape(sub.isLabel ? '' : (sub.tempRows !== undefined ? sub.tempRows : '')),
+              csvEscape(sub.isLabel ? '' : (sub.tempCols !== undefined ? sub.tempCols : '')),
+              '', '', ''
+            ].join(','))
+
+            if (!sub.isLabel && Array.isArray(sub.seats)) {
+              sub.seats.forEach((row) => {
+                row.forEach((seat) => {
+                  if (!seat) return
+                  const cat = seat.category && seat.category !== 'Ninguno' ? seat.category : ''
+                  rows.push([
+                    'seat',
+                    csvEscape(seat.id),
+                    '', '', '', '', '',
+                    csvEscape(seat.row),
+                    csvEscape(seat.col),
+                    csvEscape(cat)
+                  ].join(','))
+                })
+              })
+            }
+          })
+        }
+      })
+
+      return rows.join('|')
+    },
   },
 
   watch: {
@@ -327,18 +418,109 @@ export default {
       this.$forceUpdate()
     },
 
+    /**
+     * Returns true when the raw config value is a CSV string (starts with our header).
+     */
+    _isCsvConfig(raw) {
+      return typeof raw === 'string' && raw.trimStart().startsWith('type,id,name,')
+    },
+
+    /**
+     * Parse a flat CSV config string back into the internal `sections` array.
+     * Header: type,id,name,level,parent,tr,tc,r,c,k
+     */
+    _parseCsvConfig(csvString) {
+      const lines = csvString.split('|').map(l => l.trim()).filter(Boolean)
+      if (lines.length < 2) return []
+
+      const parseCsvLine = (line) => {
+        const fields = []
+        let current = ''
+        let inQuotes = false
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i]
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') { current += '"'; i++ }
+            else { inQuotes = !inQuotes }
+          } else if (ch === ',' && !inQuotes) {
+            fields.push(current); current = ''
+          } else {
+            current += ch
+          }
+        }
+        fields.push(current)
+        return fields
+      }
+
+      const header = lines[0].split(',')
+      const idx = {}
+      header.forEach((h, i) => { idx[h.trim()] = i })
+
+      const sections = []
+      let currentSection = null
+      let currentSub = null
+
+      for (let li = 1; li < lines.length; li++) {
+        const f = parseCsvLine(lines[li])
+        const type   = f[idx.type]   || ''
+        const id     = f[idx.id]     || ''
+        const name   = f[idx.name]   || ''
+        const level  = parseInt(f[idx.level]  || '0', 10)
+        const tr     = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
+        const tc     = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
+        const r      = f[idx.r]  !== '' && f[idx.r]  !== undefined ? parseInt(f[idx.r],  10) : undefined
+        const c      = f[idx.c]  !== '' && f[idx.c]  !== undefined ? parseInt(f[idx.c],  10) : undefined
+        const k      = (f[idx.k] || '').trim()
+
+        if (type === 's') {
+          currentSection = { id, name, isLabel: level === 1, subsections: [] }
+          currentSub = null
+          sections.push(currentSection)
+        } else if (type === 'ss' && currentSection) {
+          currentSub = { id, name, isLabel: level === 1 }
+          if (currentSub.isLabel) {
+            currentSub.width = 100
+          } else {
+            currentSub.tempRows = tr
+            currentSub.tempCols = tc
+            currentSub.seats = []
+          }
+          currentSection.subsections.push(currentSub)
+        } else if (type === 'seat' && currentSub && !currentSub.isLabel) {
+          const rowIdx = r
+          while (currentSub.seats.length <= rowIdx) { currentSub.seats.push([]) }
+          const seat = { id, row: r, col: c }
+          if (k) seat.category = k
+          currentSub.seats[rowIdx].push(seat)
+        }
+      }
+
+      return sections
+    },
+
     loadConfiguration() {
       if (!this.auditorium?.config) {
         console.warn("No se encontró configuración para cargar")
         return
       }
 
-      let config = this.auditorium.config
-      if (typeof config === "string") {
+      const raw = this.auditorium.config
+
+      // ── CSV path ──────────────────────────────────────────────────────────
+      if (this._isCsvConfig(raw)) {
+        this.saveFormat = 'csv'
+        this.sections = this._parseCsvConfig(raw)
+        return
+      }
+
+      // ── JSON path ─────────────────────────────────────────────────────────
+      this.saveFormat = 'json'
+      let config = raw
+      if (typeof config === 'string') {
         try {
           config = JSON.parse(config)
         } catch (e) {
-          console.error("Error parsing config:", e)
+          console.error('Error parsing config:', e)
           return
         }
       }
@@ -395,18 +577,26 @@ export default {
         // Verify subsection IDs before saving
         this.verifySubsectionIds()
 
-        this.auditorium.config = this.configData
+        let configString
+        if (this.saveFormat === 'csv') {
+          // Store as plain flat CSV string
+          configString = this.configDataCsv
+        } else {
+          // Store as compact nested JSON string
+          configString = JSON.stringify(this.configData)
+        }
+
+        this.auditorium.config = configString
         const payload = {
           ...this.auditorium,
           name: this.auditorium.name,
           org_id: this.auditorium.org_id?.id ?? this.auditorium.org_id,
-          config: JSON.stringify(this.configData),
+          config: configString,
         }
         await this.$repository.Auditorium.update(this.auditorium.id, payload)
-        this.$toast?.success("Auditorio guardado")
+        this.$toast?.success && this.$toast.success('Configuración guardada')
       } catch (e) {
         this.$handleError(e)
-        this.$toast?.error("Error al guardar")
       }
     },
 
@@ -873,22 +1063,34 @@ export default {
       return maxRows * this.seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
     },
 
-    // Handle configuration object emitted by JsonConfig component
+    // Handle configuration object/string emitted by JsonConfig component
     handleImportedConfig(config) {
       try {
-        if (!config || (!config.s && !config.sections)) {
-          alert("Archivo JSON inválido: falta estructura requerida (s/sections)")
+        // CSV string import path
+        if (typeof config === 'string' && this._isCsvConfig(config)) {
+          this.auditorium.config = config
+          this.loadConfiguration()
+          this.$forceUpdate()
+          this.$toast?.success
+            ? this.$toast.success('Configuración CSV importada')
+            : alert('Configuración CSV importada correctamente')
           return
         }
 
-        // Use loadConfiguration logic to handle both old and new formats
+        // JSON object import path
+        if (!config || (!config.s && !config.sections)) {
+          alert('Archivo inválido: falta estructura requerida')
+          return
+        }
+
         this.auditorium.config = config
         this.loadConfiguration()
-
         this.$forceUpdate()
-        alert("Configuración importada correctamente")
+        this.$toast?.success
+          ? this.$toast.success('Configuración JSON importada')
+          : alert('Configuración importada correctamente')
       } catch (error) {
-        alert("Error al importar: " + error.message)
+        alert('Error al importar: ' + error.message)
       }
     },
   },

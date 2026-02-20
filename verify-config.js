@@ -1,6 +1,6 @@
 const config = require("./nuxt.config.js")
 
-console.log("🔍 Verificando configuración de optimización...\n")
+console.log("🔍 Verificando configuración de optimización...|")
 
 const isDev = process.env.NODE_ENV !== "production"
 console.log("Modo:", isDev ? "DESARROLLO" : "PRODUCCIÓN")
