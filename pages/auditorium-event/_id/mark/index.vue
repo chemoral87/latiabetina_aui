@@ -300,19 +300,19 @@ export default {
         }
 
         // Call API to update seats using custom endpoint
-        const response = await this.$repository.AuditoriumEventSeat.create(updatePayload)
+        const { z: seatIdsResponse, t: timestamp, s: statusResponse } = await this.$repository.AuditoriumEventSeat.create(updatePayload)
 
-        if (!this.last_timestamp || response.timestamp > this.last_timestamp) {
-          this.last_timestamp = response.timestamp
+        if (!this.last_timestamp || timestamp > this.last_timestamp) {
+          this.last_timestamp = timestamp
         }
 
         // Update local state with response data
-        if (response && response.seats) {
-          response.seats.forEach((seatData) => {
-            const seat = this.findSeatById(seatData.seat_id)
+        if (Array.isArray(seatIdsResponse)) {
+          seatIdsResponse.forEach((seatId) => {
+            const seat = this.findSeatById(seatId)
             if (seat) {
-              // Use Vue.set to ensure reactivity in nested objects
-              this.$set(seat, "status", seatData.status)
+              // Use Vue.set to ensure reactivity
+              this.$set(seat, "status", statusResponse)
             }
           })
         }
@@ -395,16 +395,26 @@ export default {
       this.echoChannel.listen(".seat.updated", (data) => {
         console.log("🔔 Seat update received:", data)
 
-        if (!this.last_timestamp || data.timestamp > this.last_timestamp) {
-          this.last_timestamp = data.timestamp
+        // s: status, z: seatsIds in array, t: timestamp
+        const timestamp = data.t || data.timestamp
+        const seatIds = data.z || data.seats || data.seat_ids
+        const status = data.s || data.status
+
+        if (!this.last_timestamp || timestamp > this.last_timestamp) {
+          this.last_timestamp = timestamp
         }
 
         // Update local seats with the real-time data
-        if (data.seats && Array.isArray(data.seats)) {
-          data.seats.forEach((seatData) => {
-            const seat = this.findSeatById(seatData.seat_id)
+        if (seatIds && Array.isArray(seatIds)) {
+          seatIds.forEach((item) => {
+            // Support both array of strings (new compressed format) 
+            // and array of objects (legacy format)
+            const id = typeof item === "string" ? item : item.z || item.seat_id
+            const seatStatus = typeof item === "object" && item !== null ? item.s || item.status || status : status
+
+            const seat = this.findSeatById(id)
             if (seat) {
-              this.$set(seat, "status", seatData.status)
+              this.$set(seat, "status", seatStatus)
             }
           })
         }
