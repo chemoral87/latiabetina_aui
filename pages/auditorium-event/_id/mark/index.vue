@@ -141,14 +141,23 @@ export default {
     // Set up visibility change handler for mobile
     document.addEventListener("visibilitychange", this.handleVisibilityChange)
   },
+  beforeUnmount() {
+   // Clean up Echo channel when component is destroyed
+    if (this.echoChannel) {
+      this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
+      this.echoChannel = null
+      this.isListening = false
+    }
+},
 
   beforeDestroy() {
     // Clean up Echo channel when component is destroyed
     if (this.echoChannel) {
       this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
       this.echoChannel = null
+      this.isListening = false
     }
-
+    
     // Remove visibility change listener
     document.removeEventListener("visibilitychange", this.handleVisibilityChange)
   },
@@ -285,9 +294,9 @@ export default {
       try {
         // Prepare payload for API
         const updatePayload = {
-          auditorium_event_id: this.eventAuditorium.id,
-          seat_ids: seatIds,
-          status,
+          i: this.eventAuditorium.id,
+          z: seatIds,
+          s:status,
         }
 
         // Call API to update seats using custom endpoint
