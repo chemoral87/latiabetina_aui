@@ -4,6 +4,7 @@
       <!-- Top bar -->
       <div class="pa-2 grey lighten-4 d-flex align-center" style="position: relative">
         <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
+        <span class="text-subtitle-2 ml-4">{{ eventAuditorium.event_date | moment("DD MMM YYYY") }}</span>
 
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
@@ -53,14 +54,14 @@
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
-import MyDragPanel from "~/components/My/DragPanel.vue"
+
 import { STAGE_CATEGORIES } from "~/constants/auditorium"
 import { DEFAULT_SETTINGS, STATUS_CONFIG } from "~/components/Auditorium/constants"
 
 Vue.use(VueKonva)
 
 export default {
-  components: { MyDragPanel },
+  
   middleware: ["authenticated"],
   async asyncData({ app, params }) {
     const res = await app.$repository.AuditoriumEvent.show(params.id).catch((e) => {})

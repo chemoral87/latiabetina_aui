@@ -139,7 +139,7 @@ export default function ({ $axios, store, $config }) {
     store.dispatch("hideLoading")
 
     // Notifica si hay mensaje de éxito o error
-    if (response.data && (response.data.success || response.data.error)) {
+    if (response.data && (response.data.success || response.data.warning || response.data.error)) {
       store.dispatch("notify", response.data)
     }
 

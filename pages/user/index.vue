@@ -115,8 +115,9 @@ export default {
       } else {
         await this.$repository.User.create(item)
           .then((res) => {
-            me.getUsers()
+            // me.getUsers()
             me.userDialog = false
+            me.editProfiles(res)
           })
           .catch((e) => {})
       }

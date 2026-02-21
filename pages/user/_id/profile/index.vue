@@ -141,8 +141,7 @@ export default {
     saveProfile(item) {
       this.$repository.Profile.create(this.user_id, { org_id: item.org_id }).then((res) => {
         this.profileDialog = false
-        // add profile to profiles
-        this.profiles.push(res.profile)
+        this.$router.push(`/user/${this.user_id}/profile/${res.profile.id}`)
       })
     },
     async saveUserRolesPermissions() {

@@ -12,6 +12,10 @@
     class="elevation-1 xwidth800"
     @page-count="pageCount = $event"
   >
+    <template #[`item.event_date`]="{ item }">
+      {{ item.event_date | moment("DD MMM YYYY") }}
+    </template>
+
     <template #[`item.marks`]="{ item }">
       <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('mark', item)">
         <v-icon>mdi-eye</v-icon>

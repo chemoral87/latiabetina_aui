@@ -137,6 +137,15 @@ export const actions = {
         display: true,
         id: state.snack_id,
       }
+    } else if (data.warning) {
+      state.snack_id++
+      notify = {
+        text: data.warning,
+        color: "warning",
+        showing: true,
+        display: true,
+        id: state.snack_id,
+      }
     } else if (data.error) {
       state.snack_id++
       notify = {

@@ -92,8 +92,7 @@ export default {
 
     formattedDate() {
       if (!this.localEvent.event_date) return ""
-      const date = new Date(this.localEvent.event_date)
-      return date.toLocaleDateString("es-ES")
+      return this.$moment(this.localEvent.event_date).format("DD MMM YYYY")
     },
 
     isFormValid() {

@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: 'DragPanel',
+  name: 'MyDragPanel',
   props: {
     // v-model for visibility
     value: {
