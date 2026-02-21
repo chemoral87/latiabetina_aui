@@ -72,20 +72,14 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <div v-if="selectedSeatsArray.length > 0" id="markPanel" class="floating-mark-panel" :style="panelStyle">
-      <div 
-        class="panel-title"
-        style="display: flex; align-items: center; justify-content: space-between; padding: 2px 5px; background-color: #1976d2; color: white; position: relative; z-index: 1; cursor: move"
-        @mousedown="startPanelDrag"
-        @touchstart="startPanelDrag"
-      >
-        <h4 style="margin: 0; font-size: 14px">Seats: {{ selectedSeatsArray.length }}</h4>
-        <v-btn outlined fab x-small icon color="white" title="Clear all" @click.stop="clearSelectedSeats" @mousedown.stop @touchstart.stop>
-          <v-icon small>mdi-close</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="mt-0" style="padding: 2px 4px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; ">
+    <MyDragPanel
+      v-model="showMarkPanel"
+      :title="'Asientos: ' + selectedSeatsArray.length"
+      mode="fixed"
+      top="75px"
+      left="calc(50% - 95px)"
+    >
+      <div class="stats-panel-body" style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
         <!-- Loop through active status configs -->
         <div v-for="(config, key) in activeStatusConfig" :key="key" style="display: flex; flex-direction: column; align-items: center">
           <v-btn class="mb-1" icon :title="config.label" :style="`background-color: ${config.color} !important; color: white`" @click="setEventSeat(key == 'e' ? null : key)">
@@ -94,8 +88,7 @@
           <span style="font-size: 9px; text-align: center">{{ config.label }}</span>
         </div>
       </div>
-      </div>
-    </div>
+    </MyDragPanel>
   </div>
 </template>
 
@@ -103,10 +96,12 @@
 import Vue from "vue"
 import VueKonva from "vue-konva"
 import { getPercentageColor, DEFAULT_SETTINGS, STATUS_CONFIG } from "./constants.js"
+import MyDragPanel from "~/components/My/DragPanel.vue"
 Vue.use(VueKonva)
 
 export default {
   name: "SeatsStageOpCopy",
+  components: { MyDragPanel },
   props: {
     sections: { type: Array, required: true },
 
@@ -135,9 +130,6 @@ export default {
       isTwoFingerGesture: false, // Track if two fingers are active
       isDraggingStage: false, // Track if user is dragging the stage
       dragStartPos: null, // Starting position of potential drag
-      isPanelDragging: false, // Track if floating panel is being dragged
-      panelDragOffset: { x: 0, y: 0 }, // Offset for panel dragging
-      panelPosition: null, // Custom position for dragged panel (null = use default CSS)
     }
   },
   computed: {
@@ -149,6 +141,11 @@ export default {
           acc[key] = STATUS_CONFIG[key]
           return acc
         }, {})
+    },
+
+    showMarkPanel: {
+      get() { return this.selectedSeatsArray.length > 0 },
+      set(val) { if (!val) this.clearSelectedSeats() }
     },
 
     seatSpacing() {
@@ -229,7 +226,7 @@ export default {
     appBarHeight() {
       // v-app-bar de Vuetify tiene altura de 64px en desktop y 56px en mobile
       const isMobile = this.$uaParser ? this.$uaParser.isMobile() : (typeof window !== "undefined" && window.innerWidth < 768)
-      return isMobile ? 56 : 64
+      return isMobile ? 56 : 74
     },
 
     containerOuterHeight() {
@@ -278,17 +275,6 @@ export default {
       return { withStatus, total, percent }
     },
 
-    panelStyle() {
-      if (this.panelPosition) {
-        return {
-          left: `${this.panelPosition.x}px`,
-          top: `${this.panelPosition.y}px`,
-          transform: 'none',
-          right: 'auto',
-        }
-      }
-      return {}
-    },
   },
   watch: {
     selectedSubsection() {
@@ -975,60 +961,6 @@ export default {
       }, 100)
     },
 
-    startPanelDrag(e) {
-      e.preventDefault()
-      this.isPanelDragging = true
-
-      const panel = document.getElementById('markPanel')
-      if (!panel) return
-
-      // Get current position of panel
-      const rect = panel.getBoundingClientRect()
-      
-      // Determine if mouse or touch event
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY
-
-      // Store offset from cursor to panel top-left
-      this.panelDragOffset = {
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      }
-
-      // Add global listeners
-      document.addEventListener('mousemove', this.movePanelDrag)
-      document.addEventListener('touchmove', this.movePanelDrag)
-      document.addEventListener('mouseup', this.endPanelDrag)
-      document.addEventListener('touchend', this.endPanelDrag)
-    },
-
-    movePanelDrag(e) {
-      if (!this.isPanelDragging) return
-
-      // Determine if mouse or touch event
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY
-
-      // Calculate new position
-      const newX = clientX - this.panelDragOffset.x
-      const newY = clientY - this.panelDragOffset.y
-
-      // Set panel position
-      this.panelPosition = {
-        x: Math.max(0, Math.min(window.innerWidth - 200, newX)),
-        y: Math.max(0, Math.min(window.innerHeight - 100, newY)),
-      }
-    },
-
-    endPanelDrag() {
-      this.isPanelDragging = false
-
-      // Remove global listeners
-      document.removeEventListener('mousemove', this.movePanelDrag)
-      document.removeEventListener('touchmove', this.movePanelDrag)
-      document.removeEventListener('mouseup', this.endPanelDrag)
-      document.removeEventListener('touchend', this.endPanelDrag)
-    },
   },
 }
 </script>
@@ -1047,26 +979,3 @@ export default {
 }
 </style>
 
-<style>
-/* Floating mark panel - unscoped for proper z-index */
-.floating-mark-panel {
-  position: fixed;
-  top: 60px;
-  right: 0px;
-  transform: none;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-
-  pointer-events: auto;
-}
-
-@media (min-width: 768px) {
-  .floating-mark-panel {
-    top: 75px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-  }
-}
-</style>
