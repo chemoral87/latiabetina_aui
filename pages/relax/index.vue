@@ -8,62 +8,6 @@
         </div>
       </v-col>
     </v-row>
-
-    <!-- Controles de configuración -->
-    <v-row dense justify="center">
-      <v-col cols="12">
-        <v-card elevation="2" rounded="lg" class="pa-1">
-          <v-card-title class="text-subtitle-1 py-0 my-0">
-            <v-icon left small color="primary">mdi-cog-outline</v-icon>
-            Configuración
-          </v-card-title>
-
-          <v-row dense>
-            <v-col cols="auto">
-              <v-text-field v-model.number="initialContract" label="Contracción inicial" outlined dense hide-details type="number" step="0.1" suffix="s" color="orange darken-2" :disabled="isPlaying">
-                <template #prepend-inner>
-                  <v-icon small color="orange darken-2">mdi-arrow-collapse-all</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
-
-            <v-col cols="auto">
-              <v-text-field v-model.number="expansion" label="Expansión" outlined dense hide-details type="number" step="0.1" suffix="s" color="blue" :disabled="isPlaying">
-                <template #prepend-inner>
-                  <v-icon small color="blue">mdi-arrow-expand-all</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
-
-            <v-col cols="auto">
-              <v-text-field v-model.number="contraction" label="Contracción" outlined dense hide-details type="number" step="0.1" suffix="s" color="red" :disabled="isPlaying">
-                <template #prepend-inner>
-                  <v-icon small color="red">mdi-arrow-collapse-all</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
-
-            <v-col cols="auto">
-              <v-text-field v-model.number="immobile" label="Inmóvil" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
-                <template #prepend-inner>
-                  <v-icon small color="green">mdi-timer-sand</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
-               <v-col cols="auto">
-              <v-text-field v-model.number="goalTime" label="Tiempo objetivo" outlined dense hide-details type="number" step="1" suffix="min" color="purple darken-2" :disabled="isPlaying">
-                <template #prepend-inner>
-                  <v-icon small color="purple darken-2">mdi-flag-checkered</v-icon>
-                </template>
-              </v-text-field>
-            </v-col>
-          </v-row>
-
-      
-        </v-card>
-      </v-col>
-    </v-row>
-
     <!-- Área de animación y controles -->
     <v-row dense justify="center" class="mb-3">
       <v-col cols="12">
@@ -101,6 +45,16 @@
                 <v-icon left x-small>mdi-arrow-expand-all</v-icon>
                 Expansión
               </v-chip>
+                 <v-chip
+                v-if="immobile1 > 0"
+                :color="animationState === 'immobile1' ? 'green darken-2' : 'grey lighten-1'"
+                :dark="animationState === 'immobile1'"
+                small
+                  class="mr-1 mb-1"
+              > 
+                <v-icon left x-small>mdi-timer-sand</v-icon>
+                Inmóvil 1
+              </v-chip>
               <v-chip
                 v-if="contraction > 0"
                 :color="animationState === 'contraction' ? 'red darken-2' : 'grey lighten-1'"
@@ -111,15 +65,16 @@
                 <v-icon left x-small>mdi-arrow-collapse-all</v-icon>
                 Contracción
               </v-chip>
+           
               <v-chip
-                v-if="immobile > 0"
-                :color="animationState === 'immobile' ? 'green darken-2' : 'grey lighten-1'"
-                :dark="animationState === 'immobile'"
+                v-if="immobile2 > 0"
+                :color="animationState === 'immobile2' ? 'green darken-2' : 'grey lighten-1'"
+                :dark="animationState === 'immobile2'"
                 small
                 class="mb-1"
               >
                 <v-icon left x-small>mdi-timer-sand</v-icon>
-                Inmóvil
+                Inmóvil 2
               </v-chip>
             </v-col>
 
@@ -145,6 +100,70 @@
         </v-card>
       </v-col>
     </v-row>
+    <!-- Controles de configuración -->
+    <v-row dense justify="center">
+      <v-col cols="12">
+        <v-card elevation="2" rounded="lg" class="pa-1">
+          <v-card-title class="text-subtitle-1 py-0 my-0">
+            <v-icon left small color="primary">mdi-cog-outline</v-icon>
+            Configuración
+          </v-card-title>
+
+          <v-row dense>
+            <v-col cols="auto">
+              <v-text-field v-model.number="initialContract" label="Contracción inicial" outlined dense hide-details type="number" step="0.1" suffix="s" color="orange darken-2" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="orange darken-2">mdi-arrow-collapse-all</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <v-col cols="auto">
+              <v-text-field v-model.number="expansion" label="Expansión" outlined dense hide-details type="number" step="0.1" suffix="s" color="blue" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="blue">mdi-arrow-expand-all</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <v-col cols="auto">
+              <v-text-field v-model.number="immobile1" label="Inmóvil 1" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="green">mdi-timer-sand</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <v-col cols="auto">
+              <v-text-field v-model.number="contraction" label="Contracción" outlined dense hide-details type="number" step="0.1" suffix="s" color="red" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="red">mdi-arrow-collapse-all</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <v-col cols="auto">
+              <v-text-field v-model.number="immobile2" label="Inmóvil 2" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="green">mdi-timer-sand</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+               <v-col cols="auto">
+              <v-text-field v-model.number="goalTime" label="Tiempo objetivo" outlined dense hide-details type="number" step="1" suffix="min" color="purple darken-2" :disabled="isPlaying">
+                <template #prepend-inner>
+                  <v-icon small color="purple darken-2">mdi-flag-checkered</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+          </v-row>
+
+      
+        </v-card>
+      </v-col>
+    </v-row>
+
+
     <!-- Diálogo de felicitación -->
     <v-dialog v-model="showCompletionDialog" max-width="340" persistent>
       <v-card rounded="xl" class="text-center pa-4">
@@ -173,8 +192,9 @@ export default {
       showCompletionDialog: false,
       initialContract: 0, // 0.72
       expansion: 6, // 5.28
+      immobile1: 0,
       contraction: 5.04,
-      immobile: 0.96,
+      immobile2: 0.96,
       animationState: "idle",
       circleStyle: {
         width: "80px",
@@ -212,8 +232,9 @@ export default {
       const colors = {
         initialContract: "orange darken-2",
         expansion: "blue darken-2",
+        immobile1: "green darken-2",
         contraction: "red darken-2",
-        immobile: "green darken-2",
+        immobile2: "green darken-2",
         idle: "grey",
       }
       return colors[this.animationState] || "grey"
@@ -222,8 +243,9 @@ export default {
       const icons = {
         initialContract: "mdi-arrow-collapse-all",
         expansion: "mdi-arrow-expand-all",
+        immobile1: "mdi-timer-sand",
         contraction: "mdi-arrow-collapse-all",
-        immobile: "mdi-timer-sand",
+        immobile2: "mdi-timer-sand",
         idle: "mdi-circle-outline",
       }
       return icons[this.animationState] || "mdi-circle-outline"
@@ -232,8 +254,9 @@ export default {
       const texts = {
         initialContract: "Contracción inicial",
         expansion: "Expansión",
+        immobile1: "Inmóvil 1",
         contraction: "Contracción",
-        immobile: "Inmóvil",
+        immobile2: "Inmóvil 2",
         idle: "Preparado",
       }
       return texts[this.animationState] || "Preparado"
@@ -328,10 +351,25 @@ export default {
         this.innerCircleStyle.transitionTimingFunction = "ease-out"
         this.innerCircleStyle.transform = "scale(0.777)"
         const t2 = setTimeout(() => {
-          this.animationState = "contraction"
+          this.animationState = "immobile1"
           this.animateCircle()
         }, this.expansion * 1000)
         this.timeouts.push(t2)
+
+      } else if (this.animationState === "immobile1") {
+        // 2.5 Inmóvil 1: el círculo permanece expandido
+        this.circleStyle.transitionDuration = `${this.immobile1}s`
+        this.circleStyle.transitionTimingFunction = "linear"
+        this.circleStyle.backgroundColor = "#2E7D32"
+        this.circleStyle.transform = "scale(3)"
+        this.innerCircleStyle.transitionDuration = `${this.immobile1}s`
+        this.innerCircleStyle.transitionTimingFunction = "linear"
+        this.innerCircleStyle.transform = "scale(0.777)"
+        const t25 = setTimeout(() => {
+          this.animationState = "contraction"
+          this.animateCircle()
+        }, this.immobile1 * 1000)
+        this.timeouts.push(t25)
 
       } else if (this.animationState === "contraction") {
         // 3. Contracción: el círculo vuelve a su tamaño normal
@@ -343,25 +381,25 @@ export default {
         this.innerCircleStyle.transitionTimingFunction = "ease-in-out"
         this.innerCircleStyle.transform = "scale(1)"
         const t3 = setTimeout(() => {
-          this.animationState = "immobile"
+          this.animationState = "immobile2"
           this.animateCircle()
         }, this.contraction * 1000)
         this.timeouts.push(t3)
 
-      } else if (this.animationState === "immobile") {
-        // 4. Inmóvil: el círculo permanece quieto
-        this.circleStyle.transitionDuration = `${this.immobile}s`
+      } else if (this.animationState === "immobile2") {
+        // 4. Inmóvil 2: el círculo permanece quieto
+        this.circleStyle.transitionDuration = `${this.immobile2}s`
         this.circleStyle.transitionTimingFunction = "linear"
         this.circleStyle.backgroundColor = "#2E7D32"
         this.circleStyle.transform = "scale(1)"
-        this.innerCircleStyle.transitionDuration = `${this.immobile}s`
+        this.innerCircleStyle.transitionDuration = `${this.immobile2}s`
         this.innerCircleStyle.transitionTimingFunction = "linear"
         this.innerCircleStyle.transform = "scale(1)"
         const t4 = setTimeout(() => {
           // Reinicia el ciclo
           this.animationState = "initialContract"
           this.animateCircle()
-        }, this.immobile * 1000)
+        }, this.immobile2 * 1000)
         this.timeouts.push(t4)
       }
     },
