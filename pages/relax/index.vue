@@ -19,7 +19,7 @@
           </v-card-title>
 
           <v-row dense>
-            <v-col cols="3">
+            <v-col cols="auto">
               <v-text-field v-model.number="initialContract" label="Contracción inicial" outlined dense hide-details type="number" step="0.1" suffix="s" color="orange darken-2" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="orange darken-2">mdi-arrow-collapse-all</v-icon>
@@ -27,7 +27,7 @@
               </v-text-field>
             </v-col>
 
-            <v-col cols="3">
+            <v-col cols="auto">
               <v-text-field v-model.number="expansion" label="Expansión" outlined dense hide-details type="number" step="0.1" suffix="s" color="blue" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="blue">mdi-arrow-expand-all</v-icon>
@@ -35,7 +35,7 @@
               </v-text-field>
             </v-col>
 
-            <v-col cols="3">
+            <v-col cols="auto">
               <v-text-field v-model.number="contraction" label="Contracción" outlined dense hide-details type="number" step="0.1" suffix="s" color="red" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="red">mdi-arrow-collapse-all</v-icon>
@@ -43,17 +43,14 @@
               </v-text-field>
             </v-col>
 
-            <v-col cols="3">
+            <v-col cols="auto">
               <v-text-field v-model.number="immobile" label="Inmóvil" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="green">mdi-timer-sand</v-icon>
                 </template>
               </v-text-field>
             </v-col>
-          </v-row>
-
-          <v-row dense class="mt-1">
-            <v-col cols="12">
+               <v-col cols="auto">
               <v-text-field v-model.number="goalTime" label="Tiempo objetivo" outlined dense hide-details type="number" step="1" suffix="min" color="purple darken-2" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="purple darken-2">mdi-flag-checkered</v-icon>
@@ -61,6 +58,8 @@
               </v-text-field>
             </v-col>
           </v-row>
+
+      
         </v-card>
       </v-col>
     </v-row>
@@ -172,8 +171,8 @@ export default {
     return {
       goalTime: 5,
       showCompletionDialog: false,
-      initialContract: 0.72,
-      expansion: 5.28,
+      initialContract: 0, // 0.72
+      expansion: 6, // 5.28
       contraction: 5.04,
       immobile: 0.96,
       animationState: "idle",
