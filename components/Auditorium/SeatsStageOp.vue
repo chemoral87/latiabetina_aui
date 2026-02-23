@@ -34,7 +34,7 @@
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" @seat-click="handleSeatClick" />
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats" @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
@@ -60,7 +60,7 @@
 
                     <template v-else>
                       <!-- general  -->
-                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" />
+                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats" />
                     </template>
                   </v-group>
                 </template>
@@ -107,6 +107,10 @@ export default {
 
     stageConfig: { type: Object, required: true },
     categories: {
+      type: Array,
+      default: () => [],
+    },
+    loadingSeats: {
       type: Array,
       default: () => [],
     },

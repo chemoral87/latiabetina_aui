@@ -54,6 +54,10 @@
       <v-circle v-else-if="isAndroid" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
       <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat, $event)" />
       <v-path v-if="seat.iconPath" :config="seat.iconPathConfig" />
+      <!-- Loading spinner – comet tail arcs -->
+      <template v-if="seat.isLoading">
+        <v-arc v-for="(arc, i) in seat.spinnerArcs" :key="'sp-' + seat.id + '-' + i" :config="arc" />
+      </template>
     </v-group>
   </v-group>
 </template>
@@ -69,11 +73,14 @@ export default {
     categories: { type: Array, default: () => [] },
     selectedSeatsArray: { type: Array, default: () => [] },
     blinkState: { type: Boolean, default: false },
+    loadingSeats: { type: Array, default: () => [] },
   },
   data() {
     return {
       isIOS: false,
       isAndroid: false,
+      spinAngle: 0,
+      spinInterval: null,
     }
   },
   computed: {
@@ -167,6 +174,34 @@ export default {
                 seatData.iconPathConfig = this.getIconPathConfig(seat)
               }
 
+              // Loading comet-tail spinner overlay
+              const seatId = seat.i || seat.id
+              if (this.loadingSeats.includes(seatId)) {
+                seatData.isLoading = true
+                const radius = DEFAULT_SETTINGS.SEAT_SIZE / 2
+                // Comet segments – each one tapers thinner AND fades toward the tail.
+                // inner/outer shrink symmetrically so the arc ring gets narrower.
+                const SEGMENTS = [
+                  { sweep: 30,  opacity: 1.00, offset:   0,  inner: radius - 1.5, outer: radius + 1.5 }, // bright head
+                  { sweep: 40,  opacity: 0.89, offset: -30,  inner: radius - 1.3, outer: radius + 1.5 }, // tail 1
+                  { sweep: 50,  opacity: 0.78, offset: -65,  inner: radius - 1.1, outer: radius + 1.5 }, // tail 2
+                  { sweep: 55,  opacity: 0.67, offset: -108, inner: radius - 0.9, outer: radius + 1.5 }, // tail 3
+                  { sweep: 55,  opacity: 0.56, offset: -155, inner: radius - 0.6, outer: radius + 1.5 }, // tail 4
+                  { sweep: 50,  opacity: 0.45, offset: -200, inner: radius - 0.3, outer: radius + 1.5 }, // ghost tail
+                ]
+                seatData.spinnerArcs = SEGMENTS.map((seg) => ({
+                  x: 0,
+                  y: 0,
+                  innerRadius: seg.inner,
+                  outerRadius: seg.outer,
+                  angle: seg.sweep,
+                  rotation: (this.spinAngle + seg.offset + 360) % 360,
+                  fill: '#ffffff',
+                  opacity: seg.opacity,
+                  listening: false,
+                }))
+              }
+
               allSeats.push(seatData)
             }
           })
@@ -183,6 +218,13 @@ export default {
       const deviceInfo = this.$uaParser.getDeviceInfo()
       console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, "isAndroid:", this.isAndroid)
     }
+    // Spinner rotation timer
+    this.spinInterval = setInterval(() => {
+      this.spinAngle = (this.spinAngle + 10) % 360
+    }, 50)
+  },
+  beforeDestroy() {
+    if (this.spinInterval) clearInterval(this.spinInterval)
   },
   methods: {
     getRowLabelConfig(rowIdx) {

@@ -43,7 +43,7 @@
       </div>
 
       <div>
-        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" @setEventSeat="handleSetEventSeat" />
+        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" :loading-seats="loadingSeats" @setEventSeat="handleSetEventSeat" />
       </div>
     </div>
 
@@ -78,6 +78,7 @@ export default {
       settings: { ...DEFAULT_SETTINGS },
       stageCategories: STAGE_CATEGORIES,
       loading: false,
+      loadingSeats: [],
       echoChannel: null,
       statsPanel: false,
     }
@@ -540,15 +541,17 @@ export default {
       }
 
       this.loading = true
+      // Mark seats as loading so the canvas shows a spinner
+      this.loadingSeats = [...this.loadingSeats, ...seatIds]
 
       try {
         // Prepare payload for API
         const updatePayload = {
           i: this.eventAuditorium.id,
           z: seatIds,
-          s:status,
+          s: status,
         }
-
+        this.$store.dispatch("hideNextLoading")
         // Call API to update seats using custom endpoint
         const { z: seatIdsResponse, t: timestamp, s: statusResponse } = await this.$repository.AuditoriumEventSeat.create(updatePayload)
 
@@ -571,6 +574,8 @@ export default {
         this.$handleError(error)
       } finally {
         this.loading = false
+        // Remove loading state from seats
+        this.loadingSeats = this.loadingSeats.filter((id) => !seatIds.includes(id))
       }
     },
 
