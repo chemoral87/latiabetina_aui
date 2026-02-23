@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { DEFAULT_SETTINGS } from "./constants.js"
+import { DEFAULT_SETTINGS } from "~/constants/auditorium"
 
 const COLORS = {
   LABEL_TEXT: "#ff9800",

@@ -55,8 +55,8 @@
 import Vue from "vue"
 import VueKonva from "vue-konva"
 
-import { STAGE_CATEGORIES } from "~/constants/auditorium"
-import { DEFAULT_SETTINGS, STATUS_CONFIG } from "~/components/Auditorium/constants"
+import { STAGE_CATEGORIES,DEFAULT_SETTINGS, STATUS_CONFIG } from "~/constants/auditorium"
+
 
 Vue.use(VueKonva)
 

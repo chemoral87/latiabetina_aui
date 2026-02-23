@@ -95,7 +95,7 @@
 <script>
 import Vue from "vue"
 import VueKonva from "vue-konva"
-import { getPercentageColor, DEFAULT_SETTINGS, STATUS_CONFIG } from "./constants.js"
+import { getPercentageColor, DEFAULT_SETTINGS, STATUS_CONFIG } from "~/constants/auditorium"
 import MyDragPanel from "~/components/My/DragPanel.vue"
 Vue.use(VueKonva)
 

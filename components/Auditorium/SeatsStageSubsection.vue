@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { STATUS_COLORS, STATUS_ICONS, STATUS_CONFIG, COLORS, getPercentageColor, DEFAULT_SETTINGS } from "./constants.js"
+import { STATUS_COLORS, STATUS_ICONS, STATUS_CONFIG, COLORS, getPercentageColor, DEFAULT_SETTINGS } from "~/constants/auditorium"
 
 export default {
   name: "SeatsStageSubsection",
