@@ -788,9 +788,27 @@ export default {
         return
       }
 
-      // Emit event with selected seats and category
+      // Filter out seats that already have the target status – no need to resend them.
+      // For the 'clear' action (status === null), skip seats that have no status.
+      const seatIdsToSend = this.selectedSeatsArray.filter((seatId) => {
+        const seat = this.findSeatById(seatId)
+        if (!seat) return true // unknown seat – include it
+        const currentStatus = seat.status || null
+        return currentStatus !== status
+      })
+
+      // Deselect the skipped seats (already at target status)
+      this.selectedSeatsArray = this.selectedSeatsArray.filter((id) => seatIdsToSend.includes(id))
+
+      if (seatIdsToSend.length === 0) {
+        console.info("All selected seats already have status:", status)
+        this.selectedSeatsArray = []
+        return
+      }
+
+      // Emit only the seats that need updating
       this.$emit("setEventSeat", {
-        seatIds: [...this.selectedSeatsArray],
+        seatIds: seatIdsToSend,
         status,
       })
 
@@ -800,6 +818,23 @@ export default {
 
     clearSelectedSeats() {
       this.selectedSeatsArray = []
+    },
+
+    findSeatById(seatId) {
+      for (const section of this.sections) {
+        const rawSubs = section.ss || section.subsections
+        if (!rawSubs) continue
+        for (const sub of rawSubs) {
+          const seatsSource = sub.s || sub.seats
+          if (!seatsSource) continue
+          for (const row of seatsSource) {
+            for (const seat of row) {
+              if (seat && (seat.i || seat.id) === seatId) return seat
+            }
+          }
+        }
+      }
+      return null
     },
 
     handleSeatHover(e) {
