@@ -103,9 +103,7 @@ export default {
       } catch (error) {
         console.error("Error loading auditoriums:", error)
         this.response = { data: [] }
-        this.$store.dispatch("notify", {
-          error: "Error al cargar los auditorios",
-        })
+     
       }
     },
 
@@ -132,14 +130,10 @@ export default {
       try {
         await this.$repository.Auditorium?.delete?.(item.id, item)
         await this.getAuditoriums()
-        this.$store.dispatch("notify", {
-          success: "Auditorio eliminado exitosamente",
-        })
+  
       } catch (error) {
         console.error("Error deleting auditorium:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al eliminar el auditorio",
-        })
+      
       } finally {
         this.auditoriumDialogDelete = false
       }
@@ -154,23 +148,17 @@ export default {
       try {
         if (payload.id) {
           await this.$repository.Auditorium?.update?.(payload.id, payload)
-          this.$store.dispatch("notify", {
-            success: "Auditorio actualizado exitosamente",
-          })
+ 
         } else {
           await this.$repository.Auditorium?.create?.(payload)
-          this.$store.dispatch("notify", {
-            success: "Auditorio creado exitosamente",
-          })
+ 
         }
 
         await this.getAuditoriums()
         this.auditoriumDialog = false
       } catch (error) {
         console.error("Error saving auditorium:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al guardar el auditorio",
-        })
+     
       }
     },
 

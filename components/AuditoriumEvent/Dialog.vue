@@ -175,9 +175,7 @@ export default {
         }
       } catch (error) {
         console.error("Error loading auditoriums:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al cargar auditorios",
-        })
+ 
       } finally {
         this.loadingAuditoriums = false
       }
@@ -198,9 +196,7 @@ export default {
         this.$emit("save", eventData)
       } catch (error) {
         console.error("Error saving auditorium event:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al guardar el evento de auditorio",
-        })
+  
       } finally {
         this.saving = false
       }

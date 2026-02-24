@@ -77,6 +77,7 @@
           :key="i + 'snackbars'"
           v-model="snack.showing"
           :color="snack.color"
+          content-class="snack-content"
           shaped
           multi-line
           right
@@ -207,6 +208,34 @@ export default {
   top: 0;
   left: 0;
   z-index: 1000;
+}
+
+@media (max-width: 600px) {
+  /* Snackbar box — still needs ::v-deep as wrapper is outside content-class scope */
+  .snackbar-wrapper ::v-deep .v-snack__wrapper {
+    min-width: 0 !important;
+    max-width: 82vw !important;
+    padding: 4px 8px !important;
+    margin: 0 8px !important;
+  }
+  /* content-class="snack-content" targets this div directly — no ::v-deep needed */
+  .snack-content {
+    font-size: 0.9rem !important;
+    padding: 6px 4px !important;
+    min-height: 0 !important;
+  }
+  .snack-content span {
+    font-size: 0.9rem !important;
+    line-height: 1.3;
+  }
+  /* Action button — outside content-class scope, keep ::v-deep */
+  .snackbar-wrapper ::v-deep .v-snack__action {
+    padding: 0 2px !important;
+  }
+  .snackbar-wrapper ::v-deep .v-snack__action .v-btn {
+    width: 28px !important;
+    height: 28px !important;
+  }
 }
 .back_white {
   background-color: #f5f5f5 !important;

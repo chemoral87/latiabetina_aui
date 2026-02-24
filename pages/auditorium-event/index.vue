@@ -124,9 +124,7 @@ export default {
         await this.getAuditoriumEvents()
       } catch (error) {
         console.error("Error deleting auditorium event:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al eliminar el evento de auditorio",
-        })
+    
       } finally {
         this.auditoriumEventDialogDelete = false
       }
@@ -137,14 +135,10 @@ export default {
         if (this.$repository?.AuditoriumEvent) {
           if (item.id) {
             await this.$repository.AuditoriumEvent.update(item.id, item)
-            // this.$store.dispatch("notify", {
-            //   success: "Evento de auditorio actualizado exitosamente",
-            // })
+       
           } else {
             await this.$repository.AuditoriumEvent.create(item)
-            // this.$store.dispatch("notify", {
-            //   success: "Evento de auditorio creado exitosamente",
-            // })
+       
           }
         }
 
@@ -152,9 +146,7 @@ export default {
         this.auditoriumEventDialog = false
       } catch (error) {
         console.error("Error saving auditorium event:", error)
-        this.$store.dispatch("notify", {
-          error: "Error al guardar el evento de auditorio",
-        })
+  
       }
     },
 
