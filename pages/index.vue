@@ -11,7 +11,7 @@ export default {
   },
   mounted() {
     // Redirect to dashboard
-    this.$router.replace("/dashboard")
+    this.$router.push("/dashboard")
   },
 }
 </script>

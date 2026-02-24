@@ -19,6 +19,7 @@
 </template>
 <script>
 export default {
+  middleware: ["authenticated"],
   props: {},
   data() {
     return {
@@ -27,6 +28,7 @@ export default {
   },
   computed: {
     canViewAuditorium() {
+      console.log("canViewAuditorium", this.hasPermission("auditorium-index"))
       return this.hasPermission("auditorium-index")
     },
   },

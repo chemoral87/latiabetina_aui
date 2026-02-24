@@ -18,12 +18,16 @@ export class AudioProcessor {
     this.consecutiveCount = 0
     this.isTracking = false
 
+    // Miss tolerance: how many consecutive low-volume frames before truly resetting
+    this.missCount = 0
+    this.MISS_TOLERANCE = 4
+
     // Filtro de Mediana reducido al mínimo para no añadir lag
     this.recentFreqs = []
     this.MEDIAN_WINDOW = 2
 
     // Sensibilidad para no perder puntos en movimientos rápidos
-    this.MIN_DB = 24
+    this.MIN_DB = 10 // Lowered to capture soft/quiet notes
     this.sensitivity = 0.005
 
     // CONFIGURACIÓN PARA GLISSANDOS ULTRA-CORTOS:
@@ -49,12 +53,20 @@ export class AudioProcessor {
       this.buffer = new Float32Array(this.analyser.fftSize)
 
       const source = this.audioContext.createMediaStreamSource(this.mediaStream)
-      const filter = this.audioContext.createBiquadFilter()
-      filter.type = "bandpass"
-      filter.frequency.value = 440
-      filter.Q.value = 0.5
 
-      source.connect(filter)
+      // Boost soft input signals so low-volume notes reach the analyser
+      const gainNode = this.audioContext.createGain()
+      gainNode.gain.value = 4
+
+      // Highpass filter to remove subsonic rumble; avoids the narrow 440 Hz bandpass
+      // that was attenuating notes far from A4
+      const filter = this.audioContext.createBiquadFilter()
+      filter.type = "highpass"
+      filter.frequency.value = 40
+      filter.Q.value = 0.7
+
+      source.connect(gainNode)
+      gainNode.connect(filter)
       filter.connect(this.analyser)
       this.isMicActive = true
       return true
@@ -76,11 +88,16 @@ export class AudioProcessor {
     const rms = Math.sqrt(sumSquares / this.buffer.length)
     const dB = 20 * Math.log10(rms / 0.00002)
 
-    // Solo cortamos si el volumen es realmente bajo
+    // Only reset after MISS_TOLERANCE consecutive low-volume frames so brief
+    // dips (breath, soft passage) don't freeze the histogram
     if (dB < this.MIN_DB || rms < this.sensitivity) {
-      this.resetTracking()
+      this.missCount++
+      if (this.missCount > this.MISS_TOLERANCE) {
+        this.resetTracking()
+      }
       return { freq: -1, dB }
     }
+    this.missCount = 0 // reset miss counter on good frame
 
     return this.autoCorrelate(this.buffer, dB, rms)
   }
@@ -111,7 +128,8 @@ export class AudioProcessor {
       }
     }
 
-    if (maxCorr < 0.1) return { freq: -1, dB }
+    // Lowered confidence gate so quiet (low RMS) signals are not discarded
+    if (maxCorr < 0.02) return { freq: -1, dB }
 
     let refinedLag = bestLag
     if (bestLag > 0 && bestLag < SIZE - 1) {
@@ -157,8 +175,14 @@ export class AudioProcessor {
       this.lastFreq = medianFreq
       return medianFreq
     } else {
-      // Cambio demasiado brusco (posible ruido o nueva nota no ligada)
-      this.resetTracking()
+      if (this.isTracking) {
+        // While tracking, a big jump is more likely a new note than noise.
+        // Accept it immediately so the histogram never freezes mid-singing.
+        this.lastFreq = currentFreq
+        this.recentFreqs = [currentFreq]
+        return currentFreq
+      }
+      // Not yet tracking: discard this frame, wait for stability
       this.lastFreq = currentFreq
       return -1
     }
@@ -184,7 +208,8 @@ export class AudioProcessor {
           const trimmed = sorted.slice(trimCount, -trimCount)
           const avg = trimmed.reduce((a, b) => a + b, 0) / trimmed.length
 
-          this.sensitivity = Math.max(0.005, avg * 2.5)
+          // Use 1.8x multiplier (was 2.5x) so the threshold doesn't cut soft notes
+          this.sensitivity = Math.max(0.002, avg * 1.8)
           this.noiseCalibrating = false
           resolve()
         }
@@ -198,6 +223,7 @@ export class AudioProcessor {
     this.consecutiveCount = 0
     this.isTracking = false
     this.recentFreqs = []
+    this.missCount = 0
   }
 
   async cleanupMicrophone() {

@@ -23,7 +23,7 @@ export class AudioProcessor {
     this.MEDIAN_WINDOW = 2
 
     // Sensibilidad (de Gemini10)
-    this.MIN_DB = 24
+    this.MIN_DB = 10 // Lowered to capture soft/quiet notes
     this.sensitivity = 0.005
 
     // Configuración de Gemini10 (funciona bien)
@@ -51,12 +51,19 @@ export class AudioProcessor {
       this.buffer = new Float32Array(this.analyser.fftSize)
 
       const source = this.audioContext.createMediaStreamSource(this.mediaStream)
-      const filter = this.audioContext.createBiquadFilter()
-      filter.type = "bandpass"
-      filter.frequency.value = 440
-      filter.Q.value = 0.5
 
-      source.connect(filter)
+      // Boost soft input so low-volume notes reach the analyser
+      const gainNode = this.audioContext.createGain()
+      gainNode.gain.value = 4
+
+      // Highpass to cut subsonic rumble; replaced the narrow 440 Hz bandpass
+      const filter = this.audioContext.createBiquadFilter()
+      filter.type = "highpass"
+      filter.frequency.value = 40
+      filter.Q.value = 0.7
+
+      source.connect(gainNode)
+      gainNode.connect(filter)
       filter.connect(this.analyser)
       this.isMicActive = true
       return true
@@ -112,7 +119,8 @@ export class AudioProcessor {
       }
     }
 
-    if (maxCorr < 0.1) return { freq: -1, dB }
+    // Lowered confidence gate so quiet signals are not discarded
+    if (maxCorr < 0.02) return { freq: -1, dB }
 
     let refinedLag = bestLag
     if (bestLag > 0 && bestLag < SIZE - 1) {
@@ -191,7 +199,8 @@ export class AudioProcessor {
           const trimmed = sorted.slice(trimCount, -trimCount)
           const avg = trimmed.reduce((a, b) => a + b, 0) / trimmed.length
 
-          this.sensitivity = Math.max(0.005, avg * 2.5)
+          // Use 1.8x multiplier (was 2.5x) so soft notes survive post-calibration
+          this.sensitivity = Math.max(0.002, avg * 1.8)
           console.log(`Calibración completada. Sensibilidad: ${this.sensitivity.toFixed(4)}`)
           this.noiseCalibrating = false
           resolve()
