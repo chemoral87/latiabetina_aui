@@ -36,10 +36,10 @@
 import { debounce } from "lodash-es"
 
 export default {
-  middleware: ["authenticated"],
+  middleware: ["authenticated", "permission"],
+  meta: { permission: "role-index" },
 
-  async asyncData({ app, error, store }) {
-    store.dispatch("validatePermission", { error, permission: "role-index" })
+  async asyncData({ app, error }) {
 
     const options = {
       page: 1,

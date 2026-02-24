@@ -10,7 +10,7 @@
         <div class="error-yellow-box">
           <div class="text-h6 text--primary" v-html="errorMessage" />
         </div>
-        <div class="text-h6 text--primary mt-12">Presione el siguiente botón para regresar.</div>
+        <div class="text-h6 text--primary ">Presione el siguiente botón para regresar.</div>
       </v-card-text>
 
       <v-card-actions>
@@ -132,9 +132,14 @@ export default {
 </script>
 
 <style scoped>
-.error-message {
-  color: red;
+:deep(.error-message) {
+  color: #e53935;
   font-weight: bold;
+  background: rgba(229, 57, 53, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.95em;
 }
 
 .error-yellow-box {
