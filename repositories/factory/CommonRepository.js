@@ -2,13 +2,46 @@ const multipart = {
   accept: "application/json",
   headers: { "Content-Type": "multipart/form-data" },
 }
+
+const reqCache = new Map()
 export default ($axios) => (resource) => ({
-  index(params) {
+  index(params, options = {}) {
+    const { cacheMs, ...axiosOptions } = options
+    const fullOptions = { ...axiosOptions }
     if (params) {
-      return $axios.$get(`${resource}`, { params })
-    } else {
-      return $axios.$get(`${resource}`)
+      fullOptions.params = params
     }
+
+    const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
+
+    if (cacheMs) {
+      const key = `${resource}_${JSON.stringify(params || {})}`
+      const now = Date.now()
+      const cached = reqCache.get(key)
+
+      if (cached && now - cached.time < cacheMs) {
+        return cached.promise
+      }
+
+      const promise = $axios.$get(`${resource}`, getOptions).catch((err) => {
+        if (reqCache.get(key)?.promise === promise) {
+          reqCache.delete(key)
+        }
+        throw err
+      })
+
+      reqCache.set(key, { promise, time: now })
+
+      setTimeout(() => {
+        if (reqCache.get(key)?.promise === promise) {
+          reqCache.delete(key)
+        }
+      }, cacheMs)
+
+      return promise
+    }
+
+    return $axios.$get(`${resource}`, getOptions)
   },
 
   initialCatalog(params = {}) {

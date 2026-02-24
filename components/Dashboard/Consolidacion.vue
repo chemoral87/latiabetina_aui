@@ -10,38 +10,38 @@
     </v-card>
   </div>
 </template>
+
 <script>
 export default {
   name: "DashboardConsolidacion",
+
   data() {
     return {
       response: {},
-      loading: false,
-      options: {
-        sortBy: ["event_date"],
-        sortDesc: [true],
-        itemsPerPage: 10,
-        date: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
-      },
     }
   },
+
   computed: {
     events() {
       return this.response?.data || []
     },
   },
+
   async mounted() {
-    if (this.loading) return // guard against double-mount
-    this.loading = true
+    const options = {
+      sortBy: ["event_date"],
+      sortDesc: [true],
+      itemsPerPage: 10,
+      date: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
+    }
 
     try {
-      this.response = await this.$repository.AuditoriumEvent?.index?.(this.options)
+      this.response = await this.$repository.AuditoriumEvent.index(options, { cacheMs: 500 })
     } catch (error) {
       console.error("Error loading auditorium events:", error)
-    } finally {
-      this.loading = false
     }
   },
+
   methods: {
     goToEvent(eventId) {
       this.$router.push(`/auditorium-event/${eventId}/mark`)
