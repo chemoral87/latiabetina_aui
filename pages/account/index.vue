@@ -44,7 +44,6 @@ export default {
   }),
   computed: {
     permissions_org() {
-      // permissions_org: { permission: [org_id, ...] }
       return this.$store.getters.permissions || {}
     },
     orgs() {

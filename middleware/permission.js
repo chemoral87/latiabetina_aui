@@ -19,11 +19,7 @@ export default function ({ store, error, route }) {
   const required = meta?.permission
   if (!required) return // no permission required for this page
 
-  const permissions = store.getters.permissions ?? []
-  const hasPermission =
-    Array.isArray(permissions)
-      ? permissions.includes(required)
-      : Object.prototype.hasOwnProperty.call(permissions, required)
+  const hasPermission = store.getters.hasPermission(required)
 
   if (!hasPermission) {
     return error({
