@@ -16,10 +16,12 @@ export default {
   data() {
     return {
       response: {},
+      loading: false,
       options: {
         sortBy: ["event_date"],
         sortDesc: [true],
         itemsPerPage: 10,
+        date: this.$moment().format("YYYY-MM-DD HH:mm:ss"),
       },
     }
   },
@@ -29,14 +31,15 @@ export default {
     },
   },
   async mounted() {
-    this.options.date = this.$moment().format("YYYY-MM-DD HH:mm:ss")
+    if (this.loading) return // guard against double-mount
+    this.loading = true
 
     try {
-      const response = await this.$repository.AuditoriumEvent?.index?.(this.options)
-      this.response = response
-      this.hasLoadedData = true
+      this.response = await this.$repository.AuditoriumEvent?.index?.(this.options)
     } catch (error) {
       console.error("Error loading auditorium events:", error)
+    } finally {
+      this.loading = false
     }
   },
   methods: {
