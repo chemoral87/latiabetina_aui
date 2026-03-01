@@ -1,29 +1,30 @@
 {
-  // ── Format on save ──────────────────────────────────────────────────────
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
 
-  // Use Prettier as the default formatter for Vue files
   "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.defaultFormatter": "Vue.volar",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
   },
 
-  // Also keep JS/TS tidy while we're here
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
   },
+
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
 
-  // ESLint: auto-fix on save (works alongside Prettier)
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
 
-  // Volar / Vetur – disable built-in formatting so Prettier wins
   "vetur.format.enable": false,
-  "vue.format.enable": false
+  "vue.format.enable": false,
+  "prettier.enable": true,
+  "prettier.requireConfig": false
 }

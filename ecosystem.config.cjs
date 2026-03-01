@@ -1,0 +1,17 @@
+module.exports = {
+  apps: [
+    {
+      name: "admin",
+      script: ".output/server/index.mjs",
+      cwd: "/var/www/avivamiento_aui/current",
+      watch: false,
+      instances: 1,
+      autorestart: true,
+      max_restarts: 5,
+      env: {
+        PORT: 3002,
+        NODE_ENV: "production",
+      },
+    },
+  ],
+}
