@@ -28,9 +28,9 @@
 <script>
 const ERROR_MESSAGES = {
   403: "No tiene los suficientes permisos para ver esta página, verifique con el Administrador del sistema.",
-  404: "Registro No Encontrado.",
-  500: "Registro No Encontrado.",
-  405: "Registro No Encontrado.",
+  404: "Esta página no pudo ser encontrada.",
+  500: "Error interno del servidor.",
+  405: "Método no permitido.",
   default: "Ocurrió un error inesperado.",
 }
 
@@ -110,6 +110,11 @@ export default {
 
     formatErrorMessage(message) {
       const code = this.statusCode
+
+      // Reemplazar mensajes comunes de Nuxt en inglés
+      if (message === "This page could not be found") {
+        message = ERROR_MESSAGES[404]
+      }
 
       if (code === 403) {
         return `${ERROR_MESSAGES[403]}<br/><br/>${message}`

@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: "admin",
-      script: ".output/server/index.mjs",
+      script: "npm",
+      args: "start",
       cwd: "/var/www/admin/current",
       watch: false,
       instances: 1,
