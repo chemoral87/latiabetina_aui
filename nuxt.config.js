@@ -100,6 +100,9 @@ export default {
   // Build modules
   buildModules: ["@nuxtjs/eslint-module", "@nuxtjs/vuetify"],
 
+  // Server Middleware (Nuxt 2 equivalent of server/api)
+  serverMiddleware: [{ path: "/api/version", handler: "~/server-middleware/version.js" }],
+
   // Modules
   modules: ["@nuxtjs/axios", "@nuxtjs/auth-next", ["@nuxtjs/dotenv", { filename: ".env." + process.env.NODE_ENV }]],
 
