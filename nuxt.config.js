@@ -538,8 +538,8 @@ export default {
       : false,
   },
 
-  // Modo moderno para navegadores actuales
-  modern: !isDev ? "client" : false,
+  // Modo moderno DESACTIVADO: duplica el tiempo de build en CI/CD
+  modern: false,
 
   // Genera sitemap automáticamente
   generate: {
