@@ -68,7 +68,7 @@ export default {
       let message = this.extractErrorMessage()
 
       // Filtra mensaje genérico de axios
-      if (message === AXIOS_GENERIC_403) {
+      if(message === AXIOS_GENERIC_403) {
         message = ERROR_MESSAGES[403]
       }
 
@@ -83,7 +83,7 @@ export default {
   watch: {
     // Observa cuando el módulo auth se carga
     "$store.state.auth"(val) {
-      if (val && !this.authLoaded) {
+      if(val && !this.authLoaded) {
         this.authLoaded = true
         this.$forceUpdate()
       }
@@ -92,7 +92,7 @@ export default {
 
   mounted() {
     // Verifica inmediatamente si auth ya está cargado
-    if (this.$store.state.auth) {
+    if(this.$store.state.auth) {
       this.authLoaded = true
     }
   },
@@ -101,7 +101,7 @@ export default {
 
   methods: {
     extractErrorMessage() {
-      if (typeof this.error === "string") {
+      if(typeof this.error === "string") {
         return this.error
       }
 
@@ -112,15 +112,15 @@ export default {
       const code = this.statusCode
 
       // Reemplazar mensajes comunes de Nuxt en inglés
-      if (message === "This page could not be found") {
+      if(message === "This page could not be found") {
         message = ERROR_MESSAGES[404]
       }
 
-      if (code === 403) {
+      if(code === 403) {
         return `${ERROR_MESSAGES[403]}<br/><br/>${message}`
       }
 
-      if ([404, 500, 405].includes(code)) {
+      if([404, 500, 405].includes(code)) {
         return message ? `<span class="error-message">${message}</span>` : `<span class="error-message">${ERROR_MESSAGES[code]}</span>`
       }
 
