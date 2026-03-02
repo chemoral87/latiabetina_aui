@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "admin",
       script: ".output/server/index.mjs",
-      cwd: "/var/www/avivamiento_aui/current",
+      cwd: "/var/www/admin/current",
       watch: false,
       instances: 1,
       autorestart: true,
