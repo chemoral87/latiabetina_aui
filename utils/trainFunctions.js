@@ -162,4 +162,86 @@ export function minBricks(structure) {
   return Math.min(ascCost, descCost)
 }
 
-export function batteryCharges() {}
+export function maxbatteryCharges3(t, capacities, recharges) {
+  const n = capacities.length
+  // Pair capacities with their recharge requirements and track usage
+  const batteries = capacities.map((cap, i) => ({
+    cap,
+    req: recharges[i],
+    used: false,
+  }))
+
+  let totalCapacityReached = 0
+  let batteryCount = 0
+
+  while (totalCapacityReached < t) {
+    // Find the best available battery:
+    // It must not be used AND totalCapacityReached must be >= its recharge requirement
+    let bestIdx = -1
+    for (let i = 0; i < n; i++) {
+      const b = batteries[i]
+      if (!b.used && totalCapacityReached >= b.req) {
+        if (bestIdx === -1 || b.cap > batteries[bestIdx].cap) {
+          bestIdx = i
+        }
+      }
+    }
+
+    // If no battery is available to be picked, we failed
+    if (bestIdx === -1) return -1
+
+    // Use the battery
+    const chosen = batteries[bestIdx]
+    chosen.used = true
+    totalCapacityReached += chosen.cap
+    batteryCount++
+  }
+
+  return batteryCount
+}
+
+export function maxbatteryCharges(t, capacity, recharges) {
+  let currRecharges = [...recharges]
+  let batteryCount = 0
+  while (t > 0) {
+    const rechargeIndex = currRecharges.map((r, i) => (r === recharges[i] ? i : -1)).filter((i) => i !== -1)[0]
+    console.log("rechargeIndex", rechargeIndex)
+    if (rechargeIndex === undefined) break
+
+    t = t - capacity[rechargeIndex]
+    if (t < 0) break
+    currRecharges[rechargeIndex] = 0
+    batteryCount++
+    currRecharges = currRecharges.map((r, i) => {
+      if (i === rechargeIndex) {
+        return r // Keep original
+      }
+      if (r + capacity[rechargeIndex] > recharges[i]) {
+        return recharges[i]
+      } else {
+        return r + capacity[rechargeIndex]
+      }
+    })
+    console.log("curr_recharges", currRecharges)
+  }
+  if (t > 0) return -1
+  return batteryCount
+}
+
+export function maxbatteryCharges2(t, capacity, recharges) {
+  // Sort capacity costs ascending to greedily pick the cheapest charges first
+  const sorted = [...capacity].sort((a, b) => a - b)
+  let count = 0
+  let remaining = t
+
+  for (const cost of sorted) {
+    if (remaining >= cost) {
+      remaining -= cost
+      count++
+    } else {
+      break
+    }
+  }
+
+  return count
+}

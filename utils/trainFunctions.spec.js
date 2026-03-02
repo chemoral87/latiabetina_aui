@@ -1,4 +1,4 @@
-import { calculateBestRateIndex, diffMinutesDepartures, minBricks } from "./trainFunctions"
+import { calculateBestRateIndex, diffMinutesDepartures, minBricks, maxbatteryCharges } from "./trainFunctions"
 
 describe("calculateBestRateIndex", () => {
   it("should return the correct index for the highest rate (price/votes)", () => {
@@ -73,5 +73,15 @@ describe("minBricks", () => {
 
   it("should return 9 for [5, 7, 9, 4, 11]", () => {
     expect(minBricks([5, 7, 9, 4, 11])).toBe(9)
+  })
+})
+
+describe("maxbatteryCharges", () => {
+  it("should return 3 for maxbatteryCharges(16, [2,5,6], [12,1,4])", () => {
+    expect(maxbatteryCharges(16, [2, 5, 6], [12, 1, 4])).toBe(3)
+  })
+
+  it("should return -1 for maxbatteryCharges(16, [2,5,6], [12,8,4])", () => {
+    expect(maxbatteryCharges(16, [2, 5, 6], [12, 8, 4])).toBe(-1)
   })
 })

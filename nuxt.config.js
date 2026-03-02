@@ -91,6 +91,7 @@ export default {
     { src: "./plugins/localstorage.js", mode: "client" },
     { src: "./plugins/echo.js", mode: "client" },
     { src: "./plugins/ua-parser.js", mode: "client" },
+    { src: "./plugins/prevent-zoom.js", mode: "client" },
   ],
 
   // Auto import components
