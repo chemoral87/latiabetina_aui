@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" :hide-no-data="!search" :items="items" :search-input.sync="search" hide-selected label="Roles" multiple>
+    <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" :hide-no-data="!search" :items="items"
+      :search-input.sync="search" hide-selected label="Roles" multiple>
       <template #no-data>
         <v-list-item v-if="!searching">Intente con otra búsqueda</v-list-item>
         <v-list-item v-else>Buscando...</v-list-item>
@@ -45,19 +46,19 @@ export default {
   },
   watch: {
     async search(val, prev) {
-      this.$store.dispatch("hideNextLoading")
+
       this.searching = true
-      if (!(val == null || val.trim() === "")) {
+      if(!(val == null || val.trim() === "")) {
         const itemz = await this.$repository.Role.filter({ queryText: val, ids: this.roles_id })
         this.searching = false
         this.items = itemz
       }
     },
     model(val, prev) {
-      if (val.length === prev.length) return
+      if(val.length === prev.length) return
       let i = val.length
-      while (i--) {
-        if (typeof val[i] === "string") {
+      while(i--) {
+        if(typeof val[i] === "string") {
           val.splice(i, 1)
         }
       }

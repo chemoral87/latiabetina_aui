@@ -11,10 +11,12 @@
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-text-field v-model="filterProfile" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
+              <v-text-field v-model="filterProfile" append-icon="mdi-magnify" clearable hide-details
+                placeholder="Filtro" />
             </v-col>
             <v-col cols="12">
-              <v-select v-model="item.org_id" :items="organizations" item-value="id" item-text="name" label="Organizaciones" outlined :rules="[$vrules.required]"></v-select>
+              <v-select v-model="item.org_id" :items="organizations" item-value="id" item-text="name"
+                label="Organizaciones" outlined :rules="[$vrules.required]"></v-select>
             </v-col>
           </v-row>
         </v-card-text>
@@ -43,14 +45,14 @@ export default {
   },
   computed: {
     iconTitle() {
-      if (this.item.id) {
+      if(this.item.id) {
         return "mdi-pencil"
       } else {
         return "mdi-plus"
       }
     },
     formTitle() {
-      if (this.item.id) {
+      if(this.item.id) {
         return "Editar Perfil"
       } else {
         return "Nuevo Perfil"
@@ -59,7 +61,7 @@ export default {
   },
   watch: {
     filterProfile(value) {
-      this.$store.dispatch("hideNextLoading")
+
       const me = this
       const op = Object.assign(me.options, { queryText: value })
       // me.response = await me.$repository.User.index(op);
@@ -68,7 +70,7 @@ export default {
   },
 
   mounted() {
-    if (this.userx) {
+    if(this.userx) {
       this.item = this.userx
     }
     this.indexOrganizations()
@@ -79,11 +81,11 @@ export default {
     },
 
     saveProfile() {
-      if (!this.$refs.formProfile.validate()) return
+      if(!this.$refs.formProfile.validate()) return
       this.$emit("save", this.item)
     },
     indexOrganizations(options) {
-      if (options) {
+      if(options) {
         this.options = options
       }
       const op = Object.assign({ queryText: this.filterUser }, this.options)

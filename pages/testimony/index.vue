@@ -2,22 +2,16 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar" placeholder="Buscar..." :disabled="loading" />
+        <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar"
+          placeholder="Buscar..." :disabled="loading" />
       </v-col>
 
       <v-col cols="12" md="2">
-        <v-select
-          v-model="statusFilter"
-          :items="[
-            { text: 'Pendientes', value: '' },
-            { text: 'Aprobados', value: 'approved' },
-            { text: 'Rechazados', value: 'rejected' },
-          ]"
-          label="Estado"
-          hide-details
-          :disabled="loading"
-          @change="onStatusChange"
-        />
+        <v-select v-model="statusFilter" :items="[
+          { text: 'Pendientes', value: '' },
+          { text: 'Aprobados', value: 'approved' },
+          { text: 'Rechazados', value: 'rejected' },
+        ]" label="Estado" hide-details :disabled="loading" @change="onStatusChange" />
       </v-col>
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mr-2" @click="newTestimony">
@@ -30,13 +24,16 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading" @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
+        <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading"
+          @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
       </v-col>
     </v-row>
 
-    <TestimonyDialog v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog" @save="saveTestimony" />
+    <TestimonyDialog v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog"
+      @save="saveTestimony" />
 
-    <DialogDelete v-if="testimonyDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteTestimony" @close="testimonyDialogDelete = false" />
+    <DialogDelete v-if="testimonyDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteTestimony"
+      @close="testimonyDialogDelete = false" />
   </v-container>
 </template>
 
@@ -57,7 +54,7 @@ export default {
     try {
       const response = await app.$repository.Testimony.index(options)
       return { response, options }
-    } catch (e) {
+    } catch(e) {
       console.error("Error loading testimonies:", e)
       error({ statusCode: e.response?.status || 500, message: "Error al cargar testimonios" })
       return { response: { data: [], total: 0 }, options }
@@ -83,9 +80,9 @@ export default {
 
   watch: {
     filterTestimony: {
-      handler: debounce(function (value) {
+      handler: debounce(function(value) {
         // Si skipFilterWatch está activo, no ejecutar el watch
-        if (this.skipFilterWatch) {
+        if(this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
         }
@@ -111,19 +108,19 @@ export default {
     async loadTestimonies(overrides = {}) {
       try {
         this.loading = true
-        this.$store.dispatch("hideNextLoading")
+
 
         const requestOptions = { ...this.options, ...overrides }
-        if (this.filterTestimony && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+        if(this.filterTestimony && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterTestimony
         }
-        if (this.statusFilter && !Object.prototype.hasOwnProperty.call(overrides, "status")) {
+        if(this.statusFilter && !Object.prototype.hasOwnProperty.call(overrides, "status")) {
           requestOptions.status = this.statusFilter
         }
 
         this.response = await this.$repository.Testimony.index(requestOptions)
         this.options = requestOptions
-      } catch (error) {
+      } catch(error) {
         console.error("Error loading testimonies:", error)
         this.$notify({ type: "error", text: error.response?.data?.message || "Error al cargar testimonios" })
       } finally {
@@ -174,7 +171,7 @@ export default {
         this.filterTestimony = ""
         await this.loadTestimonies({ page: 1, filter: "" })
         this.testimonyDialogDelete = false
-      } catch (error) {
+      } catch(error) {
         console.error("Error deleting testimony:", error)
         this.$notify({ type: "error", text: error.response?.data?.message || "Error al eliminar testimonio" })
       } finally {
@@ -187,12 +184,12 @@ export default {
         this.saving = true
         const isUpdate = Boolean(item.id)
         let saved = null
-        if (isUpdate) {
+        if(isUpdate) {
           const res = await this.$repository.Testimony.update(item.id, item)
           saved = res.data?.testimony || res.testimony || res.data || res
 
           const idx = this.response.data.findIndex((d) => d.id === (saved.id || item.id))
-          if (idx !== -1) {
+          if(idx !== -1) {
             this.$set(this.response.data, idx, saved)
           } else {
             this.response.data.unshift(saved)
@@ -206,13 +203,13 @@ export default {
         }
 
         // update the table row via ref if available
-        if (this.$refs.testimonyTable && typeof this.$refs.testimonyTable.updateRow === "function") {
+        if(this.$refs.testimonyTable && typeof this.$refs.testimonyTable.updateRow === "function") {
           this.$refs.testimonyTable.updateRow(saved)
         }
 
         this.$notify({ type: "success", text: `Testimonio ${isUpdate ? "actualizado" : "creado"} exitosamente` })
         this.testimonyDialog = false
-      } catch (error) {
+      } catch(error) {
         console.error("Error saving testimony:", error)
         this.$notify({ type: "error", text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} testimonio` })
       } finally {

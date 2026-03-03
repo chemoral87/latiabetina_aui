@@ -6,10 +6,13 @@ const multipart = {
 const reqCache = new Map()
 export default ($axios) => (resource) => ({
   index(params, options = {}) {
-    const { cacheMs, ...axiosOptions } = options
+    const { cacheMs, hideLoading, ...axiosOptions } = options
     const fullOptions = { ...axiosOptions }
     if (params) {
       fullOptions.params = params
+    }
+    if (hideLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Hide-Loading": "true" }
     }
 
     const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
@@ -59,8 +62,13 @@ export default ($axios) => (resource) => ({
     })
   },
 
-  create(payload) {
-    return $axios.$post(`${resource}`, payload)
+  create(payload, options = {}) {
+    const { hideLoading, ...axiosOptions } = options
+    const config = Object.keys(axiosOptions).length > 0 ? axiosOptions : {}
+    if (hideLoading) {
+      config.headers = { ...config.headers, "X-Hide-Loading": "true" }
+    }
+    return $axios.$post(`${resource}`, payload, Object.keys(config).length > 0 ? config : undefined)
   },
 
   createForm(payload) {

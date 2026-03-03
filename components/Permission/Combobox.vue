@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" hide-selected :hide-no-data="!search" :items="items" :search-input.sync="search" v-bind="$attrs" multiple>
+    <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" hide-selected :hide-no-data="!search"
+      :items="items" :search-input.sync="search" v-bind="$attrs" multiple>
       <template #no-data>
         <v-list-item>Intente con otra búsqueda...</v-list-item>
       </template>
@@ -43,17 +44,17 @@ export default {
   },
   watch: {
     async search(val, prev) {
-      this.$store.dispatch("hideNextLoading")
-      if (!(val == null || val.trim() === "")) {
+
+      if(!(val == null || val.trim() === "")) {
         const itemz = await this.$repository.Permission.filter({ queryText: val, ids: this.permissions_id }, { loading: false })
         this.items = itemz
       }
     },
     model(val, prev) {
-      if (val.length === prev.length) return
+      if(val.length === prev.length) return
       let i = val.length
-      while (i--) {
-        if (typeof val[i] === "string") {
+      while(i--) {
+        if(typeof val[i] === "string") {
           val.splice(i, 1)
         }
       }

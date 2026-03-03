@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
+          placeholder="Filtro"></v-text-field>
       </v-col>
       <v-col cols="12" md="3">
         <v-btn class="mr-1" color="primary" @click="newPermission()">
@@ -16,12 +17,14 @@
       </v-col>
       <v-col cols="12">
         <client-only>
-          <PermissionTable :options="options" :response="response" @sorting="getPermissions" @edit="editPermission" @delete="beforeDeletePermission"></PermissionTable>
+          <PermissionTable :options="options" :response="response" @sorting="getPermissions" @edit="editPermission"
+            @delete="beforeDeletePermission"></PermissionTable>
         </client-only>
       </v-col>
     </v-row>
     <PermissionDialog v-if="permissionDialog" :permission="permission" @close="closeDialog" @save="savePermission" />
-    <DialogDelete v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission" @close="permissionDialogDelete = false"></DialogDelete>
+    <DialogDelete v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission"
+      @close="permissionDialogDelete = false"></DialogDelete>
 
     <!-- <PermissionDialogDelete :permission="permission" v-if="permissionDialogDelete" @close="permissionDialogDelete = false" @ok="deletePermission" /> -->
   </v-container>
@@ -57,7 +60,6 @@ export default {
   watch: {
     async filterPermission(value) {
       const me = this
-      this.$store.dispatch("hideNextLoading")
       const op = Object.assign(me.options, { filter: value, page: 1 })
       me.response = await me.$repository.Permission.index(op)
     },
@@ -90,10 +92,10 @@ export default {
           this.getPermissions()
           this.permissionDialogDelete = false
         })
-        .catch((e) => {})
+        .catch((e) => { })
     },
     async getPermissions(options) {
-      if (options) {
+      if(options) {
         this.options = options
       }
       const op = Object.assign({ filter: this.filterPermission }, this.options)
@@ -101,20 +103,20 @@ export default {
     },
     async savePermission(item) {
       const me = this
-      if (item.id) {
+      if(item.id) {
         await this.$repository.Permission.update(item.id, item)
           .then((res) => {
             me.getPermissions()
             me.permissionDialog = false
           })
-          .catch((e) => {})
+          .catch((e) => { })
       } else {
         await this.$repository.Permission.create(item)
           .then((res) => {
             me.getPermissions()
             me.permissionDialog = false
           })
-          .catch((e) => {})
+          .catch((e) => { })
       }
     },
     closeDialog() {

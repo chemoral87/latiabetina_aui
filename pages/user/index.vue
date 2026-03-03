@@ -16,11 +16,13 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <UserTable :options="options" :response="response" @sorting="getUsers" @edit="editUser" @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
+        <UserTable :options="options" :response="response" @sorting="getUsers" @edit="editUser"
+          @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
       </v-col>
     </v-row>
     <UserDialog v-if="userDialog" :userx="userx" @close="closeDialog" @save="saveUser" />
-    <DialogDelete v-if="userDialogDelete" :dialog="dialogDelete" @ok="deleteUser" @close="userDialogDelete = false"></DialogDelete>
+    <DialogDelete v-if="userDialogDelete" :dialog="dialogDelete" @ok="deleteUser" @close="userDialogDelete = false">
+    </DialogDelete>
     <!-- <UserDialogDelete :userx="userx" v-if="userDialogDelete" @close="userDialogDelete = false" @ok="deleteUser" /> -->
   </v-container>
 </template>
@@ -37,7 +39,7 @@ export default {
       itemsPerPage: 10,
     }
 
-    const res = await app.$repository.User.index(op).catch((e) => {})
+    const res = await app.$repository.User.index(op).catch((e) => { })
     return { response: res, options: op }
   },
 
@@ -52,7 +54,7 @@ export default {
   },
   watch: {
     filterUser(value) {
-      this.$store.dispatch("hideNextLoading")
+
       const me = this
       const op = Object.assign(me.options, { filter: value, page: 1 })
 
@@ -94,10 +96,10 @@ export default {
           this.getUsers()
           this.userDialogDelete = false
         })
-        .catch((e) => {})
+        .catch((e) => { })
     },
     async getUsers(options) {
-      if (options) {
+      if(options) {
         this.options = options
       }
       const op = Object.assign({ filter: this.filterUser }, this.options)
@@ -105,13 +107,13 @@ export default {
     },
     async saveUser(item) {
       const me = this
-      if (item.id) {
+      if(item.id) {
         await this.$repository.User.update(item.id, item)
           .then((res) => {
             me.getUsers()
             me.userDialog = false
           })
-          .catch((e) => {})
+          .catch((e) => { })
       } else {
         await this.$repository.User.create(item)
           .then((res) => {
@@ -119,7 +121,7 @@ export default {
             me.userDialog = false
             me.editProfiles(res)
           })
-          .catch((e) => {})
+          .catch((e) => { })
       }
     },
     closeDialog() {

@@ -3,7 +3,8 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..." dense :disabled="loading" />
+        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
+          dense :disabled="loading" />
       </v-col>
 
       <!-- Botones de acción -->
@@ -20,7 +21,8 @@
 
       <!-- Tabla de roles -->
       <v-col cols="12">
-        <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting" @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
+        <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
+          @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
 
@@ -28,7 +30,8 @@
     <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole" @close="roleDialogDelete = false" />
+    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
+      @close="roleDialogDelete = false" />
   </v-container>
 </template>
 
@@ -51,7 +54,7 @@ export default {
     try {
       const response = await app.$repository.Role.index(options)
       return { response, options }
-    } catch (e) {
+    } catch(e) {
       console.error("Error loading roles:", e)
       error({ statusCode: e.response?.status || 500, message: "Error al cargar roles" })
       return {
@@ -90,9 +93,9 @@ export default {
 
   watch: {
     filterRole: {
-      handler: debounce(function (value) {
+      handler: debounce(function(value) {
         // Si skipFilterWatch está activo, no ejecutar el watch
-        if (this.skipFilterWatch) {
+        if(this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
         }
@@ -127,7 +130,6 @@ export default {
     async loadRoles(overrides = {}) {
       try {
         this.loading = true
-        this.$store.dispatch("hideNextLoading")
 
         // Combina opciones actuales con las sobrescrituras
         const requestOptions = {
@@ -136,7 +138,7 @@ export default {
         }
 
         // Preserva el filtro actual si no se sobrescribe explícitamente
-        if (this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+        if(this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterRole
         }
 
@@ -144,7 +146,7 @@ export default {
 
         // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions
-      } catch (error) {
+      } catch(error) {
         console.error("Error loading roles:", error)
         this.$notify({
           type: "error",
@@ -222,7 +224,7 @@ export default {
         await this.loadRoles({ page: 1, filter: "" })
 
         this.roleDialogDelete = false
-      } catch (error) {
+      } catch(error) {
         console.error("Error deleting role:", error)
         this.$notify({
           type: "error",
@@ -242,7 +244,7 @@ export default {
 
         const isUpdate = Boolean(item.id)
 
-        if (isUpdate) {
+        if(isUpdate) {
           await this.$repository.Role.update(item.id, item)
         } else {
           await this.$repository.Role.create(item)
@@ -256,7 +258,7 @@ export default {
         // Aplica el filtro con el nombre del rol guardado y recarga
         this.filterRole = item.name
         this.roleDialog = false
-      } catch (error) {
+      } catch(error) {
         console.error("Error saving role:", error)
         this.$notify({
           type: "error",

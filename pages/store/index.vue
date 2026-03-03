@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="6" md="2">
-        <v-text-field v-model="filterStore" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterStore" append-icon="mdi-magnify" clearable hide-details
+          placeholder="Filtro"></v-text-field>
       </v-col>
 
       <v-spacer />
@@ -13,7 +14,8 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <StoreTable :options="options" :response="response" :dialog-delete.sync="dialogDeleteStore" @sorting="indexStore" @edit="editStore" @delete="deleteStore" />
+        <StoreTable :options="options" :response="response" :dialog-delete.sync="dialogDeleteStore"
+          @sorting="indexStore" @edit="editStore" @delete="deleteStore" />
       </v-col>
     </v-row>
   </v-container>
@@ -28,7 +30,7 @@ export default {
       sortDesc: [true],
       itemsPerPage: 5,
     }
-    const response = await app.$repository.Store.index(options).catch((e) => {})
+    const response = await app.$repository.Store.index(options).catch((e) => { })
     return { response, options }
   },
   data() {
@@ -42,7 +44,7 @@ export default {
   watch: {
     async filterStore(value) {
       const me = this
-      this.$store.dispatch("hideNextLoading")
+
       const op = Object.assign(me.options, { filter: value, page: 1 })
       me.response = await me.$repository.Store.index(op)
     },
@@ -56,7 +58,7 @@ export default {
   },
   methods: {
     async indexStore(options) {
-      if (options) {
+      if(options) {
         this.options = Object.assign(this.options, options)
       }
       const op = Object.assign({ filter: this.filter }, this.options)
@@ -71,7 +73,7 @@ export default {
           this.dialogDeleteStore = false
           this.indexStore()
         })
-        .catch((e) => {})
+        .catch((e) => { })
     },
   },
 }
