@@ -3,15 +3,15 @@
     <div v-if="eventAuditorium && eventAuditorium.id">
       <!-- Top bar -->
       <div class="pa-2 grey lighten-4 d-flex align-center" style="position: relative">
-        <span class="text-subtitle-2">Auditorio: {{ eventAuditorium.auditorium_name }}</span>
-        <span class="text-subtitle-2 ml-4">{{ eventAuditorium.event_date | moment("DD MMM YYYY") }}</span>
+        <span class="text-subtitle-2">{{ eventAuditorium.auditorium_name }}</span>
+        |<span class="text-subtitle-2 ">{{ eventAuditorium.event_date | moment("DD MMM YYYY") }}</span>
 
         <v-spacer></v-spacer>
         <span class="text-subtitle-2">{{ totalSeatsWithStatus }}/{{ totalSeats }}</span>
-        <span class="text-subtitle-2 ml-3" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
+        <span class="text-subtitle-2 ml-1" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
 
         <!-- Stats toggle button -->
-        <v-btn x-small fab color="success" class="ml-4" title="Ver desglose por estatus"
+        <v-btn x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
           @click="statsPanel = !statsPanel">
           <v-icon small color="yellow">mdi-chart-bar</v-icon>
         </v-btn>
@@ -45,7 +45,8 @@
 
       <div>
         <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig"
-          :categories="stageCategories" :loading-seats="loadingSeats" @setEventSeat="handleSetEventSeat" />
+          :auditorium-event-id="eventAuditorium.id" :categories="stageCategories" :loading-seats="loadingSeats"
+          @setEventSeat="handleSetEventSeat" />
       </div>
     </div>
 

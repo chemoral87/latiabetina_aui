@@ -6,7 +6,7 @@ const multipart = {
 const reqCache = new Map()
 export default ($axios) => (resource) => ({
   index(params, options = {}) {
-    const { cacheMs, hideLoading, ...axiosOptions } = options
+    const { cacheMs, hideLoading = true, ...axiosOptions } = options
     const fullOptions = { ...axiosOptions }
     if (params) {
       fullOptions.params = params

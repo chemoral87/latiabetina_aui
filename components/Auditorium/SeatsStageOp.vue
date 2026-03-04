@@ -25,16 +25,27 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
+        <v-btn v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
+          @click="openHistory">
+          <v-icon left>mdi-history</v-icon>
+          Hist
+        </v-btn>
       </v-col>
     </v-row>
 
     <div style="display: flex; gap: 2px">
-      <div id="subsectionPanel" :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage ref="konvaStage" :config="adjustedStageConfig" :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" @dragstart="handleDragStart" @dragend="handleDragEnd">
+      <div id="subsectionPanel"
+        :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
+        <v-stage ref="konvaStage" :config="adjustedStageConfig"
+          :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel"
+          @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
+          @dragstart="handleDragStart" @dragend="handleDragEnd">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats" @seat-click="handleSeatClick" />
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories"
+                :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats"
+                @seat-click="handleSeatClick" />
             </template>
 
             <!-- Show all sections when no subsection is selected -->
@@ -45,22 +56,19 @@
                 <v-text :config="getSectionTitleConfig(section)" />
 
                 <template v-if="!(section.l || section.isLabel)">
-                  <v-group
-                    v-for="(sub, subIdx) in (section.ss || section.subsections)"
-                    :key="`sub-${sIdx}-${subIdx}`"
-                    :config="getSubsectionPosition(section, subIdx)"
-                    @click="handleSubsectionClick(sub)"
-                    @tap="handleSubsectionClick(sub)"
-                    @mouseenter="handleSeatHover"
-                    @mouseleave="handleSeatLeave"
-                  >
+                  <v-group v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-${subIdx}`"
+                    :config="getSubsectionPosition(section, subIdx)" @click="handleSubsectionClick(sub)"
+                    @tap="handleSubsectionClick(sub)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave">
                     <template v-if="sub.l || sub.isLabel">
-                      <AuditoriumSeatsStageSubsectionLabel :subsection="sub" :section-height="getSectionHeight(section)" />
+                      <AuditoriumSeatsStageSubsectionLabel :subsection="sub"
+                        :section-height="getSectionHeight(section)" />
                     </template>
 
                     <template v-else>
                       <!-- general  -->
-                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories" :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats" />
+                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories"
+                        :selected-seats-array="selectedSeatsArray" :blink-state="blinkState"
+                        :loading-seats="loadingSeats" />
                     </template>
                   </v-group>
                 </template>
@@ -72,23 +80,109 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <MyDragPanel
-      v-model="showMarkPanel"
-      :title="'Asientos: ' + selectedSeatsArray.length"
-      mode="fixed"
-      top="75px"
-      left="calc(50% - 95px)"
-    >
-      <div class="stats-panel-body" style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
+      left="calc(50% - 95px)">
+      <div class="stats-panel-body"
+        style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
         <!-- Loop through active status configs -->
-        <div v-for="(config, key) in activeStatusConfig" :key="key" style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon :title="config.label" :style="`background-color: ${config.color} !important; color: white`" @click="setEventSeat(key == 'e' ? null : key)">
+        <div v-for="(config, key) in activeStatusConfig" :key="key"
+          style="display: flex; flex-direction: column; align-items: center">
+          <v-btn class="mb-1" icon :title="config.label"
+            :style="`background-color: ${config.color} !important; color: white`"
+            @click="setEventSeat(key == 'e' ? null : key)">
             <v-icon>{{ getIconName(key) }}</v-icon>
           </v-btn>
           <span style="font-size: 9px; text-align: center">{{ config.label }}</span>
         </div>
       </div>
     </MyDragPanel>
+
+    <!-- History Dialog -->
+    <v-dialog v-model="historyDialog" max-width="700" scrollable>
+      <v-card>
+        <v-card-title class="d-flex align-center">
+          <v-icon left color="info">mdi-history</v-icon>
+          Historial de asientos
+          <v-spacer />
+          <v-btn icon @click="historyDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+
+        <v-divider />
+
+        <v-card-text style="max-height: 60vh; padding: 0">
+          <div v-if="historyLoading" class="d-flex justify-center align-center pa-8">
+            <v-progress-circular indeterminate color="info" />
+          </div>
+
+          <v-simple-table v-else-if="seatTransitions.length" dense>
+            <template #default>
+              <thead>
+                <tr>
+                  <th colspan="2" style="padding: 6px 16px 4px">
+                    <div class="d-flex align-center flex-wrap" style="gap: 6px">
+                      <span style="font-size: 11px; color: #888; margin-right: 4px">Filtrar:</span>
+                      <v-btn v-for="(cfg, key) in activeStatusConfig" :key="key" x-small icon :title="cfg.label" :style="{
+                        backgroundColor: historyIconFilter === key ? cfg.color : 'transparent',
+                        border: '2px solid ' + cfg.color,
+                        borderRadius: '50%',
+                        width: '26px',
+                        height: '26px',
+                      }" @click="historyIconFilter = historyIconFilter === key ? null : key">
+                        <v-icon x-small :color="historyIconFilter === key ? 'white' : cfg.color">{{ cfg.mdi }}</v-icon>
+                      </v-btn>
+                      <v-btn v-if="historyIconFilter" x-small text class="ml-1"
+                        style="font-size: 10px; text-transform: none" @click="historyIconFilter = null">
+                        <v-icon x-small left>mdi-close-circle</v-icon>
+                        Limpiar
+                      </v-btn>
+                    </div>
+                  </th>
+                </tr>
+                <tr>
+                  <th>Asiento</th>
+                  <th>Transiciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="seat in filteredSeatTransitions" :key="seat.id">
+                  <td class="text-caption" style="white-space: nowrap; font-family: monospace">
+                    {{ seat.label }}
+                  </td>
+                  <td>
+                    <div class="d-flex align-center flex-wrap" style="gap: 4px; row-gap: 6px">
+                      <template v-for="(step, si) in seat.transitions">
+                        <div :key="'step-' + si" class="d-flex align-center" style="gap: 4px">
+                          <v-icon small :color="step.color" :title="step.label">{{ step.mdi }}</v-icon>
+                          <span style="font-size: 11px; white-space: nowrap; line-height: 1">
+                            <span style="font-weight: 600">{{ getHistoryUser(step.createdBy) }}</span>
+                            <span class="grey--text">{{ step.time }}</span>
+                          </span>
+                        </div>
+                        <span v-if="si < seat.transitions.length - 1" :key="'a-' + si" class="grey--text"
+                          style="font-size: 12px; padding: 0 0px">›</span>
+                      </template>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+          <div v-else class="pa-6 text-center grey--text">
+            <v-icon large>mdi-clipboard-text-off-outline</v-icon>
+            <div class="mt-2">Sin historial disponible</div>
+          </div>
+        </v-card-text>
+
+        <v-divider />
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="historyDialog = false">Cerrar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -104,8 +198,9 @@ export default {
   components: { MyDragPanel },
   props: {
     sections: { type: Array, required: true },
-
     stageConfig: { type: Object, required: true },
+    auditoriumEventId: { type: [Number, String], default: null },
+    sectionPrefix: { type: String, default: null },
     categories: {
       type: Array,
       default: () => [],
@@ -117,7 +212,7 @@ export default {
   },
   data() {
     return {
-      eventArrays : [],
+      eventArrays: [],
       selectedSubsection: null,
       zoomLevel: 1,
       minZoom: 0.3,
@@ -134,13 +229,49 @@ export default {
       isTwoFingerGesture: false, // Track if two fingers are active
       isDraggingStage: false, // Track if user is dragging the stage
       dragStartPos: null, // Starting position of potential drag
+      // History
+      historyDialog: false,
+      historyLog: [],
+      historyUsers: [],
+      historyLoading: false,
+      historyIconFilter: null,
     }
   },
   computed: {
+    filteredSeatTransitions() {
+      if(!this.historyIconFilter) return this.seatTransitions
+      return this.seatTransitions.filter((seat) =>
+        seat.transitions.some((step) => step.status === this.historyIconFilter)
+      )
+    },
+
+    seatTransitions() {
+      // Build a map: seatId -> [{ status, color, mdi, label, date }, ...]
+      const map = {}
+      this.historyLog.forEach((entry) => {
+        const seats = entry.seat_ids || []
+        const cfg = STATUS_CONFIG[entry.status] || {}
+        const step = {
+          status: entry.status,
+          color: cfg.color || '#ffeb3b',
+          mdi: cfg.mdi || 'mdi-circle',
+          label: cfg.label || entry.status || '—',
+          date: new Date(entry.created_at).toLocaleString(),
+          time: new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          createdBy: entry.created_by,
+        }
+        seats.forEach((seatId) => {
+          if(!map[seatId]) map[seatId] = []
+          map[seatId].push(step)
+        })
+      })
+      return Object.keys(map).sort().map((id) => ({ id, label: this.formatSeatId(id), transitions: map[id] }))
+    },
+
     activeStatusConfig() {
-      // Filter STATUS_CONFIG to only include active items
+      // Filter STATUS_CONFIG to only include active items (exclude 'e' = Vacío from the icon filter)
       return Object.keys(STATUS_CONFIG)
-        .filter(key => STATUS_CONFIG[key].active !== false)
+        .filter(key => STATUS_CONFIG[key].active !== false && key !== 'e')
         .reduce((acc, key) => {
           acc[key] = STATUS_CONFIG[key]
           return acc
@@ -149,7 +280,7 @@ export default {
 
     showMarkPanel: {
       get() { return this.selectedSeatsArray.length > 0 },
-      set(val) { if (!val) this.clearSelectedSeats() }
+      set(val) { if(!val) this.clearSelectedSeats() }
     },
 
     seatSpacing() {
@@ -161,11 +292,11 @@ export default {
       this.sections.forEach((section) => {
         const isLabel = section.l || section.isLabel
         const rawSubs = section.ss || section.subsections
-        if (!isLabel && rawSubs) {
+        if(!isLabel && rawSubs) {
           rawSubs.forEach((sub) => {
             const isSubLabel = sub.l || sub.isLabel
             const seatsSource = sub.s || sub.seats
-            if (!isSubLabel && seatsSource) {
+            if(!isSubLabel && seatsSource) {
               subsections.push(sub)
             }
           })
@@ -175,7 +306,7 @@ export default {
     },
 
     currentSubsectionIndex() {
-      if (!this.selectedSubsection || this.allSubsections.length === 0) return -1
+      if(!this.selectedSubsection || this.allSubsections.length === 0) return -1
       const selectedId = this.selectedSubsection.i || this.selectedSubsection.id
       return this.allSubsections.findIndex((sub) => (sub.i || sub.id) === selectedId)
     },
@@ -194,10 +325,10 @@ export default {
 
     contentOffsetX() {
       // No aplicar offset cuando hay subsección seleccionada
-      if (this.selectedSubsection) return 0
+      if(this.selectedSubsection) return 0
 
       // Calcular el offset para centrar el contenido
-      if (!this.sections || this.sections.length === 0) return 0
+      if(!this.sections || this.sections.length === 0) return 0
       const maxSectionWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section)))
       const scaledWidth = maxSectionWidth * this.zoomLevel
       const containerWidth = this.adjustedStageConfig.width
@@ -206,12 +337,12 @@ export default {
 
     containerHeight() {
       // Usar la altura del stage para que coincidan
-      if (this.selectedSubsection) {
+      if(this.selectedSubsection) {
         const subsectionHeight = this.getSubsectionHeight(this.selectedSubsection) + 40
         return `${subsectionHeight * this.zoomLevel}px`
       }
 
-      if (!this.sections || this.sections.length === 0) return "500px"
+      if(!this.sections || this.sections.length === 0) return "500px"
 
       const totalContentHeight =
         this.sections.reduce((acc, section, idx) => {
@@ -242,13 +373,13 @@ export default {
 
     containerWidth() {
       // Ancho del contenedor: 100%
-      if (typeof window === "undefined") return 800
+      if(typeof window === "undefined") return 800
       return window.innerWidth
     },
 
     containerHeightPx() {
       // Altura del contenedor en píxeles
-      if (typeof window === "undefined") return 600
+      if(typeof window === "undefined") return 600
       const controlH = this.controlHeight
       const appBarH = this.appBarHeight
       return window.innerHeight - controlH - appBarH - 34
@@ -256,7 +387,7 @@ export default {
 
     subsectionStats() {
       const seatsSource = this.selectedSubsection?.s || this.selectedSubsection?.seats
-      if (!this.selectedSubsection || !seatsSource) {
+      if(!this.selectedSubsection || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
@@ -265,9 +396,9 @@ export default {
 
       seatsSource.forEach((row) => {
         row.forEach((seat) => {
-          if (seat) {
+          if(seat) {
             total++
-            if (seat.status && seat.status !== null) {
+            if(seat.status && seat.status !== null) {
               withStatus++
             }
           }
@@ -308,7 +439,7 @@ export default {
   },
   beforeDestroy() {
     // Clean up interval
-    if (this.blinkInterval) {
+    if(this.blinkInterval) {
       clearInterval(this.blinkInterval)
     }
   },
@@ -319,7 +450,7 @@ export default {
 
     getSubsectionStatsFor(sub) {
       const seatsSource = sub?.s || sub?.seats
-      if (!sub || !seatsSource) {
+      if(!sub || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
@@ -328,9 +459,9 @@ export default {
 
       seatsSource.forEach((row) => {
         row.forEach((seat) => {
-          if (seat) {
+          if(seat) {
             total++
-            if (seat.status && seat.status !== null) {
+            if(seat.status && seat.status !== null) {
               withStatus++
             }
           }
@@ -348,11 +479,11 @@ export default {
 
     getControlRowHeight() {
       // Intentar obtener la altura real del elemento v-row
-      if (this.$refs.controlRow) {
+      if(this.$refs.controlRow) {
         // Vuetify v-row puede ser accedido directamente o a través de $el
         const element = this.$refs.controlRow.$el || this.$refs.controlRow
 
-        if (element && element.offsetHeight) {
+        if(element && element.offsetHeight) {
           const height = element.offsetHeight
 
           return height > 0 ? height : 50
@@ -370,17 +501,17 @@ export default {
       let y = 0
 
       // Calculate y position by summing heights of all previous sections
-      for (let i = 0; i < sIdx; i++) {
+      for(let i = 0; i < sIdx; i++) {
         y += this.getSectionHeight(this.sections[i])
       }
 
       // Add spacing between sections (not for the first section)
-      if (sIdx > 0) {
+      if(sIdx > 0) {
         y += sIdx * 20 // 20px spacing between each section
       }
 
       // Add 10px top margin for label sections (like "Altar")
-      if (section.isLabel) {
+      if(section.isLabel) {
         // y += 10
       }
 
@@ -421,7 +552,7 @@ export default {
       let x = DEFAULT_SETTINGS.SECTION_SIDE_PADDING
       const rawSubs = section.ss || section.subsections
 
-      for (let i = 0; i < subIdx; i++) {
+      for(let i = 0; i < subIdx; i++) {
         const s = rawSubs[i]
         const isLabel = s.l || s.isLabel
         const width = isLabel ? (s.w || s.width || 40) - 20 : this.getSubsectionWidth(s)
@@ -449,31 +580,31 @@ export default {
 
     getSubsectionWidth(sub) {
       const isLabel = sub.l || sub.isLabel
-      if (isLabel) return sub.w || sub.width || 40
+      if(isLabel) return sub.w || sub.width || 40
       const seatsSource = sub.s || sub.seats
-      if (!seatsSource?.length) return 0
+      if(!seatsSource?.length) return 0
       const maxCols = Math.max(...seatsSource.map((row) => row.length))
       return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
       const isLabel = sub.l || sub.isLabel
-      if (isLabel) return 0
+      if(isLabel) return 0
       const seatsSource = sub.s || sub.seats
-      if (!seatsSource?.length) return 40
+      if(!seatsSource?.length) return 40
       return seatsSource.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     getSectionWidth(section) {
       const isLabel = section.l || section.isLabel
-      if (isLabel) {
+      if(isLabel) {
         // Calculate the max width of all regular sections to center the label
         const maxSectionWidth = Math.max(
           ...this.sections
             .filter((s) => !(s.l || s.isLabel))
             .map((s) => {
               const rawSubs = s.ss || s.subsections
-              if (!rawSubs || !rawSubs.length) return 0
+              if(!rawSubs || !rawSubs.length) return 0
               return (
                 rawSubs.reduce((acc, sub) => {
                   const isSubLabel = sub.l || sub.isLabel
@@ -488,7 +619,7 @@ export default {
         return maxSectionWidth || 800 // Use max section width or default
       }
       const rawSubs = section.ss || section.subsections
-      if (!rawSubs || !rawSubs.length) return 0
+      if(!rawSubs || !rawSubs.length) return 0
       // Calculate extra width: subsection border (2px) + title padding (13px) + safety margin (5px) = 20px
       const extraWidthPadding = 20
       return (
@@ -504,15 +635,15 @@ export default {
 
     getSectionHeight(section) {
       const isLabel = section.l || section.isLabel
-      if (isLabel) return 30
+      if(isLabel) return 30
       const rawSubs = section.ss || section.subsections
-      if (!rawSubs || !rawSubs.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
+      if(!rawSubs || !rawSubs.length) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING
       const maxRows = Math.max(...rawSubs.map((sub) => {
         const isSubLabel = sub.l || sub.isLabel
         const seatsSource = sub.s || sub.seats
         return (isSubLabel ? 0 : seatsSource?.length || 0)
       }))
-      if (maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
+      if(maxRows === 0) return DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + 40
       // Calculate extra height: column label offset (5px) + font size (8px) + spacing (7px) + stats area (20px) = 40px
       const extraHeightPadding = 40
       return maxRows * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE + DEFAULT_SETTINGS.SECTION_TOP_PADDING + DEFAULT_SETTINGS.SECTION_BOTTOM_PADDING + extraHeightPadding
@@ -523,7 +654,7 @@ export default {
       this.selectedSubsection = subSection
 
       // Set fitstate to 'width' if null, then apply the current fitstate
-      if (this.fitstate === null) {
+      if(this.fitstate === null) {
         this.fitstate = "width"
       }
       this.$nextTick(() => {
@@ -546,7 +677,7 @@ export default {
     },
 
     nextSubsection() {
-      if (!this.selectedSubsection || this.allSubsections.length === 0) return
+      if(!this.selectedSubsection || this.allSubsections.length === 0) return
       const currentIndex = this.currentSubsectionIndex
       const nextIndex = (currentIndex + 1) % this.allSubsections.length // circular navigation
       this.selectedSubsection = this.allSubsections[nextIndex]
@@ -560,7 +691,7 @@ export default {
     },
 
     previousSubsection() {
-      if (!this.selectedSubsection || this.allSubsections.length === 0) return
+      if(!this.selectedSubsection || this.allSubsections.length === 0) return
       const currentIndex = this.currentSubsectionIndex
       const prevIndex = currentIndex === 0 ? this.allSubsections.length - 1 : currentIndex - 1 // circular navigation
       this.selectedSubsection = this.allSubsections[prevIndex]
@@ -588,7 +719,7 @@ export default {
 
     applyCurrentFit() {
       // Apply fit based on current fitstate
-      if (this.fitstate === "height") {
+      if(this.fitstate === "height") {
         this.fitToHeight()
       } else {
         this.fitToWidth()
@@ -599,7 +730,7 @@ export default {
       // Set fitstate to 'width'
       this.fitstate = "width"
       // Calcular el zoom óptimo basado en el ancho disponible
-      if (!this.sections || this.sections.length === 0) {
+      if(!this.sections || this.sections.length === 0) {
         console.warn("No sections available for fit calculation")
         this.zoomLevel = 0.7
         return
@@ -613,7 +744,7 @@ export default {
 
           // Calcular el ancho real del contenido según si hay subsección seleccionada o no
           let maxContentWidth
-          if (this.selectedSubsection) {
+          if(this.selectedSubsection) {
             // Si hay subsección seleccionada, incluir todos los offsets y elementos adicionales
             // - v-group x: 0
             // - v-rect x: 1, width: subsectionWidth + 18
@@ -628,7 +759,7 @@ export default {
             maxContentWidth = Math.max(...this.sections.map((section) => this.getSectionWidth(section))) + 25
           }
 
-          if (maxContentWidth > 0 && actualWidth > 0) {
+          if(maxContentWidth > 0 && actualWidth > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = actualWidth / maxContentWidth
             // Establecer un mínimo de 0.3 y máximo según maxZoom
@@ -643,12 +774,12 @@ export default {
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
             const stage = this.$refs.konvaStage?.getStage()
-            if (stage) {
+            if(stage) {
               stage.position({ x: 0, y: 0 })
               stage.batchDraw()
             }
           })
-        } catch (error) {
+        } catch(error) {
           console.error("Error calculating fit:", error)
           this.zoomLevel = 0.7
         }
@@ -659,7 +790,7 @@ export default {
       // Set fitstate to 'height'
       this.fitstate = "height"
       // Calcular el zoom óptimo basado en la altura disponible
-      if (!this.sections || this.sections.length === 0) {
+      if(!this.sections || this.sections.length === 0) {
         this.zoomLevel = 0.7
         return
       }
@@ -672,7 +803,7 @@ export default {
 
           // Calcular la altura total del contenido según si hay subsección seleccionada o no
           let totalContentHeight
-          if (this.selectedSubsection) {
+          if(this.selectedSubsection) {
             const subsectionContentHeight = this.getSubsectionHeight(this.selectedSubsection)
             totalContentHeight = subsectionContentHeight + 35 // rect y + content + rect extra + label space
           } else {
@@ -683,7 +814,7 @@ export default {
               }, 0) + 40 // padding extra
           }
 
-          if (totalContentHeight > 0 && availableHeight > 0) {
+          if(totalContentHeight > 0 && availableHeight > 0) {
             // Calcular zoom óptimo sin margen adicional ya que el contenido tiene su propio padding
             const optimalZoom = availableHeight / totalContentHeight
             // Establecer un mínimo de 0.3 y máximo según maxZoom
@@ -700,12 +831,12 @@ export default {
           // Resetear la posición del stage al centro
           this.$nextTick(() => {
             const stage = this.$refs.konvaStage?.getStage()
-            if (stage) {
+            if(stage) {
               stage.position({ x: 0, y: 0 })
               stage.batchDraw()
             }
           })
-        } catch (error) {
+        } catch(error) {
           console.error("Error calculating fit:", error)
           this.zoomLevel = 0.7
         }
@@ -714,14 +845,14 @@ export default {
 
     getDragBoundFunc() {
       const mode = this.dragMode
-      return function (pos) {
-        if (mode === "y") {
+      return function(pos) {
+        if(mode === "y") {
           // Solo permitir movimiento en eje X
           return {
             x: pos.x,
             y: 0,
           }
-        } else if (mode === "x") {
+        } else if(mode === "x") {
           // Solo permitir movimiento en eje Y
           return {
             x: 0,
@@ -735,36 +866,36 @@ export default {
     handleSeatClick(payload) {
       const { seat } = payload
 
-    this.isIOS = this.$uaParser.isIOS()
+      this.isIOS = this.$uaParser.isIOS()
       this.isAndroid = this.$uaParser.isAndroid()
       const deviceInfo = this.$uaParser.getDeviceInfo()
       console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, " SeatId:", seat.id)
 
-      this.eventArrays.push(  "handleSeatClick " + deviceInfo?.os.name + " " + this.isIOS + "/" + this.isAndroid + " " + seat.id)
-      
+      this.eventArrays.push("handleSeatClick " + deviceInfo?.os.name + " " + this.isIOS + "/" + this.isAndroid + " " + seat.id)
+
       // Only allow selection when a subsection is selected
-      if (!this.selectedSubsection) {
+      if(!this.selectedSubsection) {
         return
       }
 
       // Only check for drag if we actually detected a drag happening
       // isDraggingStage indicates an active drag, not just small movements
-      if (this.isDraggingStage) {
+      if(this.isDraggingStage) {
         return
       }
 
       // Check if this was a significant drag operation after drag ended
       const stage = this.$refs.konvaStage?.getStage()
-      if (stage && this.dragStartPos) {
+      if(stage && this.dragStartPos) {
         const currentPos = stage.position()
         const dragDistance = Math.sqrt(
-          Math.pow(currentPos.x - this.dragStartPos.x, 2) + 
+          Math.pow(currentPos.x - this.dragStartPos.x, 2) +
           Math.pow(currentPos.y - this.dragStartPos.y, 2)
         )
-        
+
         // Use threshold from constants to be more mobile-friendly
         // Small movements during taps shouldn't prevent selection
-        if (dragDistance > DEFAULT_SETTINGS.DRAG_THRESHOLD) {
+        if(dragDistance > DEFAULT_SETTINGS.DRAG_THRESHOLD) {
           return
         }
       }
@@ -773,7 +904,7 @@ export default {
       const seatId = seat.id
       const index = this.selectedSeatsArray.indexOf(seatId)
 
-      if (index > -1) {
+      if(index > -1) {
         // Seat is already selected, remove it
         this.selectedSeatsArray.splice(index, 1)
       } else {
@@ -783,7 +914,7 @@ export default {
     },
 
     setEventSeat(status) {
-      if (this.selectedSeatsArray.length === 0) {
+      if(this.selectedSeatsArray.length === 0) {
         console.warn("No seats selected")
         return
       }
@@ -792,7 +923,7 @@ export default {
       // For the 'clear' action (status === null), skip seats that have no status.
       const seatIdsToSend = this.selectedSeatsArray.filter((seatId) => {
         const seat = this.findSeatById(seatId)
-        if (!seat) return true // unknown seat – include it
+        if(!seat) return true // unknown seat – include it
         const currentStatus = seat.status || null
         return currentStatus !== status
       })
@@ -800,7 +931,7 @@ export default {
       // Deselect the skipped seats (already at target status)
       this.selectedSeatsArray = this.selectedSeatsArray.filter((id) => seatIdsToSend.includes(id))
 
-      if (seatIdsToSend.length === 0) {
+      if(seatIdsToSend.length === 0) {
         console.info("All selected seats already have status:", status)
         this.selectedSeatsArray = []
         return
@@ -821,15 +952,15 @@ export default {
     },
 
     findSeatById(seatId) {
-      for (const section of this.sections) {
+      for(const section of this.sections) {
         const rawSubs = section.ss || section.subsections
-        if (!rawSubs) continue
-        for (const sub of rawSubs) {
+        if(!rawSubs) continue
+        for(const sub of rawSubs) {
           const seatsSource = sub.s || sub.seats
-          if (!seatsSource) continue
-          for (const row of seatsSource) {
-            for (const seat of row) {
-              if (seat && (seat.i || seat.id) === seatId) return seat
+          if(!seatsSource) continue
+          for(const row of seatsSource) {
+            for(const seat of row) {
+              if(seat && (seat.i || seat.id) === seatId) return seat
             }
           }
         }
@@ -851,7 +982,7 @@ export default {
       e.evt.preventDefault()
 
       const stage = this.$refs.konvaStage?.getStage()
-      if (!stage) return
+      if(!stage) return
 
       const oldScale = this.zoomLevel
       const pointer = stage.getPointerPosition()
@@ -868,7 +999,7 @@ export default {
       newScale = Math.round(newScale * 100) / 100
 
       // Only update if scale changed
-      if (newScale === oldScale) return
+      if(newScale === oldScale) return
 
       // Get mouse point relative to stage
       const mousePointTo = {
@@ -899,7 +1030,7 @@ export default {
       const touch1 = e.evt.touches[0]
       const touch2 = e.evt.touches[1]
 
-      if (touch1 && touch2) {
+      if(touch1 && touch2) {
         // Two fingers detected - prepare for pinch zoom
         this.isTwoFingerGesture = true
         this.lastDist = this.getDistance(touch1, touch2)
@@ -913,17 +1044,17 @@ export default {
       const touch1 = e.evt.touches[0]
       const touch2 = e.evt.touches[1]
 
-      if (touch1 && touch2) {
+      if(touch1 && touch2) {
         // Prevent default to avoid page scroll
         e.evt.preventDefault()
 
         const stage = this.$refs.konvaStage?.getStage()
-        if (!stage) return
+        if(!stage) return
 
         const dist = this.getDistance(touch1, touch2)
         const center = this.getCenter(touch1, touch2)
 
-        if (!this.lastDist) {
+        if(!this.lastDist) {
           this.lastDist = dist
         }
 
@@ -985,7 +1116,7 @@ export default {
     handleDragStart() {
       // Store initial position when drag starts
       const stage = this.$refs.konvaStage?.getStage()
-      if (stage) {
+      if(stage) {
         this.dragStartPos = { ...stage.position() }
         this.isDraggingStage = true
       }
@@ -998,6 +1129,54 @@ export default {
       setTimeout(() => {
         this.dragStartPos = null
       }, 100)
+    },
+
+    getStatusColor(status) {
+      const STATUS_COLORS = {
+        a: 'green',
+        p: 'orange',
+        r: 'red',
+        e: 'grey',
+      }
+      return STATUS_COLORS[status] || 'blue-grey'
+    },
+
+    formatSeatId(seatId) {
+      // Convert "seg1-seg2-row-col" to "rowLETTER", e.g. "1-2-1-4" -> "1D"
+      if(!seatId) return seatId
+      const parts = seatId.split('-')
+      if(parts.length < 4) return seatId
+      const row = parts[parts.length - 2]
+      const col = parseInt(parts[parts.length - 1], 10)
+      if(isNaN(col)) return seatId
+      const letter = String.fromCharCode(64 + col) // 1=A, 2=B, 3=C, 4=D, 5=E ...
+      return `${row}${letter}`
+    },
+
+    async openHistory() {
+      this.historyDialog = true
+      this.historyLoading = true
+      this.historyLog = []
+      this.historyIconFilter = null
+      const prefix = this.sectionPrefix || (this.selectedSubsection ? (this.selectedSubsection.i || this.selectedSubsection.id) : null)
+      try {
+        const response = await this.$repository.AuditoriumEventSeatLog.index(
+          { auditorium_event_id: this.auditoriumEventId, section_prefix: prefix + "-" }
+        )
+        this.historyLog = response?.seatsLog || []
+        this.historyUsers = response?.users || []
+      } catch(e) {
+        console.error('Error fetching seat history:', e)
+      } finally {
+        this.historyLoading = false
+      }
+    },
+
+    getHistoryUser(createdBy) {
+      const user = this.historyUsers.find((u) => u.id === createdBy)
+      if(!user) return `#${createdBy}`
+      const lastName = user.last_name ? ` ${user.last_name.charAt(0)}.` : ''
+      return `${user.name}${lastName}`
     },
 
   },
@@ -1017,4 +1196,3 @@ export default {
   }
 }
 </style>
-

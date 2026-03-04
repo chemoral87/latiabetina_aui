@@ -245,3 +245,213 @@ export function maxbatteryCharges2(t, capacity, recharges) {
 
   return count
 }
+
+export function decodePassword(password, keys) {
+  let countDecode = 0
+  for (let i = 0; i < keys.length - 1; i++) {
+    for (let j = i + 1; j < keys.length; j++) {
+      console.log(i, j)
+      if (keys[i].toString() + keys[j].toString() === password.toString()) countDecode++
+      if (keys[j].toString() + keys[i].toString() === password.toString()) countDecode++
+    }
+  }
+  return countDecode
+}
+
+export function tetrisOriginal(n, m, pieces) {
+  const shapes = {
+    a: [[1]],
+    b: [
+      [1, 1],
+      [1, 1],
+    ],
+    c: [
+      [1, 1],
+      [1, 0],
+    ],
+    d: [
+      [1, 0],
+      [1, 1],
+      [1, 0],
+    ],
+    e: [
+      [0, 1, 0],
+      [1, 1, 1],
+    ],
+  }
+
+  const array = Array.from({ length: n }, () => Array(m).fill(0))
+  console.log(array)
+
+  function canPlacePiece(piece, x, y) {
+    for (let i = 0; i < piece.length; i++) {
+      for (let j = 0; j < piece[i].length; j++) {
+        if (piece[i][j] === 1 && (x + i >= n || y + j >= m || array[x + i][y + j] !== 0)) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  function placePiece(piece, x, y, ix) {
+    for (let i = 0; i < piece.length; i++) {
+      for (let j = 0; j < piece[i].length; j++) {
+        if (piece[i][j] === 1) {
+          array[x + i][y + j] = ix
+        }
+      }
+    }
+  }
+
+  pieces.forEach((piece, ix) => {
+    console.log(piece, ix)
+    const figure = shapes[piece]
+    console.log(figure)
+
+    let placed = false
+
+    for (let i = 0; i <= n - figure.length + 1; i++) {
+      for (let j = 0; j <= m - figure[0].length + 1; j++) {
+        console.log("eval", i, j, placed, canPlacePiece(figure, i, j))
+        if (canPlacePiece(figure, i, j) && !placed) {
+          console.log("placePiece", i, j, ix + 1)
+          placePiece(figure, i, j, ix + 1)
+          placed = true
+          const arrayCopy = [...array]
+          console.log(arrayCopy)
+        }
+      }
+    }
+  })
+  console.log(array)
+  return array
+}
+
+export function tetrisGemini(n, m, pieces) {
+  // Initialize grid with 0s
+  const grid = Array.from({ length: n }, () => Array(m).fill(0))
+
+  function canPlace(shape, row, col) {
+    for (let r = 0; r < shape.length; r++) {
+      for (let c = 0; c < shape[r].length; c++) {
+        if (shape[r][c] === 1) {
+          const targetRow = row + r
+          const targetCol = col + c
+
+          // Check boundaries and collision
+          if (targetRow >= n || targetCol >= m || grid[targetRow][targetCol] !== 0) {
+            return false
+          }
+        }
+      }
+    }
+    return true
+  }
+
+  function place(shape, row, col, id) {
+    for (let r = 0; r < shape.length; r++) {
+      for (let c = 0; c < shape[r].length; c++) {
+        if (shape[r][c] === 1) {
+          grid[row + r][col + c] = id
+        }
+      }
+    }
+  }
+
+  pieces.forEach((type, index) => {
+    const shape = SHAPES[type]
+    const pieceId = index + 1
+    let placed = false
+
+    // Iterate through the grid to find the first available spot
+    for (let r = 0; r <= n - shape.length; r++) {
+      for (let c = 0; c <= m - shape[0].length; c++) {
+        if (canPlace(shape, r, c)) {
+          place(shape, r, c, pieceId)
+          placed = true
+          break // Exit inner loop
+        }
+      }
+      if (placed) break // Exit outer loop
+    }
+  })
+
+  return grid
+}
+
+const SHAPES = {
+  a: [[1]],
+  b: [
+    [1, 1],
+    [1, 1],
+  ],
+  c: [
+    [1, 1],
+    [1, 0],
+  ],
+  d: [
+    [1, 0],
+    [1, 1],
+    [1, 0],
+  ],
+  e: [
+    [0, 1, 0],
+    [1, 1, 1],
+  ],
+}
+
+export function tetris(n, m, pieces) {
+  // Initialize grid with 0s
+  const grid = Array.from({ length: n }, () => Array(m).fill(0))
+
+  /**
+   * Attempts to place a shape at (row, col) with the given id.
+   * Returns true and mutates the grid on success; returns false and leaves the grid unchanged on failure.
+   */
+  function tryPlace(shape, row, col, id) {
+    const cells = []
+
+    for (let r = 0; r < shape.length; r++) {
+      for (let c = 0; c < shape[r].length; c++) {
+        if (shape[r][c] !== 1) continue
+
+        const targetRow = row + r
+        const targetCol = col + c
+
+        // Check boundaries and collision
+        if (targetRow >= n || targetCol >= m || grid[targetRow][targetCol] !== 0) {
+          return false
+        }
+
+        cells.push([targetRow, targetCol])
+      }
+    }
+
+    // All cells are valid — commit the placement
+    for (const [r, c] of cells) {
+      grid[r][c] = id
+    }
+
+    return true
+  }
+
+  pieces.forEach((type, index) => {
+    const shape = SHAPES[type]
+    const pieceId = index + 1
+    let placed = false
+
+    // Iterate through the grid to find the first available spot
+    for (let r = 0; r <= n - shape.length; r++) {
+      for (let c = 0; c <= m - shape[0].length; c++) {
+        if (tryPlace(shape, r, c, pieceId)) {
+          placed = true
+          break
+        }
+      }
+      if (placed) break
+    }
+  })
+
+  return grid
+}

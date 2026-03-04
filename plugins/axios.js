@@ -121,7 +121,7 @@ export default function ({ $axios, store, $config }) {
     store.dispatch("validation/clearErrors")
 
     // Si el request trae X-Hide-Loading, no mostrar el spinner
-    const hideLoading = config.headers?.["X-Hide-Loading"] === "false"
+    const hideLoading = config.headers?.["X-Hide-Loading"] === "true"
 
     if (hideLoading) {
       // No mostramos loading, eliminamos el header para no enviarlo al server

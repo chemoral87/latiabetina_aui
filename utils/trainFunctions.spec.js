@@ -1,4 +1,4 @@
-import { calculateBestRateIndex, diffMinutesDepartures, minBricks, maxbatteryCharges } from "./trainFunctions"
+import { calculateBestRateIndex, diffMinutesDepartures, minBricks, maxbatteryCharges, tetris } from "./trainFunctions"
 
 describe("calculateBestRateIndex", () => {
   it("should return the correct index for the highest rate (price/votes)", () => {
@@ -83,5 +83,39 @@ describe("maxbatteryCharges", () => {
 
   it("should return -1 for maxbatteryCharges(16, [2,5,6], [12,8,4])", () => {
     expect(maxbatteryCharges(16, [2, 5, 6], [12, 8, 4])).toBe(-1)
+  })
+})
+
+describe("tetris", () => {
+  it("should return [[1,0], [0,0]] for tetris(2, 2, ['a'])", () => {
+    expect(tetris(2, 2, ["a"])).toEqual([
+      [1, 0],
+      [0, 0],
+    ])
+  })
+
+  it("should return [[1,0], [0,0]] for tetris(2, 2, ['a'])", () => {
+    expect(tetris(3, 3, ["a", "b"])).toEqual([
+      [1, 2, 2],
+      [0, 2, 2],
+      [0, 0, 0],
+    ])
+  })
+
+  it("should return [[1,0], [0,0]] for tetris(2, 2, ['a'])", () => {
+    expect(tetris(3, 3, ["c", "a", "b"])).toEqual([
+      [1, 1, 2],
+      [1, 3, 3],
+      [0, 3, 3],
+    ])
+  })
+
+  it("should return [[1,0], [0,0]] for tetris(2, 2, ['a'])", () => {
+    expect(tetris(4, 3, ["a", "b", "c"])).toEqual([
+      [1, 2, 2],
+      [0, 2, 2],
+      [3, 3, 0],
+      [3, 0, 0],
+    ])
   })
 })
