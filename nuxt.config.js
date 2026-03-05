@@ -56,7 +56,7 @@ export default {
       { name: "version", content: APP_VERSION },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
