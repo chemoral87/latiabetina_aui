@@ -18,6 +18,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Print trigger diagnostics
+        env:
+          COMMITS_PAYLOAD: ${{ toJson(github.event.commits) }}
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message || 'N/A (non-push event)' }}
+        run: |
+          echo "event_name=${{ github.event_name }}"
+          echo "ref=${{ github.ref }}"
+          echo "sha=${{ github.sha }}"
+          echo "actor=${{ github.actor }}"
+          echo "workflow=${{ github.workflow }}"
+          echo "run_id=${{ github.run_id }}"
+          echo "run_attempt=${{ github.run_attempt }}"
+          echo "head_commit_message=$HEAD_COMMIT_MESSAGE"
+          echo "commits_payload=$COMMITS_PAYLOAD"
+          {
+            echo "### Trigger Diagnostics"
+            echo "- event_name: ${{ github.event_name }}"
+            echo "- ref: ${{ github.ref }}"
+            echo "- sha: ${{ github.sha }}"
+            echo "- actor: ${{ github.actor }}"
+            echo "- workflow: ${{ github.workflow }}"
+            echo "- run_id: ${{ github.run_id }}"
+            echo "- run_attempt: ${{ github.run_attempt }}"
+            echo "- head_commit_message: $HEAD_COMMIT_MESSAGE"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Copy scripts to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
