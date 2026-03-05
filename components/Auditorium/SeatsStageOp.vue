@@ -392,7 +392,7 @@ export default {
       // El uso de dvh (dynamic viewport height) ayuda a evitar el scroll en Safari iOS/PWA
       // Restamos un pequeño margen para compensar áreas seguras o bordes
       const controlH = this.controlHeight
-      const appBarH = this.appBarHeight
+      const appBarH = this.appBarHeight + 10
       return `calc(100dvh - ${controlH}px - ${appBarH}px - env(safe-area-inset-bottom, 10px))`
     },
 
