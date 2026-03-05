@@ -1,13 +1,13 @@
 // ── Stage categories ──────────────────────────────────────────────────────────
 export const STAGE_CATEGORIES = [
-  { label: "Servidores",     value: "Servidores",     fill: "#9e9e9e" },
-  { label: "Nuevos",         value: "Nuevos",         fill: "#1976d2" },
+  { label: "Servidores", value: "Servidores", fill: "#9e9e9e" },
+  { label: "Nuevos", value: "Nuevos", fill: "#1976d2" },
   { label: "Discapacitados", value: "Discapacitados", fill: "#ffff00" },
-  { label: "Carriolas",      value: "Carriolas",      fill: "#008f39" },
-  { label: "Lideres",        value: "Lideres",        fill: "#f44336" },
-  { label: "Embarazadas",    value: "Embarazadas",    fill: "#9c27b0" },
-  { label: "Silla Ruedas",   value: "SillaRuedas",   fill: "#FFFFFF" },
-  { label: "Ninguno",        value: null,             fill: "#000" },
+  { label: "Carriolas", value: "Carriolas", fill: "#008f39" },
+  { label: "Lideres", value: "Lideres", fill: "#f44336" },
+  { label: "Embarazadas", value: "Embarazadas", fill: "#9c27b0" },
+  { label: "Silla Ruedas", value: "SillaRuedas", fill: "#FFFFFF" },
+  { label: "Ninguno", value: null, fill: "#000" },
 ]
 
 export const CLASS_STROKE_MAP = (() => {
@@ -24,10 +24,10 @@ export const CLASS_STROKE_MAP = (() => {
 export const STATUS_CONFIG = {
   e: {
     active: true,
-    label: "Vacio",
+    label: "Vacío",
     color: "#ffeb3b",
-    icon: "",
-    mdi: "",
+    icon: "M12,20A8,8 0 1,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 1,0 22,12A10,10 0 0,0 12,2Z",
+    mdi: "mdi-circle-outline",
     icon_scale: 1.7,
   },
   h: {
@@ -111,9 +111,9 @@ export const COLORS = {
 
 // ── Percentage colour helper ──────────────────────────────────────────────────
 export const getPercentageColor = (percent) => {
-  if (percent >= 86) return "#F44336"   // red
-  if (percent >= 57) return "#FF9800"   // orange
-  return "#4CAF50"                       // green
+  if (percent >= 86) return "#F44336" // red
+  if (percent >= 57) return "#FF9800" // orange
+  return "#4CAF50" // green
 }
 
 // ── Default stage layout settings ────────────────────────────────────────────

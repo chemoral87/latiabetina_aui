@@ -123,13 +123,14 @@
                   <th colspan="2" style="padding: 6px 16px 4px">
                     <div class="d-flex align-center flex-wrap" style="gap: 6px">
                       <span style="font-size: 11px; color: #888; margin-right: 4px">Filtrar:</span>
-                      <v-btn v-for="(cfg, key) in activeStatusConfig" :key="key" x-small icon :title="cfg.label" :style="{
-                        backgroundColor: historyIconFilter === key ? cfg.color : 'transparent',
-                        border: '2px solid ' + cfg.color,
-                        borderRadius: '50%',
-                        width: '26px',
-                        height: '26px',
-                      }" @click="historyIconFilter = historyIconFilter === key ? null : key">
+                      <v-btn v-for="(cfg, key) in historyFilterConfig" :key="key" x-small icon :title="cfg.label"
+                        :style="{
+                          backgroundColor: historyIconFilter === key ? cfg.color : 'transparent',
+                          border: '2px solid ' + cfg.color,
+                          borderRadius: '50%',
+                          width: '26px',
+                          height: '26px',
+                        }" @click="historyIconFilter = historyIconFilter === key ? null : key">
                         <v-icon x-small :color="historyIconFilter === key ? 'white' : cfg.color">{{ cfg.mdi }}</v-icon>
                       </v-btn>
                       <v-btn v-if="historyIconFilter" x-small text class="ml-1"
@@ -151,18 +152,24 @@
                     {{ seat.label }}
                   </td>
                   <td>
-                    <div class="d-flex align-center flex-wrap" style="gap: 4px; row-gap: 6px">
-                      <template v-for="(step, si) in seat.transitions">
-                        <div :key="'step-' + si" class="d-flex align-center" style="gap: 4px">
+                    <div class="d-flex align-center flex-wrap" style="gap: 0px; row-gap: 6px">
+                      <div v-for="(step, si) in seat.transitions" :key="`t-${seat.id}-${si}`" style="display: contents">
+                        <div class="d-flex align-center" style="gap: 0px; border-right: 1px solid #eee;">
                           <v-icon small :color="step.color" :title="step.label">{{ step.mdi }}</v-icon>
-                          <span style="font-size: 11px; white-space: nowrap; line-height: 1">
-                            <span style="font-weight: 600">{{ getHistoryUser(step.createdBy) }}</span>
-                            <span class="grey--text">{{ step.time }}</span>
-                          </span>
+                          <div style="font-size: 9px; line-height: 1.2">
+                            <div class="d-flex align-center" style="gap: 0px">
+                              <span style="font-weight: 700; color: #333">{{ getHistoryUser(step.createdBy).name
+                              }}</span>
+                              <span class="grey--text" style="font-size: 9px">{{ step.time }}</span>
+                            </div>
+                            <div class="grey--text text--darken-1" style="font-size: 8px; opacity: 0.8">
+                              {{ getHistoryUser(step.createdBy).email }}
+                            </div>
+                          </div>
                         </div>
-                        <span v-if="si < seat.transitions.length - 1" :key="'a-' + si" class="grey--text"
+                        <span v-if="si < seat.transitions.length - 1" class="grey--text"
                           style="font-size: 12px; padding: 0 0px">›</span>
-                      </template>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -269,13 +276,20 @@ export default {
     },
 
     activeStatusConfig() {
-      // Filter STATUS_CONFIG to only include active items (exclude 'e' = Vacío from the icon filter)
+      // Filter STATUS_CONFIG to only include active items
       return Object.keys(STATUS_CONFIG)
-        .filter(key => STATUS_CONFIG[key].active !== false && key !== 'e')
+        .filter(key => STATUS_CONFIG[key].active !== false)
         .reduce((acc, key) => {
           acc[key] = STATUS_CONFIG[key]
           return acc
         }, {})
+    },
+
+    historyFilterConfig() {
+      // Exclude 'e' (Vacío) from the icon filter as requested
+      const config = { ...this.activeStatusConfig }
+      delete config.e
+      return config
     },
 
     showMarkPanel: {
@@ -1174,9 +1188,11 @@ export default {
 
     getHistoryUser(createdBy) {
       const user = this.historyUsers.find((u) => u.id === createdBy)
-      if(!user) return `#${createdBy}`
-      const lastName = user.last_name ? ` ${user.last_name.charAt(0)}.` : ''
-      return `${user.name}${lastName}`
+      if(!user) return { name: `#${createdBy}`, email: '' }
+      return {
+        name: `${user.name} ${user.last_name}`,
+        email: user.email || ''
+      }
     },
 
   },
