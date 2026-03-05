@@ -59,6 +59,8 @@ export default {
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
     ],
     link: [
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/logo.png" },
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       ...(process.env.BASE_URL
         ? [
@@ -95,6 +97,7 @@ export default {
     { src: "./plugins/echo.js", mode: "client" },
     { src: "./plugins/ua-parser.js", mode: "client" },
     { src: "./plugins/prevent-zoom.js", mode: "client" },
+    { src: "./plugins/pwa-register.js", mode: "client" },
   ],
 
   // Auto import components

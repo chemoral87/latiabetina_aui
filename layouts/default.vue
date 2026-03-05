@@ -1,6 +1,7 @@
 <template>
   <v-app class="back_white">
-    <v-navigation-drawer v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant" :clipped="clipped" temporary app touchless>
+    <v-navigation-drawer v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant"
+      :clipped="clipped" temporary app touchless>
       <v-list>
         <v-list-item>
           <v-list-item-action class="mr-2">
@@ -72,20 +73,9 @@
       <MyLoading :value="loading_display"></MyLoading>
 
       <div class="snackbar-wrapper">
-        <v-snackbar
-          v-for="(snack, i) in snacks.filter((s) => s.display == true)"
-          :key="i + 'snackbars'"
-          v-model="snack.showing"
-          :color="snack.color"
-          content-class="snack-content"
-          shaped
-          multi-line
-          right
-          bottom
-          absolute
-          :timeout="snack.timeout"
-          :style="`bottom: ${i * 69 + 0}px`"
-        >
+        <v-snackbar v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackbars'"
+          v-model="snack.showing" :color="snack.color" content-class="snack-content" shaped multi-line right bottom
+          absolute :timeout="snack.timeout" :style="`bottom: ${i * 69 + 0}px`">
           <span class="text-subtitle-1 font-weight-bold">{{ snack.text }}</span>
           <template #action="{ attrs }">
             <v-btn color="grey" v-bind="attrs" fab small @click="snack.display = false">
@@ -95,6 +85,8 @@
         </v-snackbar>
       </div>
     </v-main>
+
+    <InstallPwaPrompt />
   </v-app>
 </template>
 
@@ -155,9 +147,9 @@ export default {
       this.icon = navbar.icon ?? null
       this.back = navbar.back ?? null
 
-      if (typeof this.back === "function") {
+      if(typeof this.back === "function") {
         this.backHandler = navbar.back
-      } else if (this.back) {
+      } else if(this.back) {
         this.backHandler = () => {
           this.$router.push(this.back)
         }
@@ -185,7 +177,7 @@ export default {
       this.menu = false
 
       // Para Google, hacer logout local sin llamar al backend
-      if (this.$auth.strategy.name === "google") {
+      if(this.$auth.strategy.name === "google") {
         this.$router.push("/login")
         this.$nextTick(() => {
           this.$auth.reset()
@@ -211,6 +203,7 @@ export default {
 }
 
 @media (max-width: 600px) {
+
   /* Snackbar box — still needs ::v-deep as wrapper is outside content-class scope */
   .snackbar-wrapper ::v-deep .v-snack__wrapper {
     min-width: 0 !important;
@@ -218,28 +211,34 @@ export default {
     padding: 4px 8px !important;
     margin: 0 8px !important;
   }
+
   /* content-class="snack-content" targets this div directly — no ::v-deep needed */
   .snack-content {
     font-size: 0.9rem !important;
     padding: 6px 4px !important;
     min-height: 0 !important;
   }
+
   .snack-content span {
     font-size: 0.9rem !important;
     line-height: 1.3;
   }
+
   /* Action button — outside content-class scope, keep ::v-deep */
   .snackbar-wrapper ::v-deep .v-snack__action {
     padding: 0 2px !important;
   }
+
   .snackbar-wrapper ::v-deep .v-snack__action .v-btn {
     width: 28px !important;
     height: 28px !important;
   }
 }
+
 .back_white {
   background-color: #f5f5f5 !important;
 }
+
 .no-drag {
   overscroll-behavior: none;
   touch-action: manipulation;
