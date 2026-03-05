@@ -388,10 +388,12 @@ export default {
     },
 
     containerOuterHeight() {
-      // Calcular: 100vh - altura del controlRow - altura del v-app-bar
+      // Calcular: 100dvh - altura del controlRow - altura del v-app-bar
+      // El uso de dvh (dynamic viewport height) ayuda a evitar el scroll en Safari iOS/PWA
+      // Restamos un pequeño margen para compensar áreas seguras o bordes
       const controlH = this.controlHeight
       const appBarH = this.appBarHeight
-      return `calc(100vh - ${controlH}px - ${appBarH}px - 34px)`
+      return `calc(100dvh - ${controlH}px - ${appBarH}px - env(safe-area-inset-bottom, 10px))`
     },
 
     containerWidth() {
@@ -405,7 +407,10 @@ export default {
       if(typeof window === "undefined") return 600
       const controlH = this.controlHeight
       const appBarH = this.appBarHeight
-      return window.innerHeight - controlH - appBarH - 34
+
+      // En Safari iOS, window.innerHeight es el valor más confiable del área visible
+      const baseHeight = window.innerHeight || document.documentElement.clientHeight
+      return baseHeight - controlH - appBarH - 10
     },
 
     subsectionStats() {
