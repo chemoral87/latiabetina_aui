@@ -117,32 +117,28 @@
           </div>
 
           <v-simple-table v-else-if="seatTransitions.length" dense>
-            <template #default>
+            <template>
               <thead>
                 <tr>
                   <th colspan="2" style="padding: 6px 16px 4px">
-                    <div class="d-flex align-center flex-wrap" style="gap: 6px">
-                      <span style="font-size: 11px; color: #888; margin-right: 4px">Filtrar:</span>
-                      <v-btn v-for="(cfg, key) in historyFilterConfig" :key="key" x-small icon :title="cfg.label"
-                        :style="{
-                          backgroundColor: historyIconFilter === key ? cfg.color : 'transparent',
-                          border: '2px solid ' + cfg.color,
-                          borderRadius: '50%',
-                          width: '26px',
-                          height: '26px',
-                        }" @click="historyIconFilter = historyIconFilter === key ? null : key">
-                        <v-icon x-small :color="historyIconFilter === key ? 'white' : cfg.color">{{ cfg.mdi }}</v-icon>
-                      </v-btn>
-                      <v-btn v-if="historyIconFilter" x-small text class="ml-1"
-                        style="font-size: 10px; text-transform: none" @click="historyIconFilter = null">
-                        <v-icon x-small left>mdi-close-circle</v-icon>
-                        Limpiar
-                      </v-btn>
+                    <div class="d-flex align-center" style="gap: 8px">
+                      <v-select v-model="historyIconFilter" :items="historyFilterOptions" label="Filtrar por estado"
+                        dense outlined hide-details clearable flat style="max-width: 220px; font-size: 11px"
+                        class="history-filter-select">
+                        <template #selection="{ item }">
+                          <v-icon x-small :color="item.color" class="mr-2">{{ item.mdi }}</v-icon>
+                          <span style="font-size: 11px">{{ item.text }}</span>
+                        </template>
+                        <template #item="{ item }">
+                          <v-icon x-small :color="item.color" class="mr-2">{{ item.mdi }}</v-icon>
+                          <span style="font-size: 11px">{{ item.text }}</span>
+                        </template>
+                      </v-select>
                     </div>
                   </th>
                 </tr>
                 <tr>
-                  <th>Asiento</th>
+                  <th>Seat</th>
                   <th>Transiciones</th>
                 </tr>
               </thead>
@@ -154,21 +150,27 @@
                   <td>
                     <div class="d-flex align-center flex-wrap" style="gap: 0px; row-gap: 6px">
                       <div v-for="(step, si) in seat.transitions" :key="`t-${seat.id}-${si}`" style="display: contents">
-                        <div class="d-flex align-center" style="gap: 0px; border-right: 1px solid #eee;">
-                          <v-icon small :color="step.color" :title="step.label">{{ step.mdi }}</v-icon>
-                          <div style="font-size: 9px; line-height: 1.2">
-                            <div class="d-flex align-center" style="gap: 0px">
-                              <span style="font-weight: 700; color: #333">{{ getHistoryUser(step.createdBy).name
-                              }}</span>
-                              <span class="grey--text" style="font-size: 9px">{{ step.time }}</span>
-                            </div>
-                            <div class="grey--text text--darken-1" style="font-size: 8px; opacity: 0.8">
-                              {{ getHistoryUser(step.createdBy).email }}
-                            </div>
+                        <div class="d-flex align-center" :style="{
+                          gap: '1px',
+                          border: '1.5px solid ' + step.color,
+                          borderRadius: '4px',
+                          padding: '2px 2px',
+                          background: 'transparent',
+                          marginRight: '2px'
+                        }" :title="`${getHistoryUser(step.createdBy).name}\n${getHistoryUser(step.createdBy).email}`">
+                          <v-icon :color="step.color" style="margin-top: -2px">{{ step.mdi }}</v-icon>
+                          <div class="d-flex flex-column">
+                            <span style="line-height: 1; font-weight: 700; color: #333; font-size: 8px">
+                              {{ getHistoryUser(step.createdBy).first_name }}
+                              <br>
+                              {{ getHistoryUser(step.createdBy).last_name }}
+                            </span>
+                            <span class="grey--text" style="font-size: 7px; ">
+                              {{ step.time }}
+                            </span>
                           </div>
                         </div>
-                        <span v-if="si < seat.transitions.length - 1" class="grey--text"
-                          style="font-size: 12px; padding: 0 0px">›</span>
+
                       </div>
                     </div>
                   </td>
@@ -291,6 +293,14 @@ export default {
       delete config.e
       return config
     },
+    historyFilterOptions() {
+      return Object.keys(this.historyFilterConfig).map((key) => ({
+        value: key,
+        text: this.historyFilterConfig[key].label,
+        mdi: this.historyFilterConfig[key].mdi,
+        color: this.historyFilterConfig[key].color,
+      }))
+    },
 
     showMarkPanel: {
       get() { return this.selectedSeatsArray.length > 0 },
@@ -373,9 +383,8 @@ export default {
     },
 
     appBarHeight() {
-      // v-app-bar de Vuetify tiene altura de 64px en desktop y 56px en mobile
-      const isMobile = this.$uaParser ? this.$uaParser.isMobile() : (typeof window !== "undefined" && window.innerWidth < 768)
-      return isMobile ? 56 : 74
+      // Utilizar la altura real del v-app-bar proporcionada por Vuetify
+      return this.$vuetify.application.top
     },
 
     containerOuterHeight() {
@@ -1188,9 +1197,11 @@ export default {
 
     getHistoryUser(createdBy) {
       const user = this.historyUsers.find((u) => u.id === createdBy)
-      if(!user) return { name: `#${createdBy}`, email: '' }
+      if(!user) return { name: `#${createdBy}`, first_name: `#${createdBy}`, last_name: '', email: '' }
       return {
         name: `${user.name} ${user.last_name}`,
+        first_name: user.name || '',
+        last_name: user.last_name || '',
         email: user.email || ''
       }
     },
