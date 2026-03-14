@@ -13,6 +13,9 @@ module.exports = {
   // add your custom rules here
   rules: {
     "vue/max-attributes-per-line": "off",
+    "vue/first-attribute-linebreak": "off",
+    "vue/html-closing-bracket-newline": "off",
+    "vue/html-indent": "off",
     "vue/no-mutating-props": "off",
     "vue/require-prop-types": "off",
   },
