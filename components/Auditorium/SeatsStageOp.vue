@@ -25,7 +25,8 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
-        <v-btn v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
+        <v-btn
+v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
           @click="openHistory">
           <v-icon left>mdi-history</v-icon>
           Hist
@@ -34,16 +35,19 @@
     </v-row>
 
     <div style="display: flex; gap: 2px">
-      <div id="subsectionPanel"
+      <div
+id="subsectionPanel"
         :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage ref="konvaStage" :config="adjustedStageConfig"
+        <v-stage
+ref="konvaStage" :config="adjustedStageConfig"
           :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel"
           @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
           @dragstart="handleDragStart" @dragend="handleDragEnd">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories"
+              <AuditoriumSeatsStageSubsection
+:subsection="selectedSubsection" :categories="categories"
                 :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats"
                 @seat-click="handleSeatClick" />
             </template>
@@ -56,17 +60,20 @@
                 <v-text :config="getSectionTitleConfig(section)" />
 
                 <template v-if="!(section.l || section.isLabel)">
-                  <v-group v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-${subIdx}`"
+                  <v-group
+v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-${subIdx}`"
                     :config="getSubsectionPosition(section, subIdx)" @click="handleSubsectionClick(sub)"
                     @tap="handleSubsectionClick(sub)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave">
                     <template v-if="sub.l || sub.isLabel">
-                      <AuditoriumSeatsStageSubsectionLabel :subsection="sub"
+                      <AuditoriumSeatsStageSubsectionLabel
+:subsection="sub"
                         :section-height="getSectionHeight(section)" />
                     </template>
 
                     <template v-else>
                       <!-- general  -->
-                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories"
+                      <AuditoriumSeatsStageSubsection
+:subsection="sub" :categories="categories"
                         :selected-seats-array="selectedSeatsArray" :blink-state="blinkState"
                         :loading-seats="loadingSeats" />
                     </template>
@@ -80,14 +87,18 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
+    <MyDragPanel
+v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
       left="calc(50% - 95px)">
-      <div class="stats-panel-body"
+      <div
+class="stats-panel-body"
         style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
         <!-- Loop through active status configs -->
-        <div v-for="(config, key) in activeStatusConfig" :key="key"
+        <div
+v-for="(config, key) in activeStatusConfig" :key="key"
           style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon :title="config.label"
+          <v-btn
+class="mb-1" icon :title="config.label"
             :style="`background-color: ${config.color} !important; color: white`"
             @click="setEventSeat(key == 'e' ? null : key)">
             <v-icon>{{ getIconName(key) }}</v-icon>
@@ -98,7 +109,8 @@
     </MyDragPanel>
 
     <!-- History Dialog -->
-    <AuditoriumSeatsHistory v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
+    <AuditoriumSeatsHistory
+v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
       :history-users="historyUsers" />
   </div>
 </template>

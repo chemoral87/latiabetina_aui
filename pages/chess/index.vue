@@ -94,9 +94,9 @@
             :key="piece"
             icon="mdi-chess-queen" 
             x-large
-            @click="promotePawn(piece)"
             class="piece-btn"
             :title="getPieceName(piece)"
+            @click="promotePawn(piece)"
           >
             <span class="text-h3">{{ getPieceSymbol(pendingMove?.color === 'white' ? piece.toUpperCase() : piece) }}</span>
           </v-btn>

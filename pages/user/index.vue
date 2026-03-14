@@ -16,7 +16,8 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <UserTable :options="options" :response="response" @sorting="getUsers" @edit="editUser"
+        <UserTable
+:options="options" :response="response" @sorting="getUsers" @edit="editUser"
           @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
       </v-col>
     </v-row>

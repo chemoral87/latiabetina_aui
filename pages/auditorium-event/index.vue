@@ -17,7 +17,8 @@
       </v-col>
       <v-col cols="12">
         <AuditoriumEventTable :response="response" :options="options" @sorting="getAuditoriumEvents"
-          @edit="editAuditoriumEvent" @mark="markAuditoriumEvent" @delete="beforeDeleteAuditoriumEvent" />
+          @download="downloadAuditoriumEvent" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent"
+          @delete="beforeDeleteAuditoriumEvent" />
       </v-col>
     </v-row>
     <!-- Diálogos para crear/editar y eliminar eventos de auditorio -->
@@ -29,6 +30,8 @@
 </template>
 
 <script>
+import { STATUS_CONFIG } from "~/constants/auditorium.js"
+
 export default {
   middleware: ["authenticated"],
   async asyncData({ app }) {
@@ -107,6 +110,47 @@ export default {
       this.auditoriumEvent = { ...item }
       this.auditoriumEventDialog = true
     },
+
+    async downloadAuditoriumEvent(item) {
+      this.loading = true
+      try {
+        const response = await this.$repository.AuditoriumEvent.show(item.id)
+        if(response && response.seats) {
+          const headerRow = item.auditorium_name + " - " + item.event_date
+          const rows = [[headerRow], ["Status", "Cantidad"]]
+
+          Object.keys(STATUS_CONFIG).forEach((key) => {
+            const count = response.seats[key] ? response.seats[key].length : 0
+            if(count > 0) {
+              rows.push([STATUS_CONFIG[key].label, count])
+            }
+          })
+
+          const csvContent = rows.map((e) => e.join(",")).join("\n")
+          const bom = "\uFEFF"
+          const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.href = url
+
+          let dateStr = ""
+          if(item.event_date) {
+            dateStr = item.event_date.substring(0, 10).replace(/-/g, "")
+            dateStr = `_${dateStr}`
+          }
+
+          a.setAttribute("download", `Resumen_Auditorio_${item.id}${dateStr}.csv`)
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+        }
+      } catch(error) {
+        console.error("Error downloading excel:", error)
+      } finally {
+        this.loading = false
+      }
+    },
+
     markAuditoriumEvent(item) {
       this.$router.push({ path: `/auditorium-event/${item.id}/mark` })
     },

@@ -40,17 +40,17 @@ export default {
       return "Confirmación";
     }
   },
+  mounted() {
+    if (this.userx) {
+      this.item = this.userx;
+    }
+  },
   methods: {
     close() {
       this.$emit("close");
     },
     ok() {
       this.$emit("ok", this.item);
-    }
-  },
-  mounted() {
-    if (this.userx) {
-      this.item = this.userx;
     }
   }
 }

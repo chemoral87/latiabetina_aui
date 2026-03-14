@@ -23,6 +23,9 @@
     </template>
 
     <template #[`item.actions`]="{ item }">
+      <v-btn title="Descargar Excel" outlined class="mr-1 my-1" color="success" fab small @click="$emit('download', item)">
+        <v-icon>mdi-file-excel</v-icon>
+      </v-btn>
       <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('edit', item)">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>

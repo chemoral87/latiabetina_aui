@@ -11,7 +11,8 @@
         <span class="text-subtitle-2 ml-1" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
 
         <!-- Stats toggle button -->
-        <v-btn x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
+        <v-btn
+x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
           @click="statsPanel = !statsPanel">
           <v-icon small color="yellow">mdi-chart-bar</v-icon>
         </v-btn>
@@ -44,7 +45,8 @@
       </div>
 
       <div>
-        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig"
+        <AuditoriumSeatsStageOp
+:sections="sections" :settings="settings" :stage-config="stageConfig"
           :auditorium-event-id="eventAuditorium.id" :categories="stageCategories" :loading-seats="loadingSeats"
           @setEventSeat="handleSetEventSeat" />
       </div>

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" :hide-no-data="!search" :items="items"
+    <v-combobox
+v-model="model" :filter="filter" item-value="id" item-text="name" :hide-no-data="!search" :items="items"
       :search-input.sync="search" hide-selected label="Roles" multiple>
       <template #no-data>
         <v-list-item v-if="!searching">Intente con otra búsqueda</v-list-item>

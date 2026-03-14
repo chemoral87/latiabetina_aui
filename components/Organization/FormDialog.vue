@@ -12,29 +12,29 @@
         <v-row dense>
           <v-col cols="12">
             <v-text-field
-              @keyup.enter="save"
               v-model="item.name"
               label="Nombre"
               :error-messages="errors?.name"
               :rules="[$vrules.required]"
+              @keyup.enter="save"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
             <v-text-field
-              @keyup.enter="save"
               v-model="item.short_code"
               label="Código"
               :error-messages="errors?.short_code"
               :rules="[$vrules.required]"
+              @keyup.enter="save"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12">
             <v-text-field
-              @keyup.enter="save"
               v-model="item.description"
               label="Descripción"
               :error-messages="errors?.description"
+              @keyup.enter="save"
             />
           </v-col>
         </v-row>
@@ -73,17 +73,17 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.organization) {
+      this.item = this.organization;
+    }
+  },
   methods: {
     close() {
       this.$emit("close");
     },
     save() {
       this.$emit("save", this.item);
-    }
-  },
-  mounted() {
-    if (this.organization) {
-      this.item = this.organization;
     }
   }
 };

@@ -6,26 +6,26 @@
 
     <!-- Navegación -->
     <div class="history-navigation d-flex justify-center ga-2 mb-2">
-      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(-1)" :disabled="currentMoveIndex === -1">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex === -1" @click="handleMoveClick(-1)">
         <v-icon size="small">mdi-skip-backward</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(currentMoveIndex - 1)" :disabled="currentMoveIndex <= -1">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex <= -1" @click="handleMoveClick(currentMoveIndex - 1)">
         <v-icon size="small">mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(currentMoveIndex + 1)" :disabled="currentMoveIndex >= moves.length - 1">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" @click="handleMoveClick(currentMoveIndex + 1)">
         <v-icon size="small">mdi-chevron-right</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" @click="handleMoveClick(moves.length - 1)" :disabled="currentMoveIndex >= moves.length - 1">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" @click="handleMoveClick(moves.length - 1)">
         <v-icon size="small">mdi-skip-forward</v-icon>
       </v-btn>
       <v-divider vertical class="mx-1"></v-divider>
-      <v-btn icon small density="compact" variant="text" @click="$emit('export-history')" title="Exportar JSON">
+      <v-btn icon small density="compact" variant="text" title="Exportar JSON" @click="$emit('export-history')">
         <v-icon size="small">mdi-download</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" @click="triggerFileInput" title="Importar JSON">
+      <v-btn icon small density="compact" variant="text" title="Importar JSON" @click="triggerFileInput">
         <v-icon size="small">mdi-upload</v-icon>
       </v-btn>
-      <input type="file" ref="fileInput" hidden accept=".json" @change="handleFileImport">
+      <input ref="fileInput" type="file" hidden accept=".json" @change="handleFileImport">
     </div>
 
     <div class="history-table">

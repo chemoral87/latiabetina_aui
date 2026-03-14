@@ -1,44 +1,44 @@
-let multipart = {
+const multipart = {
   accept: "application/json",
   headers: { "Content-Type": "multipart/form-data" }
 };
 export default $axios => resource => ({
-  index(parent_id, params) {
+  index(parentId, params) {
     if (params) {
-      return $axios.$get(`${resource}/${parent_id}`, { params: params });
+      return $axios.$get(`${resource}/${parentId}`, { params });
     } else {
-      return $axios.$get(`${resource}/${parent_id}`);
+      return $axios.$get(`${resource}/${parentId}`);
     }
   },
 
-  show(parent_id, id) {
-    return $axios.$get(`${resource}/${parent_id}/${id}`);
+  show(parentId, id) {
+    return $axios.$get(`${resource}/${parentId}/${id}`);
   },
 
-  filter(parent_id, params, headers) {
-    return $axios.$get(`${resource}/${parent_id}/filter`, {
-      params: params,
+  filter(parentId, params, headers) {
+    return $axios.$get(`${resource}/${parentId}/filter`, {
+      params,
       headers
     });
   },
 
-  create(parent_id, payload) {
-    return $axios.$post(`${resource}/${parent_id}`, payload);
+  create(parentId, payload) {
+    return $axios.$post(`${resource}/${parentId}`, payload);
   },
 
-  createForm(parent_id, payload) {
-    return $axios.$post(`${resource}/${parent_id}`, payload, multipart);
+  createForm(parentId, payload) {
+    return $axios.$post(`${resource}/${parentId}`, payload, multipart);
   },
 
-  update(parent_id, id, payload) {
-    return $axios.$put(`${resource}/${parent_id}/${id}`, payload);
+  update(parentId, id, payload) {
+    return $axios.$put(`${resource}/${parentId}/${id}`, payload);
   },
 
-  updateForm(parent_id, id, payload) {
-    return $axios.$post(`${resource}/${parent_id}/${id}`, payload, multipart);
+  updateForm(parentId, id, payload) {
+    return $axios.$post(`${resource}/${parentId}/${id}`, payload, multipart);
   },
 
-  delete(parent_id, id) {
-    return $axios.$delete(`${resource}/${parent_id}/${id}`);
+  delete(parentId, id) {
+    return $axios.$delete(`${resource}/${parentId}/${id}`);
   }
 });

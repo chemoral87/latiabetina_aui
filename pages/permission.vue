@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field
+v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
       <v-col cols="12" md="3">
@@ -17,13 +18,15 @@
       </v-col>
       <v-col cols="12">
         <client-only>
-          <PermissionTable :options="options" :response="response" @sorting="getPermissions" @edit="editPermission"
+          <PermissionTable
+:options="options" :response="response" @sorting="getPermissions" @edit="editPermission"
             @delete="beforeDeletePermission"></PermissionTable>
         </client-only>
       </v-col>
     </v-row>
     <PermissionDialog v-if="permissionDialog" :permission="permission" @close="closeDialog" @save="savePermission" />
-    <DialogDelete v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission"
+    <DialogDelete
+v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission"
       @close="permissionDialogDelete = false"></DialogDelete>
 
     <!-- <PermissionDialogDelete :permission="permission" v-if="permissionDialogDelete" @close="permissionDialogDelete = false" @ok="deletePermission" /> -->

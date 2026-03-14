@@ -23,7 +23,8 @@
               <tr>
                 <th colspan="2" style="padding: 6px 16px 4px">
                   <div class="d-flex align-center" style="gap: 8px">
-                    <v-select v-model="historyIconFilter" :items="historyFilterOptions" label="Filtrar por estado"
+                    <v-select
+v-model="historyIconFilter" :items="historyFilterOptions" label="Filtrar por estado"
                       dense outlined hide-details clearable flat style="max-width: 220px; font-size: 11px"
                       class="history-filter-select">
                       <template #selection="{ item }">
@@ -51,7 +52,8 @@
                 <td>
                   <div class="d-flex align-center flex-wrap" style="gap: 0px; row-gap: 6px">
                     <div v-for="(step, si) in seat.transitions" :key="`t-${seat.id}-${si}`" style="display: contents">
-                      <div class="d-flex align-center" :style="{
+                      <div
+class="d-flex align-center" :style="{
                         gap: '1px',
                         border: '1.5px solid ' + step.color,
                         borderRadius: '4px',

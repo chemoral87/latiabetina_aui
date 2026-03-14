@@ -11,11 +11,13 @@
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-text-field v-model="filterProfile" append-icon="mdi-magnify" clearable hide-details
+              <v-text-field
+v-model="filterProfile" append-icon="mdi-magnify" clearable hide-details
                 placeholder="Filtro" />
             </v-col>
             <v-col cols="12">
-              <v-select v-model="item.org_id" :items="organizations" item-value="id" item-text="name"
+              <v-select
+v-model="item.org_id" :items="organizations" item-value="id" item-text="name"
                 label="Organizaciones" outlined :rules="[$vrules.required]"></v-select>
             </v-col>
           </v-row>

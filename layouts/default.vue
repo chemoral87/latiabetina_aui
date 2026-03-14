@@ -1,6 +1,7 @@
 <template>
   <v-app class="back_white">
-    <v-navigation-drawer v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant"
+    <v-navigation-drawer
+v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVariant"
       :clipped="clipped" temporary app touchless>
       <v-list>
         <v-list-item>
@@ -73,7 +74,8 @@
       <MyLoading :value="loading_display"></MyLoading>
 
       <div class="snackbar-wrapper">
-        <v-snackbar v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackbars'"
+        <v-snackbar
+v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackbars'"
           v-model="snack.showing" :color="snack.color" content-class="snack-content" shaped multi-line right bottom
           absolute :timeout="snack.timeout" :style="`bottom: ${i * 69 + 0}px`">
           <span class="text-subtitle-1 font-weight-bold">{{ snack.text }}</span>

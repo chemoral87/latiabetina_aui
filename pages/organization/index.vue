@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="6" md="2">
-        <v-text-field v-model="filterOrganization" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field
+v-model="filterOrganization" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
 
@@ -14,11 +15,13 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <OrganizationTable :options="options" :response="response" :dialog-delete.sync="dialogDeleteOrganization"
+        <OrganizationTable
+:options="options" :response="response" :dialog-delete.sync="dialogDeleteOrganization"
           @sorting="indexOrganizations" @edit="editOrganization" @delete="deleteOrganization" @config="goConfig" />
       </v-col>
     </v-row>
-    <OrganizationFormDialog v-if="organizationFormDialog" :organization="organization" @close="closeFormDialog()"
+    <OrganizationFormDialog
+v-if="organizationFormDialog" :organization="organization" @close="closeFormDialog()"
       @save="saveOrganization" />
   </v-container>
 </template>

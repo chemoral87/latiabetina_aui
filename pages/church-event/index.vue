@@ -3,7 +3,8 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field
+v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
           placeholder="Buscar evento..." dense :disabled="loading" />
       </v-col>
 
@@ -21,17 +22,20 @@
 
       <!-- Tabla de eventos -->
       <v-col cols="12">
-        <ChurchEventTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
+        <ChurchEventTable
+:options="options" :response="response" :loading="loading" @sorting="handleSorting"
           @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
       </v-col>
     </v-row>
 
     <!-- Diálogo para crear/editar evento -->
-    <ChurchEventDialog v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog"
+    <ChurchEventDialog
+v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog"
       @save="saveChurchEvent" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
+    <DialogDelete
+v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
       @close="churchEventDialogDelete = false" />
   </v-container>
 </template>

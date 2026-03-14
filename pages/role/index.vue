@@ -3,7 +3,8 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
+        <v-text-field
+v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
           dense :disabled="loading" />
       </v-col>
 
@@ -21,7 +22,8 @@
 
       <!-- Tabla de roles -->
       <v-col cols="12">
-        <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
+        <RoleTable
+:options="options" :response="response" :loading="loading" @sorting="handleSorting"
           @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
@@ -30,7 +32,8 @@
     <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
+    <DialogDelete
+v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
       @close="roleDialogDelete = false" />
   </v-container>
 </template>

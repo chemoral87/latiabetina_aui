@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="6" md="2">
-        <v-text-field v-model="filterStore" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field
+v-model="filterStore" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
 
@@ -14,7 +15,8 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <StoreTable :options="options" :response="response" :dialog-delete.sync="dialogDeleteStore"
+        <StoreTable
+:options="options" :response="response" :dialog-delete.sync="dialogDeleteStore"
           @sorting="indexStore" @edit="editStore" @delete="deleteStore" />
       </v-col>
     </v-row>
