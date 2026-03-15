@@ -10,13 +10,13 @@
           <v-icon>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" @click="getAuditoriums()">
+        <v-btn color="primary" :loading="loading" @click="getAuditoriums()">
           <v-icon>mdi-reload</v-icon>
           Refrescar
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <AuditoriumTable :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium"
+        <AuditoriumTable :loading="loading" :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium"
           @delete="beforeDeleteAuditorium" @layout="goToLayout" />
       </v-col>
     </v-row>
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { debounce } from "lodash-es"
+
 export default {
   middleware: ["authenticated"],
 
@@ -53,6 +55,7 @@ export default {
       auditorium: {},
       response: { data: [] },
       options: {},
+      loading: false,
       auditoriumDialog: false,
       auditoriumDialogDelete: false,
       dialogDelete: {},
@@ -70,15 +73,16 @@ export default {
   },
 
   watch: {
-    async filterAuditorium(value) {
-      const options = {
-        ...this.options,
-        filter: value,
-        page: 1,
-        itemsPerPage: 10,
-      }
-
-      this.response = await this.$repository.Auditorium?.index?.(options)
+    filterAuditorium: {
+      handler: debounce(function(value) {
+        const op = {
+          ...this.options,
+          filter: value,
+          page: 1,
+          itemsPerPage: 10,
+        }
+        this.getAuditoriums(op)
+      }, 500),
     },
   },
 
@@ -96,7 +100,15 @@ export default {
       if(options) {
         this.options = options
       }
-      this.response = (await this.$repository.Auditorium?.index?.(this.options))
+      
+      const op = Object.assign({ filter: this.filterAuditorium }, this.options)
+
+      try {
+        this.loading = true
+        this.response = (await this.$repository.Auditorium?.index?.(op))
+      } finally {
+        this.loading = false
+      }
     },
 
     newAuditorium() {
