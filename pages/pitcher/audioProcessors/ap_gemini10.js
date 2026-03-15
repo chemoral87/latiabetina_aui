@@ -40,40 +40,35 @@ export class AudioProcessor {
   }
 
   async initializeMicrophone() {
-    try {
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      })
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      this.sampleRate = this.audioContext.sampleRate
-      this.analyser = this.audioContext.createAnalyser()
+    this.mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+    })
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    this.sampleRate = this.audioContext.sampleRate
+    this.analyser = this.audioContext.createAnalyser()
 
-      // Mantenemos 4096 para precisión, pero el análisis será más frecuente
-      this.analyser.fftSize = 4096
-      this.buffer = new Float32Array(this.analyser.fftSize)
+    // Mantenemos 4096 para precisión, pero el análisis será más frecuente
+    this.analyser.fftSize = 4096
+    this.buffer = new Float32Array(this.analyser.fftSize)
 
-      const source = this.audioContext.createMediaStreamSource(this.mediaStream)
+    const source = this.audioContext.createMediaStreamSource(this.mediaStream)
 
-      // Boost soft input signals so low-volume notes reach the analyser
-      const gainNode = this.audioContext.createGain()
-      gainNode.gain.value = 4
+    // Boost soft input signals so low-volume notes reach the analyser
+    const gainNode = this.audioContext.createGain()
+    gainNode.gain.value = 4
 
-      // Highpass filter to remove subsonic rumble; avoids the narrow 440 Hz bandpass
-      // that was attenuating notes far from A4
-      const filter = this.audioContext.createBiquadFilter()
-      filter.type = "highpass"
-      filter.frequency.value = 40
-      filter.Q.value = 0.7
+    // Highpass filter to remove subsonic rumble; avoids the narrow 440 Hz bandpass
+    // that was attenuating notes far from A4
+    const filter = this.audioContext.createBiquadFilter()
+    filter.type = "highpass"
+    filter.frequency.value = 40
+    filter.Q.value = 0.7
 
-      source.connect(gainNode)
-      gainNode.connect(filter)
-      filter.connect(this.analyser)
-      this.isMicActive = true
-      return true
-    } catch (error) {
-      console.error("Error mic:", error)
-      throw error
-    }
+    source.connect(gainNode)
+    gainNode.connect(filter)
+    filter.connect(this.analyser)
+    this.isMicActive = true
+    return true
   }
 
   analyzeFrequency() {

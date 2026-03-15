@@ -11,8 +11,10 @@
 
               <!-- Botón de Google primero -->
               <v-col cols="12">
-                <v-btn outlined block large class="text-none mb-4" style="border-color: #dadce0; color: #3c4043; background-color: white" @click="loginWithGoogle">
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px; margin-right: 12px" />
+                <v-btn outlined block large class="text-none mb-4"
+                  style="border-color: #dadce0; color: #3c4043; background-color: white" @click="loginWithGoogle">
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                    style="width: 18px; height: 18px; margin-right: 12px" />
                   Acceder con Google
                 </v-btn>
               </v-col>
@@ -26,25 +28,19 @@
 
               <!-- Campos de login -->
               <v-col cols="12">
-                <v-text-field v-model="email" outlined dense autocomplete="username" label="Dirección de correo electrónico" :error-messages="errors ? errors?.email : []"></v-text-field>
+                <v-text-field v-model="email" outlined dense autocomplete="username"
+                  label="Dirección de correo electrónico" :error-messages="errors ? errors?.email : []"></v-text-field>
               </v-col>
 
               <v-col cols="12">
-                <v-text-field
-                  v-model="password"
-                  outlined
-                  dense
-                  autocomplete="current-password"
-                  label="Contraseña"
-                  :error-messages="errors ? errors?.password : []"
-                  :append-icon="showned ? 'mdi-eye' : 'mdi-eye-off'"
-                  :type="showned ? 'text' : 'password'"
-                  @click:append="showned = !showned"
-                ></v-text-field>
+                <v-text-field v-model="password" outlined dense autocomplete="current-password" label="Contraseña"
+                  :error-messages="errors ? errors?.password : []" :append-icon="showned ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showned ? 'text' : 'password'" @click:append="showned = !showned"></v-text-field>
               </v-col>
 
               <v-col cols="12" class="text-right">
-                <a href="#" class="text-decoration-none" @click.prevent="$router.push('/forgot-password')">Olvidé mi contraseña</a>
+                <a href="#" class="text-decoration-none" @click.prevent="$router.push('/forgot-password')">Olvidé mi
+                  contraseña</a>
               </v-col>
 
               <v-col cols="12" class="">
@@ -94,13 +90,13 @@ export default {
       const token = urlParams.get("token")
       const error = urlParams.get("error")
 
-      if (error) {
+      if(error) {
         this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
         window.history.replaceState({}, document.title, window.location.pathname)
         return
       }
 
-      if (token) {
+      if(token) {
         try {
           // Guarda el token y obtiene el usuario
           this.$auth.setUserToken(token)
@@ -113,8 +109,7 @@ export default {
           this.$router.push({
             path: this.$route.query.redirect || "/",
           })
-        } catch (error) {
-          console.error("Error en el callback de Google:", error)
+        } catch(error) {
           this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
           window.history.replaceState({}, document.title, window.location.pathname)
         }
@@ -132,7 +127,7 @@ export default {
         this.$router.push({
           path: this.$route.query.redirect || "/",
         })
-      } catch (e) {
+      } catch(e) {
         // console.log(e)
       }
     },

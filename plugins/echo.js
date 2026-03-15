@@ -34,15 +34,9 @@ export default ({ app, store }, inject) => {
   inject("echo", echo)
 
   // Listen for connection status
-  echo.connector.pusher.connection.bind("connected", () => {
-    console.log("✅ WebSocket connected successfully")
-  })
+  // echo.connector.pusher.connection.bind("connected", () => {})
 
-  echo.connector.pusher.connection.bind("disconnected", () => {
-    console.log("❌ WebSocket disconnected")
-  })
+  // echo.connector.pusher.connection.bind("disconnected", () => {})
 
-  echo.connector.pusher.connection.bind("error", (err) => {
-    console.error("❌ WebSocket error:", err)
-  })
+  // echo.connector.pusher.connection.bind("error", (err) => {})
 }

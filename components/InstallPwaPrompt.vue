@@ -43,8 +43,7 @@
     </v-dialog>
 
     <!-- Floating button to trigger install if dismissed before -->
-    <v-btn
-v-if="(deferredPrompt || isIosEligible) && !isStandalone && showFloatingButton" color="primary" fab small
+    <v-btn v-if="(deferredPrompt || isIosEligible) && !isStandalone && showFloatingButton" color="primary" fab small
       fixed bottom right style="bottom: 80px; z-index: 99;" @click="triggerPrompt">
       <v-icon>mdi-download</v-icon>
     </v-btn>
@@ -126,10 +125,10 @@ export default {
         this.deferredPrompt.prompt()
         const { outcome } = await this.deferredPrompt.userChoice
         if(outcome === 'accepted') {
-          console.log('User accepted the install prompt')
+
           this.showFloatingButton = false
         } else {
-          console.log('User dismissed the install prompt')
+
           this.showFloatingButton = true
         }
         this.deferredPrompt = null

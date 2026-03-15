@@ -2,14 +2,12 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field
-v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar"
+        <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar"
           placeholder="Buscar..." :disabled="loading" />
       </v-col>
 
       <v-col cols="12" md="2">
-        <v-select
-v-model="statusFilter" :items="[
+        <v-select v-model="statusFilter" :items="[
           { text: 'Pendientes', value: '' },
           { text: 'Aprobados', value: 'approved' },
           { text: 'Rechazados', value: 'rejected' },
@@ -26,18 +24,15 @@ v-model="statusFilter" :items="[
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <TestimonyTable
-ref="testimonyTable" :options="options" :response="response" :loading="loading"
+        <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading"
           @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />
       </v-col>
     </v-row>
 
-    <TestimonyDialog
-v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog"
+    <TestimonyDialog v-if="testimonyDialog" :testimony="testimony" :loading="saving" @close="closeDialog"
       @save="saveTestimony" />
 
-    <DialogDelete
-v-if="testimonyDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteTestimony"
+    <DialogDelete v-if="testimonyDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteTestimony"
       @close="testimonyDialogDelete = false" />
   </v-container>
 </template>
@@ -60,7 +55,6 @@ export default {
       const response = await app.$repository.Testimony.index(options)
       return { response, options }
     } catch(e) {
-      console.error("Error loading testimonies:", e)
       error({ statusCode: e.response?.status || 500, message: "Error al cargar testimonios" })
       return { response: { data: [], total: 0 }, options }
     }
@@ -126,7 +120,7 @@ export default {
         this.response = await this.$repository.Testimony.index(requestOptions)
         this.options = requestOptions
       } catch(error) {
-        console.error("Error loading testimonies:", error)
+
         this.$notify({ type: "error", text: error.response?.data?.message || "Error al cargar testimonios" })
       } finally {
         this.loading = false
@@ -177,7 +171,7 @@ export default {
         await this.loadTestimonies({ page: 1, filter: "" })
         this.testimonyDialogDelete = false
       } catch(error) {
-        console.error("Error deleting testimony:", error)
+
         this.$notify({ type: "error", text: error.response?.data?.message || "Error al eliminar testimonio" })
       } finally {
         this.deleting = false
@@ -215,7 +209,7 @@ export default {
         this.$notify({ type: "success", text: `Testimonio ${isUpdate ? "actualizado" : "creado"} exitosamente` })
         this.testimonyDialog = false
       } catch(error) {
-        console.error("Error saving testimony:", error)
+
         this.$notify({ type: "error", text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} testimonio` })
       } finally {
         this.saving = false

@@ -16,7 +16,8 @@
     <v-row>
       <!-- Canvas de Asientos - Primero en mobile -->
       <v-col cols="12" :md="9" :order="$vuetify.breakpoint.mdAndUp ? 2 : 1">
-        <AuditoriumSeatsStage :sections="sections" :settings="settings" :stage-config="stageConfig" :categories="stageCategories" />
+        <AuditoriumSeatsStage :sections="sections" :settings="settings" :stage-config="stageConfig"
+          :categories="stageCategories" />
       </v-col>
 
       <!-- Panel de Control - Segundo en mobile -->
@@ -30,13 +31,15 @@
             </v-btn>
           </v-col>
           <v-col cols="6" md="12">
-            <v-btn color="secondary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="addSection(true)">
+            <v-btn color="secondary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2"
+              @click="addSection(true)">
               <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-label</v-icon>
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar etiqueta sección</span>
             </v-btn>
           </v-col>
           <v-col cols="6" md="12">
-            <v-btn color="warning" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="clearAllSeatStates">
+            <v-btn color="warning" block :small="$vuetify.breakpoint.mobile" class="mb-md-2"
+              @click="clearAllSeatStates">
               <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-broom</v-icon>
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Limpiar categorías</span>
             </v-btn>
@@ -63,19 +66,17 @@
             </v-chip>
           </div>
 
-          <json-config
-            :config-data="configData"
-            :config-data-csv="configDataCsv"
-            :save-format="saveFormat"
-            @imported="handleImportedConfig"
-            @import-error="$toast?.error('Error al importar configuración')"
-          />
+          <json-config :config-data="configData" :config-data-csv="configDataCsv" :save-format="saveFormat"
+            @imported="handleImportedConfig" @import-error="$toast?.error('Error al importar configuración')" />
 
-          <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label dense class="mb-1" />
+          <v-slider v-model="settings.SEAT_SIZE" :min="5" :max="20" :step="1" label="Tamaño de asiento" thumb-label
+            dense class="mb-1" />
 
-          <v-slider v-model="settings.SEATS_DISTANCE" :min="2" :max="8" :step="1" label="Distancia entre asientos" thumb-label dense class="mb-1" />
+          <v-slider v-model="settings.SEATS_DISTANCE" :min="2" :max="8" :step="1" label="Distancia entre asientos"
+            thumb-label dense class="mb-1" />
 
-          <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5" label="Padding superior sección" thumb-label dense class="mb-0" />
+          <v-slider v-model="settings.SECTION_TOP_PADDING" :min="0" :max="160" :step="5"
+            label="Padding superior sección" thumb-label dense class="mb-0" />
         </v-card>
 
         <!-- Lista de Secciones -->
@@ -84,7 +85,8 @@
           <v-expansion-panel v-for="(section, sIdx) in sections" :key="`section-${sIdx}`">
             <v-expansion-panel-header>
               <div class="d-flex align-center" style="width: 100%">
-                <v-text-field v-model="section.name" dense solo hide-details :style="$vuetify.breakpoint.mobile ? 'max-width: 120px' : 'max-width: 140px'" @click.stop />
+                <v-text-field v-model="section.name" dense solo hide-details
+                  :style="$vuetify.breakpoint.mobile ? 'max-width: 120px' : 'max-width: 140px'" @click.stop />
                 <v-chip v-if="section.isLabel" x-small color="secondary" class="ml-1 ml-md-2">Etiqueta</v-chip>
                 <v-spacer />
                 <v-btn icon :small="$vuetify.breakpoint.mdAndUp" color="error" @click.stop="removeSection(sIdx)">
@@ -96,28 +98,35 @@
             <v-expansion-panel-content v-if="!section.isLabel">
               <v-row dense class="mb-2">
                 <v-col cols="6">
-                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="secondary" @click="addSubsection(sIdx, false)">
-                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs" small>mdi-plus</v-icon>
+                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="secondary"
+                    @click="addSubsection(sIdx, false)">
+                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs"
+                      small>mdi-plus</v-icon>
                     <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.xs }">Agregar subsección</span>
                   </v-btn>
                 </v-col>
                 <v-col cols="6">
-                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="accent" @click="addSubsection(sIdx, true)">
-                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs" small>mdi-label-outline</v-icon>
+                  <v-btn :small="$vuetify.breakpoint.mobile" :x-small="$vuetify.breakpoint.xs" block color="accent"
+                    @click="addSubsection(sIdx, true)">
+                    <v-icon :left="$vuetify.breakpoint.smAndUp" :x-small="$vuetify.breakpoint.xs"
+                      small>mdi-label-outline</v-icon>
                     <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.xs }">Agregar área</span>
                   </v-btn>
                 </v-col>
               </v-row>
 
               <!-- Subsecciones -->
-              <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2" :class="$vuetify.breakpoint.mobile ? 'pa-1' : 'pa-2'">
+              <v-card v-for="(sub, subIdx) in section.subsections" :key="`sub-${subIdx}`" outlined class="mb-2"
+                :class="$vuetify.breakpoint.mobile ? 'pa-1' : 'pa-2'">
                 <div class="d-flex align-center mb-2">
-                  <v-text-field v-model="sub.name" :label="sub.isLabel ? 'Nombre área' : 'Nombre subsección'" dense hide-details :style="$vuetify.breakpoint.mobile ? 'font-size: 14px' : ''" />
+                  <v-text-field v-model="sub.name" :label="sub.isLabel ? 'Nombre área' : 'Nombre subsección'" dense
+                    hide-details :style="$vuetify.breakpoint.mobile ? 'font-size: 14px' : ''" />
                   <v-chip v-if="sub.isLabel" x-small color="accent" class="ml-1 ml-md-2">Área</v-chip>
                 </div>
 
                 <!-- Ancho de área (solo para etiquetas) -->
-                <v-slider v-if="sub.isLabel" v-model="sub.width" :min="50" :max="300" :step="10" label="Ancho del área" thumb-label dense hide-details class="mb-2" />
+                <v-slider v-if="sub.isLabel" v-model="sub.width" :min="50" :max="300" :step="10" label="Ancho del área"
+                  thumb-label dense hide-details class="mb-2" />
 
                 <template v-if="!sub.isLabel">
                   <!-- Definir filas y columnas -->
@@ -129,7 +138,8 @@
                       <v-text-field v-model.number="sub.tempCols" label="Columnas" type="text" dense hide-details />
                     </v-col>
                     <v-col cols="4" sm="2">
-                      <v-btn :x-small="$vuetify.breakpoint.xs" small color="primary" @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>
+                      <v-btn :x-small="$vuetify.breakpoint.xs" small color="primary"
+                        @click="setSubsectionGrid(sIdx, subIdx)">Set</v-btn>
                     </v-col>
                   </v-row>
 
@@ -138,14 +148,17 @@
                   <div class="text-caption mb-1">Agregar asiento individual:</div>
                   <v-row dense>
                     <v-col cols="12" sm="6">
-                      <v-select v-model="selectedRow[`${sIdx}-${subIdx}`]" :items="getRowOptions(sub)" label="Seleccionar fila" dense hide-details />
+                      <v-select v-model="selectedRow[`${sIdx}-${subIdx}`]" :items="getRowOptions(sub)"
+                        label="Seleccionar fila" dense hide-details />
                     </v-col>
                     <v-col cols="12" sm="6" class="d-flex" style="gap: 4px">
-                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'left')">
+                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)"
+                        @click="addSeatToRow(sIdx, subIdx, 'left')">
                         <v-icon x-small>mdi-arrow-left-circle</v-icon>
                         <span class="ml-1">Izq</span>
                       </v-btn>
-                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)" @click="addSeatToRow(sIdx, subIdx, 'right')">
+                      <v-btn x-small color="primary" block :disabled="!isRowSelected(sIdx, subIdx)"
+                        @click="addSeatToRow(sIdx, subIdx, 'right')">
                         <v-icon x-small>mdi-arrow-right-circle</v-icon>
                         <span class="ml-1">Der</span>
                       </v-btn>
@@ -208,7 +221,7 @@ export default {
     let auditorium = {}
     try {
       auditorium = await app.$repository.Auditorium.show(params.id)
-    } catch (e) {
+    } catch(e) {
       error(app.$handleError(e))
     }
     return { auditorium }
@@ -233,20 +246,20 @@ export default {
       return this.settings.SEAT_SIZE + this.settings.SEATS_DISTANCE
     },
     tooltipPos() {
-      if (!this.activeSeat) return { x: 0, y: 0 }
+      if(!this.activeSeat) return { x: 0, y: 0 }
       try {
         const parts = String(this.activeSeat.id).split("-")
         // expected id like 'section-1-2-3' -> parts ['section','1','2','3']
         const sectionIdx = Math.max(0, parseInt(parts[1], 10) - 1)
         const subIdx = Math.max(0, parseInt(parts[2], 10) - 1)
         const section = this.sections[sectionIdx]
-        if (!section) return { x: this.activeSeat.x, y: this.activeSeat.y }
+        if(!section) return { x: this.activeSeat.x, y: this.activeSeat.y }
         const sectionPos = this.getSectionConfig(sectionIdx)
         const subPos = this.getSubsectionPosition(section, subIdx)
         const x = sectionPos.x + subPos.x + this.activeSeat.x + (this.settings.SEAT_SIZE / 2 + 6)
         const y = sectionPos.y + subPos.y + this.activeSeat.y - (this.settings.SEAT_SIZE / 2 + 8)
         return { x, y }
-      } catch (err) {
+      } catch(err) {
         return { x: this.activeSeat.x, y: this.activeSeat.y }
       }
     },
@@ -258,7 +271,7 @@ export default {
         })
       )
 
-      if (Array.isArray(cleaned.sections)) {
+      if(Array.isArray(cleaned.sections)) {
         const sections = cleaned.sections.map((section) => {
           const s = {
             i: section.id,
@@ -267,7 +280,7 @@ export default {
             ss: [],
           }
 
-          if (Array.isArray(section.subsections)) {
+          if(Array.isArray(section.subsections)) {
             s.ss = section.subsections.map((sub) => {
               const ss = {
                 i: sub.id,
@@ -276,18 +289,18 @@ export default {
                 tr: sub.tempRows,
                 tc: sub.tempCols,
               }
-              if (sub.isLabel) {
+              if(sub.isLabel) {
                 ss.w = sub.width
-              } else if (Array.isArray(sub.seats)) {
+              } else if(Array.isArray(sub.seats)) {
                 ss.s = sub.seats.map((row) => {
                   return row.map((seat) => {
-                    if (!seat) return null
+                    if(!seat) return null
                     const rs = {
                       i: seat.id,
                       r: seat.row,
                       c: seat.col,
                     }
-                    if (seat.category && seat.category !== "Ninguno") {
+                    if(seat.category && seat.category !== "Ninguno") {
                       rs.k = seat.category
                     }
                     return rs
@@ -319,9 +332,9 @@ export default {
      */
     configDataCsv() {
       const csvEscape = (v) => {
-        if (v === null || v === undefined) return ''
+        if(v === null || v === undefined) return ''
         const s = String(v)
-        if (s.includes(',') || s.includes('"') || s.includes('|')) {
+        if(s.includes(',') || s.includes('"') || s.includes('|')) {
           return '"' + s.replace(/"/g, '""') + '"'
         }
         return s
@@ -332,12 +345,12 @@ export default {
       this.sections.forEach((section) => {
         // s,name  or  s,name,1  when isLabel
         const sRow = ['s', csvEscape(section.name)]
-        if (section.isLabel) sRow.push('1')
+        if(section.isLabel) sRow.push('1')
         rows.push(sRow.join(','))
 
-        if (Array.isArray(section.subsections)) {
+        if(Array.isArray(section.subsections)) {
           section.subsections.forEach((sub) => {
-            if (sub.isLabel) {
+            if(sub.isLabel) {
               // ss,name,,,1
               rows.push(['ss', csvEscape(sub.name), '', '', '1'].join(','))
             } else {
@@ -346,14 +359,14 @@ export default {
               const tc = sub.tempCols !== undefined ? sub.tempCols : ''
               rows.push(['ss', csvEscape(sub.name), csvEscape(tr), csvEscape(tc)].join(','))
 
-              if (Array.isArray(sub.seats)) {
+              if(Array.isArray(sub.seats)) {
                 sub.seats.forEach((row) => {
                   row.forEach((seat) => {
-                    if (!seat) return
+                    if(!seat) return
                     const cat = seat.category && seat.category !== 'Ninguno' ? seat.category : ''
                     // z,id,r,c[,k]  — k omitted when empty to save space
                     const zRow = ['z', csvEscape(seat.id), csvEscape(seat.row), csvEscape(seat.col)]
-                    if (cat) zRow.push(csvEscape(cat))
+                    if(cat) zRow.push(csvEscape(cat))
                     rows.push(zRow.join(','))
                   })
                 })
@@ -395,11 +408,11 @@ export default {
     updateStageSize() {
       // Ajustar el tamaño del canvas según el viewport
       const width = window.innerWidth
-      if (width < 600) {
+      if(width < 600) {
         // Mobile - restar padding del container (pa-2 = 8px * 2) + padding del sheet (pa-2 = 8px * 2)
         this.stageConfig.width = Math.max(width - 48, 280)
         this.stageConfig.height = 450
-      } else if (width < 960) {
+      } else if(width < 960) {
         // Tablet
         this.stageConfig.width = Math.min(width - 64, 700)
         this.stageConfig.height = 600
@@ -418,7 +431,7 @@ export default {
      * Supports both the legacy 'type,id,name,...' header and the new 'csv_format' header.
      */
     _isCsvConfig(raw) {
-      if (typeof raw !== 'string') return false
+      if(typeof raw !== 'string') return false
       const trimmed = raw.trimStart()
       return trimmed.startsWith('csv_format') || trimmed.startsWith('type,id,name,')
     },
@@ -438,18 +451,18 @@ export default {
      */
     _parseCsvConfig(csvString) {
       const lines = csvString.split('|').map(l => l.trim()).filter(Boolean)
-      if (lines.length < 2) return []
+      if(lines.length < 2) return []
 
       const parseCsvLine = (line) => {
         const fields = []
         let current = ''
         let inQuotes = false
-        for (let i = 0; i < line.length; i++) {
+        for(let i = 0; i < line.length; i++) {
           const ch = line[i]
-          if (ch === '"') {
-            if (inQuotes && line[i + 1] === '"') { current += '"'; i++ }
+          if(ch === '"') {
+            if(inQuotes && line[i + 1] === '"') { current += '"'; i++ }
             else { inQuotes = !inQuotes }
-          } else if (ch === ',' && !inQuotes) {
+          } else if(ch === ',' && !inQuotes) {
             fields.push(current); current = ''
           } else {
             current += ch
@@ -462,7 +475,7 @@ export default {
       const isNewFormat = lines[0].trim() === 'csv_format'
 
       // ── Legacy format path ──────────────────────────────────────────────
-      if (!isNewFormat) {
+      if(!isNewFormat) {
         const header = lines[0].split(',')
         const idx = {}
         header.forEach((h, i) => { idx[h.trim()] = i })
@@ -471,31 +484,31 @@ export default {
         let currentSection = null
         let currentSub = null
 
-        for (let li = 1; li < lines.length; li++) {
+        for(let li = 1; li < lines.length; li++) {
           const f = parseCsvLine(lines[li])
-          const type  = f[idx.type]  || ''
-          const id    = f[idx.id]    || ''
-          const name  = f[idx.name]  || ''
+          const type = f[idx.type] || ''
+          const id = f[idx.id] || ''
+          const name = f[idx.name] || ''
           const level = parseInt(f[idx.level] || '0', 10)
-          const tr    = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
-          const tc    = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
-          const r     = f[idx.r]  !== '' && f[idx.r]  !== undefined ? parseInt(f[idx.r],  10) : undefined
-          const c     = f[idx.c]  !== '' && f[idx.c]  !== undefined ? parseInt(f[idx.c],  10) : undefined
-          const k     = (f[idx.k] || '').trim()
+          const tr = f[idx.tr] !== '' && f[idx.tr] !== undefined ? parseInt(f[idx.tr], 10) : undefined
+          const tc = f[idx.tc] !== '' && f[idx.tc] !== undefined ? parseInt(f[idx.tc], 10) : undefined
+          const r = f[idx.r] !== '' && f[idx.r] !== undefined ? parseInt(f[idx.r], 10) : undefined
+          const c = f[idx.c] !== '' && f[idx.c] !== undefined ? parseInt(f[idx.c], 10) : undefined
+          const k = (f[idx.k] || '').trim()
 
-          if (type === 's') {
+          if(type === 's') {
             currentSection = { id, name, isLabel: level === 1, subsections: [] }
             currentSub = null
             sections.push(currentSection)
-          } else if (type === 'ss' && currentSection) {
+          } else if(type === 'ss' && currentSection) {
             currentSub = { id, name, isLabel: level === 1 }
-            if (currentSub.isLabel) { currentSub.width = 100 }
+            if(currentSub.isLabel) { currentSub.width = 100 }
             else { currentSub.tempRows = tr; currentSub.tempCols = tc; currentSub.seats = [] }
             currentSection.subsections.push(currentSub)
-          } else if (type === 'seat' && currentSub && !currentSub.isLabel) {
-            while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
+          } else if(type === 'seat' && currentSub && !currentSub.isLabel) {
+            while(currentSub.seats.length <= r) { currentSub.seats.push([]) }
             const seat = { id, row: r, col: c }
-            if (k) seat.category = k
+            if(k) seat.category = k
             currentSub.seats[r].push(seat)
           }
         }
@@ -509,29 +522,29 @@ export default {
       let sectionCounter = 0
       let subCounter = 0
 
-      for (let li = 1; li < lines.length; li++) {
+      for(let li = 1; li < lines.length; li++) {
         const f = parseCsvLine(lines[li])
         const type = f[0] || ''
 
-        if (type === 's') {
+        if(type === 's') {
           // s,name[,1]
           sectionCounter++
           subCounter = 0
-          const name    = f[1] || ''
+          const name = f[1] || ''
           const isLabel = f[2] === '1'
           currentSection = { id: String(sectionCounter), name, isLabel, subsections: [] }
           currentSub = null
           sections.push(currentSection)
-        } else if (type === 'ss' && currentSection) {
+        } else if(type === 'ss' && currentSection) {
           // ss,name,tr,tc[,1]
           subCounter++
-          const name    = f[1] || ''
-          const tr      = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : undefined
-          const tc      = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : undefined
+          const name = f[1] || ''
+          const tr = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : undefined
+          const tc = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : undefined
           const isLabel = f[4] === '1'
-          const subId   = `${currentSection.id}-${subCounter}`
+          const subId = `${currentSection.id}-${subCounter}`
           currentSub = { id: subId, name, isLabel }
-          if (isLabel) {
+          if(isLabel) {
             currentSub.width = 100
           } else {
             currentSub.tempRows = tr
@@ -539,15 +552,15 @@ export default {
             currentSub.seats = []
           }
           currentSection.subsections.push(currentSub)
-        } else if (type === 'z' && currentSub && !currentSub.isLabel) {
+        } else if(type === 'z' && currentSub && !currentSub.isLabel) {
           // z,id,r,c[,k]
           const id = f[1] || ''
-          const r  = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : 0
-          const c  = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : 0
-          const k  = (f[4] || '').trim()
-          while (currentSub.seats.length <= r) { currentSub.seats.push([]) }
+          const r = f[2] !== '' && f[2] !== undefined ? parseInt(f[2], 10) : 0
+          const c = f[3] !== '' && f[3] !== undefined ? parseInt(f[3], 10) : 0
+          const k = (f[4] || '').trim()
+          while(currentSub.seats.length <= r) { currentSub.seats.push([]) }
           const seat = { id, row: r, col: c }
-          if (k) seat.category = k
+          if(k) seat.category = k
           currentSub.seats[r].push(seat)
         }
       }
@@ -556,15 +569,15 @@ export default {
     },
 
     loadConfiguration() {
-      if (!this.auditorium?.config) {
-        console.warn("No se encontró configuración para cargar")
+      if(!this.auditorium?.config) {
+        this.$notify({ type: 'error', message: 'No se encontró configuración para cargar' })
         return
       }
 
       const raw = this.auditorium.config
 
       // ── CSV path ──────────────────────────────────────────────────────────
-      if (this._isCsvConfig(raw)) {
+      if(this._isCsvConfig(raw)) {
         this.saveFormat = 'csv'
         this.sections = this._parseCsvConfig(raw)
         return
@@ -573,16 +586,17 @@ export default {
       // ── JSON path ─────────────────────────────────────────────────────────
       this.saveFormat = 'json'
       let config = raw
-      if (typeof config === 'string') {
+      if(typeof config === 'string') {
         try {
           config = JSON.parse(config)
-        } catch (e) {
-          console.error('Error parsing config:', e)
+        } catch(e) {
+
+          this.$notify({ type: 'error', message: 'Error parsing config' })
           return
         }
       }
 
-      if (config.s || config.sections) {
+      if(config.s || config.sections) {
         const rawSections = config.s || config.sections
         const cleanSections = rawSections.map((section, sIdx) => {
           const s = {
@@ -592,7 +606,7 @@ export default {
             subsections: [],
           }
 
-          if (section.ss || section.subsections) {
+          if(section.ss || section.subsections) {
             const rawSubs = section.ss || section.subsections
             s.subsections = rawSubs.map((sub, subIdx) => {
               const ss = {
@@ -600,16 +614,16 @@ export default {
                 name: sub.n || sub.name,
                 isLabel: !!(sub.l || sub.isLabel),
               }
-              if (ss.isLabel) {
+              if(ss.isLabel) {
                 ss.width = sub.w || sub.width
               } else {
                 ss.tempRows = sub.tr || sub.tempRows
                 ss.tempCols = sub.tc || sub.tempCols
                 const rawSeats = sub.s || sub.seats
-                if (rawSeats) {
+                if(rawSeats) {
                   ss.seats = rawSeats.map((row, rowIdx) => {
                     return row.map((seat, colIdx) => {
-                      if (!seat) return null
+                      if(!seat) return null
                       return {
                         id: seat.i || seat.id || `${ss.id}-${rowIdx + 1}-${colIdx + 1}`,
                         row: seat.r !== undefined ? seat.r : seat.row,
@@ -635,7 +649,7 @@ export default {
         this.verifySubsectionIds()
 
         let configString
-        if (this.saveFormat === 'csv') {
+        if(this.saveFormat === 'csv') {
           // Store as plain flat CSV string
           configString = this.configDataCsv
         } else {
@@ -652,7 +666,7 @@ export default {
         }
         await this.$repository.Auditorium.update(this.auditorium.id, payload)
         this.$toast?.success && this.$toast.success('Configuración guardada')
-      } catch (e) {
+      } catch(e) {
         this.$handleError(e)
       }
     },
@@ -662,30 +676,28 @@ export default {
 
       this.sections.forEach((section, sIdx) => {
         const expectedSectionId = `${sIdx + 1}`
-        if (section.id !== expectedSectionId) {
-          console.warn(`Section ID mismatch: expected ${expectedSectionId}, got ${section.id}`)
+        if(section.id !== expectedSectionId) {
           section.id = expectedSectionId
           configModified = true
         }
 
-        if (section.subsections) {
+        if(section.subsections) {
           section.subsections.forEach((sub, subIdx) => {
             const expectedSubId = `${section.id}-${subIdx + 1}`
-            if (sub.id !== expectedSubId) {
-              console.warn(`Subsection ID mismatch: expected ${expectedSubId}, got ${sub.id}`)
+            if(sub.id !== expectedSubId) {
               sub.id = expectedSubId
               configModified = true
             }
 
             // Also verify seat IDs if they exist
-            if (sub.seats && Array.isArray(sub.seats)) {
+            if(sub.seats && Array.isArray(sub.seats)) {
               sub.seats.forEach((row, rowIdx) => {
-                if (Array.isArray(row)) {
+                if(Array.isArray(row)) {
                   row.forEach((seat, colIdx) => {
-                    if (seat) {
+                    if(seat) {
                       const expectedSeatId = `${section.id}-${subIdx + 1}-${rowIdx + 1}-${colIdx + 1}`
-                      if (seat.id !== expectedSeatId) {
-                        console.warn(`Seat ID mismatch: expected ${expectedSeatId}, got ${seat.id}`)
+                      if(seat.id !== expectedSeatId) {
+
                         seat.id = expectedSeatId
                         seat.row = rowIdx
                         seat.col = colIdx
@@ -700,8 +712,8 @@ export default {
         }
       })
 
-      if (configModified) {
-        console.log("Configuration IDs were corrected")
+      if(configModified) {
+
         // Update the auditorium config to reflect the changes
         this.auditorium.config = this.configData
         this.$forceUpdate()
@@ -720,7 +732,7 @@ export default {
         isLabel,
         subsections: [],
       }
-      if (!isLabel) {
+      if(!isLabel) {
         section.subsections.push(this.createSubsection("Subsección 1", false, 4, 4, sectionIdx, 0, sectionId))
       }
       this.sections.push(section)
@@ -744,7 +756,7 @@ export default {
     createSubsection(name, isLabel, rows = 3, cols = 5, sectionIdx = "", subIdx = "", sectionId = "") {
       const subId = `${sectionId}-${subIdx + 1}`
       const sub = { id: subId, name, isLabel, seats: [] }
-      if (isLabel) {
+      if(isLabel) {
         sub.width = 100
       } else {
         sub.seats = this.createSeatsGrid(rows, cols, sectionIdx, subIdx, sectionId)
@@ -764,15 +776,15 @@ export default {
     },
 
     clearAllSeatStates() {
-      if (!Array.isArray(this.sections)) return
+      if(!Array.isArray(this.sections)) return
       this.sections.forEach((section) => {
-        if (!Array.isArray(section.subsections)) return
+        if(!Array.isArray(section.subsections)) return
         section.subsections.forEach((sub) => {
-          if (!Array.isArray(sub.seats)) return
+          if(!Array.isArray(sub.seats)) return
           sub.seats.forEach((row) => {
-            if (!Array.isArray(row)) return
+            if(!Array.isArray(row)) return
             row.forEach((seat) => {
-              if (seat && "category" in seat) {
+              if(seat && "category" in seat) {
                 this.$delete(seat, "category")
               }
             })
@@ -803,9 +815,9 @@ export default {
       const section = this.sections[sIdx]
       const sub = section.subsections[subIdx]
       const selectedRowIdx = this.selectedRow[`${sIdx}-${subIdx}`]
-      if (!this.isRowSelected(sIdx, subIdx)) return
+      if(!this.isRowSelected(sIdx, subIdx)) return
       const selectedRow = sub.seats[selectedRowIdx]
-      if (side === "left") {
+      if(side === "left") {
         selectedRow.unshift(this.createSeat(0, selectedRowIdx, sIdx, subIdx, section.id))
       } else {
         selectedRow.push(this.createSeat(selectedRow.length, selectedRowIdx, sIdx, subIdx, section.id))
@@ -830,7 +842,7 @@ export default {
     // ============ MANEJO DE EVENTOS ============
     handleSeatClick(seat, e) {
       // Toggle selection if not reserved
-      if (seat.state !== "reserved") {
+      if(seat.state !== "reserved") {
         seat.state = seat.state === "selected" ? "free" : "selected"
       }
       // Open tooltip for this seat
@@ -841,34 +853,34 @@ export default {
       this.$nextTick(() => {
         try {
           const stage = e && e.target && e.target.getStage ? e.target.getStage() : null
-          if (!stage) return
+          if(!stage) return
           const tooltipNode = stage.findOne("." + ("tooltip-" + seat.id))
-          if (tooltipNode && tooltipNode.moveToTop) {
+          if(tooltipNode && tooltipNode.moveToTop) {
             tooltipNode.moveToTop()
             const layer = tooltipNode.getLayer && tooltipNode.getLayer()
-            if (layer && layer.draw) layer.draw()
+            if(layer && layer.draw) layer.draw()
           }
-        } catch (err) {
+        } catch(err) {
           // ignore
         }
       })
     },
 
     setSeatCategory(seat, category) {
-      if (!seat) return
+      if(!seat) return
 
       // Derive normalized category label from the page's `stageCategories`
       // Find original seat object in sections (getSubsectionSeats returns copies)
       const original = this.findSeatById(seat.id)
       let value
-      if (category == null) {
+      if(category == null) {
         value = "Ninguno"
       } else {
         const match = (this.stageCategories || []).find((c) => String(c.value) === String(category) || String(c.label) === String(category))
         value = match ? match.label : category
       }
 
-      if (original) {
+      if(original) {
         this.$set(original, "category", value)
       } else {
         this.$set(seat, "category", value)
@@ -880,17 +892,17 @@ export default {
     },
 
     findSeatById(id) {
-      if (!id) return null
-      for (let s = 0; s < this.sections.length; s++) {
+      if(!id) return null
+      for(let s = 0; s < this.sections.length; s++) {
         const section = this.sections[s]
-        for (let subIdx = 0; subIdx < (section.subsections?.length || 0); subIdx++) {
+        for(let subIdx = 0; subIdx < (section.subsections?.length || 0); subIdx++) {
           const sub = section.subsections[subIdx]
-          if (!sub.seats) continue
-          for (let r = 0; r < sub.seats.length; r++) {
+          if(!sub.seats) continue
+          for(let r = 0; r < sub.seats.length; r++) {
             const row = sub.seats[r]
-            for (let c = 0; c < row.length; c++) {
+            for(let c = 0; c < row.length; c++) {
               const seat = row[c]
-              if (seat && seat.id === id) return seat
+              if(seat && seat.id === id) return seat
             }
           }
         }
@@ -901,10 +913,10 @@ export default {
     handleStageClick(e) {
       // Close tooltip when clicking outside a seat (i.e. target is not a Circle nor inside one)
       let node = e.target
-      while (node) {
+      while(node) {
         const cls = node.getClassName && node.getClassName()
-        if (cls === "Circle") return
-        if (cls === "Stage") break
+        if(cls === "Circle") return
+        if(cls === "Stage") break
         node = node.getParent()
       }
       this.activeSeat = null
@@ -1046,7 +1058,7 @@ export default {
       const allSeats = []
       sub.seats.forEach((row, rowIdx) => {
         row.forEach((seat, colIdx) => {
-          if (seat.state !== "invisible") {
+          if(seat.state !== "invisible") {
             allSeats.push({
               ...seat,
               x: colIdx * this.seatSpacing + this.settings.SEAT_SIZE / 2,
@@ -1068,7 +1080,7 @@ export default {
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
       let strokeWidth = 1
 
-      if (category && classStrokeMap[category]) {
+      if(category && classStrokeMap[category]) {
         stroke = classStrokeMap[category]
         strokeWidth = 4
       }
@@ -1086,21 +1098,21 @@ export default {
 
     // ============ CÁLCULOS DE DIMENSIONES ============
     getSubsectionWidth(sub) {
-      if (sub.isLabel) return sub.width || 100
-      if (!sub.seats?.length) return 0
+      if(sub.isLabel) return sub.width || 100
+      if(!sub.seats?.length) return 0
       const maxCols = Math.max(...sub.seats.map((row) => row.length))
       return maxCols * this.seatSpacing - this.settings.SEATS_DISTANCE
     },
 
     getSubsectionHeight(sub) {
-      if (sub.isLabel) return 0
-      if (!sub.seats?.length) return 40
+      if(sub.isLabel) return 0
+      if(!sub.seats?.length) return 40
       return sub.seats.length * this.seatSpacing - this.settings.SEATS_DISTANCE
     },
 
     getSectionWidth(section) {
-      if (section.isLabel) return 0
-      if (!section.subsections.length) return 0
+      if(section.isLabel) return 0
+      if(!section.subsections.length) return 0
 
       return (
         section.subsections.reduce((acc, s) => acc + (s.isLabel ? s.width || 100 : this.getSubsectionWidth(s)), 0) +
@@ -1110,12 +1122,12 @@ export default {
     },
 
     getSectionHeight(section) {
-      if (section.isLabel) return 30
-      if (!section.subsections?.length) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
+      if(section.isLabel) return 30
+      if(!section.subsections?.length) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
 
       const maxRows = Math.max(...section.subsections.map((sub) => (sub.isLabel ? 0 : sub.seats?.length || 0)))
 
-      if (maxRows === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING + 40
+      if(maxRows === 0) return this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING + 40
 
       return maxRows * this.seatSpacing - this.settings.SEATS_DISTANCE + this.settings.SECTION_TOP_PADDING + this.settings.SECTION_BOTTOM_PADDING
     },
@@ -1124,7 +1136,7 @@ export default {
     handleImportedConfig(config) {
       try {
         // CSV string import path
-        if (typeof config === 'string' && this._isCsvConfig(config)) {
+        if(typeof config === 'string' && this._isCsvConfig(config)) {
           this.auditorium.config = config
           this.loadConfiguration()
           this.$forceUpdate()
@@ -1135,7 +1147,7 @@ export default {
         }
 
         // JSON object import path
-        if (!config || (!config.s && !config.sections)) {
+        if(!config || (!config.s && !config.sections)) {
           alert('Archivo inválido: falta estructura requerida')
           return
         }
@@ -1146,7 +1158,7 @@ export default {
         this.$toast?.success
           ? this.$toast.success('Configuración JSON importada')
           : alert('Configuración importada correctamente')
-      } catch (error) {
+      } catch(error) {
         alert('Error al importar: ' + error.message)
       }
     },
@@ -1158,6 +1170,7 @@ export default {
 .gap-1 {
   gap: 4px;
 }
+
 .gap-2 {
   gap: 8px;
 }

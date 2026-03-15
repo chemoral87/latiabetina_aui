@@ -6,16 +6,20 @@
 
     <!-- Navegación -->
     <div class="history-navigation d-flex justify-center ga-2 mb-2">
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex === -1" @click="handleMoveClick(-1)">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex === -1"
+        @click="handleMoveClick(-1)">
         <v-icon size="small">mdi-skip-backward</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex <= -1" @click="handleMoveClick(currentMoveIndex - 1)">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex <= -1"
+        @click="handleMoveClick(currentMoveIndex - 1)">
         <v-icon size="small">mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" @click="handleMoveClick(currentMoveIndex + 1)">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1"
+        @click="handleMoveClick(currentMoveIndex + 1)">
         <v-icon size="small">mdi-chevron-right</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" @click="handleMoveClick(moves.length - 1)">
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1"
+        @click="handleMoveClick(moves.length - 1)">
         <v-icon size="small">mdi-skip-forward</v-icon>
       </v-btn>
       <v-divider vertical class="mx-1"></v-divider>
@@ -37,24 +41,14 @@
       </div>
 
       <!-- Movimientos -->
-      <div
-        v-for="(pair, pairIndex) in movePairs"
-        :key="pairIndex"
-        class="history-row"
-      >
+      <div v-for="(pair, pairIndex) in movePairs" :key="pairIndex" class="history-row">
         <div class="move-number">{{ pairIndex + 1 }}</div>
-        <div
-          class="move-white move-cell"
-          :class="{ 'active': pair.whiteIndex === currentMoveIndex }"
-          @click="pair.white && handleMoveClick(pair.whiteIndex)"
-        >
+        <div class="move-white move-cell" :class="{ 'active': pair.whiteIndex === currentMoveIndex }"
+          @click="pair.white && handleMoveClick(pair.whiteIndex)">
           {{ pair.white || '' }}
         </div>
-        <div
-          class="move-black move-cell"
-          :class="{ 'active': pair.blackIndex === currentMoveIndex }"
-          @click="pair.black && handleMoveClick(pair.blackIndex)"
-        >
+        <div class="move-black move-cell" :class="{ 'active': pair.blackIndex === currentMoveIndex }"
+          @click="pair.black && handleMoveClick(pair.blackIndex)">
           {{ pair.black || '' }}
         </div>
       </div>
@@ -83,7 +77,7 @@ export default {
   computed: {
     movePairs() {
       const pairs = []
-      for (let i = 0; i < this.moves.length; i += 2) {
+      for(let i = 0; i < this.moves.length; i += 2) {
         pairs.push({
           white: this.moves[i]?.notation || null,
           whiteIndex: i,
@@ -106,21 +100,21 @@ export default {
     scrollToActive() {
       this.$nextTick(() => {
         const container = this.$el.querySelector('.history-table')
-        if (!container) return
+        if(!container) return
 
-        if (this.currentMoveIndex === -1) {
+        if(this.currentMoveIndex === -1) {
           container.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
           const activeItem = this.$el.querySelector('.move-cell.active')
-          if (activeItem) {
+          if(activeItem) {
             activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
           }
         }
       })
     },
     handleMoveClick(moveIndex) {
-      if (moveIndex < -1) moveIndex = -1
-      if (moveIndex >= this.moves.length) moveIndex = this.moves.length - 1
+      if(moveIndex < -1) moveIndex = -1
+      if(moveIndex >= this.moves.length) moveIndex = this.moves.length - 1
       this.$emit('move-selected', moveIndex)
     },
     triggerFileInput() {
@@ -128,15 +122,15 @@ export default {
     },
     handleFileImport(event) {
       const file = event.target.files[0]
-      if (!file) return
-      
+      if(!file) return
+
       const reader = new FileReader()
       reader.onload = (e) => {
         try {
           const data = JSON.parse(e.target.result)
           this.$emit('import-history', data)
-        } catch (err) {
-          console.error('Error al importar:', err)
+        } catch(err) {
+
           alert('Archivo JSON inválido')
         }
       }

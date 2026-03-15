@@ -63,7 +63,6 @@ export class AudioProcessor {
       this.isMicActive = true
       return true
     } catch (error) {
-      console.error("Error initializing microphone:", error)
       this.isMicActive = false
       throw error
     }

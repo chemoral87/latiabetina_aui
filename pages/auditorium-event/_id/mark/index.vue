@@ -11,8 +11,7 @@
         <span class="text-subtitle-2 ml-1" :style="{ color: percentageColor }">{{ percentajeTotalSeats }}%</span>
 
         <!-- Stats toggle button -->
-        <v-btn
-x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
+        <v-btn x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
           @click="statsPanel = !statsPanel">
           <v-icon small color="yellow">mdi-chart-bar</v-icon>
         </v-btn>
@@ -45,8 +44,7 @@ x-small fab color="success" class="ml-1" title="Ver desglose por estatus"
       </div>
 
       <div>
-        <AuditoriumSeatsStageOp
-:sections="sections" :settings="settings" :stage-config="stageConfig"
+        <AuditoriumSeatsStageOp :sections="sections" :settings="settings" :stage-config="stageConfig"
           :auditorium-event-id="eventAuditorium.id" :categories="stageCategories" :loading-seats="loadingSeats"
           @setEventSeat="handleSetEventSeat" />
       </div>
@@ -400,7 +398,7 @@ export default {
 
     loadConfiguration() {
       if(!this.eventAuditorium?.config) {
-        console.warn("No se encontró configuración para cargar")
+
         return
       }
 
@@ -419,7 +417,6 @@ export default {
         try {
           config = JSON.parse(config)
         } catch(e) {
-          console.error("Error parsing config:", e)
           return
         }
       }
@@ -574,7 +571,6 @@ export default {
           })
         }
       } catch(error) {
-        console.error("Error updating seats:", error)
         this.$handleError(error)
       } finally {
         this.loading = false
@@ -610,7 +606,6 @@ export default {
       if(!this.$uaParser || !this.$uaParser.isMobile()) return
 
       if(!document.hidden && this.eventAuditorium?.id) {
-        console.log("📱 Page visible again, syncing updates...")
         try {
           const response = await this.$repository.AuditoriumEventSeat.index({ auditorium_event_id: this.eventAuditorium.id, last_timestamp: this.last_timestamp })
 
@@ -634,26 +629,23 @@ export default {
             })
           }
         } catch(error) {
-          console.error("Error syncing seat updates:", error)
         }
       }
     },
 
     setupRealtimeListeners() {
       if(!this.$echo || !this.eventAuditorium?.id) {
-        console.warn("Echo not available or event ID missing")
         return
       }
 
       // Subscribe to the auditorium event channel
       const channelName = `auditorium-event.${this.eventAuditorium.id}`
-      console.log(`📡 Subscribing to channel: ${channelName}`)
 
       this.echoChannel = this.$echo.channel(channelName)
 
       // Listen for seat updates
       this.echoChannel.listen(".seat.updated", (data) => {
-        console.log("🔔 Seat update received:", data)
+
 
         // s: status, z: seatsIds in array, t: timestamp
         const timestamp = data.t || data.timestamp

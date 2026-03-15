@@ -62,15 +62,12 @@ export function minBricks2(structure) {
   const structureCopy = [...structure]
 
   while ((addBricks === false && i === structureCopy.length - 2) || i < structureCopy.length - 1) {
-    console.log(structureCopy[i], structureCopy[i + 1], " :", i, " ", addBricks)
     const diff = structureCopy[i + 1] - structureCopy[i] - 1
     if (diff > 0) {
-      console.log("add bricks", diff)
       ascBricks += diff
       structureCopy[i] += diff
       addBricks = true
     } else if (diff < 0) {
-      console.log("add bricks", diff)
       ascBricks += diff * -1
       structureCopy[i + 1] += diff * -1
       addBricks = true
@@ -79,7 +76,6 @@ export function minBricks2(structure) {
     if (addBricks && i === structureCopy.length - 2) {
       i = 0
       addBricks = false
-      console.log("reset", i)
     } else {
       i++
     }
@@ -89,30 +85,24 @@ export function minBricks2(structure) {
   addBricks = false
   i = 0
   while ((addBricks === false && i === structure.length - 2) || i < structure.length - 1) {
-    console.log(structure[i], structure[i + 1], " :", i, " ", addBricks)
     const diff = structure[i + 1] - structure[i] - 1
     if (diff > 0) {
-      console.log("add bricks", diff)
       descBricks += diff
       structure[i] += diff
       addBricks = true
     } else if (diff < 0) {
-      console.log("add bricks", diff)
       descBricks += diff * -1
       structure[i + 1] += diff * -1
       addBricks = true
     }
 
-    console.log(structure)
     if (addBricks && i === structure.length - 2) {
       i = 0
       addBricks = false
-      console.log("reset", i)
     } else {
       i++
     }
   }
-  console.log(ascBricks, structureCopy, descBricks, structure)
   return ascBricks > descBricks ? descBricks : ascBricks
 }
 
@@ -145,20 +135,17 @@ export function minBricks(structure) {
   const getCost = (arr) => {
     // Normalize: What would the starting brick be if this element was the anchor?
     const normalized = arr.map((val, i) => val - i)
-    console.log("normalized", normalized)
 
     // We must pick the maximum normalized value to ensure we only ADD bricks
     const startValue = Math.max(...normalized)
-    console.log("startValue", startValue)
 
     // Sum the differences: (startValue + index) - originalValue
-    console.log(arr)
     return arr.reduce((sum, val, i) => sum + (startValue + i - val), 0)
   }
 
   const ascCost = getCost(structure)
   const descCost = getCost([...structure].reverse())
-  console.log(ascCost, descCost)
+
   return Math.min(ascCost, descCost)
 }
 
@@ -205,7 +192,6 @@ export function maxbatteryCharges(t, capacity, recharges) {
   let batteryCount = 0
   while (t > 0) {
     const rechargeIndex = currRecharges.map((r, i) => (r === recharges[i] ? i : -1)).filter((i) => i !== -1)[0]
-    console.log("rechargeIndex", rechargeIndex)
     if (rechargeIndex === undefined) break
 
     t = t - capacity[rechargeIndex]
@@ -222,7 +208,6 @@ export function maxbatteryCharges(t, capacity, recharges) {
         return r + capacity[rechargeIndex]
       }
     })
-    console.log("curr_recharges", currRecharges)
   }
   if (t > 0) return -1
   return batteryCount
@@ -250,7 +235,6 @@ export function decodePassword(password, keys) {
   let countDecode = 0
   for (let i = 0; i < keys.length - 1; i++) {
     for (let j = i + 1; j < keys.length; j++) {
-      console.log(i, j)
       if (keys[i].toString() + keys[j].toString() === password.toString()) countDecode++
       if (keys[j].toString() + keys[i].toString() === password.toString()) countDecode++
     }
@@ -281,7 +265,6 @@ export function tetrisOriginal(n, m, pieces) {
   }
 
   const array = Array.from({ length: n }, () => Array(m).fill(0))
-  console.log(array)
 
   function canPlacePiece(piece, x, y) {
     for (let i = 0; i < piece.length; i++) {
@@ -305,26 +288,21 @@ export function tetrisOriginal(n, m, pieces) {
   }
 
   pieces.forEach((piece, ix) => {
-    console.log(piece, ix)
     const figure = shapes[piece]
-    console.log(figure)
 
     let placed = false
 
     for (let i = 0; i <= n - figure.length + 1; i++) {
       for (let j = 0; j <= m - figure[0].length + 1; j++) {
-        console.log("eval", i, j, placed, canPlacePiece(figure, i, j))
         if (canPlacePiece(figure, i, j) && !placed) {
-          console.log("placePiece", i, j, ix + 1)
           placePiece(figure, i, j, ix + 1)
           placed = true
-          const arrayCopy = [...array]
-          console.log(arrayCopy)
+          // const arrayCopy = [...array]
         }
       }
     }
   })
-  console.log(array)
+
   return array
 }
 

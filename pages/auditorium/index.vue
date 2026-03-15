@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details
+          placeholder="Filtro"></v-text-field>
       </v-col>
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mr-1" @click="newAuditorium()">
@@ -15,11 +16,14 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <AuditoriumTable :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium" @delete="beforeDeleteAuditorium" @layout="goToLayout" />
+        <AuditoriumTable :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium"
+          @delete="beforeDeleteAuditorium" @layout="goToLayout" />
       </v-col>
     </v-row>
-    <AuditoriumDialog v-if="auditoriumDialog" :auditorium="auditorium" :orgs="userOrgs" @close="closeDialog" @save="saveAuditorium" />
-    <DialogDelete v-if="auditoriumDialogDelete" :dialog="dialogDelete" @ok="deleteAuditorium" @close="auditoriumDialogDelete = false"></DialogDelete>
+    <AuditoriumDialog v-if="auditoriumDialog" :auditorium="auditorium" :orgs="userOrgs" @close="closeDialog"
+      @save="saveAuditorium" />
+    <DialogDelete v-if="auditoriumDialogDelete" :dialog="dialogDelete" @ok="deleteAuditorium"
+      @close="auditoriumDialogDelete = false"></DialogDelete>
   </v-container>
 </template>
 
@@ -37,8 +41,8 @@ export default {
     try {
       const response = await app.$repository.Auditorium?.index?.(options)
       return { response, options }
-    } catch (error) {
-      console.error("Error loading auditoriums:", error)
+    } catch(error) {
+
       return { response: { data: [] }, options }
     }
   },
@@ -74,12 +78,7 @@ export default {
         itemsPerPage: 10,
       }
 
-      try {
-        this.response = (await this.$repository.Auditorium?.index?.(options)) || { data: [] }
-      } catch (error) {
-        console.error("Error filtering auditoriums:", error)
-        this.response = { data: [] }
-      }
+      this.response = await this.$repository.Auditorium?.index?.(options)
     },
   },
 
@@ -94,17 +93,10 @@ export default {
 
   methods: {
     async getAuditoriums(options) {
-      if (options) {
+      if(options) {
         this.options = options
       }
-
-      try {
-        this.response = (await this.$repository.Auditorium?.index?.(this.options)) || { data: [] }
-      } catch (error) {
-        console.error("Error loading auditoriums:", error)
-        this.response = { data: [] }
-     
-      }
+      this.response = (await this.$repository.Auditorium?.index?.(this.options))
     },
 
     newAuditorium() {
@@ -130,10 +122,7 @@ export default {
       try {
         await this.$repository.Auditorium?.delete?.(item.id, item)
         await this.getAuditoriums()
-  
-      } catch (error) {
-        console.error("Error deleting auditorium:", error)
-      
+
       } finally {
         this.auditoriumDialogDelete = false
       }
@@ -146,19 +135,19 @@ export default {
       }
 
       try {
-        if (payload.id) {
+        if(payload.id) {
           await this.$repository.Auditorium?.update?.(payload.id, payload)
- 
+
         } else {
           await this.$repository.Auditorium?.create?.(payload)
- 
+
         }
 
         await this.getAuditoriums()
         this.auditoriumDialog = false
-      } catch (error) {
-        console.error("Error saving auditorium:", error)
-     
+      } catch(error) {
+        this.$handleError(error)
+
       }
     },
 

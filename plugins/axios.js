@@ -103,7 +103,6 @@ export default function ({ $axios, store, $config }) {
     }
     // Errores desconocidos
     else {
-      console.error("Error desconocido:", error)
       store.dispatch("notify", {
         error: "Ha ocurrido un error inesperado",
       })

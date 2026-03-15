@@ -190,8 +190,6 @@ export const actions = {
     try {
       const res = await this.$repository.Config.index({ settings })
       commit("SET_CONFIG", res)
-    } catch (error) {
-      console.error("Error loading config:", error)
-    }
+    } catch (error) {}
   },
 }

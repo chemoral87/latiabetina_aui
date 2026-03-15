@@ -12,14 +12,18 @@
     <!-- Grid de Temporizadores -->
     <v-row dense>
       <v-col v-for="timer in timers" :key="timer.id" cols="6" class="timer-col">
-        <v-card elevation="3" rounded="lg" class="pa-3 timer-card" :class="{ 'timer-active': timer.isRunning, 'timer-finished': timer.isFinished }" @click="toggleTimer(timer)">
+        <v-card elevation="3" rounded="lg" class="pa-3 timer-card"
+          :class="{ 'timer-active': timer.isRunning, 'timer-finished': timer.isFinished }" @click="toggleTimer(timer)">
           <!-- Círculo con progreso -->
           <div class="circle-wrapper">
             <svg class="progress-ring" :width="circleSize" :height="circleSize">
               <!-- Círculo de fondo -->
-              <circle class="progress-ring-bg" :stroke="timer.isFinished ? '#4CAF50' : '#e0e0e0'" :stroke-width="strokeWidth" fill="transparent" :r="radius" :cx="circleSize / 2" :cy="circleSize / 2" />
+              <circle class="progress-ring-bg" :stroke="timer.isFinished ? '#4CAF50' : '#e0e0e0'"
+                :stroke-width="strokeWidth" fill="transparent" :r="radius" :cx="circleSize / 2" :cy="circleSize / 2" />
               <!-- Círculo de progreso -->
-              <circle class="progress-ring-circle" :stroke="getTimerColor(timer)" :stroke-width="strokeWidth" fill="transparent" :r="radius" :cx="circleSize / 2" :cy="circleSize / 2" :style="getCircleStyle(timer)" />
+              <circle class="progress-ring-circle" :stroke="getTimerColor(timer)" :stroke-width="strokeWidth"
+                fill="transparent" :r="radius" :cx="circleSize / 2" :cy="circleSize / 2"
+                :style="getCircleStyle(timer)" />
             </svg>
 
             <!-- Contenido del círculo -->
@@ -111,19 +115,19 @@ export default {
   beforeDestroy() {
     // Limpiar todos los intervalos
     this.timers.forEach((timer) => {
-      if (timer.interval) {
+      if(timer.interval) {
         clearInterval(timer.interval)
       }
     })
   },
   methods: {
     toggleTimer(timer) {
-      if (timer.isFinished) {
+      if(timer.isFinished) {
         this.resetTimer(timer)
         return
       }
 
-      if (timer.isRunning) {
+      if(timer.isRunning) {
         this.pauseTimer(timer)
       } else {
         this.startTimer(timer)
@@ -134,7 +138,7 @@ export default {
       timer.isFinished = false
 
       timer.interval = setInterval(() => {
-        if (timer.currentTime > 0) {
+        if(timer.currentTime > 0) {
           timer.currentTime--
         } else {
           this.finishTimer(timer)
@@ -143,7 +147,7 @@ export default {
     },
     pauseTimer(timer) {
       timer.isRunning = false
-      if (timer.interval) {
+      if(timer.interval) {
         clearInterval(timer.interval)
         timer.interval = null
       }
@@ -151,7 +155,7 @@ export default {
     finishTimer(timer) {
       timer.isRunning = false
       timer.isFinished = true
-      if (timer.interval) {
+      if(timer.interval) {
         clearInterval(timer.interval)
         timer.interval = null
       }
@@ -161,7 +165,7 @@ export default {
 
       // Auto-reset después de 2 segundos
       setTimeout(() => {
-        if (timer.isFinished) {
+        if(timer.isFinished) {
           this.resetTimer(timer)
         }
       }, 2000)
@@ -170,7 +174,7 @@ export default {
       timer.currentTime = timer.totalTime
       timer.isRunning = false
       timer.isFinished = false
-      if (timer.interval) {
+      if(timer.interval) {
         clearInterval(timer.interval)
         timer.interval = null
       }
@@ -188,14 +192,12 @@ export default {
       // En iOS es vital intentar reproducir inmediatamente tras el clic
       const playPromise = audio.play()
 
-      if (playPromise !== undefined) {
+      if(playPromise !== undefined) {
         playPromise
           .then(() => {
             // Reproducción exitosa
           })
-          .catch((error) => {
-            console.error("Error al reproducir audio en iOS:", error)
-          })
+
       }
     },
     formatTime(seconds) {
@@ -214,22 +216,22 @@ export default {
       }
     },
     getTimerColor(timer) {
-      if (timer.isFinished) return "#4CAF50"
-      if (timer.isRunning) return "#2196F3"
+      if(timer.isFinished) return "#4CAF50"
+      if(timer.isRunning) return "#2196F3"
 
       const progress = timer.currentTime / timer.totalTime
-      if (progress <= 0.25) return "#F44336"
-      if (progress <= 0.5) return "#FF9800"
+      if(progress <= 0.25) return "#F44336"
+      if(progress <= 0.5) return "#FF9800"
       return "#9E9E9E"
     },
     getIconColor(timer) {
-      if (timer.isFinished) return "success"
-      if (timer.isRunning) return "primary"
+      if(timer.isFinished) return "success"
+      if(timer.isRunning) return "primary"
       return "grey"
     },
     getTimerIcon(timer) {
-      if (timer.isFinished) return "mdi-check-circle"
-      if (timer.isRunning) return "mdi-pause-circle"
+      if(timer.isFinished) return "mdi-check-circle"
+      if(timer.isRunning) return "mdi-pause-circle"
       return "mdi-play-circle"
     },
   },

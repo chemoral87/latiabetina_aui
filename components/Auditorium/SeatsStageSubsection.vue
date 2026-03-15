@@ -1,19 +1,18 @@
 <template>
   <v-group :config="{ x: 0, y: 0 }">
-    <v-rect
-      :config="{
-        x: 1,
-        y: 3,
-        width: subsectionWidth + 18,
-        height: subsectionHeight + 31,
-        fill: 'black',
-        stroke: 'red',
-        strokeWidth: 1,
-      }"
-    />
+    <v-rect :config="{
+      x: 1,
+      y: 3,
+      width: subsectionWidth + 18,
+      height: subsectionHeight + 31,
+      fill: 'black',
+      stroke: 'red',
+      strokeWidth: 1,
+    }" />
 
     <!-- Row labels -->
-    <v-text v-for="rowIdx in (subsection.s || subsection.seats || []).length" :key="`row-label-${rowIdx}`" :config="getRowLabelConfig(rowIdx - 1)" />
+    <v-text v-for="rowIdx in (subsection.s || subsection.seats || []).length" :key="`row-label-${rowIdx}`"
+      :config="getRowLabelConfig(rowIdx - 1)" />
 
     <!-- Column labels -->
     <v-text v-for="colIdx in maxColumns" :key="`col-label-${colIdx}`" :config="getColLabelConfig(colIdx - 1)" />
@@ -22,37 +21,36 @@
     <v-text :config="subsectionTitleConfig" />
 
     <!-- Stats: Count -->
-    <v-text
-      :config="{
-        x: 2,
-        y: -7,
-        text: `${stats.withStatus}/${stats.total}`,
-        fontSize: 10,
-        fill: 'white',
-        fontStyle: 'bold',
-        fontFamily: 'Arial',
-      }"
-    />
+    <v-text :config="{
+      x: 2,
+      y: -7,
+      text: `${stats.withStatus}/${stats.total}`,
+      fontSize: 10,
+      fill: 'white',
+      fontStyle: 'bold',
+      fontFamily: 'Arial',
+    }" />
 
     <!-- Stats: Percentage -->
-    <v-text
-      :config="{
-        x: 36,
-        y: -7,
-        text: `${stats.percent}%`,
-        fontSize: 10,
-        fill: percentageColor,
-        fontStyle: 'bold',
-        fontFamily: 'Arial',
-      }"
-    />
+    <v-text :config="{
+      x: 36,
+      y: -7,
+      text: `${stats.percent}%`,
+      fontSize: 10,
+      fill: percentageColor,
+      fontStyle: 'bold',
+      fontFamily: 'Arial',
+    }" />
 
     <!-- Seats -->
 
     <v-group v-for="seat in seats" :key="seat.id" :config="{ x: seat.x, y: seat.y }">
-      <v-circle v-if="isIOS" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
-      <v-circle v-else-if="isAndroid" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @tap="handleSeatClick(seat, $event)" />
-      <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })" @click="handleSeatClick(seat, $event)" />
+      <v-circle v-if="isIOS" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })"
+        @tap="handleSeatClick(seat, $event)" />
+      <v-circle v-else-if="isAndroid" :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })"
+        @tap="handleSeatClick(seat, $event)" />
+      <v-circle v-else :config="Object.assign({}, seat.config, { x: 0, y: 0, listening: true })"
+        @click="handleSeatClick(seat, $event)" />
       <v-path v-if="seat.iconPath" :config="seat.iconPathConfig" />
       <!-- Loading spinner – comet tail arcs -->
       <template v-if="seat.isLoading">
@@ -90,20 +88,20 @@ export default {
 
     subsectionWidth() {
       const seatsSource = this.subsection.s || this.subsection.seats
-      if (!seatsSource?.length) return 0
+      if(!seatsSource?.length) return 0
       const maxCols = Math.max(...seatsSource.map((row) => row.length))
       return maxCols * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     subsectionHeight() {
       const seatsSource = this.subsection.s || this.subsection.seats
-      if (!seatsSource?.length) return 40
+      if(!seatsSource?.length) return 40
       return seatsSource.length * this.seatSpacing - DEFAULT_SETTINGS.SEATS_DISTANCE
     },
 
     maxColumns() {
       const seatsSource = this.subsection.s || this.subsection.seats
-      if (!this.subsection || !Array.isArray(seatsSource) || seatsSource.length === 0) return 0
+      if(!this.subsection || !Array.isArray(seatsSource) || seatsSource.length === 0) return 0
       return Math.max(...seatsSource.map((row) => (row ? row.length : 0)))
     },
 
@@ -122,7 +120,7 @@ export default {
 
     stats() {
       const seatsSource = this.subsection.s || this.subsection.seats
-      if (!this.subsection || !seatsSource) {
+      if(!this.subsection || !seatsSource) {
         return { withStatus: 0, total: 0, percent: 0 }
       }
 
@@ -131,9 +129,9 @@ export default {
 
       seatsSource.forEach((row) => {
         row.forEach((seat) => {
-          if (seat) {
+          if(seat) {
             total++
-            if (seat.status && seat.status !== null) {
+            if(seat.status && seat.status !== null) {
               withStatus++
             }
           }
@@ -152,10 +150,10 @@ export default {
     seats() {
       const allSeats = []
       const seatsSource = this.subsection.s || this.subsection.seats
-      if (seatsSource) {
+      if(seatsSource) {
         seatsSource.forEach((row, rowIdx) => {
           row.forEach((seat, colIdx) => {
-            if (seat && seat.state !== "invisible") {
+            if(seat && seat.state !== "invisible") {
               const seatData = {
                 ...seat,
                 id: seat.i || seat.id,
@@ -169,25 +167,25 @@ export default {
 
               // Add icon path if seat has status
               const status = seat.status ? String(seat.status).toLowerCase() : null
-              if (status && STATUS_ICONS[status]) {
+              if(status && STATUS_ICONS[status]) {
                 seatData.iconPath = STATUS_ICONS[status]
                 seatData.iconPathConfig = this.getIconPathConfig(seat)
               }
 
               // Loading comet-tail spinner overlay
               const seatId = seat.i || seat.id
-              if (this.loadingSeats.includes(seatId)) {
+              if(this.loadingSeats.includes(seatId)) {
                 seatData.isLoading = true
                 const radius = DEFAULT_SETTINGS.SEAT_SIZE / 2
                 // Comet segments – each one tapers thinner AND fades toward the tail.
                 // inner/outer shrink symmetrically so the arc ring gets narrower.
                 const SEGMENTS = [
-                  { sweep: 30,  opacity: 1.00, offset:   0,  inner: radius - 1.5, outer: radius + 1.5 }, // bright head
-                  { sweep: 40,  opacity: 0.89, offset: -30,  inner: radius - 1.3, outer: radius + 1.5 }, // tail 1
-                  { sweep: 50,  opacity: 0.78, offset: -65,  inner: radius - 1.1, outer: radius + 1.5 }, // tail 2
-                  { sweep: 55,  opacity: 0.67, offset: -108, inner: radius - 0.9, outer: radius + 1.5 }, // tail 3
-                  { sweep: 55,  opacity: 0.56, offset: -155, inner: radius - 0.6, outer: radius + 1.5 }, // tail 4
-                  { sweep: 50,  opacity: 0.45, offset: -200, inner: radius - 0.3, outer: radius + 1.5 }, // ghost tail
+                  { sweep: 30, opacity: 1.00, offset: 0, inner: radius - 1.5, outer: radius + 1.5 }, // bright head
+                  { sweep: 40, opacity: 0.89, offset: -30, inner: radius - 1.3, outer: radius + 1.5 }, // tail 1
+                  { sweep: 50, opacity: 0.78, offset: -65, inner: radius - 1.1, outer: radius + 1.5 }, // tail 2
+                  { sweep: 55, opacity: 0.67, offset: -108, inner: radius - 0.9, outer: radius + 1.5 }, // tail 3
+                  { sweep: 55, opacity: 0.56, offset: -155, inner: radius - 0.6, outer: radius + 1.5 }, // tail 4
+                  { sweep: 50, opacity: 0.45, offset: -200, inner: radius - 0.3, outer: radius + 1.5 }, // ghost tail
                 ]
                 seatData.spinnerArcs = SEGMENTS.map((seg) => ({
                   x: 0,
@@ -212,11 +210,11 @@ export default {
   },
   mounted() {
     // Detect iOS and Android using UAParser plugin
-    if (this.$uaParser) {
+    if(this.$uaParser) {
       this.isIOS = this.$uaParser.isIOS()
       this.isAndroid = this.$uaParser.isAndroid()
-      const deviceInfo = this.$uaParser.getDeviceInfo()
-      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, "isAndroid:", this.isAndroid)
+      // const deviceInfo = this.$uaParser.getDeviceInfo()
+
     }
     // Spinner rotation timer
     this.spinInterval = setInterval(() => {
@@ -224,7 +222,7 @@ export default {
     }, 50)
   },
   beforeDestroy() {
-    if (this.spinInterval) clearInterval(this.spinInterval)
+    if(this.spinInterval) clearInterval(this.spinInterval)
   },
   methods: {
     getRowLabelConfig(rowIdx) {
@@ -273,28 +271,28 @@ export default {
       let stroke = isSelected ? COLORS.SEAT_SELECTED : "#757575"
       let strokeWidth = 0.3
 
-      if (category) {
+      if(category) {
         try {
           const def = (this.categories || []).find((c) => String(c.label).toLowerCase() === category || String(c.value).toLowerCase() === category)
-          if (def && typeof def.value !== "undefined" && def.value !== null && def.fill) {
+          if(def && typeof def.value !== "undefined" && def.value !== null && def.fill) {
             stroke = def.fill
             strokeWidth = 2
-          } else if (CLASS_STROKE_MAP[category]) {
+          } else if(CLASS_STROKE_MAP[category]) {
             stroke = CLASS_STROKE_MAP[category]
             strokeWidth = 0
           }
-        } catch (err) {}
+        } catch(err) { }
       }
 
       let fill = isSelected ? COLORS.SEAT_SELECTED : isReserved ? COLORS.SEAT_RESERVED : COLORS.SEAT_FREE
-      if (isInSelectedArray) {
+      if(isInSelectedArray) {
         let baseColor = "#ffeb3b"
-        if (status) {
+        if(status) {
           baseColor = statusColors[status] || "#ffeb3b"
         }
         fill = this.blinkState ? baseColor : "#808080"
         strokeWidth = 0
-      } else if (status) {
+      } else if(status) {
         fill = statusColors[status] || fill
       }
 
@@ -315,12 +313,12 @@ export default {
       let iconColor = "#FFFFFF" // white by default
 
       // For light backgrounds (yellow), use dark icon
-      if (!status) {
+      if(!status) {
         iconColor = "#000000"
       }
 
       // If blinking, adjust color
-      if (isInSelectedArray && !this.blinkState) {
+      if(isInSelectedArray && !this.blinkState) {
         iconColor = "#FFFFFF" // white on red background
       }
 
@@ -364,6 +362,7 @@ export default {
 /* Para el contenedor de Konva */
 canvas {
   display: block;
-  touch-action: none; /* IMPORTANTE: Previene gestos del navegador */
+  touch-action: none;
+  /* IMPORTANTE: Previene gestos del navegador */
 }
 </style>

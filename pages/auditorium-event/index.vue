@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterAuditoriumEvent" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterAuditoriumEvent" append-icon="mdi-magnify" clearable hide-details
+          placeholder="Filtro"></v-text-field>
       </v-col>
       <v-col cols="12" md="auto">
         <v-btn color="primary" class="mr-1" @click="newAuditoriumEvent()">
@@ -15,20 +16,16 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <AuditoriumEventTable
-          :response="response"
-          :options="options"
-          @sorting="getAuditoriumEvents"
-          @download="downloadAuditoriumEvent"
-          @edit="editAuditoriumEvent"
-          @mark="markAuditoriumEvent"
-          @delete="beforeDeleteAuditoriumEvent"
-        />
+        <AuditoriumEventTable :response="response" :options="options" @sorting="getAuditoriumEvents"
+          @download="downloadAuditoriumEvent" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent"
+          @delete="beforeDeleteAuditoriumEvent" />
       </v-col>
     </v-row>
     <!-- Diálogos para crear/editar y eliminar eventos de auditorio -->
-    <AuditoriumEventDialog v-model="auditoriumEventDialog" :auditorium-event="auditoriumEvent" @close="closeDialog" @save="saveAuditoriumEvent" />
-    <DialogDelete v-if="auditoriumEventDialogDelete" :dialog="dialogDelete" @ok="deleteAuditoriumEvent" @close="auditoriumEventDialogDelete = false"></DialogDelete>
+    <AuditoriumEventDialog v-model="auditoriumEventDialog" :auditorium-event="auditoriumEvent" @close="closeDialog"
+      @save="saveAuditoriumEvent" />
+    <DialogDelete v-if="auditoriumEventDialogDelete" :dialog="dialogDelete" @ok="deleteAuditoriumEvent"
+      @close="auditoriumEventDialogDelete = false"></DialogDelete>
   </v-container>
 </template>
 
@@ -49,7 +46,7 @@ export default {
       const response = await app.$repository.AuditoriumEvent?.index?.(options)
 
       return { response, options }
-    } catch (error) {
+    } catch(error) {
       // console.error("Error loading auditorium events:", error)
       return { response: { data: [], total: 0 }, options }
     }
@@ -97,7 +94,7 @@ export default {
 
   methods: {
     async getAuditoriumEvents(options) {
-      if (options) {
+      if(options) {
         this.options = options
       }
       const op = Object.assign({}, this.options)
@@ -118,13 +115,13 @@ export default {
       this.loading = true
       try {
         const response = await this.$repository.AuditoriumEvent.show(item.id)
-        if (response && response.seats) {
+        if(response && response.seats) {
           const headerRow = item.auditorium_name + " - " + item.event_date
           const rows = [[headerRow], ["Status", "Cantidad"]]
 
           Object.keys(STATUS_CONFIG).forEach((key) => {
             const count = response.seats[key] ? response.seats[key].length : 0
-            if (count > 0) {
+            if(count > 0) {
               rows.push([STATUS_CONFIG[key].label, count])
             }
           })
@@ -137,7 +134,7 @@ export default {
           a.href = url
 
           let dateStr = ""
-          if (item.event_date) {
+          if(item.event_date) {
             dateStr = item.event_date.substring(0, 10).replace(/-/g, "")
             dateStr = `_${dateStr}`
           }
@@ -147,8 +144,8 @@ export default {
           a.click()
           document.body.removeChild(a)
         }
-      } catch (error) {
-        console.error("Error downloading excel:", error)
+      } catch(error) {
+
       } finally {
         this.loading = false
       }
@@ -172,8 +169,9 @@ export default {
         await this.$repository.AuditoriumEvent.delete(item.id)
 
         await this.getAuditoriumEvents()
-      } catch (error) {
-        console.error("Error deleting auditorium event:", error)
+      } catch(error) {
+        this.$notify({ type: 'error', message: 'Error deleting auditorium event' })
+
       } finally {
         this.auditoriumEventDialogDelete = false
       }
@@ -181,8 +179,8 @@ export default {
 
     async saveAuditoriumEvent(item) {
       try {
-        if (this.$repository?.AuditoriumEvent) {
-          if (item.id) {
+        if(this.$repository?.AuditoriumEvent) {
+          if(item.id) {
             await this.$repository.AuditoriumEvent.update(item.id, item)
           } else {
             await this.$repository.AuditoriumEvent.create(item)
@@ -191,8 +189,9 @@ export default {
 
         await this.getAuditoriumEvents()
         this.auditoriumEventDialog = false
-      } catch (error) {
-        console.error("Error saving auditorium event:", error)
+      } catch(error) {
+        this.$notify({ type: 'error', message: 'Error saving auditorium event' })
+
       }
     },
 

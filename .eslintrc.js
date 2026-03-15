@@ -3,6 +3,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
+    jest: true,
   },
   parserOptions: {
     parser: "@babel/eslint-parser",
@@ -19,4 +20,12 @@ module.exports = {
     "vue/no-mutating-props": "off",
     "vue/require-prop-types": "off",
   },
+  overrides: [
+    {
+      files: ['verify-config.js'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
 }

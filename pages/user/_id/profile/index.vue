@@ -62,7 +62,7 @@
       </v-col>
     </v-row>
 
-    <ProfileDialog v-if="profileDialog" :user_id="user_id" @close="closeProfileDialog" @save="saveProfile" />
+    <ProfileDialog v-if="profileDialog" :user-id="user_id" @close="closeProfileDialog" @save="saveProfile" />
     <DialogDelete
       v-if="dialogDelete"
       :dialog="dialogDeleteProp"

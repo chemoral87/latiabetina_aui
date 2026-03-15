@@ -3,8 +3,7 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field
-v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
           placeholder="Buscar evento..." dense :disabled="loading" />
       </v-col>
 
@@ -22,20 +21,17 @@ v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
 
       <!-- Tabla de eventos -->
       <v-col cols="12">
-        <ChurchEventTable
-:options="options" :response="response" :loading="loading" @sorting="handleSorting"
+        <ChurchEventTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
           @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
       </v-col>
     </v-row>
 
     <!-- Diálogo para crear/editar evento -->
-    <ChurchEventDialog
-v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog"
+    <ChurchEventDialog v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog"
       @save="saveChurchEvent" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete
-v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
+    <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
       @close="churchEventDialogDelete = false" />
   </v-container>
 </template>
@@ -56,21 +52,14 @@ export default {
       itemsPerPage: 10,
     }
 
-    try {
-      const response = await app.$repository.ChurchEvent.index(options)
-      // Normalizar la respuesta si es un array
-      //   if (Array.isArray(response)) {
-      //     response = { data: response, total: response.length }
-      //   }
-      return { response, options }
-    } catch(e) {
-      console.error("Error loading church events:", e)
-      error({ statusCode: e.response?.status || 500, message: "Error al cargar eventos de iglesia" })
-      return {
-        response: { data: [], total: 0 },
-        options,
-      }
-    }
+
+    const response = await app.$repository.ChurchEvent.index(options)
+    // Normalizar la respuesta si es un array
+    //   if (Array.isArray(response)) {
+    //     response = { data: response, total: response.length }
+    //   }
+    return { response, options }
+
   },
 
   data() {
@@ -163,11 +152,7 @@ export default {
         // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions
       } catch(error) {
-        console.error("Error loading church events:", error)
-        this.$notify({
-          type: "error",
-          text: error.response?.data?.message || "Error al cargar eventos de iglesia",
-        })
+        this.$handleError(error)
       } finally {
         this.loading = false
       }
@@ -234,11 +219,7 @@ export default {
 
         this.churchEventDialogDelete = false
       } catch(error) {
-        console.error("Error deleting church event:", error)
-        this.$notify({
-          type: "error",
-          text: error.response?.data?.message || "Error al eliminar el evento",
-        })
+        this.$handleError(error)
       } finally {
         this.deleting = false
       }
@@ -268,11 +249,7 @@ export default {
         this.filterChurchEvent = item.name
         this.churchEventDialog = false
       } catch(error) {
-        console.error("Error saving church event:", error)
-        this.$notify({
-          type: "error",
-          text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} el evento`,
-        })
+        this.$handleError(error)
       } finally {
         this.saving = false
       }

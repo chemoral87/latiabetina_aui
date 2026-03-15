@@ -3,8 +3,7 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
-        <v-text-field
-v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
+        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
           dense :disabled="loading" />
       </v-col>
 
@@ -22,8 +21,7 @@ v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholde
 
       <!-- Tabla de roles -->
       <v-col cols="12">
-        <RoleTable
-:options="options" :response="response" :loading="loading" @sorting="handleSorting"
+        <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
           @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
@@ -32,8 +30,7 @@ v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholde
     <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
 
     <!-- Diálogo de confirmación de eliminación -->
-    <DialogDelete
-v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
+    <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
       @close="roleDialogDelete = false" />
   </v-container>
 </template>
@@ -58,7 +55,7 @@ export default {
       const response = await app.$repository.Role.index(options)
       return { response, options }
     } catch(e) {
-      console.error("Error loading roles:", e)
+
       error({ statusCode: e.response?.status || 500, message: "Error al cargar roles" })
       return {
         response: { data: [], total: 0 },
@@ -150,11 +147,7 @@ export default {
         // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions
       } catch(error) {
-        console.error("Error loading roles:", error)
-        this.$notify({
-          type: "error",
-          text: error.response?.data?.message || "Error al cargar roles",
-        })
+        this.$handleError(error)
       } finally {
         this.loading = false
       }
@@ -228,7 +221,7 @@ export default {
 
         this.roleDialogDelete = false
       } catch(error) {
-        console.error("Error deleting role:", error)
+
         this.$notify({
           type: "error",
           text: error.response?.data?.message || "Error al eliminar el rol",
@@ -262,7 +255,7 @@ export default {
         this.filterRole = item.name
         this.roleDialog = false
       } catch(error) {
-        console.error("Error saving role:", error)
+
         this.$notify({
           type: "error",
           text: error.response?.data?.message || `Error al ${item.id ? "actualizar" : "crear"} el rol`,

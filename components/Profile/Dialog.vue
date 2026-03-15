@@ -36,7 +36,7 @@ v-model="item.org_id" :items="organizations" item-value="id" item-text="name"
 <script>
 export default {
   name: "ProfileDialog",
-  props: ["value", "user_id"],
+  props: ["value", "userId"],
   data() {
     return {
       item: {},
@@ -92,7 +92,7 @@ export default {
       }
       const op = Object.assign({ queryText: this.filterUser }, this.options)
 
-      op.user_id = this.user_id
+      op.user_id = this.userId
 
       this.$repository.Organization.filter(op).then((res) => {
         this.organizations = res

@@ -18,7 +18,7 @@
         </div>
 
         <v-simple-table v-else-if="seatTransitions.length" dense>
-          <template>
+          <template #default>
             <thead>
               <tr>
                 <th colspan="2" style="padding: 6px 16px 4px">

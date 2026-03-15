@@ -28,7 +28,7 @@ export default {
           this.$auth.logout()
         }
       } catch(e) {
-        console.error("Error al cerrar sesión:", e)
+
         // En caso de error, intentamos limpiar el estado local
         this.$auth.reset()
         this.$router.push("/login")

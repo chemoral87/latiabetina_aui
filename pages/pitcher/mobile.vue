@@ -20,7 +20,8 @@
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn color="warning" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small @click="calibrateNoise">
+        <v-btn color="warning" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small
+          @click="calibrateNoise">
           <v-icon left>mdi-tune</v-icon>
           <span>Calibrar Ruido</span>
         </v-btn>
@@ -34,20 +35,24 @@
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-select v-model="selectedRootNote" :items="currentNoteOptions" :label="latinNotation ? 'Escala Mayor' : 'Mayor Scale'" dense outlined hide-details />
+        <v-select v-model="selectedRootNote" :items="currentNoteOptions"
+          :label="latinNotation ? 'Escala Mayor' : 'Mayor Scale'" dense outlined hide-details />
       </v-col>
       <v-col cols="6">
-        <v-select v-model="selectedProcessor" :items="processorOptions" label="Audio Processor" dense outlined hide-details @change="changeProcessor" />
+        <v-select v-model="selectedProcessor" :items="processorOptions" label="Audio Processor" dense outlined
+          hide-details @change="changeProcessor" />
       </v-col>
     </v-row>
 
     <v-row dense>
       <v-col cols="8" md="5" class="pr-1 mx-0">
-        <PitcherHistogram ref="histogramComponent" :history="history" :freq-display="freqDisplay" :last-freq="lastFreq" :cents-deviation="centsDeviation" />
+        <PitcherHistogram ref="histogramComponent" :history="history" :freq-display="freqDisplay" :last-freq="lastFreq"
+          :cents-deviation="centsDeviation" />
       </v-col>
 
       <v-col cols="4" md="2" class="px-0 mx-0">
-        <PitcherStaffNotation v-if="lastValidFreq" :frequency="lastValidFreq" :cents-deviation="centsDeviation" :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
+        <PitcherStaffNotation v-if="lastValidFreq" :frequency="lastValidFreq" :cents-deviation="centsDeviation"
+          :zoom="2" :canvas-height="600" :canvas-width="300" :show-cents-deviation="true" />
       </v-col>
       <v-col cols="12">
         <PitcherUkeleleNotation v-if="lastValidFreq" :frequency="lastValidFreq" />
@@ -126,7 +131,7 @@ export default {
     },
 
     async changeProcessor() {
-      if (this.isMicActive) {
+      if(this.isMicActive) {
         await this.cleanup()
       }
       await this.loadProcessor(this.selectedProcessor)
@@ -138,7 +143,7 @@ export default {
       this.lastValidFreq = null
       this.centsDeviation = null
       // Clear histogram canvas
-      if (this.$refs.histogramComponent) {
+      if(this.$refs.histogramComponent) {
         this.$refs.histogramComponent.resetCanvas()
       }
       // Reset audio processor
@@ -146,11 +151,11 @@ export default {
     },
 
     async calibrateNoise() {
-      if (!this.isMicActive) {
+      if(!this.isMicActive) {
         return
       }
 
-      console.log("Iniciando calibración de ruido...")
+
       this.noiseCalibrating = true
 
       try {
@@ -158,8 +163,8 @@ export default {
         // Update sensitivity in store
         const newSensitivity = this.audioProcessor.getSensitivity()
         this.$store.commit("pitcher_store/SET_SENSITIVITY", newSensitivity)
-      } catch (error) {
-        console.error("Error during noise calibration:", error)
+      } catch(error) {
+
       } finally {
         this.noiseCalibrating = false
       }
@@ -177,7 +182,7 @@ export default {
     },
 
     async toggleMic() {
-      if (!this.isMicActive) {
+      if(!this.isMicActive) {
         try {
           // Use audio processor to initialize microphone
           await this.audioProcessor.initializeMicrophone()
@@ -191,7 +196,7 @@ export default {
 
           // Start the update loop
           this.update()
-        } catch (e) {
+        } catch(e) {
           alert("Error accediendo al micrófono: " + e.message)
           this.isMicActive = false
         }
@@ -201,17 +206,17 @@ export default {
     },
 
     update() {
-      if (!this.isMicActive) return
+      if(!this.isMicActive) return
 
       const result = this.audioProcessor.analyzeFrequency()
       this.dBDisplay = Math.max(0, result.dB).toFixed(1)
 
-      if (result.freq !== -1) {
+      if(result.freq !== -1) {
         // Intentar estabilizar el ataque
         const stableFreq = this.audioProcessor.smoothFrequency(result.freq)
 
         // Solo si la nota es estable la procesamos y dibujamos
-        if (stableFreq !== -1) {
+        if(stableFreq !== -1) {
           const exactFreq = parseFloat(stableFreq.toFixed(2))
           const midi = this.freqToMidi(exactFreq)
           const note = this.getNoteNameNum(midi)
@@ -226,7 +231,7 @@ export default {
           this.lastValidFreq = exactFreq // Guardar la última frecuencia válida
 
           this.history.unshift({ freq: stableFreq, midi })
-          if (this.history.length > this.maxHistory) this.history.pop()
+          if(this.history.length > this.maxHistory) this.history.pop()
         } else {
           // Nota en fase de estabilización: no actualizamos displays de frecuencia
           this.freqDisplay = "--"
@@ -238,7 +243,7 @@ export default {
         this.lastFreq = null
       }
 
-      if (this.isMicActive) requestAnimationFrame(this.update)
+      if(this.isMicActive) requestAnimationFrame(this.update)
     },
 
     // Helper methods for frequency conversion
@@ -247,7 +252,7 @@ export default {
     },
 
     freqToMidi(freq) {
-      if (freq <= 0) return 0
+      if(freq <= 0) return 0
       return 69 + 12 * Math.log2(freq / A4_FREQ)
     },
 

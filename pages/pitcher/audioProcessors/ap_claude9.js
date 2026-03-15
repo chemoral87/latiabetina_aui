@@ -39,38 +39,33 @@ export class AudioProcessor {
   }
 
   async initializeMicrophone() {
-    try {
-      this.mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      })
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      this.sampleRate = this.audioContext.sampleRate
+    this.mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+    })
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    this.sampleRate = this.audioContext.sampleRate
 
-      this.analyser = this.audioContext.createAnalyser()
-      this.analyser.fftSize = 4096
-      this.buffer = new Float32Array(this.analyser.fftSize)
+    this.analyser = this.audioContext.createAnalyser()
+    this.analyser.fftSize = 4096
+    this.buffer = new Float32Array(this.analyser.fftSize)
 
-      const source = this.audioContext.createMediaStreamSource(this.mediaStream)
+    const source = this.audioContext.createMediaStreamSource(this.mediaStream)
 
-      // Boost soft input so low-volume notes reach the analyser
-      const gainNode = this.audioContext.createGain()
-      gainNode.gain.value = 4
+    // Boost soft input so low-volume notes reach the analyser
+    const gainNode = this.audioContext.createGain()
+    gainNode.gain.value = 4
 
-      // Highpass to cut subsonic rumble; replaced the narrow 440 Hz bandpass
-      const filter = this.audioContext.createBiquadFilter()
-      filter.type = "highpass"
-      filter.frequency.value = 40
-      filter.Q.value = 0.7
+    // Highpass to cut subsonic rumble; replaced the narrow 440 Hz bandpass
+    const filter = this.audioContext.createBiquadFilter()
+    filter.type = "highpass"
+    filter.frequency.value = 40
+    filter.Q.value = 0.7
 
-      source.connect(gainNode)
-      gainNode.connect(filter)
-      filter.connect(this.analyser)
-      this.isMicActive = true
-      return true
-    } catch (error) {
-      console.error("Error mic:", error)
-      throw error
-    }
+    source.connect(gainNode)
+    gainNode.connect(filter)
+    filter.connect(this.analyser)
+    this.isMicActive = true
+    return true
   }
 
   analyzeFrequency() {
@@ -201,7 +196,6 @@ export class AudioProcessor {
 
           // Use 1.8x multiplier (was 2.5x) so soft notes survive post-calibration
           this.sensitivity = Math.max(0.002, avg * 1.8)
-          console.log(`Calibración completada. Sensibilidad: ${this.sensitivity.toFixed(4)}`)
           this.noiseCalibrating = false
           resolve()
         }

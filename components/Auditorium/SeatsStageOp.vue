@@ -25,8 +25,7 @@
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
-        <v-btn
-v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
+        <v-btn v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
           @click="openHistory">
           <v-icon left>mdi-history</v-icon>
           Hist
@@ -35,19 +34,16 @@ v-if="selectedSubsection" title="Historial de asientos" color="success" small cl
     </v-row>
 
     <div style="display: flex; gap: 2px">
-      <div
-id="subsectionPanel"
+      <div id="subsectionPanel"
         :style="{ backgroundColor: 'blueviolet', flex: 1, height: containerOuterHeight, overflow: 'hidden' }">
-        <v-stage
-ref="konvaStage" :config="adjustedStageConfig"
+        <v-stage ref="konvaStage" :config="adjustedStageConfig"
           :style="{ backgroundColor: selectedSubsection ? 'lightgray' : 'pink' }" @wheel="handleWheel"
           @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
           @dragstart="handleDragStart" @dragend="handleDragEnd">
           <v-layer :config="{ x: contentOffsetX, scaleX: zoomLevel, scaleY: zoomLevel }">
             <!-- Show only selected subsection if one is selected -->
             <template v-if="selectedSubsection">
-              <AuditoriumSeatsStageSubsection
-:subsection="selectedSubsection" :categories="categories"
+              <AuditoriumSeatsStageSubsection :subsection="selectedSubsection" :categories="categories"
                 :selected-seats-array="selectedSeatsArray" :blink-state="blinkState" :loading-seats="loadingSeats"
                 @seat-click="handleSeatClick" />
             </template>
@@ -60,20 +56,17 @@ ref="konvaStage" :config="adjustedStageConfig"
                 <v-text :config="getSectionTitleConfig(section)" />
 
                 <template v-if="!(section.l || section.isLabel)">
-                  <v-group
-v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-${subIdx}`"
+                  <v-group v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-${subIdx}`"
                     :config="getSubsectionPosition(section, subIdx)" @click="handleSubsectionClick(sub)"
                     @tap="handleSubsectionClick(sub)" @mouseenter="handleSeatHover" @mouseleave="handleSeatLeave">
                     <template v-if="sub.l || sub.isLabel">
-                      <AuditoriumSeatsStageSubsectionLabel
-:subsection="sub"
+                      <AuditoriumSeatsStageSubsectionLabel :subsection="sub"
                         :section-height="getSectionHeight(section)" />
                     </template>
 
                     <template v-else>
                       <!-- general  -->
-                      <AuditoriumSeatsStageSubsection
-:subsection="sub" :categories="categories"
+                      <AuditoriumSeatsStageSubsection :subsection="sub" :categories="categories"
                         :selected-seats-array="selectedSeatsArray" :blink-state="blinkState"
                         :loading-seats="loadingSeats" />
                     </template>
@@ -87,18 +80,14 @@ v-for="(sub, subIdx) in (section.ss || section.subsections)" :key="`sub-${sIdx}-
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <MyDragPanel
-v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
+    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
       left="calc(50% - 95px)">
-      <div
-class="stats-panel-body"
+      <div class="stats-panel-body"
         style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
         <!-- Loop through active status configs -->
-        <div
-v-for="(config, key) in activeStatusConfig" :key="key"
+        <div v-for="(config, key) in activeStatusConfig" :key="key"
           style="display: flex; flex-direction: column; align-items: center">
-          <v-btn
-class="mb-1" icon :title="config.label"
+          <v-btn class="mb-1" icon :title="config.label"
             :style="`background-color: ${config.color} !important; color: white`"
             @click="setEventSeat(key == 'e' ? null : key)">
             <v-icon>{{ getIconName(key) }}</v-icon>
@@ -109,8 +98,7 @@ class="mb-1" icon :title="config.label"
     </MyDragPanel>
 
     <!-- History Dialog -->
-    <AuditoriumSeatsHistory
-v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
+    <AuditoriumSeatsHistory v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
       :history-users="historyUsers" />
   </div>
 </template>
@@ -584,7 +572,7 @@ export default {
       const currentIndex = this.currentSubsectionIndex
       const nextIndex = (currentIndex + 1) % this.allSubsections.length // circular navigation
       this.selectedSubsection = this.allSubsections[nextIndex]
-      console.log("Next subsection:", this.selectedSubsection.name)
+
       // Apply current fitstate
       this.$nextTick(() => {
         setTimeout(() => {
@@ -598,7 +586,7 @@ export default {
       const currentIndex = this.currentSubsectionIndex
       const prevIndex = currentIndex === 0 ? this.allSubsections.length - 1 : currentIndex - 1 // circular navigation
       this.selectedSubsection = this.allSubsections[prevIndex]
-      console.log("Previous subsection:", this.selectedSubsection.name)
+
       // Apply current fitstate
       this.$nextTick(() => {
         setTimeout(() => {
@@ -611,13 +599,13 @@ export default {
     zoomIn() {
       const newZoom = Math.min(this.maxZoom, this.zoomLevel + this.zoomStep)
       this.zoomLevel = Math.round(newZoom * 10) / 10
-      console.log("Zoom in:", this.zoomLevel)
+
     },
 
     zoomOut() {
       const newZoom = Math.max(this.minZoom, this.zoomLevel - this.zoomStep)
       this.zoomLevel = Math.round(newZoom * 10) / 10
-      console.log("Zoom out:", this.zoomLevel)
+
     },
 
     applyCurrentFit() {
@@ -634,7 +622,7 @@ export default {
       this.fitstate = "width"
       // Calcular el zoom óptimo basado en el ancho disponible
       if(!this.sections || this.sections.length === 0) {
-        console.warn("No sections available for fit calculation")
+
         this.zoomLevel = 0.7
         return
       }
@@ -654,7 +642,7 @@ export default {
             // - Total width: 1 + subsectionWidth + 18 + small margin (5px) = subsectionWidth + 24
             const subsectionContentWidth = this.getSubsectionWidth(this.selectedSubsection)
             maxContentWidth = subsectionContentWidth + 20 // rect x + content + rect extra + margin
-            console.log("Subsection selected, width:", maxContentWidth)
+
           } else {
             // Si no hay subsección, calcular el ancho total considerando TODAS las secciones
             // Necesitamos el ancho máximo entre todas las secciones (ya que están una debajo de la otra)
@@ -683,7 +671,7 @@ export default {
             }
           })
         } catch(error) {
-          console.error("Error calculating fit:", error)
+
           this.zoomLevel = 0.7
         }
       }, 50) // Pequeño delay para asegurar que el DOM esté listo en mobile
@@ -726,8 +714,6 @@ export default {
             this.zoomLevel = 0.7 // Default más grande
           }
 
-          console.log("Fit to height zoom level:", this.zoomLevel)
-
           // Establecer modo de arrastre en ambos ejes (permite movimiento en X e Y)
           this.dragMode = null
 
@@ -740,7 +726,7 @@ export default {
             }
           })
         } catch(error) {
-          console.error("Error calculating fit:", error)
+
           this.zoomLevel = 0.7
         }
       }, 50) // Pequeño delay para asegurar que el DOM esté listo en mobile
@@ -772,7 +758,7 @@ export default {
       this.isIOS = this.$uaParser.isIOS()
       this.isAndroid = this.$uaParser.isAndroid()
       const deviceInfo = this.$uaParser.getDeviceInfo()
-      console.log("OS detected:", deviceInfo?.os.name, "isIOS:", this.isIOS, " SeatId:", seat.id)
+
 
       this.eventArrays.push("handleSeatClick " + deviceInfo?.os.name + " " + this.isIOS + "/" + this.isAndroid + " " + seat.id)
 
@@ -818,7 +804,7 @@ export default {
 
     setEventSeat(status) {
       if(this.selectedSeatsArray.length === 0) {
-        console.warn("No seats selected")
+
         return
       }
 
@@ -835,7 +821,7 @@ export default {
       this.selectedSeatsArray = this.selectedSeatsArray.filter((id) => seatIdsToSend.includes(id))
 
       if(seatIdsToSend.length === 0) {
-        console.info("All selected seats already have status:", status)
+
         this.selectedSeatsArray = []
         return
       }
@@ -1056,7 +1042,7 @@ export default {
         this.historyLog = response?.seatsLog || []
         this.historyUsers = response?.users || []
       } catch(e) {
-        console.error('Error fetching seat history:', e)
+
       } finally {
         this.historyLoading = false
       }

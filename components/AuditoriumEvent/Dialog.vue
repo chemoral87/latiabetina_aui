@@ -14,13 +14,17 @@
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <organization-select v-model="localEvent.org_id" label="Organización *" hide-one :permission="'auditorium-index'" :rules="organizationRules" :prevent-auto-select="!isEditing" outlined />
+                <organization-select v-model="localEvent.org_id" label="Organización *" hide-one
+                  :permission="'auditorium-index'" :rules="organizationRules" :prevent-auto-select="!isEditing"
+                  outlined />
               </v-col>
               <!-- Fecha del Evento -->
               <v-col cols="12" md="6">
-                <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
+                <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition"
+                  offset-y min-width="auto">
                   <template #activator="{ on, attrs }">
-                    <v-text-field v-model="formattedDate" label="Fecha del Evento *" prepend-icon="mdi-calendar" readonly required :rules="dateRules" v-bind="attrs" v-on="on" />
+                    <v-text-field v-model="formattedDate" label="Fecha del Evento *" prepend-icon="mdi-calendar"
+                      readonly required :rules="dateRules" v-bind="attrs" v-on="on" />
                   </template>
                   <v-date-picker v-model="localEvent.event_date" @input="dateMenu = false" />
                 </v-menu>
@@ -28,7 +32,8 @@
 
               <!-- Auditorio -->
               <v-col cols="12" md="6">
-                <AuditoriumSelect v-model="localEvent.auditorium_id" :org-id="localEvent.org_id" :loading="loadingAuditoriums" label="Auditorio *" :rules="auditoriumRules" outlined />
+                <AuditoriumSelect v-model="localEvent.auditorium_id" :org-id="localEvent.org_id"
+                  :loading="loadingAuditoriums" label="Auditorio *" :rules="auditoriumRules" outlined />
               </v-col>
 
               <!-- Organización -->
@@ -91,7 +96,7 @@ export default {
     },
 
     formattedDate() {
-      if (!this.localEvent.event_date) return ""
+      if(!this.localEvent.event_date) return ""
       return this.$moment(this.localEvent.event_date).format("DD MMM YYYY")
     },
 
@@ -105,7 +110,7 @@ export default {
       immediate: true,
       handler(newVal) {
         this.dialog = newVal
-        if (newVal) {
+        if(newVal) {
           // Reset and refresh localEvent when dialog opens
           this.localEvent = {
             event_date: null,
@@ -114,7 +119,7 @@ export default {
             config: "",
           }
           // Force organization select reset for new events
-          if (!this.isEditing) {
+          if(!this.isEditing) {
             this.$nextTick(() => {
               this.localEvent.org_id = null
             })
@@ -122,7 +127,7 @@ export default {
           this.initializeForm()
           // Reset form validation
           this.$nextTick(() => {
-            if (this.$refs.eventForm) {
+            if(this.$refs.eventForm) {
               this.$refs.eventForm.resetValidation()
             }
           })
@@ -131,7 +136,7 @@ export default {
     },
 
     dialog(newVal) {
-      if (!newVal) {
+      if(!newVal) {
         this.$emit("input", false)
       }
     },
@@ -147,7 +152,7 @@ export default {
 
   methods: {
     initializeForm() {
-      if (this.auditoriumEvent && Object.keys(this.auditoriumEvent).length > 0) {
+      if(this.auditoriumEvent && Object.keys(this.auditoriumEvent).length > 0) {
         this.localEvent = {
           ...this.auditoriumEvent,
           event_date: this.auditoriumEvent.event_date || null,
@@ -166,23 +171,23 @@ export default {
     async loadAuditoriums() {
       this.loadingAuditoriums = true
       try {
-        if (this.$repository?.Auditorium?.index) {
+        if(this.$repository?.Auditorium?.index) {
           const response = await this.$repository.Auditorium.index({})
           this.auditoriums = response?.data || []
         } else {
-          console.warn("Auditorium repository not available")
+
           this.auditoriums = []
         }
-      } catch (error) {
-        console.error("Error loading auditoriums:", error)
- 
+      } catch(error) {
+
+
       } finally {
         this.loadingAuditoriums = false
       }
     },
 
     saveEvent() {
-      if (!this.isFormValid) return
+      if(!this.isFormValid) return
 
       this.saving = true
 
@@ -194,9 +199,8 @@ export default {
         }
 
         this.$emit("save", eventData)
-      } catch (error) {
-        console.error("Error saving auditorium event:", error)
-  
+      } catch(error) {
+
       } finally {
         this.saving = false
       }

@@ -8,6 +8,7 @@
 
       <v-card-text>
         <div class="error-yellow-box">
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <div class="text-h6 text--primary" v-html="errorMessage" />
         </div>
         <div class="text-h6 text--primary ">Presione el siguiente botón para regresar.</div>
