@@ -4,7 +4,7 @@
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
         <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
-          dense :disabled="loading" />
+          dense />
       </v-col>
 
       <!-- Botones de acción -->

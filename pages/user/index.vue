@@ -10,15 +10,14 @@
           <v-icon>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" @click="getUsers()">
+        <v-btn color="primary" :loading="loading" @click="getUsers()">
           <v-icon>mdi-reload</v-icon>
           Refrescar
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <UserTable
-:options="options" :response="response" @sorting="getUsers" @edit="editUser"
-          @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
+        <UserTable :loading="loading" :options="options" :response="response" @sorting="getUsers"
+          @edit="editUser" @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
       </v-col>
     </v-row>
     <UserDialog v-if="userDialog" :userx="userx" @close="closeDialog" @save="saveUser" />
@@ -28,6 +27,8 @@
   </v-container>
 </template>
 <script>
+import { debounce } from "lodash-es"
+
 export default {
   middleware: ["authenticated"],
 
@@ -51,15 +52,16 @@ export default {
       filterUser: "",
       userDialog: false,
       userDialogDelete: false,
+      loading: false,
     }
   },
   watch: {
-    filterUser(value) {
-
-      const me = this
-      const op = Object.assign(me.options, { filter: value, page: 1 })
-
-      me.getUsers(op)
+    filterUser: {
+      handler: debounce(function(value) {
+        const me = this
+        const op = Object.assign(me.options, { filter: value, page: 1 })
+        me.getUsers(op)
+      }, 500),
     },
   },
   mounted() {
@@ -104,7 +106,13 @@ export default {
         this.options = options
       }
       const op = Object.assign({ filter: this.filterUser }, this.options)
-      this.response = await this.$repository.User.index(op)
+
+      try {
+        this.loading = true
+        this.response = await this.$repository.User.index(op)
+      } finally {
+        this.loading = false
+      }
     },
     async saveUser(item) {
       const me = this
