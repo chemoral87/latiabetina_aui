@@ -3,7 +3,7 @@
     <v-row dense>
       <v-col cols="12" md="2">
         <v-text-field v-model="filterTestimony" append-icon="mdi-magnify" clearable hide-details label="Buscar"
-          placeholder="Buscar..." :disabled="loading" />
+          placeholder="Buscar..." />
       </v-col>
 
       <v-col cols="12" md="2">
@@ -11,7 +11,7 @@
           { text: 'Pendientes', value: '' },
           { text: 'Aprobados', value: 'approved' },
           { text: 'Rechazados', value: 'rejected' },
-        ]" label="Estado" hide-details :disabled="loading" @change="onStatusChange" />
+        ]" label="Estado" hide-details @change="onStatusChange" />
       </v-col>
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mr-2" @click="newTestimony">

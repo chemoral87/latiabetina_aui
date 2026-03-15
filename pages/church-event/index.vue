@@ -4,7 +4,7 @@
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="2">
         <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Buscar evento..." dense :disabled="loading" />
+          placeholder="Buscar evento..." dense />
       </v-col>
 
       <!-- Botones de acción -->

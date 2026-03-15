@@ -9,6 +9,7 @@
     :items="items"
     :options.sync="optionsTable"
     :server-items-length="total"
+    :loading="loading"
     class="elevation-1 xwidth800"
     @page-count="pageCount = $event"
   >
@@ -39,7 +40,20 @@
 <script>
 export default {
   name: "AuditoriumEventTable",
-  props: ["response", "options"],
+  props: {
+    response: {
+      type: Object,
+      default: () => ({}),
+    },
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       optionsTable: {},
