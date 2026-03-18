@@ -21,6 +21,8 @@ export default ($axios) => ({
   ChurchEvent: CommonRepository($axios)("/church-event"),
   /// ////////Admin Repository////////////////////////
   Store: CommonRepository($axios)("/store"),
+  ConsoSheet: CommonRepository($axios)("/conso-sheet"),
+  ChurchMember: CommonRepository($axios)("/church-member"),
   // Investor: InvestorRepository($axios)("/investor"),
   // InvestorProfile: InvestorProfileRepository($axios)("/investor-profile"),
   // Investment: InvestmentRepository($axios)("/investment"),

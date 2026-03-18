@@ -10,11 +10,11 @@
       <!-- Botones de acción -->
       <v-col cols="12" md="3">
         <v-btn color="primary" class="mr-2" @click="newRole">
-          <v-icon left>mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
           Nuevo
         </v-btn>
         <v-btn color="primary" :loading="loading" @click="refreshRoles">
-          <v-icon left>mdi-reload</v-icon>
+          <v-icon>mdi-reload</v-icon>
           Refrescar
         </v-btn>
       </v-col>

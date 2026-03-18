@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="3">
-        <v-text-field v-model="filterUser" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
+        <v-text-field v-model="filterUser" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"
+          dense />
       </v-col>
 
       <v-col cols="12" md="4">
@@ -16,8 +17,8 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <UserTable :loading="loading" :options="options" :response="response" @sorting="getUsers"
-          @edit="editUser" @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
+        <UserTable :loading="loading" :options="options" :response="response" @sorting="getUsers" @edit="editUser"
+          @editProfiles="editProfiles" @delete="beforeDeleteUser"></UserTable>
       </v-col>
     </v-row>
     <UserDialog v-if="userDialog" :userx="userx" @close="closeDialog" @save="saveUser" />

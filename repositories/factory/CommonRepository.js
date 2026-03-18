@@ -55,11 +55,19 @@ export default ($axios) => (resource) => ({
     return $axios.$get(`${resource}/${id}`)
   },
 
-  filter(params, headers) {
-    return $axios.$get(`${resource}/filter`, {
-      params,
-      headers,
-    })
+  filter(params, options = {}) {
+    const { hideLoading = true, ...axiosOptions } = options
+    const fullOptions = { ...axiosOptions }
+    if (params) {
+      fullOptions.params = params
+    }
+    if (hideLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Hide-Loading": "true" }
+    }
+
+    const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
+
+    return $axios.$get(`${resource}/filter`, getOptions)
   },
 
   create(payload, options = {}) {

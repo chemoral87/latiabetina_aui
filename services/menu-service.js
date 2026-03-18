@@ -41,6 +41,10 @@ export class MenuService {
       if (this.hasPermission("church-event-index")) {
         menu.push({ icon: "mdi-calendar", title: "Eventos  Iglesia", to: "/church-event" })
       }
+
+      if (this.hasPermission("conso-sheet-index")) {
+        menu.push({ icon: "mdi-account-multiple", title: "Consolidación", to: "/consolidation" })
+      }
       // menu.push({
       //   icon: "mdi-chart-bar",
       //   title: "ReportesA",

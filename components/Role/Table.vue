@@ -1,5 +1,6 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total" :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
+  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
+    :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
     <!-- Columna de permisos -->
     <template #[`item.permissions`]="{ item }">
       <div v-if="hasPermissions(item)" class="d-flex flex-wrap">
@@ -12,34 +13,35 @@
 
     <!-- Columna de acciones -->
     <template #[`item.actions`]="{ item }">
-      <div class="d-flex flex-nowrap justify-center">
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
-              <v-icon small>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <span>Editar</span>
-        </v-tooltip>
 
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn outlined color="success" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editPermissions(item)">
-              <v-icon small>mdi-key</v-icon>
-            </v-btn>
-          </template>
-          <span>Permisos</span>
-        </v-tooltip>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+        </template>
+        <span>Editar</span>
+      </v-tooltip>
 
-        <v-tooltip bottom>
-          <template #activator="{ on, attrs }">
-            <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteRole(item)">
-              <v-icon small>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-          <span>Eliminar</span>
-        </v-tooltip>
-      </div>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="success" fab x-small class="mr-1" v-bind="attrs" v-on="on"
+            @click="editPermissions(item)">
+            <v-icon small>mdi-key</v-icon>
+          </v-btn>
+        </template>
+        <span>Permisos</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteRole(item)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Eliminar</span>
+      </v-tooltip>
+
     </template>
 
     <!-- Estado vacío -->
@@ -110,7 +112,7 @@ export default {
   watch: {
     options: {
       handler(newOptions) {
-        if (newOptions) {
+        if(newOptions) {
           this.optionsTable = Object.assign({}, newOptions)
         }
       },
@@ -121,13 +123,13 @@ export default {
     optionsTable: {
       handler(newValue, oldValue) {
         // Evitar el primer watch (cuando se inicializa)
-        if (this.isFirstWatch) {
+        if(this.isFirstWatch) {
           this.isFirstWatch = false
           return
         }
 
         // Solo emitir si realmente cambió algo relevante
-        if (this.hasOptionsChanged(newValue, oldValue)) {
+        if(this.hasOptionsChanged(newValue, oldValue)) {
           this.$emit("sorting", newValue)
         }
       },
@@ -137,13 +139,13 @@ export default {
 
   methods: {
     hasOptionsChanged(newVal, oldVal) {
-      if (!oldVal) return true
+      if(!oldVal) return true
 
       // Comparar solo las propiedades relevantes
       const relevantProps = ["page", "itemsPerPage", "sortBy", "sortDesc"]
 
       return relevantProps.some((prop) => {
-        if (Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
+        if(Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
           return JSON.stringify(newVal[prop]) !== JSON.stringify(oldVal[prop])
         }
         return newVal[prop] !== oldVal[prop]

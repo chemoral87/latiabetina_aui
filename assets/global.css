@@ -1,1 +1,8 @@
 /* Estilos globales para la aplicación */
+
+/* Fix for outlined dense text field labels being crossed by the border line */
+.v-text-field--outlined.v-input--dense .v-label--active {
+  transform: translateY(-18px) scale(0.75) !important;
+  background-color: white !important;
+  padding: 0 4px !important;
+}

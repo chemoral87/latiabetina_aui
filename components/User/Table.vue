@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-data-table mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable"
-      :server-items-length="total" :loading="loading" class="elevation-1">
+    <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items"
+      :options.sync="optionsTable" :server-items-length="total" :loading="loading" class="elevation-1">
       <template #[`item.roles`]="{ item }">
         <v-chip v-for="it in item.roles" :key="it.id" class="ma-2" color="primary">
           {{ it.name }}
@@ -14,17 +14,17 @@
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-btn title="Editar" class="ma-1" color="primary" outlined fab small @click="edit(item)">
-          <v-icon>mdi-pencil</v-icon>
+        <v-btn title="Editar" class="mr-1" color="primary" outlined fab x-small @click="edit(item)">
+          <v-icon small>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn title="Perfiles" class="ma-1" color="success" outlined fab small @click="editProfiles(item)">
-          <v-icon>mdi-redhat</v-icon>
+        <v-btn title="Perfiles" class="mr-1" color="success" outlined fab x-small @click="editProfiles(item)">
+          <v-icon small>mdi-redhat</v-icon>
         </v-btn>
         <!-- <v-btn title="Roles y Permisos" class="ma-1" color="info" outlined fab small @click="editRoles(item)">
           <v-icon> mdi-drama-masks </v-icon>
         </v-btn> -->
-        <v-btn title="Eliminar" class="ma-1" color="error" outlined fab small @click="deleteItem(item)">
-          <v-icon>mdi-delete</v-icon>
+        <v-btn title="Eliminar" class="mr-1" color="error" outlined fab x-small @click="deleteItem(item)">
+          <v-icon small>mdi-delete</v-icon>
         </v-btn>
       </template>
     </v-data-table>
@@ -63,11 +63,11 @@ export default {
   },
   computed: {
     total() {
-      if (this.response) return this.response.total
+      if(this.response) return this.response.total
       else return 0
     },
     items() {
-      if (this.response) return this.response.data
+      if(this.response) return this.response.data
       else return []
     },
   },
@@ -77,7 +77,7 @@ export default {
     me.$nextTick(() => {
       me.options_watch = me.$watch(
         "optionsTable",
-        function () {
+        function() {
           this.$emit("sorting", me.optionsTable)
         },
         {
