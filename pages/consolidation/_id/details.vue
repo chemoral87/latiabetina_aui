@@ -7,7 +7,7 @@
             <v-icon left>mdi-clipboard-list</v-icon>
             Consolidado #{{ sheet.folio_number }}
             <v-spacer />
-            <v-btn color="primary" small :loading="savingSheet" @click="saveSheet">
+            <v-btn color="primary" small :loading="savingSheet" :disabled="!isDirty || savingSheet" @click="saveSheet">
               <v-icon left small>mdi-content-save</v-icon>
               Guardar
             </v-btn>
@@ -70,7 +70,7 @@
       </v-col>
 
       <v-col cols="12">
-        <ConsolidationMemberTable :members="members" :loading="loading" @edit="editMember"
+        <ConsolidationMemberTable :members="filteredMembers" :loading="loading" @edit="editMember"
           @delete="deleteMemberPrompt" />
       </v-col>
     </v-row>
@@ -80,12 +80,29 @@
 
     <DialogDelete v-if="dialogDelete" :dialog="deleteData" :loading="deleting" @ok="confirmDelete"
       @close="dialogDelete = false" />
+
+    <DialogConfirm v-if="showConfirmDialog" title="Cambios sin guardar"
+      message="Hay cambios sin guardar. ¿Desea guardarlos antes de salir?" @yes="confirmSave" @no="confirmDiscard"
+      @cancel="confirmAbort" />
   </v-container>
 </template>
 
 <script>
 export default {
   middleware: ['authenticated'],
+
+  async asyncData({ $repository, params, error }) {
+    try {
+      const [sheet, dataMembers] = await Promise.all([
+        $repository.ConsoSheet.show(params.id),
+        $repository.ChurchMember.index({ conso_sheet_id: params.id }),
+      ]);
+      const members = Array.isArray(dataMembers) ? dataMembers : dataMembers.data || [];
+      return { sheet, originalSheet: JSON.parse(JSON.stringify(sheet)), members };
+    } catch(e) {
+      error({ statusCode: 404, message: 'No se pudo cargar la información' });
+    }
+  },
 
   data() {
     return {
@@ -97,16 +114,22 @@ export default {
       dialog: false,
       dialogDelete: false,
       sheet: {},
+      originalSheet: {},
       member: {},
       deleteData: {},
       members: [],
       users: [],
+      showConfirmDialog: false,
+      resolveNext: null,
     };
   },
 
   computed: {
     sheetId() {
       return this.$route.params.id;
+    },
+    isDirty() {
+      return JSON.stringify(this.sheet) !== JSON.stringify(this.originalSheet);
     },
     filteredMembers() {
       if(!this.filterTerm) return this.members;
@@ -120,12 +143,19 @@ export default {
     },
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.isDirty) {
+      this.showConfirmDialog = true;
+      this.resolveNext = next;
+    } else {
+      next();
+    }
+  },
+
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt;
     eventBus.$emit('setNavBar', { title: 'Detalles de Consolidado', icon: 'mdi-clipboard-list', back: '/consolidation' });
-    this.fetchSheet();
-    this.fetchMembers();
-    this.fetchUsers();
+    // this.fetchUsers();
   },
 
   methods: {
@@ -154,6 +184,7 @@ export default {
       try {
         this.savingSheet = true;
         await this.$repository.ConsoSheet.update(this.sheetId, this.sheet);
+        this.originalSheet = JSON.parse(JSON.stringify(this.sheet));
         this.$notify({ type: 'success', text: 'Consolidado actualizado exitosamente' });
       } catch(error) {
         this.$notify({ type: 'error', text: error.response?.data?.message || 'Error al guardar consolidado' });
@@ -163,9 +194,15 @@ export default {
     },
 
     async fetchMembers() {
-
-      const data = await this.$repository.ChurchMember.index({ conso_sheet_id: this.sheetId });
-      this.members = Array.isArray(data) ? data : data.data || [];
+      try {
+        this.loading = true;
+        const data = await this.$repository.ChurchMember.index({ conso_sheet_id: this.sheetId });
+        this.members = Array.isArray(data) ? data : data.data || [];
+      } catch(error) {
+        this.$notify({ type: 'error', text: 'Error al cargar los miembros' });
+      } finally {
+        this.loading = false;
+      }
     },
 
     newMember() {
@@ -224,6 +261,35 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.member = {};
+    },
+
+    async confirmSave() {
+      await this.saveSheet();
+      this.showConfirmDialog = false;
+      if (this.resolveNext) {
+        if (!this.isDirty) {
+          this.resolveNext();
+        } else {
+          this.resolveNext(false);
+        }
+        this.resolveNext = null;
+      }
+    },
+
+    confirmDiscard() {
+      this.showConfirmDialog = false;
+      if (this.resolveNext) {
+        this.resolveNext();
+        this.resolveNext = null;
+      }
+    },
+
+    confirmAbort() {
+      this.showConfirmDialog = false;
+      if (this.resolveNext) {
+        this.resolveNext(false);
+        this.resolveNext = null;
+      }
     },
   },
 };

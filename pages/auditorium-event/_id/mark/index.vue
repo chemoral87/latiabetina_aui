@@ -554,7 +554,7 @@ export default {
           s: status,
         }
         // Call API to update seats using custom endpoint
-        const { z: seatIdsResponse, t: timestamp, s: statusResponse } = await this.$repository.AuditoriumEventSeat.create(updatePayload, { hideLoading: true })
+        const { z: seatIdsResponse, t: timestamp, s: statusResponse } = await this.$repository.AuditoriumEventSeat.create(updatePayload, { showLoading: false })
 
         if(!this.last_timestamp || timestamp > this.last_timestamp) {
           this.last_timestamp = timestamp

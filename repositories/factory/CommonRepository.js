@@ -6,13 +6,13 @@ const multipart = {
 const reqCache = new Map()
 export default ($axios) => (resource) => ({
   index(params, options = {}) {
-    const { cacheMs, hideLoading = true, ...axiosOptions } = options
+    const { cacheMs, showLoading = false, ...axiosOptions } = options
     const fullOptions = { ...axiosOptions }
     if (params) {
       fullOptions.params = params
     }
-    if (hideLoading) {
-      fullOptions.headers = { ...fullOptions.headers, "X-Hide-Loading": "true" }
+    if (showLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Show-Loading": "true" }
     }
 
     const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
@@ -51,18 +51,26 @@ export default ($axios) => (resource) => ({
     return $axios.$get(`${resource}/initialCatalog`, { params })
   },
 
-  show(id) {
-    return $axios.$get(`${resource}/${id}`)
+  show(id, options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const fullOptions = { ...axiosOptions }
+    if (showLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Show-Loading": "true" }
+    }
+
+    const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
+
+    return $axios.$get(`${resource}/${id}`, getOptions)
   },
 
   filter(params, options = {}) {
-    const { hideLoading = true, ...axiosOptions } = options
+    const { showLoading = false, ...axiosOptions } = options
     const fullOptions = { ...axiosOptions }
     if (params) {
       fullOptions.params = params
     }
-    if (hideLoading) {
-      fullOptions.headers = { ...fullOptions.headers, "X-Hide-Loading": "true" }
+    if (showLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Show-Loading": "true" }
     }
 
     const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
@@ -71,10 +79,10 @@ export default ($axios) => (resource) => ({
   },
 
   create(payload, options = {}) {
-    const { hideLoading, ...axiosOptions } = options
+    const { showLoading = false, ...axiosOptions } = options
     const config = Object.keys(axiosOptions).length > 0 ? axiosOptions : {}
-    if (hideLoading) {
-      config.headers = { ...config.headers, "X-Hide-Loading": "true" }
+    if (showLoading) {
+      config.headers = { ...config.headers, "X-Show-Loading": "true" }
     }
     return $axios.$post(`${resource}`, payload, Object.keys(config).length > 0 ? config : undefined)
   },
@@ -83,8 +91,13 @@ export default ($axios) => (resource) => ({
     return $axios.$post(`${resource}`, payload, multipart)
   },
 
-  update(id, payload) {
-    return $axios.$put(`${resource}/${id}`, payload)
+  update(id, payload, options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const config = { ...axiosOptions }
+    if (showLoading) {
+      config.headers = { ...config.headers, "X-Show-Loading": "true" }
+    }
+    return $axios.$put(`${resource}/${id}`, payload, Object.keys(config).length > 0 ? config : undefined)
   },
 
   updateForm(id, payload) {
@@ -96,16 +109,41 @@ export default ($axios) => (resource) => ({
     return $axios.$put(`${resource}/${id}/children`, payload)
   },
 
-  delete(id) {
-    return $axios.$delete(`${resource}/${id}`)
+  delete(id, options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const config = { ...axiosOptions }
+    if (showLoading) {
+      config.headers = { ...config.headers, "X-Show-Loading": "true" }
+    }
+    return $axios.$delete(`${resource}/${id}`, Object.keys(config).length > 0 ? config : undefined)
   },
-  change(payload) {
-    return $axios.$post(`${resource}/change`, payload)
+  change(payload, options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const config = { ...axiosOptions }
+    if (showLoading) {
+      config.headers = { ...config.headers, "X-Show-Loading": "true" }
+    }
+    return $axios.$post(`${resource}/change`, payload, Object.keys(config).length > 0 ? config : undefined)
   },
-  generate() {
-    return $axios.$post(`${resource}/generate`)
+  generate(options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const config = { ...axiosOptions }
+    if (showLoading) {
+      config.headers = { ...config.headers, "X-Show-Loading": "true" }
+    }
+    return $axios.$post(`${resource}/generate`, undefined, Object.keys(config).length > 0 ? config : undefined)
   },
-  fetch(params = {}) {
-    return $axios.$get(`${resource}/fetch`, { params })
+  fetch(params = {}, options = {}) {
+    const { showLoading = false, ...axiosOptions } = options
+    const fullOptions = { ...axiosOptions }
+    if (params) {
+      fullOptions.params = params
+    }
+    if (showLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Show-Loading": "true" }
+    }
+
+    const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
+    return $axios.$get(`${resource}/fetch`, getOptions)
   },
 })

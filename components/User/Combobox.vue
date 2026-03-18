@@ -44,7 +44,7 @@ export default {
 
       this.searching = true
       if(!(val == null || val.trim() === "")) {
-        const itemz = await this.$repository.User.filter({ queryText: val, ids: this.user_ids }, { hideLoading: false })
+        const itemz = await this.$repository.User.filter({ queryText: val, ids: this.user_ids }, { showLoading: true })
         this.searching = false
         this.items = itemz
       }

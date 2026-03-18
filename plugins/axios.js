@@ -119,21 +119,13 @@ export default function ({ $axios, store, $config }) {
     // Limpia errores de validación previos
     store.dispatch("validation/clearErrors")
 
-    // Si el request trae X-Hide-Loading, no mostrar el spinner
-    const hideLoading = config.headers?.["X-Hide-Loading"] === "true"
+    // Si el request trae X-Show-Loading, mostrar el spinner
+    const showLoading = config.headers?.["X-Show-Loading"] === "true"
 
-    if (hideLoading) {
-      // No mostramos loading, eliminamos el header para no enviarlo al server
-      delete config.headers["X-Hide-Loading"]
-    } else {
-      // Maneja el estado de loading
-      const shouldHideNextLoading = store.getters.hideNextLoading
-
-      if (shouldHideNextLoading) {
-        store.dispatch("showNextLoading")
-      } else {
-        store.dispatch("showLoading")
-      }
+    if (showLoading) {
+      // Mostramos loading, eliminamos el header para no enviarlo al server
+      delete config.headers["X-Show-Loading"]
+      store.dispatch("showLoading")
     }
 
     return config
