@@ -17,21 +17,37 @@
               <v-col cols="12" md="2">
                 <div class="d-flex align-center">
                   <v-icon small class="mr-1">mdi-calendar</v-icon>
-                  <span class="caption font-weight-bold grey--text text--darken-2">
+                  <span class="caption font-weight-bold grey--text text--darken-2 text-truncate">
                     Fecha: {{ sheet.date | moment('DD-MMM-YYYY') | uppercase }}
                   </span>
                 </div>
               </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field v-model="sheet.how_did_you_hear" label="¿Cómo se enteró de la iglesia?" dense hide-details
+              <v-col cols="12" md="2">
+                <div class="d-flex align-center">
+                  <v-icon small class="mr-1">mdi-office-building</v-icon>
+                  <span class="caption font-weight-bold grey--text text--darken-2 text-truncate">
+                    Org: {{ sheet.organization ? sheet.organization.name : 'N/A' }}
+                  </span>
+                </div>
+              </v-col>
+              <v-col cols="12" md="2">
+                <div class="d-flex align-center">
+                  <v-icon small class="mr-1">mdi-account-plus</v-icon>
+                  <span class="caption font-weight-bold grey--text text--darken-2 text-truncate">
+                    Creador: {{ sheet.creator ? sheet.creator.name : 'N/A' }}
+                  </span>
+                </div>
+              </v-col>
+              <v-col cols="12" md="2">
+                <v-text-field v-model="sheet.how_did_you_hear" label="¿Cómo se enteró?" dense hide-details
                   outlined prepend-inner-icon="mdi-bullhorn" :disabled="savingSheet" />
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="2">
                 <v-autocomplete v-model="sheet.consolidator_id" :items="users" item-value="id" item-text="name" outlined
                   label="Consolidador" clearable dense hide-details prepend-inner-icon="mdi-account-tie"
                   :disabled="savingSheet" />
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="2">
                 <v-select v-model="sheet.first_time_christian_church"
                   :items="[{ text: 'SI', value: true }, { text: 'NO', value: false }]"
                   label="¿Primera vez en iglesia cristiana?" outlined dense hide-details
@@ -144,7 +160,7 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-    if (this.isDirty) {
+    if(this.isDirty) {
       this.showConfirmDialog = true;
       this.resolveNext = next;
     } else {
@@ -266,8 +282,8 @@ export default {
     async confirmSave() {
       await this.saveSheet();
       this.showConfirmDialog = false;
-      if (this.resolveNext) {
-        if (!this.isDirty) {
+      if(this.resolveNext) {
+        if(!this.isDirty) {
           this.resolveNext();
         } else {
           this.resolveNext(false);
@@ -278,7 +294,7 @@ export default {
 
     confirmDiscard() {
       this.showConfirmDialog = false;
-      if (this.resolveNext) {
+      if(this.resolveNext) {
         this.resolveNext();
         this.resolveNext = null;
       }
@@ -286,7 +302,7 @@ export default {
 
     confirmAbort() {
       this.showConfirmDialog = false;
-      if (this.resolveNext) {
+      if(this.resolveNext) {
         this.resolveNext(false);
         this.resolveNext = null;
       }

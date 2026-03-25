@@ -19,10 +19,10 @@
 
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field v-model="item.start_date" label="Fecha Inicio" type="date" :error-messages="errors.start_date" :disabled="loading" required />
+              <MyDatePicker v-model="item.start_date" label="Fecha Inicio" :error-messages="errors.start_date" :disabled="loading" required />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field v-model="item.end_date" label="Fecha Fin" type="date" :error-messages="errors.end_date" :disabled="loading" />
+              <MyDatePicker v-model="item.end_date" label="Fecha Fin" :error-messages="errors.end_date" :disabled="loading" />
             </v-col>
           </v-row>
 

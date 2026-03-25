@@ -20,14 +20,7 @@
               </v-col>
               <!-- Fecha del Evento -->
               <v-col cols="12" md="6">
-                <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition"
-                  offset-y min-width="auto">
-                  <template #activator="{ on, attrs }">
-                    <v-text-field v-model="formattedDate" label="Fecha del Evento *" prepend-icon="mdi-calendar"
-                      readonly required :rules="dateRules" v-bind="attrs" v-on="on" />
-                  </template>
-                  <v-date-picker v-model="localEvent.event_date" @input="dateMenu = false" />
-                </v-menu>
+                <MyDatePicker v-model="localEvent.event_date" label="Fecha del Evento *" :rules="dateRules" required />
               </v-col>
 
               <!-- Auditorio -->
@@ -70,7 +63,6 @@ export default {
   data() {
     return {
       dialog: false,
-      dateMenu: false,
       saving: false,
       loadingAuditoriums: false,
       loadingOrganizations: false,
@@ -93,11 +85,6 @@ export default {
   computed: {
     isEditing() {
       return this.auditoriumEvent && this.auditoriumEvent.id
-    },
-
-    formattedDate() {
-      if(!this.localEvent.event_date) return ""
-      return this.$moment(this.localEvent.event_date).format("DD MMM YYYY")
     },
 
     isFormValid() {

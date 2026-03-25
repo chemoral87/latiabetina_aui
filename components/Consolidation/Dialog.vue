@@ -12,6 +12,16 @@
 
       <v-card-text>
         <v-form ref="form" @submit.prevent="save">
+          <organization-select
+            v-model="item.org_id"
+            label="Organización *"
+            hide-one
+            :permission="'conso-sheet-index'"
+            :error-messages="errors.org_id"
+            outlined
+            dense
+            class="mb-2"
+          />
           <v-text-field
             v-model="item.folio_number"
             label="Número de Folio"
@@ -20,14 +30,12 @@
             required
             autofocus
           />
-          <v-text-field
+          <MyDatePicker
             v-model="item.date"
             label="Fecha"
-            type="date"
             :error-messages="errors.date"
             :disabled="loading"
             required
-            @keyup.enter="save"
           />
         </v-form>
       </v-card-text>
@@ -59,6 +67,7 @@ export default {
   data() {
     return {
       item: {
+        org_id: null,
         folio_number: "",
         date: "",
       },
@@ -84,7 +93,7 @@ export default {
     },
 
     isValid() {
-      return this.item.folio_number && this.item.date
+      return this.item.org_id && this.item.folio_number && this.item.date
     },
   },
 

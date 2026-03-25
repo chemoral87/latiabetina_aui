@@ -30,6 +30,14 @@
         <span>Eliminar</span>
       </v-tooltip>
     </template>
+    
+    <template #[`item.creator`]="{ item }">
+      {{ item.creator ? item.creator.name : 'N/A' }}
+    </template>
+
+    <template #[`item.organization`]="{ item }">
+      {{ item.organization ? item.organization.name : 'N/A' }}
+    </template>
 
     <template #no-data>
       <div class="text-center pa-4">
@@ -65,6 +73,8 @@ export default {
       headers: [
         { text: "Folio", value: "folio_number" },
         { text: "Fecha", value: "date" },
+        { text: "Organización", value: "organization" },
+        { text: "Creado por", value: "creator" },
         { text: "Acciones", value: "actions", sortable: false, align: "center", width: "200px" },
       ],
       isFirstWatch: true,
