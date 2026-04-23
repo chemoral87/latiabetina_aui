@@ -8,7 +8,7 @@
       "type": "shell",
       "command": "rm -rf node_modules/.cache && npm run dev ",
       "windows": {
-        "command": "rm -rf node_modules/.cache && npm run dev"
+        "command": "set PATH=C:\\Users\\chemo\\AppData\\Roaming\\nvm\\v18.17.1;%PATH% && set NODE_OPTIONS=--openssl-legacy-provider && rd /s /q node_modules\\.cache 2>nul & npm run dev"
       },
       "presentation": {
         "reveal": "always",

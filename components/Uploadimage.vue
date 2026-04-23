@@ -63,6 +63,7 @@ export default {
         this.blob = null
         this.filename = ""
       } else {
+        this.$emit("loading")
         const _URL = window.URL || window.webkitURL
         const imgLoader = new Image()
         imgLoader.onload = function () {
