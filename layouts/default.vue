@@ -68,7 +68,7 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
     </v-app-bar>
 
     <v-main class="no-drag">
-      <v-container fluid class="pa-0 no-drag">
+      <v-container fluid class="pa-0">
         <Nuxt />
       </v-container>
       <MyLoading :value="loading_display"></MyLoading>
@@ -246,8 +246,6 @@ export default {
   touch-action: manipulation;
   -webkit-overflow-scrolling: touch;
   position: relative;
-  overflow: hidden;
-  user-select: none;
   -webkit-user-drag: none;
 }
 
