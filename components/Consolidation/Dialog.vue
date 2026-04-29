@@ -12,31 +12,11 @@
 
       <v-card-text>
         <v-form ref="form" @submit.prevent="save">
-          <organization-select
-            v-model="item.org_id"
-            label="Organización *"
-            hide-one
-            :permission="'conso-sheet-index'"
-            :error-messages="errors.org_id"
-            outlined
-            dense
-            class="mb-2"
-          />
-          <v-text-field
-            v-model="item.folio_number"
-            label="Número de Folio"
-            :error-messages="errors.folio_number"
-            :disabled="loading"
-            required
-            autofocus
-          />
-          <MyDatePicker
-            v-model="item.date"
-            label="Fecha"
-            :error-messages="errors.date"
-            :disabled="loading"
-            required
-          />
+          <organization-select v-model="item.org_id" label="Organización *" hide-one :permission="'conso-sheet-index'"
+            :error-messages="errors.org_id" outlined dense class="mb-2" />
+          <v-text-field v-model="item.folio_number" label="Número de Folio" :error-messages="errors.folio_number"
+            :disabled="loading" required autofocus />
+          <MyDatePicker v-model="item.date" label="Fecha" :error-messages="errors.date" :disabled="loading" required />
         </v-form>
       </v-card-text>
 
@@ -100,7 +80,7 @@ export default {
   watch: {
     sheet: {
       handler(newValue) {
-        if (newValue && Object.keys(newValue).length > 0) {
+        if(newValue && Object.keys(newValue).length > 0) {
           this.item = Object.assign({}, newValue)
         }
       },
@@ -115,7 +95,7 @@ export default {
 
   methods: {
     initializeForm() {
-      if (this.sheet && Object.keys(this.sheet).length > 0) {
+      if(this.sheet && Object.keys(this.sheet).length > 0) {
         this.item = Object.assign({}, this.sheet)
       } else {
         // Default to today
@@ -130,7 +110,7 @@ export default {
     },
 
     save() {
-      if (!this.isValid || this.loading) return
+      if(!this.isValid || this.loading) return
 
       this.$emit("save", Object.assign({}, this.item))
     },
