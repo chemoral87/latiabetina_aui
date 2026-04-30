@@ -128,7 +128,7 @@ export default {
     async sendWhatsAppMessage() {
       if(!this.$refs.form.validate()) return;
 
-      this.sending = true;
+      // this.sending = true;
       this.response = null;
 
       try {
@@ -142,7 +142,7 @@ export default {
           type: 'success',
           text: `Message sent successfully! ID: ${data.id}`
         };
-        this.message = ''; // Clear message after success
+        // this.message = ''; // Clear message after success
 
         // Clear success message after 5 seconds
         setTimeout(() => {
