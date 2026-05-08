@@ -32,7 +32,7 @@
               </div>
 
               <v-btn block x-large color="success" class="send-btn rounded-pill font-weight-bold elevation-8"
-                :loading="sending" :disabled="!valid || botStatus !== 'READY'" @click="sendWhatsAppMessage">
+                :loading="sending" @click="sendWhatsAppMessage">
                 <v-icon left>mdi-send</v-icon>
                 Send Message
               </v-btn>
