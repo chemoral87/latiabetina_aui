@@ -2,13 +2,14 @@
   <div>
     <!-- <div v-if="!events || events.length === 0" class="text-caption grey--text">No hay eventos disponibles</div> -->
     <v-card v-for="event in events" :key="event.id" class="mb-3 text-center" hover outlined
-      style="cursor: pointer; border: 6px solid #87ceeb" @click="goToEvent(event.id)">
+      :style="{ cursor: 'pointer', border: '6px solid ' + getEventColor(event.time) }" @click="goToEvent(event.id)">
       <v-card-text v-if="event.auditorium_name" class="d-flex flex-column align-center">
         <v-icon large class="mb-2">mdi-theater</v-icon>
         <div>{{ event.auditorium_name }}</div>
       </v-card-text>
       <v-card-title v-if="event.event_date" class="justify-center">
         Evento {{ $moment(event.event_date).format("DD MMM YYYY") }}
+        <span v-if="event.time" class="ml-2">- {{ $moment(event.time, 'HH:mm').format("hh:mm a") }}</span>
       </v-card-title>
     </v-card>
   </div>
@@ -43,6 +44,11 @@ export default {
   },
 
   methods: {
+    getEventColor(time) {
+      if(time === '09:45') return 'green'
+      if(time === '12:00') return 'orange'
+      return '#87ceeb'
+    },
     goToEvent(eventId) {
       this.$router.push(`/auditorium-event/${eventId}/mark`)
     },

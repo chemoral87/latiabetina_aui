@@ -2,34 +2,13 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="3">
-        <v-menu
-          ref="dateMenu"
-          v-model="dateMenu"
-          :close-on-content-click="false"
-          :return-value.sync="filterAuditoriumEvent"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
+        <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false"
+          :return-value.sync="filterAuditoriumEvent" transition="scale-transition" offset-y min-width="auto">
           <template #activator="{ on, attrs }">
-            <v-text-field
-              v-model="dateRangeText"
-              placeholder="Rango de fechas"
-              append-icon="mdi-calendar"
-              readonly
-              clearable
-              hide-details
-              v-bind="attrs"
-              v-on="on"
-              @click:clear="filterAuditoriumEvent = []"
-            ></v-text-field>
+            <v-text-field v-model="dateRangeText" placeholder="Rango de fechas" append-icon="mdi-calendar" readonly
+              clearable hide-details v-bind="attrs" v-on="on" @click:clear="filterAuditoriumEvent = []"></v-text-field>
           </template>
-          <v-date-picker
-            v-model="filterAuditoriumEvent"
-            range
-            no-title
-            scrollable
-          >
+          <v-date-picker v-model="filterAuditoriumEvent" range no-title scrollable>
             <v-spacer></v-spacer>
             <v-btn text color="primary" @click="dateMenu = false">Cancelar</v-btn>
             <v-btn text color="primary" @click="$refs.dateMenu.save(filterAuditoriumEvent)">OK</v-btn>
@@ -101,7 +80,7 @@ export default {
 
   computed: {
     dateRangeText() {
-      if (!this.filterAuditoriumEvent || this.filterAuditoriumEvent.length === 0) return ""
+      if(!this.filterAuditoriumEvent || this.filterAuditoriumEvent.length === 0) return ""
       return [...this.filterAuditoriumEvent].sort().join(" ~ ")
     },
     currentUser() {
@@ -112,7 +91,7 @@ export default {
   watch: {
     filterAuditoriumEvent: {
       handler: debounce(function(value) {
-        if (value && value.length > 0) {
+        if(value && value.length > 0) {
           value = [...value].sort()
         }
         const me = this
@@ -139,9 +118,9 @@ export default {
       if(options) {
         this.options = options
       }
-      
+
       const op = Object.assign({ filter: this.filterAuditoriumEvent }, this.options)
-      
+
       try {
         this.loading = true
         this.response = await this.$repository.AuditoriumEvent.index(op)
@@ -230,14 +209,14 @@ export default {
       try {
         if(this.$repository?.AuditoriumEvent) {
           if(item.id) {
-            await this.$repository.AuditoriumEvent.update(item.id, item)
+            await this.$repository.AuditoriumEvent.update(item.id, item, { showLoading: true })
           } else {
-            await this.$repository.AuditoriumEvent.create(item)
+            await this.$repository.AuditoriumEvent.create(item, { showLoading: true })
           }
         }
-
-        await this.getAuditoriumEvents()
         this.auditoriumEventDialog = false
+        await this.getAuditoriumEvents()
+
       } catch(error) {
         this.$notify({ type: 'error', message: 'Error saving auditorium event' })
 

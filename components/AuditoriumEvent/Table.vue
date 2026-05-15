@@ -17,6 +17,10 @@
       {{ item.event_date | moment("DD MMM YYYY") }}
     </template>
 
+    <template #[`item.time`]="{ item }">
+      {{ item.time ? $moment(item.time, 'HH:mm').format("hh:mm a") : '-' }}
+    </template>
+
     <template #[`item.marks`]="{ item }">
       <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('mark', item)">
         <v-icon>mdi-eye</v-icon>
@@ -61,6 +65,7 @@ export default {
         { text: "", value: "marks", sortable: false },
 
         { text: "Fecha del Evento", align: "start", value: "event_date" },
+        { text: "Hora", align: "start", value: "time" },
         { text: "Auditorio", align: "start", value: "auditorium_name" },
         { text: "Organización", align: "start", value: "org_name" },
         { text: "Acciones", value: "actions", sortable: false },

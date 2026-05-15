@@ -22,6 +22,19 @@
               <v-col cols="12" md="6">
                 <MyDatePicker v-model="localEvent.event_date" label="Fecha del Evento *" :rules="dateRules" required />
               </v-col>
+              <!-- Hora del Evento -->
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="localEvent.time"
+                  :items="timeOptions"
+                  item-text="text"
+                  item-value="value"
+                  label="Hora del Evento *"
+                  :rules="timeRules"
+                  required
+                  outlined
+                ></v-select>
+              </v-col>
 
               <!-- Auditorio -->
               <v-col cols="12" md="6">
@@ -68,8 +81,14 @@ export default {
       loadingOrganizations: false,
       auditoriums: [],
       organizations: [],
+      timeOptions: [
+        { text: "09:45 AM", value: "09:45" },
+        { text: "12:00 PM", value: "12:00" },
+        { text: "08:00 PM", value: "20:00" },
+      ],
       localEvent: {
         event_date: null,
+        time: null,
         auditorium_id: null,
         org_id: null,
         config: "",
@@ -77,6 +96,7 @@ export default {
 
       // Validation rules
       dateRules: [(v) => !!v || "La fecha es requerida"],
+      timeRules: [(v) => !!v || "La hora es requerida"],
       auditoriumRules: [(v) => !!v || "El auditorio es requerido"],
       organizationRules: [(v) => !!v || "La organización es requerida"],
     }
@@ -88,7 +108,7 @@ export default {
     },
 
     isFormValid() {
-      return this.localEvent.event_date && this.localEvent.org_id
+      return this.localEvent.event_date && this.localEvent.time && this.localEvent.org_id
     },
   },
 
@@ -101,6 +121,7 @@ export default {
           // Reset and refresh localEvent when dialog opens
           this.localEvent = {
             event_date: null,
+            time: null,
             auditorium_id: null,
             org_id: null,
             config: "",
@@ -143,11 +164,13 @@ export default {
         this.localEvent = {
           ...this.auditoriumEvent,
           event_date: this.auditoriumEvent.event_date || null,
+          time: this.auditoriumEvent.time || null,
           config: this.auditoriumEvent.config || "",
         }
       } else {
         this.localEvent = {
           event_date: null,
+          time: null,
           auditorium_id: null,
           org_id: null,
           config: "",
