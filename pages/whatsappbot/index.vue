@@ -31,6 +31,12 @@
                   class="custom-field"></v-textarea>
               </div>
 
+              <div class="input-group mb-8">
+                <label class="d-block mb-2 font-weight-bold grey--text text--darken-2">Media URL (Optional)</label>
+                <v-text-field v-model="mediaUrl" placeholder="https://example.com/image.jpg" outlined rounded dense
+                  hide-details="auto" prepend-inner-icon="mdi-image" class="custom-field"></v-text-field>
+              </div>
+
               <v-btn block x-large color="success" class="send-btn rounded-pill font-weight-bold elevation-8"
                 :loading="sending" @click="sendWhatsAppMessage">
                 <v-icon left>mdi-send</v-icon>
@@ -81,6 +87,7 @@ export default {
       valid: true,
       phone: '',
       message: '',
+      mediaUrl: '',
       botStatus: 'CHECKING...',
       statusColor: 'grey',
       sending: false,
@@ -136,7 +143,8 @@ export default {
         // Using the new Repository pattern
         const data = await this.$repository.Whatsapp.sendMessage({
           phone: this.phone,
-          message: this.message
+          message: this.message,
+          mediaUrl: this.mediaUrl ? this.mediaUrl : undefined
         });
 
         this.response = {
