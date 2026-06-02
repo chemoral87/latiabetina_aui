@@ -1,6 +1,7 @@
 import UserRepository from "../UserRepository"
 import ProfileRepository from "../ProfileRepository"
 import WhatsappRepository from "../WhatsappRepository"
+import WhatsappMessageLogRepository from "../WhatsappMessageLogRepository"
 
 import CommonRepository from "./CommonRepository"
 import ParentRepository from "./ParentRepository"
@@ -13,6 +14,7 @@ export default ($axios) => ({
   User: UserRepository($axios)("/user"),
   Profile: ProfileRepository($axios)("/profile"),
   Whatsapp: WhatsappRepository($axios)("/whatsapp"),
+  WhatsappMessageLog: WhatsappMessageLogRepository($axios)("/whatsapp"),
   Organization: CommonRepository($axios)("/organization"),
   Auditorium: CommonRepository($axios)("/auditorium"),
   AuditoriumEvent: CommonRepository($axios)("/auditorium-event"),
