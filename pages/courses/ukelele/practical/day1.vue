@@ -1,10 +1,6 @@
 <template>
-  <div class="text-white bg-black min-h-screen">
-    <h1
-      class="d-inline-flex align-center"
-      style="cursor: pointer"
-      @click="toggleContent"
-    >
+  <div class="text-white bg-black">
+    <h1 class="d-inline-flex align-center" style="cursor: pointer" @click="toggleContent">
       <v-icon color="black" class="mr-2">
         {{ showContent ? "mdi-menu-right" : "mdi-menu-down" }}
       </v-icon>
@@ -12,17 +8,30 @@
     </h1>
 
     <v-expand-transition>
-      <v-container v-if="showContent" class="pa-4" style="max-width: 860px">
+      <div v-if="showContent" class="pa-4">
 
-        <!-- SECCION 1: Partes del ukelele y su afinacion -->
+        <!-- SECCION 1: Partes del Ukelele -->
         <v-card class="mb-8" elevation="2">
           <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
             <v-icon left color="white">mdi-guitar-acoustic</v-icon>
-            Partes del Ukelele y su Afinacion
+            Partes del Ukelele
           </v-card-title>
 
           <v-card-text class="pt-4">
             <p class="text-subtitle-1 font-weight-medium mb-3">Partes principales</p>
+            <v-img
+              src="/courses/ukelele/images/partes-ukelele.jpg"
+              class="mb-4 rounded"
+              max-height="420"
+              contain
+            >
+              <template #error>
+                <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                  <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
+                  <span class="text-caption grey--text text--darken-1">Imagen general no disponible</span>
+                </div>
+              </template>
+            </v-img>
 
             <v-row dense class="mb-4">
               <v-col v-for="part in ukelele_parts" :key="part.name" cols="12" sm="6" md="4">
@@ -32,25 +41,48 @@
                     <span class="font-weight-medium">{{ part.name }}</span>
                   </div>
                   <p class="text-body-2 grey--text text--darken-1 mb-0">{{ part.description }}</p>
+                  <v-img :src="part.image" height="140" class="mt-3 rounded" contain>
+                    <template #placeholder>
+                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                        <span class="text-caption grey--text text--darken-1">Cargando imagen...</span>
+                      </div>
+                    </template>
+                    <template #error>
+                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                        <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
+                        <span class="text-caption grey--text text--darken-1">Imagen no disponible</span>
+                      </div>
+                    </template>
+                  </v-img>
                 </v-card>
               </v-col>
             </v-row>
+          </v-card-text>
+        </v-card>
 
-            <v-divider class="mb-4" />
+        <!-- SECCION 2: Afinación Estándar -->
+        <v-card class="mb-8" elevation="2">
+          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
+            <v-icon left color="white">mdi-tune</v-icon>
+            Afinación Estándar
+          </v-card-title>
 
-            <p class="text-subtitle-1 font-weight-medium mb-2">Afinacion estandar (G-C-E-A)</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-3">
+          <v-card-text class="pt-4">
+            <p class="text-subtitle-1 font-weight-medium mb-2">Afinación estándar (G-C-E-A)</p>
+            <p class="text-body-2 grey--text text--darken-2 mb-4">
               El ukelele soprano, concert y tenor se afinan de forma reentrante: la cuerda 4 (G)
-              suena mas aguda que las cuerdas 3 y 2.
+              suena más aguda que las cuerdas 3 y 2. Esta es la afinación <strong>High G</strong>,
+              la más común en los ukeleles estándar.
             </p>
 
-            <v-simple-table dense class="mb-3">
+            <v-simple-table dense class="mb-4">
               <thead>
                 <tr>
                   <th class="text-left">Cuerda</th>
-                  <th class="text-left">Nota (ingles)</th>
+                  <th class="text-left">Nota (inglés)</th>
                   <th class="text-left">Nota (latino)</th>
-                  <th class="text-left">Posicion</th>
+                  <th class="text-left">Frecuencia (Hz)</th>
+                  <th class="text-left">Posición</th>
                   <th class="text-left">Referencia</th>
                 </tr>
               </thead>
@@ -61,31 +93,59 @@
                   </td>
                   <td><strong>{{ string.note_en }}</strong></td>
                   <td>{{ string.note_es }}</td>
+                  <td class="text-body-2">{{ string.frequency }}</td>
                   <td class="text-body-2">{{ string.position }}</td>
                   <td class="text-body-2 grey--text">{{ string.hint }}</td>
                 </tr>
               </tbody>
             </v-simple-table>
 
-            <v-alert type="info" dense text class="mt-2">
-              <strong>Tip:</strong> Para recordar el orden G-C-E-A usa la frase
-              <em>"Good Cats Eat Avocados"</em>.
-            </v-alert>
+            <v-divider class="mb-4" />
+
+            <p class="text-subtitle-1 font-weight-medium mb-3">High G vs. Low G</p>
+
+            <v-row dense>
+              <v-col cols="12" md="6">
+                <v-card outlined class="pa-3 mb-3">
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="amber" class="mr-2">mdi-music-note-high</v-icon>
+                    <span class="font-weight-medium">High G (G4 - 392 Hz)</span>
+                  </div>
+                  <p class="text-body-2 mb-0">
+                    Afinación estándar reentrante. Sonido brillante y clásico del ukelele.
+                    La más usada en ukeleles soprano, concert y tenor.
+                  </p>
+                </v-card>
+              </v-col>
+
+              <v-col cols="12" md="6">
+                <v-card outlined class="pa-3 mb-3">
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="blue" class="mr-2">mdi-music-note</v-icon>
+                    <span class="font-weight-medium">Low G (G3 - 196 Hz)</span>
+                  </div>
+                  <p class="text-body-2 mb-0">
+                    Afinación alternativa lineal. Proporciona más registro grave y un sonido más lleno
+                    en los acordes. Ideal para arreglos con líneas de bajo.
+                  </p>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
 
-        <!-- SECCION 2: Notas musicales, sostenidos, bemoles y notacion -->
-        <v-card elevation="2">
-          <v-card-title class="text-h6 font-weight-bold secondary white--text py-3 px-4">
+        <!-- SECCION 3: Notas Musicales -->
+        <v-card class="mb-8" elevation="2">
+          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
             <v-icon left color="white">mdi-music-note</v-icon>
-            Notas Musicales, Sostenidos y Bemoles
+            Notas Musicales
           </v-card-title>
 
           <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-2">Notacion latina vs. inglesa</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-3">
-              En Latinoamerica se usa notacion <strong>latina (Do, Re, Mi...)</strong>.
-              En el mundo anglosajon y en muchas apps se usa notacion <strong>inglesa (C, D, E...)</strong>.
+            <p class="text-subtitle-1 font-weight-medium mb-2">Notación latina vs. inglesa</p>
+            <p class="text-body-2 grey--text text--darken-2 mb-4">
+              En Latinoamérica se usa notación <strong>latina (Do, Re, Mi...)</strong>.
+              En el mundo anglosajón y en muchas apps se usa notación <strong>inglesa (C, D, E...)</strong>.
               Ejemplo: Do = C.
             </p>
 
@@ -93,7 +153,7 @@
               <thead>
                 <tr>
                   <th class="text-left">Latino</th>
-                  <th class="text-left">Ingles</th>
+                  <th class="text-left">Inglés</th>
                   <th class="text-left">Sostenido (#)</th>
                   <th class="text-left">Bemol (b) siguiente</th>
                 </tr>
@@ -120,7 +180,7 @@
 
             <v-divider class="mb-4" />
 
-            <p class="text-subtitle-1 font-weight-medium mb-2">Que son los sostenidos y bemoles?</p>
+            <p class="text-subtitle-1 font-weight-medium mb-2">¿Qué son los sostenidos y bemoles?</p>
 
             <v-row dense>
               <v-col cols="12" md="6">
@@ -131,7 +191,7 @@
                   </div>
                   <p class="text-body-2 mb-0">
                     Sube la nota <strong>medio tono</strong> (un traste hacia arriba).
-                    Ejemplo: Do# / C# esta un traste arriba que Do / C.
+                    Ejemplo: Do# / C# está un traste arriba que Do / C.
                   </p>
                 </v-card>
               </v-col>
@@ -144,13 +204,13 @@
                   </div>
                   <p class="text-body-2 mb-0">
                     Baja la nota <strong>medio tono</strong> (un traste hacia abajo).
-                    Ejemplo: Reb / Db es la misma altura que Do# / C# (notas enarmonicas).
+                    Ejemplo: Reb / Db es la misma altura que Do# / C# (notas enarmónicas).
                   </p>
                 </v-card>
               </v-col>
             </v-row>
 
-            <v-alert type="warning" dense text class="mt-2">
+            <v-alert type="warning" dense text class="mt-4">
               Entre <strong>Mi-Fa (E-F)</strong> y <strong>Si-Do (B-C)</strong>
               <strong>no hay nota intermedia</strong>: son semitonos naturales y no existe
               un sostenido/bemol entre ellos.
@@ -158,7 +218,7 @@
           </v-card-text>
         </v-card>
 
-      </v-container>
+      </div>
     </v-expand-transition>
   </div>
 </template>
@@ -167,52 +227,55 @@
 export default {
   data() {
     return {
-      showContent: false,
+      showContent: true,
       ukelele_parts: [
         {
           name: "Clavijeros",
           icon: "mdi-tune",
           description: "Tornillos que tensan o aflojan las cuerdas para ajustar la afinacion.",
+          image: "/courses/ukelele/images/clavijeros.jpg",
         },
         {
-          name: "Cejuela (Nut)",
+          name: "Cejilla",
           icon: "mdi-minus",
           description: "Pieza en la parte superior del mastil que guia las cuerdas y define el inicio de la escala.",
+          image: "/courses/ukelele/images/cejuela.jpg",
         },
         {
           name: "Mastil",
           icon: "mdi-rectangle-outline",
           description: "Parte donde se ubican los trastes y el diapasón; aqui se presionan los acordes.",
+          image: "/courses/ukelele/images/mastil.jpg",
         },
         {
           name: "Trastes",
           icon: "mdi-view-column",
           description: "Barras metalicas que dividen el diapasón. Cada traste representa medio tono.",
+          image: "/courses/ukelele/images/trastes.jpg",
         },
         {
           name: "Caja de resonancia",
           icon: "mdi-circle-outline",
           description: "Cuerpo hueco de madera que amplifica el sonido de las cuerdas.",
+          image: "/courses/ukelele/images/caja-resonancia.jpg",
         },
         {
           name: "Boca (Sound hole)",
           icon: "mdi-circle",
           description: "Agujero en la tapa que permite que el sonido salga con mayor proyeccion.",
-        },
-        {
-          name: "Puente (Bridge)",
-          icon: "mdi-bridge",
-          description: "Fija las cuerdas a la caja y transmite la vibracion a la tapa.",
+          image: "/courses/ukelele/images/boca.jpg",
         },
         {
           name: "Cuerdas",
           icon: "mdi-guitar-pick",
           description: "El ukelele tiene 4 cuerdas, generalmente de nylon o fluorocarbono.",
+          image: "/courses/ukelele/images/cuerdas.jpg",
         },
         {
-          name: "Selleta (Saddle)",
+          name: "Cejilla Inferior",
           icon: "mdi-minus-thick",
-          description: "Pieza en el puente que eleva las cuerdas y define la altura de accion.",
+          description: "Pieza inferior que sostiene y eleva las cuerdas en la base del instrumento.",
+          image: "/courses/ukelele/images/selleta.jpg",
         },
       ],
 
@@ -221,6 +284,7 @@ export default {
           number: "4 (arriba)",
           note_en: "G",
           note_es: "Sol",
+          frequency: "392 Hz",
           position: "La mas cercana a ti al tocar",
           hint: "Nota reentrante (suena aguda)",
           color: "green darken-1",
@@ -229,6 +293,7 @@ export default {
           number: "3",
           note_en: "C",
           note_es: "Do",
+          frequency: "262 Hz",
           position: "Segunda desde arriba",
           hint: "Mas grave de las 4",
           color: "blue darken-1",
@@ -237,6 +302,7 @@ export default {
           number: "2",
           note_en: "E",
           note_es: "Mi",
+          frequency: "330 Hz",
           position: "Tercera cuerda",
           hint: "",
           color: "orange darken-1",
@@ -245,6 +311,7 @@ export default {
           number: "1 (abajo)",
           note_en: "A",
           note_es: "La",
+          frequency: "440 Hz",
           position: "La mas alejada de ti al tocar",
           hint: "Cuerda mas aguda en pitch estandar",
           color: "red darken-1",
