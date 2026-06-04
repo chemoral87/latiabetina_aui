@@ -1,222 +1,196 @@
 <template>
-  <div class="text-white bg-black">
-    <h1 class="d-inline-flex align-center" style="cursor: pointer" @click="toggleContent">
-      <v-icon color="black" class="mr-2">
-        {{ showContent ? "mdi-menu-right" : "mdi-menu-down" }}
-      </v-icon>
-      Teórico - Día 1
-    </h1>
+  <div>
+    <courses-header v-model="showContent" title="Teórico - Día 1" />
 
     <v-expand-transition>
       <div v-if="showContent" class="pa-4">
 
         <!-- SECCION 1: Partes del Ukelele -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-guitar-acoustic</v-icon>
-            Partes del Ukelele
-          </v-card-title>
+        <courses-section title="Partes del Ukelele" icon="mdi-guitar-acoustic">
+          <p class="text-subtitle-1 font-weight-medium mb-3">Partes principales</p>
+          <v-img
+            src="/courses/ukelele/images/partes-ukelele.jpg"
+            class="mb-4 rounded"
+            max-height="420"
+            contain
+          >
+            <template #error>
+              <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
+                <span class="text-caption grey--text text--darken-1">Imagen general no disponible</span>
+              </div>
+            </template>
+          </v-img>
 
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-3">Partes principales</p>
-            <v-img
-              src="/courses/ukelele/images/partes-ukelele.jpg"
-              class="mb-4 rounded"
-              max-height="420"
-              contain
-            >
-              <template #error>
-                <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                  <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
-                  <span class="text-caption grey--text text--darken-1">Imagen general no disponible</span>
+          <v-row dense class="mb-4">
+            <v-col v-for="part in ukelele_parts" :key="part.name" cols="12" sm="6" md="4">
+              <v-card outlined class="pa-3 fill-height">
+                <div class="d-flex align-center mb-1">
+                  <v-icon small color="primary" class="mr-2">{{ part.icon }}</v-icon>
+                  <span class="font-weight-medium">{{ part.name }}</span>
                 </div>
-              </template>
-            </v-img>
-
-            <v-row dense class="mb-4">
-              <v-col v-for="part in ukelele_parts" :key="part.name" cols="12" sm="6" md="4">
-                <v-card outlined class="pa-3 fill-height">
-                  <div class="d-flex align-center mb-1">
-                    <v-icon small color="primary" class="mr-2">{{ part.icon }}</v-icon>
-                    <span class="font-weight-medium">{{ part.name }}</span>
-                  </div>
-                  <p class="text-body-2 grey--text text--darken-1 mb-0">{{ part.description }}</p>
-                  <v-img :src="part.image" height="140" class="mt-3 rounded" contain>
-                    <template #placeholder>
-                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                        <span class="text-caption grey--text text--darken-1">Cargando imagen...</span>
-                      </div>
-                    </template>
-                    <template #error>
-                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                        <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
-                        <span class="text-caption grey--text text--darken-1">Imagen no disponible</span>
-                      </div>
-                    </template>
-                  </v-img>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+                <p class="text-body-2 grey--text text--darken-1 mb-0">{{ part.description }}</p>
+                <v-img :src="part.image" height="140" class="mt-3 rounded" contain>
+                  <template #placeholder>
+                    <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                      <span class="text-caption grey--text text--darken-1">Cargando imagen...</span>
+                    </div>
+                  </template>
+                  <template #error>
+                    <div class="d-flex align-center justify-center fill-height grey lighten-3">
+                      <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
+                      <span class="text-caption grey--text text--darken-1">Imagen no disponible</span>
+                    </div>
+                  </template>
+                </v-img>
+              </v-card>
+            </v-col>
+          </v-row>
+        </courses-section>
 
         <!-- SECCION 2: Afinación Estándar -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-tune</v-icon>
-            Afinación Estándar
-          </v-card-title>
+        <courses-section title="Afinación Estándar" icon="mdi-tune">
+          <p class="text-subtitle-1 font-weight-medium mb-2">Afinación estándar (G-C-E-A)</p>
+          <p class="text-body-2 grey--text text--darken-2 mb-4">
+            El ukelele soprano, concert y tenor se afinan de forma reentrante: la cuerda 4 (G)
+            suena más aguda que las cuerdas 3 y 2. Esta es la afinación <strong>High G</strong>,
+            la más común en los ukeleles estándar.
+          </p>
 
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-2">Afinación estándar (G-C-E-A)</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-4">
-              El ukelele soprano, concert y tenor se afinan de forma reentrante: la cuerda 4 (G)
-              suena más aguda que las cuerdas 3 y 2. Esta es la afinación <strong>High G</strong>,
-              la más común en los ukeleles estándar.
-            </p>
+          <v-simple-table dense class="mb-4">
+            <thead>
+              <tr>
+                <th class="text-left">Cuerda</th>
+                <th class="text-left">Nota (inglés)</th>
+                <th class="text-left">Nota (latino)</th>
+                <th class="text-left">Frecuencia (Hz)</th>
+                <th class="text-left">Posición</th>
+                <th class="text-left">Referencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="string in tuning_strings" :key="string.number">
+                <td>
+                  <v-chip x-small :color="string.color" dark>{{ string.number }}</v-chip>
+                </td>
+                <td><strong>{{ string.note_en }}</strong></td>
+                <td>{{ string.note_es }}</td>
+                <td class="text-body-2">{{ string.frequency }}</td>
+                <td class="text-body-2">{{ string.position }}</td>
+                <td class="text-body-2 grey--text">{{ string.hint }}</td>
+              </tr>
+            </tbody>
+          </v-simple-table>
 
-            <v-simple-table dense class="mb-4">
-              <thead>
-                <tr>
-                  <th class="text-left">Cuerda</th>
-                  <th class="text-left">Nota (inglés)</th>
-                  <th class="text-left">Nota (latino)</th>
-                  <th class="text-left">Frecuencia (Hz)</th>
-                  <th class="text-left">Posición</th>
-                  <th class="text-left">Referencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="string in tuning_strings" :key="string.number">
-                  <td>
-                    <v-chip x-small :color="string.color" dark>{{ string.number }}</v-chip>
-                  </td>
-                  <td><strong>{{ string.note_en }}</strong></td>
-                  <td>{{ string.note_es }}</td>
-                  <td class="text-body-2">{{ string.frequency }}</td>
-                  <td class="text-body-2">{{ string.position }}</td>
-                  <td class="text-body-2 grey--text">{{ string.hint }}</td>
-                </tr>
-              </tbody>
-            </v-simple-table>
+          <v-divider class="mb-4" />
 
-            <v-divider class="mb-4" />
+          <p class="text-subtitle-1 font-weight-medium mb-3">High G vs. Low G</p>
 
-            <p class="text-subtitle-1 font-weight-medium mb-3">High G vs. Low G</p>
+          <v-row dense>
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3 mb-3">
+                <div class="d-flex align-center mb-2">
+                  <v-icon color="amber" class="mr-2">mdi-music-note-high</v-icon>
+                  <span class="font-weight-medium">High G (G4 - 392 Hz)</span>
+                </div>
+                <p class="text-body-2 mb-0">
+                  Afinación estándar reentrante. Sonido brillante y clásico del ukelele.
+                  La más usada en ukeleles soprano, concert y tenor.
+                </p>
+              </v-card>
+            </v-col>
 
-            <v-row dense>
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="amber" class="mr-2">mdi-music-note-high</v-icon>
-                    <span class="font-weight-medium">High G (G4 - 392 Hz)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Afinación estándar reentrante. Sonido brillante y clásico del ukelele.
-                    La más usada en ukeleles soprano, concert y tenor.
-                  </p>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="blue" class="mr-2">mdi-music-note</v-icon>
-                    <span class="font-weight-medium">Low G (G3 - 196 Hz)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Afinación alternativa lineal. Proporciona más registro grave y un sonido más lleno
-                    en los acordes. Ideal para arreglos con líneas de bajo.
-                  </p>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3 mb-3">
+                <div class="d-flex align-center mb-2">
+                  <v-icon color="blue" class="mr-2">mdi-music-note</v-icon>
+                  <span class="font-weight-medium">Low G (G3 - 196 Hz)</span>
+                </div>
+                <p class="text-body-2 mb-0">
+                  Afinación alternativa lineal. Proporciona más registro grave y un sonido más lleno
+                  en los acordes. Ideal para arreglos con líneas de bajo.
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
+        </courses-section>
 
         <!-- SECCION 3: Notas Musicales -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-music-note</v-icon>
-            Notas Musicales
-          </v-card-title>
+        <courses-section title="Notas Musicales" icon="mdi-music-note">
+          <p class="text-subtitle-1 font-weight-medium mb-2">Notación latina vs. inglesa</p>
+          <p class="text-body-2 grey--text text--darken-2 mb-4">
+            En Latinoamérica se usa notación <strong>latina (Do, Re, Mi...)</strong>.
+            En el mundo anglosajón y en muchas apps se usa notación <strong>inglesa (C, D, E...)</strong>.
+            Ejemplo: Do = C.
+          </p>
 
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-2">Notación latina vs. inglesa</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-4">
-              En Latinoamérica se usa notación <strong>latina (Do, Re, Mi...)</strong>.
-              En el mundo anglosajón y en muchas apps se usa notación <strong>inglesa (C, D, E...)</strong>.
-              Ejemplo: Do = C.
-            </p>
+          <v-simple-table dense class="mb-5">
+            <thead>
+              <tr>
+                <th class="text-left">Latino</th>
+                <th class="text-left">Inglés</th>
+                <th class="text-left">Sostenido (#)</th>
+                <th class="text-left">Bemol (b) siguiente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="note in notes_table" :key="note.latin">
+                <td><strong>{{ note.latin }}</strong></td>
+                <td>{{ note.english }}</td>
+                <td>
+                  <v-chip v-if="note.sharp" x-small color="deep-orange lighten-4" class="font-weight-medium">
+                    {{ note.sharp }}
+                  </v-chip>
+                  <span v-else class="grey--text">—</span>
+                </td>
+                <td>
+                  <v-chip v-if="note.flat_next" x-small color="blue lighten-4" class="font-weight-medium">
+                    {{ note.flat_next }}
+                  </v-chip>
+                  <span v-else class="grey--text">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
 
-            <v-simple-table dense class="mb-5">
-              <thead>
-                <tr>
-                  <th class="text-left">Latino</th>
-                  <th class="text-left">Inglés</th>
-                  <th class="text-left">Sostenido (#)</th>
-                  <th class="text-left">Bemol (b) siguiente</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="note in notes_table" :key="note.latin">
-                  <td><strong>{{ note.latin }}</strong></td>
-                  <td>{{ note.english }}</td>
-                  <td>
-                    <v-chip v-if="note.sharp" x-small color="deep-orange lighten-4" class="font-weight-medium">
-                      {{ note.sharp }}
-                    </v-chip>
-                    <span v-else class="grey--text">—</span>
-                  </td>
-                  <td>
-                    <v-chip v-if="note.flat_next" x-small color="blue lighten-4" class="font-weight-medium">
-                      {{ note.flat_next }}
-                    </v-chip>
-                    <span v-else class="grey--text">—</span>
-                  </td>
-                </tr>
-              </tbody>
-            </v-simple-table>
+          <v-divider class="mb-4" />
 
-            <v-divider class="mb-4" />
+          <p class="text-subtitle-1 font-weight-medium mb-2">¿Qué son los sostenidos y bemoles?</p>
 
-            <p class="text-subtitle-1 font-weight-medium mb-2">¿Qué son los sostenidos y bemoles?</p>
+          <v-row dense>
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3 mb-3">
+                <div class="d-flex align-center mb-2">
+                  <v-icon color="deep-orange" class="mr-2">mdi-arrow-up</v-icon>
+                  <span class="font-weight-medium">Sostenido (# · Sharp)</span>
+                </div>
+                <p class="text-body-2 mb-0">
+                  Sube la nota <strong>medio tono</strong> (un traste hacia arriba).
+                  Ejemplo: Do# / C# está un traste arriba que Do / C.
+                </p>
+              </v-card>
+            </v-col>
 
-            <v-row dense>
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="deep-orange" class="mr-2">mdi-arrow-up</v-icon>
-                    <span class="font-weight-medium">Sostenido (# · Sharp)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Sube la nota <strong>medio tono</strong> (un traste hacia arriba).
-                    Ejemplo: Do# / C# está un traste arriba que Do / C.
-                  </p>
-                </v-card>
-              </v-col>
+            <v-col cols="12" md="6">
+              <v-card outlined class="pa-3 mb-3">
+                <div class="d-flex align-center mb-2">
+                  <v-icon color="blue" class="mr-2">mdi-arrow-down</v-icon>
+                  <span class="font-weight-medium">Bemol (b · Flat)</span>
+                </div>
+                <p class="text-body-2 mb-0">
+                  Baja la nota <strong>medio tono</strong> (un traste hacia abajo).
+                  Ejemplo: Reb / Db es la misma altura que Do# / C# (notas enarmónicas).
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
 
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="blue" class="mr-2">mdi-arrow-down</v-icon>
-                    <span class="font-weight-medium">Bemol (b · Flat)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Baja la nota <strong>medio tono</strong> (un traste hacia abajo).
-                    Ejemplo: Reb / Db es la misma altura que Do# / C# (notas enarmónicas).
-                  </p>
-                </v-card>
-              </v-col>
-            </v-row>
-
-            <v-alert type="warning" dense text class="mt-4">
-              Entre <strong>Mi-Fa (E-F)</strong> y <strong>Si-Do (B-C)</strong>
-              <strong>no hay nota intermedia</strong>: son semitonos naturales y no existe
-              un sostenido/bemol entre ellos.
-            </v-alert>
-          </v-card-text>
-        </v-card>
+          <v-alert type="warning" dense text class="mt-4">
+            Entre <strong>Mi-Fa (E-F)</strong> y <strong>Si-Do (B-C)</strong>
+            <strong>no hay nota intermedia</strong>: son semitonos naturales y no existe
+            un sostenido/bemol entre ellos.
+          </v-alert>
+        </courses-section>
 
       </div>
     </v-expand-transition>

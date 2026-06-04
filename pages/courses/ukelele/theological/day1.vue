@@ -1,223 +1,189 @@
 <template>
-  <div class="text-white bg-black">
-    <h1 class="d-inline-flex align-center" style="cursor: pointer" @click="toggleContent">
-      <v-icon color="black" class="mr-2">
-        {{ showContent ? "mdi-menu-right" : "mdi-menu-down" }}
-      </v-icon>
-      Teológico - Día 1
-    </h1>
+  <div>
+    <courses-header v-model="showContent" title="Teológico - Día 1" />
 
     <v-expand-transition>
       <div v-if="showContent" class="pa-4">
+        <!-- SECCIÓN 1: La Alabanza y los Instrumentos -->
+        <courses-section outlined title="La Alabanza y los Instrumentos" icon="mdi-music-clef-treble" text-class="">
+          <p class="text-body-1 grey--text text--darken-3 mb-4">
+            A lo largo de las Escrituras, vemos que la música y los instrumentos musicales juegan un papel fundamental en la adoración a Dios. No son simples acompañamientos decorativos, sino canales a través de los cuales expresamos júbilo, gratitud y reverencia al Creador.
+          </p>
 
-        <!-- SECCION 1: Partes del Ukelele -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-guitar-acoustic</v-icon>
-            Partes del Ukelele
-          </v-card-title>
-
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-3">Partes principales</p>
-            <v-img
-              src="/courses/ukelele/images/partes-ukelele.jpg"
-              class="mb-4 rounded"
-              max-height="420"
-              contain
-            >
-              <template #error>
-                <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                  <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
-                  <span class="text-caption grey--text text--darken-1">Imagen general no disponible</span>
+          <v-row dense>
+            <v-col cols="12" md="4" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Salmo 150:3-5</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Alabadle a son de bocina; Alabadle con salterio y arpa. Alabadle con pandero y danza; Alabadle con cuerdas y flautas. Alabadle con címbalos resonantes; Alabadle con címbalos de júbilo."
+                  </p>
                 </div>
-              </template>
-            </v-img>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
 
-            <v-row dense class="mb-4">
-              <v-col v-for="part in ukelele_parts" :key="part.name" cols="12" sm="6" md="4">
-                <v-card outlined class="pa-3 fill-height">
-                  <div class="d-flex align-center mb-1">
-                    <v-icon small color="primary" class="mr-2">{{ part.icon }}</v-icon>
-                    <span class="font-weight-medium">{{ part.name }}</span>
+            <v-col cols="12" md="4" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Salmo 33:2-3</span>
                   </div>
-                  <p class="text-body-2 grey--text text--darken-1 mb-0">{{ part.description }}</p>
-                  <v-img :src="part.image" height="140" class="mt-3 rounded" contain>
-                    <template #placeholder>
-                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                        <span class="text-caption grey--text text--darken-1">Cargando imagen...</span>
-                      </div>
-                    </template>
-                    <template #error>
-                      <div class="d-flex align-center justify-center fill-height grey lighten-3">
-                        <v-icon class="mr-1" small color="grey darken-1">mdi-image-off</v-icon>
-                        <span class="text-caption grey--text text--darken-1">Imagen no disponible</span>
-                      </div>
-                    </template>
-                  </v-img>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Alabad a Jehová con arpa; Cantadle con salterio y decacordio. Cantadle cántico nuevo; Hacedlo bien, tañendo con júbilo."
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="4" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Efesios 5:19</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "hablando entre vosotros con salmos, con himnos y cánticos espirituales, cantando y alabando al Señor en vuestros corazones;"
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <!-- Galería de Instrumentos Bíblicos -->
+          <div class="mt-6">
+            <h3 class="text-subtitle-1 font-weight-bold grey--text text--darken-3 mb-3 d-flex align-center">
+              <v-icon color="primary" class="mr-2">mdi-image-multiple</v-icon>
+              Instrumentos mencionados en las Escrituras
+            </h3>
+            <v-row dense justify="center">
+              <v-col cols="6" sm="4" md="2" v-for="instrumento in instrumentos" :key="instrumento.nombre" class="d-flex">
+                <v-card
+                  outlined
+                  class="pa-3 text-center w-100 instrument-card"
+                  style="border-radius:12px; transition: all 0.25s ease;"
+                >
+                  <v-img
+                    :src="instrumento.imagen"
+                    :alt="instrumento.nombre"
+                    height="110"
+                    contain
+                    class="mb-2"
+                  />
+                  <div class="text-caption font-weight-bold grey--text text--darken-3">{{ instrumento.nombre }}</div>
+                  <div class="text-caption grey--text text--darken-1">{{ instrumento.referencia }}</div>
                 </v-card>
               </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
+          </div>
+        </courses-section>
 
-        <!-- SECCION 2: Afinación Estándar -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-tune</v-icon>
-            Afinación Estándar
-          </v-card-title>
+        <!-- SECCIÓN 2: ¿Existe la Música Cristiana? -->
+        <courses-section outlined title="¿Existe la Música Cristiana?" icon="mdi-help-circle-outline" text-class="">
+          <p class="text-body-1 grey--text text--darken-3 mb-4">
+            Frecuentemente se clasifica la música en categorías como "cristiana" o "secular". Sin embargo, desde una perspectiva estrictamente técnica y bíblica, <strong>la música en sí misma no tiene religión</strong>.
+          </p>
 
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-2">Afinación estándar (G-C-E-A)</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-4">
-              El ukelele soprano, concert y tenor se afinan de forma reentrante: la cuerda 4 (G)
-              suena más aguda que las cuerdas 3 y 2. Esta es la afinación <strong>High G</strong>,
-              la más común en los ukeleles estándar.
-            </p>
+          <v-row dense class="mb-4">
+            <v-col cols="12" md="6">
+              <v-card flat class="pa-2">
+                <h3 class="text-subtitle-1 font-weight-bold primary--text mb-2">La neutralidad del sonido</h3>
+                <p class="text-body-2 grey--text text--darken-3">
+                  Una nota musical (como un Do o un Sol), una escala mayor o una progresión de acordes son leyes físicas de la acústica y frecuencias creadas por Dios al fundar el universo. El sonido y la teoría musical son inherentemente neutrales; no existen las "notas cristianas" ni los "ritmos pecaminosos".
+                </p>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-card flat class="pa-2">
+                <h3 class="text-subtitle-1 font-weight-bold primary--text mb-2">La letra y la intención del corazón</h3>
+                <p class="text-body-2 grey--text text--darken-3">
+                  Lo que verdaderamente define y santifica a una canción es <strong>su mensaje y el propósito del corazón</strong> que la ejecuta. Son las letras inspiradas en la Palabra, que exaltan, confiesan y dan gloria a Dios, junto con una actitud sincera del adorador, las que transforman el sonido en una ofrenda de olor fragante ante Su altar.
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
 
-            <v-simple-table dense class="mb-4">
-              <thead>
-                <tr>
-                  <th class="text-left">Cuerda</th>
-                  <th class="text-left">Nota (inglés)</th>
-                  <th class="text-left">Nota (latino)</th>
-                  <th class="text-left">Frecuencia (Hz)</th>
-                  <th class="text-left">Posición</th>
-                  <th class="text-left">Referencia</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="string in tuning_strings" :key="string.number">
-                  <td>
-                    <v-chip x-small :color="string.color" dark>{{ string.number }}</v-chip>
-                  </td>
-                  <td><strong>{{ string.note_en }}</strong></td>
-                  <td>{{ string.note_es }}</td>
-                  <td class="text-body-2">{{ string.frequency }}</td>
-                  <td class="text-body-2">{{ string.position }}</td>
-                  <td class="text-body-2 grey--text">{{ string.hint }}</td>
-                </tr>
-              </tbody>
-            </v-simple-table>
+          <v-alert type="info" border="left" colored-border elevation="1" class="mb-6">
+            <div class="text-body-2 font-weight-medium grey--text text--darken-4">
+              "El ukelele que tienes en tus manos es un instrumento neutral. Al aprender acordes y ritmos, estás dominando la creación de Dios. Es la intención de tu corazón y la letra de tus cantos lo que convertirá tu práctica en adoración verdadera."
+            </div>
+          </v-alert>
 
-            <v-divider class="mb-4" />
+          <!-- Analogía del Cuchillo -->
+          <v-card class="knife-analogy-card pa-5" elevation="2" style="border-radius: 16px; border-left: 5px solid #FF6F00;">
+            <div class="d-flex align-start">
+              <v-icon size="40" color="orange darken-3" class="mr-4 mt-1 flex-shrink-0">mdi-knife</v-icon>
+              <div>
+                <h3 class="text-subtitle-1 font-weight-bold orange--text text--darken-3 mb-2">
+                  Analogía: El cuchillo
+                </h3>
+                <p class="text-body-2 grey--text text--darken-3 mb-3">
+                  Piensa en un cuchillo de cocina. En manos de una madre, sirve para cortar verduras, preparar el alimento y nutrir a su familia.
+                  Ese mismo cuchillo, en otras circunstancias, puede usarse para herir o lastimar.
+                </p>
+                <p class="text-body-2 grey--text text--darken-3 mb-3">
+                  ¿Es el cuchillo bueno o malo? <strong>El objeto en sí es neutral.</strong>
+                  Lo que determina su resultado es <strong>quién lo sostiene, con qué intención y hacia qué propósito</strong>.
+                </p>
+                <v-divider class="mb-3" />
+                <p class="text-body-2 grey--text text--darken-3 mb-0">
+                  La música funciona exactamente igual. Un acorde de Sol mayor puede acompañar un himno de adoración que lleva a una congregación a los pies de Dios,
+                  o puede acompañar una letra que destruye, envilece o aleja del Creador.
+                  <strong>No hay música cristiana ni música secular: hay letras e intenciones que exaltan a Dios, y letras e intenciones que no lo hacen.</strong>
+                </p>
+              </div>
+            </div>
+          </v-card>
+        </courses-section>
 
-            <p class="text-subtitle-1 font-weight-medium mb-3">High G vs. Low G</p>
+        <!-- SECCIÓN 3: La Importancia de la Disciplina -->
+        <courses-section outlined title="La Importancia de la Disciplina" icon="mdi-seal" text-class="">
+          <p class="text-body-1 grey--text text--darken-3 mb-4">
+            Desarrollar una habilidad musical requiere perseverancia, práctica y paciencia. En la Biblia, la disciplina y la excelencia técnica no se oponen a la espiritualidad, sino que caminan de la mano para servir a Dios con lo mejor de nosotros.
+          </p>
 
-            <v-row dense>
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="amber" class="mr-2">mdi-music-note-high</v-icon>
-                    <span class="font-weight-medium">High G (G4 - 392 Hz)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Afinación estándar reentrante. Sonido brillante y clásico del ukelele.
-                    La más usada en ukeleles soprano, concert y tenor.
-                  </p>
-                </v-card>
-              </v-col>
+          <v-row dense class="align-center mb-4">
+            <v-col cols="12" md="8">
+              <h3 class="text-subtitle-1 font-weight-bold primary--text mb-2">David tocando el arpa para Saúl</h3>
+              <p class="text-body-2 grey--text text--darken-3 mb-3">
+                Cuando el rey Saúl era atormentado por un espíritu malo, sus sirvientes buscaron a alguien que supiera tocar bien. Encontraron a David, quien no solo tenía el respaldo de Dios, sino que era sumamente dedicado a su instrumento.
+              </p>
+              <v-card outlined class="pa-4 grey lighten-5 mb-3">
+                <div class="d-flex align-center mb-2">
+                  <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                  <span class="font-weight-bold grey--text text--darken-4">1 Samuel 16:23</span>
+                </div>
+                <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                  "Y cuando el espíritu malo de parte de Dios venía sobre Saúl, David tomaba el arpa y la tocaba con su mano; y Saúl tenía alivio y estaba mejor, y el espíritu malo se apartaba de él."
+                </p>
+                <div class="text-caption primary--text font-weight-bold mt-1 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
 
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="blue" class="mr-2">mdi-music-note</v-icon>
-                    <span class="font-weight-medium">Low G (G3 - 196 Hz)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Afinación alternativa lineal. Proporciona más registro grave y un sonido más lleno
-                    en los acordes. Ideal para arreglos con líneas de bajo.
-                  </p>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+            <v-col cols="12" md="4" class="text-center">
+              <v-card outlined class="pa-4 fill-height d-flex flex-column justify-center align-center">
+                <v-icon size="48" color="amber darken-2" class="mb-2">mdi-music</v-icon>
+                <div class="text-subtitle-2 font-weight-bold mb-1">"Tañendo con júbilo"</div>
+                <p class="text-caption grey--text text--darken-2 mb-0">
+                  David no tocaba de manera improvisada; su destreza en el arpa era fruto de horas de cuidado de las ovejas y práctica silenciosa, capacitando su talento para ser un canal de paz y liberación espiritual.
+                </p>
+              </v-card>
+            </v-col>
+          </v-row>
 
-        <!-- SECCION 3: Notas Musicales -->
-        <v-card class="mb-8" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
-            <v-icon left color="white">mdi-music-note</v-icon>
-            Notas Musicales
-          </v-card-title>
-
-          <v-card-text class="pt-4">
-            <p class="text-subtitle-1 font-weight-medium mb-2">Notación latina vs. inglesa</p>
-            <p class="text-body-2 grey--text text--darken-2 mb-4">
-              En Latinoamérica se usa notación <strong>latina (Do, Re, Mi...)</strong>.
-              En el mundo anglosajón y en muchas apps se usa notación <strong>inglesa (C, D, E...)</strong>.
-              Ejemplo: Do = C.
-            </p>
-
-            <v-simple-table dense class="mb-5">
-              <thead>
-                <tr>
-                  <th class="text-left">Latino</th>
-                  <th class="text-left">Inglés</th>
-                  <th class="text-left">Sostenido (#)</th>
-                  <th class="text-left">Bemol (b) siguiente</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="note in notes_table" :key="note.latin">
-                  <td><strong>{{ note.latin }}</strong></td>
-                  <td>{{ note.english }}</td>
-                  <td>
-                    <v-chip v-if="note.sharp" x-small color="deep-orange lighten-4" class="font-weight-medium">
-                      {{ note.sharp }}
-                    </v-chip>
-                    <span v-else class="grey--text">—</span>
-                  </td>
-                  <td>
-                    <v-chip v-if="note.flat_next" x-small color="blue lighten-4" class="font-weight-medium">
-                      {{ note.flat_next }}
-                    </v-chip>
-                    <span v-else class="grey--text">—</span>
-                  </td>
-                </tr>
-              </tbody>
-            </v-simple-table>
-
-            <v-divider class="mb-4" />
-
-            <p class="text-subtitle-1 font-weight-medium mb-2">¿Qué son los sostenidos y bemoles?</p>
-
-            <v-row dense>
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="deep-orange" class="mr-2">mdi-arrow-up</v-icon>
-                    <span class="font-weight-medium">Sostenido (# · Sharp)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Sube la nota <strong>medio tono</strong> (un traste hacia arriba).
-                    Ejemplo: Do# / C# está un traste arriba que Do / C.
-                  </p>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="6">
-                <v-card outlined class="pa-3 mb-3">
-                  <div class="d-flex align-center mb-2">
-                    <v-icon color="blue" class="mr-2">mdi-arrow-down</v-icon>
-                    <span class="font-weight-medium">Bemol (b · Flat)</span>
-                  </div>
-                  <p class="text-body-2 mb-0">
-                    Baja la nota <strong>medio tono</strong> (un traste hacia abajo).
-                    Ejemplo: Reb / Db es la misma altura que Do# / C# (notas enarmónicas).
-                  </p>
-                </v-card>
-              </v-col>
-            </v-row>
-
-            <v-alert type="warning" dense text class="mt-4">
-              Entre <strong>Mi-Fa (E-F)</strong> y <strong>Si-Do (B-C)</strong>
-              <strong>no hay nota intermedia</strong>: son semitonos naturales y no existe
-              un sostenido/bemol entre ellos.
-            </v-alert>
-          </v-card-text>
-        </v-card>
-
+          <v-alert type="warning" border="left" colored-border elevation="1" class="my-0">
+            <div class="text-body-2 font-weight-medium grey--text text--darken-4">
+              <strong>El llamado a la excelencia:</strong> Así como el rey David, la práctica diaria del ukelele es un acto de disciplina y respeto hacia Dios. Estudiar teoría musical y practicar digitación es preparar una ofrenda digna para nuestro Creador.
+            </div>
+          </v-alert>
+        </courses-section>
       </div>
     </v-expand-transition>
   </div>
@@ -225,115 +191,52 @@
 
 <script>
 export default {
+  name: "UkeleleTheologicalDay1",
   data() {
     return {
       showContent: true,
-      ukelele_parts: [
+      instrumentos: [
         {
-          name: "Clavijeros",
-          icon: "mdi-tune",
-          description: "Tornillos que tensan o aflojan las cuerdas para ajustar la afinacion.",
-          image: "/courses/ukelele/images/clavijeros.jpg",
+          nombre: 'Címbalo',
+          imagen: '/courses/ukelele/images/cimbalo.png',
+          referencia: 'Salmo 150:5'
         },
         {
-          name: "Cejilla",
-          icon: "mdi-minus",
-          description: "Pieza en la parte superior del mastil que guia las cuerdas y define el inicio de la escala.",
-          image: "/courses/ukelele/images/cejuela.jpg",
+          nombre: 'Pandero',
+          imagen: '/courses/ukelele/images/pandero.png',
+          referencia: 'Salmo 150:4'
         },
         {
-          name: "Mastil",
-          icon: "mdi-rectangle-outline",
-          description: "Parte donde se ubican los trastes y el diapasón; aqui se presionan los acordes.",
-          image: "/courses/ukelele/images/mastil.jpg",
+          nombre: 'Salterio',
+          imagen: '/courses/ukelele/images/salterio.png',
+          referencia: 'Salmo 33:2'
         },
         {
-          name: "Trastes",
-          icon: "mdi-view-column",
-          description: "Barras metalicas que dividen el diapasón. Cada traste representa medio tono.",
-          image: "/courses/ukelele/images/trastes.jpg",
+          nombre: 'Arpa',
+          imagen: '/courses/ukelele/images/arpa.png',
+          referencia: 'Salmo 33:2'
         },
         {
-          name: "Caja de resonancia",
-          icon: "mdi-circle-outline",
-          description: "Cuerpo hueco de madera que amplifica el sonido de las cuerdas.",
-          image: "/courses/ukelele/images/caja-resonancia.jpg",
-        },
-        {
-          name: "Boca (Sound hole)",
-          icon: "mdi-circle",
-          description: "Agujero en la tapa que permite que el sonido salga con mayor proyeccion.",
-          image: "/courses/ukelele/images/boca.jpg",
-        },
-        {
-          name: "Cuerdas",
-          icon: "mdi-guitar-pick",
-          description: "El ukelele tiene 4 cuerdas, generalmente de nylon o fluorocarbono.",
-          image: "/courses/ukelele/images/cuerdas.jpg",
-        },
-        {
-          name: "Cejilla Inferior",
-          icon: "mdi-minus-thick",
-          description: "Pieza inferior que sostiene y eleva las cuerdas en la base del instrumento.",
-          image: "/courses/ukelele/images/selleta.jpg",
+          nombre: 'Decacordio',
+          imagen: '/courses/ukelele/images/decacordio.png',
+          referencia: 'Salmo 33:2'
         },
       ],
-
-      tuning_strings: [
-        {
-          number: "4 (arriba)",
-          note_en: "G",
-          note_es: "Sol",
-          frequency: "392 Hz",
-          position: "La mas cercana a ti al tocar",
-          hint: "Nota reentrante (suena aguda)",
-          color: "green darken-1",
-        },
-        {
-          number: "3",
-          note_en: "C",
-          note_es: "Do",
-          frequency: "262 Hz",
-          position: "Segunda desde arriba",
-          hint: "Mas grave de las 4",
-          color: "blue darken-1",
-        },
-        {
-          number: "2",
-          note_en: "E",
-          note_es: "Mi",
-          frequency: "330 Hz",
-          position: "Tercera cuerda",
-          hint: "",
-          color: "orange darken-1",
-        },
-        {
-          number: "1 (abajo)",
-          note_en: "A",
-          note_es: "La",
-          frequency: "440 Hz",
-          position: "La mas alejada de ti al tocar",
-          hint: "Cuerda mas aguda en pitch estandar",
-          color: "red darken-1",
-        },
-      ],
-
-      notes_table: [
-        { latin: "Do", english: "C", sharp: "Do# / C#", flat_next: "Reb / Db" },
-        { latin: "Re", english: "D", sharp: "Re# / D#", flat_next: "Mib / Eb" },
-        { latin: "Mi", english: "E", sharp: null, flat_next: null },
-        { latin: "Fa", english: "F", sharp: "Fa# / F#", flat_next: "Solb / Gb" },
-        { latin: "Sol", english: "G", sharp: "Sol# / G#", flat_next: "Lab / Ab" },
-        { latin: "La", english: "A", sharp: "La# / A#", flat_next: "Sib / Bb" },
-        { latin: "Si", english: "B", sharp: null, flat_next: null },
-      ],
-    }
+    };
   },
-
-  methods: {
-    toggleContent() {
-      this.showContent = !this.showContent
-    },
-  },
-}
+};
 </script>
+
+<style scoped>
+.italic {
+  font-style: italic;
+}
+.w-100 {
+  width: 100%;
+}
+.instrument-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-color: #1976d2 !important;
+}
+</style>
