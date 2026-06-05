@@ -158,40 +158,43 @@ const boardHints = computed(() => {
   const hints = []
 
   if(bestMovesLichess.value) {
-    bestMovesLichess.value.forEach(move => {
+    bestMovesLichess.value.forEach((move, index) => {
       hints.push({
         from: notationToIndex(move.lan.substring(0, 2)),
         to: notationToIndex(move.lan.substring(2, 4)),
         color: '#4caf50',
         xOffset: 0,
         radius: 30,
-        arrowScale: 0.7
+        arrowScale: 0.7,
+        rank: index + 1
       })
     })
   }
 
   if(bestMovesStockfish.value) {
-    bestMovesStockfish.value.forEach(move => {
+    bestMovesStockfish.value.forEach((move, index) => {
       hints.push({
         from: notationToIndex(move.lan.substring(0, 2)),
         to: notationToIndex(move.lan.substring(2, 4)),
         color: '#ff5252',
         xOffset: -12,
         radius: 30,
-        arrowScale: 0.7
+        arrowScale: 0.7,
+        rank: index + 1
       })
     })
   }
 
   if(bestMovesL0c.value) {
-    bestMovesL0c.value.forEach(move => {
+    bestMovesL0c.value.forEach((move, index) => {
       hints.push({
         from: notationToIndex(move.lan.substring(0, 2)),
         to: notationToIndex(move.lan.substring(2, 4)),
         color: '#2196f3',
         xOffset: 12,
         radius: 30,
-        arrowScale: 0.7
+        arrowScale: 0.7,
+        rank: index + 1
       })
     })
   }

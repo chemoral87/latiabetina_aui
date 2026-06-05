@@ -56,6 +56,26 @@
               :marker-end="getMarker(hint.color)"
               opacity="0.7"
             />
+            <!-- Rank badge (pink dot with number) at arrow tip -->
+            <g v-if="hint.rank" :transform="isRotated ? `rotate(180 ${hint.x2} ${hint.y2})` : ''">
+              <circle
+                :cx="hint.x2" :cy="hint.y2"
+                r="14"
+                fill="#e91e8a"
+                stroke="white"
+                stroke-width="2"
+                opacity="0.9"
+              />
+              <text
+                :x="hint.x2" :y="hint.y2"
+                text-anchor="middle"
+                dominant-baseline="central"
+                fill="white"
+                font-size="16"
+                font-weight="bold"
+                style="pointer-events: none;"
+              >{{ hint.rank }}</text>
+            </g>
           </g>
         </svg>
       </div>
@@ -138,7 +158,8 @@ export default {
           y2: toRow * 100 + 50,
           color: hint.color,
           radius: hint.radius || 38,
-          arrowScale: hint.arrowScale || 1
+          arrowScale: hint.arrowScale || 1,
+          rank: hint.rank || null
         }
       })
     }

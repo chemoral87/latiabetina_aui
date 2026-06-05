@@ -52,6 +52,8 @@ const folderContexts = {
 }
 
 export default {
+  middleware: ["authenticated", "permission"],
+  meta: { permission: "ukelele-course" },
   data() {
     return {
       loading: false,

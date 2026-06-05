@@ -14,14 +14,49 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact @click="closeDrawer">
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <template v-for="(item, i) in items">
+          <v-list-group
+            v-if="item.children"
+            :key="`group-${i}`"
+            :prepend-icon="item.icon"
+            no-action
+          >
+            <template #activator>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+
+            <v-list-item
+              v-for="(child, j) in item.children"
+              :key="`child-${i}-${j}`"
+              :to="child.to"
+              router
+              exact
+              @click="closeDrawer"
+            >
+              <v-list-item-content>
+                <v-list-item-title>{{ child.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+
+          <v-list-item
+            v-else
+            :key="`item-${i}`"
+            :to="item.to"
+            router
+            exact
+            @click="closeDrawer"
+          >
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
         <v-spacer />
       </v-list>
     </v-navigation-drawer>

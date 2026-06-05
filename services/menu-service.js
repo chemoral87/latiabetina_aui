@@ -45,6 +45,22 @@ export class MenuService {
       if (this.hasPermission("conso-sheet-index")) {
         menu.push({ icon: "mdi-account-multiple", title: "Consolidación", to: "/consolidation" })
       }
+
+      if (this.hasPermission("ukelele-course")) {
+        menu.push({
+          icon: "mdi-guitar-acoustic",
+          title: "Ukelele",
+          to: "/courses/ukelele",
+          children: [
+            { title: "Día 1", to: "/courses/ukelele?day=1&order=TR,P" },
+            { title: "Día 2", to: "/courses/ukelele?day=2&order=TR,P" },
+            { title: "Día 3", to: "/courses/ukelele?day=3&order=TR,P" },
+            { title: "Día 4", to: "/courses/ukelele?day=4&order=TR,P" },
+            { title: "Día 5", to: "/courses/ukelele?day=5&order=TR,P" },
+            { title: "Día 6", to: "/courses/ukelele?day=6&order=TR,P" },
+          ],
+        })
+      }
       // menu.push({
       //   icon: "mdi-chart-bar",
       //   title: "ReportesA",
