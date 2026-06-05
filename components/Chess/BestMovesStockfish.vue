@@ -1,42 +1,48 @@
 <template>
   <v-card outlined class="mt-4 pa-3">
     <div class="text-subtitle-2 font-weight-medium mb-2 d-flex align-center">
-      <v-icon small left color="primary">mdi-robot</v-icon>
+      <v-icon small left color="red">mdi-robot</v-icon>
       {{ title }}
     </div>
     
     <div v-if="loading" class="d-flex justify-center pa-4">
-      <v-progress-circular indeterminate color="primary" size="24"></v-progress-circular>
+      <v-progress-circular indeterminate color="red" size="24"></v-progress-circular>
     </div>
     
-    <div v-else-if="move" class="d-flex flex-column ga-2">
-      <div class="best-move-item pa-3 rounded elevation-1">
-        <div class="d-flex align-center justify-space-between mb-2">
+    <div v-else-if="moves.length > 0" class="d-flex flex-column ga-2">
+      <div 
+        v-for="(move, index) in moves" 
+        :key="index"
+        class="best-move-item pa-2 rounded"
+      >
+        <div class="d-flex align-center justify-space-between mb-1">
           <div class="d-flex align-center ga-2">
-            <span class="text-h5">🏆</span>
-            <span class="text-h5 font-weight-bold primary--text">{{ move.san }}</span>
+            <span v-if="index === 0" class="text-h6">🥇</span>
+            <span v-else-if="index === 1" class="text-h6">🥈</span>
+            <span v-else class="font-weight-bold grey--text text--darken-2 pl-1">#{{ index + 1 }}</span>
+            <span class="text-body-2 font-weight-bold red--text">{{ move.san }}</span>
           </div>
           <div class="d-flex flex-column align-end">
-             <v-chip small label :color="getScoreColor(move.eval)" dark class="font-weight-bold mb-1">
+            <v-chip x-small label :color="getScoreColor(move.eval)" dark>
               {{ formatEval(move.eval, move.mate) }}
             </v-chip>
-            <span v-if="move.winChance" class="text-caption success--text font-weight-bold">
+            <span v-if="move.winChance" class="text-caption success--text font-weight-bold mt-1">
               {{ move.winChance.toFixed(1) }}% Vic.
             </span>
           </div>
         </div>
 
         <!-- Línea de continuación -->
-        <div v-if="move.continuationArr && move.continuationArr.length" class="text-caption grey--text text--darken-2 mt-1 py-1" style="background: rgba(0,0,0,0.03); border-radius: 4px;">
-          <v-icon x-small left class="ml-1">mdi-arrow-right</v-icon>
-          {{ move.continuationArr.slice(0, 8).join(' ') }}
-          <span v-if="move.continuationArr.length > 8">...</span>
+        <div v-if="move.continuationArr && move.continuationArr.length" class="text-caption grey--text text--darken-1 text-truncate">
+          <v-icon x-small left>mdi-arrow-right</v-icon>
+          {{ move.continuationArr.slice(0, 5).join(' ') }}
+          <span v-if="move.continuationArr.length > 5">...</span>
         </div>
       </div>
     </div>
     
     <div v-else class="text-caption grey--text text-center pa-2">
-      Esperando movimiento...
+      Esperando análisis de Stockfish...
     </div>
   </v-card>
 </template>
@@ -49,9 +55,9 @@ export default {
       type: String,
       default: 'Mejor Opción (Stockfish)'
     },
-    move: {
-      type: Object,
-      default: null
+    moves: {
+      type: Array,
+      default: () => []
     },
     loading: {
       type: Boolean,
@@ -74,7 +80,10 @@ export default {
 
 <style scoped>
 .best-move-item {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  border-left: 3px solid transparent;
+}
+.best-move-item:hover {
+  background-color: #eeeeee;
 }
 </style>

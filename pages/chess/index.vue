@@ -21,7 +21,7 @@
             <!-- Indicador de turno -->
             <ChessIndicator :current-turn="currentTurn" />
 
-            <ChessBestMovesStockfish :move="bestMoveStockfish" :loading="loadingStockfish" class="mt-4" />
+            <ChessBestMovesStockfish :moves="bestMovesStockfish" :loading="loadingStockfish" class="mt-4" />
             <ChessBestMovesL0c title="Mejor Opción (L0c)" :moves="bestMovesL0c" :loading="loadingL0c" class="mt-4" />
             <ChessBestMovesLichess :moves="bestMovesLichess" :loading="loadingLichess" class="mt-4" />
 
@@ -83,7 +83,7 @@ const selectedSquare = ref(null)
 const validMoves = ref([])
 const currentTurn = ref('white') // 'white' o 'black'
 // Estados para análisis
-const bestMoveStockfish = ref(null)
+const bestMovesStockfish = ref([])
 const bestMovesL0c = ref([])
 const bestMovesLichess = ref([])
 const loadingStockfish = ref(false)
@@ -130,7 +130,7 @@ const resetBoard = () => {
   currentMoveIndex.value = -1
   boardHistory.value = [[...initialPosition]]
   currentTurn.value = 'white'
-  bestMoveStockfish.value = null
+  bestMovesStockfish.value = []
   bestMovesL0c.value = []
   bestMovesLichess.value = []
   lastAnalysisFen.value = ''
@@ -170,18 +170,17 @@ const boardHints = computed(() => {
     })
   }
 
-  if(bestMoveStockfish.value) {
-    const lan = bestMoveStockfish.value.lan || bestMoveStockfish.value.move
-    if(lan && lan.length >= 4) {
+  if(bestMovesStockfish.value) {
+    bestMovesStockfish.value.forEach(move => {
       hints.push({
-        from: notationToIndex(lan.substring(0, 2)),
-        to: notationToIndex(lan.substring(2, 4)),
+        from: notationToIndex(move.lan.substring(0, 2)),
+        to: notationToIndex(move.lan.substring(2, 4)),
         color: '#ff5252',
         xOffset: -12,
         radius: 30,
         arrowScale: 0.7
       })
-    }
+    })
   }
 
   if(bestMovesL0c.value) {
@@ -202,18 +201,26 @@ const boardHints = computed(() => {
 
 const getStockfishMove = async (fen) => {
   loadingStockfish.value = true
-  bestMoveStockfish.value = null
+  bestMovesStockfish.value = []
 
   try {
     const response = await fetch('https://chess-api.com/v1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fen, variants: 1, depth: 12 })
+      body: JSON.stringify({ fen, variants: 3, depth: 12 })
     })
 
     if(response.ok && fen === lastAnalysisFen.value) {
       const data = await response.json()
-      bestMoveStockfish.value = Array.isArray(data) ? data[0] : data
+      const items = Array.isArray(data) ? data : [data]
+      bestMovesStockfish.value = items.map(d => ({
+        san: d.san || d.move,
+        lan: d.lan || d.move,
+        eval: Math.round((d.eval || 0) * 100),
+        mate: d.mate,
+        winChance: d.winChance,
+        continuationArr: d.continuationArr || []
+      }))
     }
   } catch(error) {
 
@@ -268,7 +275,7 @@ const getLichessMoves = async (fen) => {
   bestMovesLichess.value = []
 
   try {
-    const lichessRes = await fetch(`https://lichess.org/api/cloud-eval?fen=${encodeURIComponent(fen)}&multiPv=2`)
+    const lichessRes = await fetch(`https://lichess.org/api/cloud-eval?fen=${encodeURIComponent(fen)}&multiPv=3`)
     if(lichessRes.ok && fen === lastAnalysisFen.value) {
       const data = await lichessRes.json()
       if(data.pvs && data.pvs.length > 0 && fen === lastAnalysisFen.value) {
@@ -305,7 +312,7 @@ const getBestMoves = () => {
   const playerColor = isRotated.value ? 'black' : 'white'
   const shouldAnalyze = analyzeAllMoves.value || (currentTurn.value === playerColor)
 
-  bestMoveStockfish.value = null
+  bestMovesStockfish.value = []
   bestMovesL0c.value = []
   bestMovesLichess.value = []
   lastAnalysisFen.value = ''
