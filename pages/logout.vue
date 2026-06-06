@@ -10,28 +10,41 @@
 <script>
 export default {
   auth: false,
+  data() {
+    return {
+      isLoggingOut: false
+    }
+  },
   head() {
     return {
       title: "Cerrando sesión",
     }
   },
   mounted() {
+    // Prevent multiple logout calls
+    if (this.isLoggingOut) return
+    this.isLoggingOut = true
+    
     // Breve retraso para que el usuario vea el mensaje
     setTimeout(() => {
       try {
-        if(this.$auth.strategy.name === "google") {
-          // Para Google, hacer logout local sin llamar al backend
-          this.$auth.reset()
-          this.$router.push("/login")
-        } else {
-          // Para Laravel, usar logout normal
-          this.$auth.logout()
-        }
+        // Hacer la llamada al backend logout mientras el token aún está disponible
+        this.$axios.post('/auth/logout')
+          .then(() => {
+            // Token cleared on successful logout
+            this.$auth.setUser(false)
+            // Redirect to login after logout completes
+            this.$router.push('/login')
+          })
+          .catch(() => {
+            // En caso de error, continuamos
+            this.$auth.setUser(false)
+            this.$router.push('/login')
+          })
       } catch(e) {
-
-        // En caso de error, intentamos limpiar el estado local
-        this.$auth.reset()
-        this.$router.push("/login")
+        // En caso de error, continuamos
+        this.$auth.setUser(false)
+        this.$router.push('/login')
       }
     }, 800)
   },

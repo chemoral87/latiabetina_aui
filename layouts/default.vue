@@ -128,7 +128,6 @@ v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackba
 </template>
 
 <script>
-import _ from "lodash"
 import { mapGetters } from "vuex"
 import { MenuService } from "../services/menu-service"
 
@@ -210,27 +209,9 @@ export default {
       this.$router.push("/")
     },
 
-    async logout() {
+    logout() {
       this.menu = false
-
-      const newRouteQuery = _.omit(this.$route.query, ['day', 'order', 's'])
-      await this.$router.replace({ query: newRouteQuery }).catch(() => {})
-
-      let redirectUrl = '/login'
-      if (this.$route.path !== '/' && this.$route.path !== '/login') {
-        let cleanPath = this.$route.path
-        const qs = new URLSearchParams(newRouteQuery).toString()
-        if (qs) cleanPath += '?' + qs
-        redirectUrl = `/login?redirect=${encodeURIComponent(cleanPath)}`
-      }
-
-      if(this.$auth.strategy.name === "google") {
-        this.$auth.reset()
-        window.location.replace(redirectUrl)
-      } else {
-        await this.$auth.logout()
-        window.location.replace(redirectUrl)
-      }
+      this.$router.replace('/logout')
     },
   },
 }
