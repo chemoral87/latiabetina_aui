@@ -128,6 +128,7 @@ v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackba
 </template>
 
 <script>
+import _ from "lodash"
 import { mapGetters } from "vuex"
 import { MenuService } from "../services/menu-service"
 
@@ -167,13 +168,11 @@ export default {
   },
 
   created() {
-    // Usar el event bus personalizado (con fallback a $nuxt)
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$on("setNavBar", this.setNavBar)
   },
 
   beforeDestroy() {
-    // Limpiar listener para evitar memory leaks
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$off("setNavBar", this.setNavBar)
   },
@@ -210,18 +209,26 @@ export default {
       this.$router.push("/")
     },
 
-    logout() {
+    async logout() {
       this.menu = false
 
-      // Para Google, hacer logout local sin llamar al backend
+      const newRouteQuery = _.omit(this.$route.query, ['day', 'order', 's'])
+      await this.$router.replace({ query: newRouteQuery }).catch(() => {})
+
+      let redirectUrl = '/login'
+      if (this.$route.path !== '/' && this.$route.path !== '/login') {
+        let cleanPath = this.$route.path
+        const qs = new URLSearchParams(newRouteQuery).toString()
+        if (qs) cleanPath += '?' + qs
+        redirectUrl = `/login?redirect=${encodeURIComponent(cleanPath)}`
+      }
+
       if(this.$auth.strategy.name === "google") {
-        this.$router.push("/login")
-        this.$nextTick(() => {
-          this.$auth.reset()
-        })
+        this.$auth.reset()
+        window.location.replace(redirectUrl)
       } else {
-        // Para Laravel, usar logout normal
-        this.$auth.logout()
+        await this.$auth.logout()
+        window.location.replace(redirectUrl)
       }
     },
   },
@@ -240,8 +247,6 @@ export default {
 }
 
 @media (max-width: 600px) {
-
-  /* Snackbar box — still needs ::v-deep as wrapper is outside content-class scope */
   .snackbar-wrapper ::v-deep .v-snack__wrapper {
     min-width: 0 !important;
     max-width: 82vw !important;
@@ -249,7 +254,6 @@ export default {
     margin: 0 8px !important;
   }
 
-  /* content-class="snack-content" targets this div directly — no ::v-deep needed */
   .snack-content {
     font-size: 0.9rem !important;
     padding: 6px 4px !important;
@@ -261,7 +265,6 @@ export default {
     line-height: 1.3;
   }
 
-  /* Action button — outside content-class scope, keep ::v-deep */
   .snackbar-wrapper ::v-deep .v-snack__action {
     padding: 0 2px !important;
   }
@@ -280,15 +283,16 @@ export default {
   overscroll-behavior: none;
   touch-action: manipulation;
   -webkit-overflow-scrolling: touch;
-  position: relative;
-  -webkit-user-drag: none;
 }
 
-/* Prevent pull-to-refresh in PWA */
-.v-main.no-drag {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
+/*
+  THE DEFINITIVE FIX:
+  Vuetify's v-app sets the root to height:100vh with overflow:hidden,
+  then v-main__wrap gets overflow:auto — that is the "inner" scrollbar.
+  We force it to overflow:visible so it never creates a scroll context.
+  The browser's native scrollbar (on <html>) is the only one that remains.
+*/
+.v-main.no-drag ::v-deep .v-main__wrap {
+  overflow: visible !important;
 }
 </style>
