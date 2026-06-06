@@ -133,6 +133,7 @@ import { mapGetters } from "vuex"
 import { MenuService } from "../services/menu-service"
 
 export default {
+  middleware: ["auth-redirect"],
   data() {
     return {
       clipped: false,

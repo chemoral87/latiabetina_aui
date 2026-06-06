@@ -80,19 +80,32 @@ export default {
 
   methods: {
     loginWithGoogle() {
-      // Redirige directamente sin hacer petición AJAX
+      // Obtiene el redirect del query param o localStorage
+      const redirect = this.$route.query.redirect || localStorage.getItem("loginRedirect")
+      
+      // Redirige al backend con el redirect como query param
       const baseUrl = process.env.BASE_URL || this.name_secret
-      window.location.href = `${baseUrl}/auth/google/redirect`
+      let googleRedirectUrl = `${baseUrl}/auth/google/redirect`
+      
+      if (redirect) {
+        googleRedirectUrl += `?redirect=${encodeURIComponent(redirect)}`
+        // También guarda en localStorage como backup
+        localStorage.setItem("loginRedirect", redirect)
+      }
+      
+      window.location.href = googleRedirectUrl
     },
     async handleGoogleCallback() {
       // Verifica si hay un token en la URL (cuando Laravel redirige de vuelta)
       const urlParams = new URLSearchParams(window.location.search)
       const token = urlParams.get("token")
+      const redirect = urlParams.get("redirect") // Ahora viene desde el backend
       const error = urlParams.get("error")
 
       if(error) {
         this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
         window.history.replaceState({}, document.title, window.location.pathname)
+        localStorage.removeItem("loginRedirect")
         return
       }
 
@@ -105,13 +118,23 @@ export default {
           // Limpia la URL
           window.history.replaceState({}, document.title, window.location.pathname)
 
-          // Redirige al dashboard o a la ruta solicitada
-          this.$router.push({
-            path: this.$route.query.redirect || "/",
-          })
+          // Usa el redirect del query param (viene del backend) o localStorage como fallback
+          const redirectPath = redirect || localStorage.getItem("loginRedirect") || "/"
+          
+          // Limpia los redirects guardados
+          localStorage.removeItem("loginRedirect")
+          this.$store.dispatch("clearLoginRedirect")
+
+          // Redirige con delay para asegurar que auth module termine de procesar
+          setTimeout(() => {
+            this.$router.push({
+              path: redirectPath,
+            })
+          }, 100)
         } catch(error) {
           this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
           window.history.replaceState({}, document.title, window.location.pathname)
+          localStorage.removeItem("loginRedirect")
         }
       }
     },
@@ -124,8 +147,17 @@ export default {
         }
         await this.$auth.loginWith("laravelJWT", { data: credentials })
         // eslint-disable-next-line no-console
+        
+        // Obtiene el redirect de localStorage o query param
+        const redirectFromStorage = localStorage.getItem("loginRedirect")
+        const redirectPath = redirectFromStorage || this.$route.query.redirect || "/"
+        
+        // Limpia los redirects guardados
+        this.$store.dispatch("clearLoginRedirect")
+        localStorage.removeItem("loginRedirect")
+        
         this.$router.push({
-          path: this.$route.query.redirect || "/",
+          path: redirectPath,
         })
       } catch(e) {
         // console.log(e)

@@ -9,6 +9,7 @@ export const state = () => ({
   locale: "es",
   config: [],
   app_version: process.env.APP_VERSION,
+  loginRedirect: null,
 })
 
 export const getters = {
@@ -73,6 +74,10 @@ export const getters = {
 
     return config.keys[parameter]
   },
+
+  loginRedirect(state) {
+    return state.loginRedirect
+  },
 }
 
 export const mutations = {
@@ -106,6 +111,14 @@ export const mutations = {
 
   SET_CONFIG(state, payload) {
     state.config = payload
+  },
+
+  SET_LOGIN_REDIRECT(state, redirect) {
+    state.loginRedirect = redirect
+  },
+
+  CLEAR_LOGIN_REDIRECT(state) {
+    state.loginRedirect = null
   },
 }
 
@@ -191,5 +204,13 @@ export const actions = {
       const res = await this.$repository.Config.index({ settings })
       commit("SET_CONFIG", res)
     } catch (error) {}
+  },
+
+  setLoginRedirect({ commit }, redirect) {
+    commit("SET_LOGIN_REDIRECT", redirect)
+  },
+
+  clearLoginRedirect({ commit }) {
+    commit("CLEAR_LOGIN_REDIRECT")
   },
 }
