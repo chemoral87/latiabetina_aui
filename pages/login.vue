@@ -103,7 +103,6 @@ export default {
       const error = urlParams.get("error")
 
       if(error) {
-        this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
         window.history.replaceState({}, document.title, window.location.pathname)
         localStorage.removeItem("loginRedirect")
         return
@@ -111,9 +110,16 @@ export default {
 
       if(token) {
         try {
-          // Guarda el token y obtiene el usuario
+          // Guarda el token
           this.$auth.setUserToken(token)
-          await this.$auth.fetchUser()
+          
+          // Intenta obtener el usuario, pero no falla si hay error
+          try {
+            await this.$auth.fetchUser()
+          } catch(fetchError) {
+            // Si falla fetchUser, continuamos de todas formas
+            console.warn("Warning fetching user:", fetchError)
+          }
 
           // Limpia la URL
           window.history.replaceState({}, document.title, window.location.pathname)
@@ -132,9 +138,10 @@ export default {
             })
           }, 100)
         } catch(error) {
-          this.$store.dispatch("notify", { error: "Error al procesar la autenticación de Google" })
+          // Silent error handling - don't show notification
           window.history.replaceState({}, document.title, window.location.pathname)
           localStorage.removeItem("loginRedirect")
+          console.error("Error during Google login:", error)
         }
       }
     },

@@ -20,6 +20,9 @@ const VALIDATION_ERROR_CODES = [HTTP_STATUS.UNPROCESSABLE_ENTITY]
 // Códigos de estado que muestran mensaje de error
 const MESSAGE_ERROR_CODES = [HTTP_STATUS.NOT_FOUND, HTTP_STATUS.METHOD_NOT_ALLOWED, ...AUTH_ERROR_CODES]
 
+// Track pending auth validation requests to prevent duplicates
+const pendingAuthRequests = new Map()
+
 export default function ({ $axios, store, $config }) {
   // Configurar baseURL dinámicamente según el hostname (solo en desarrollo)
   const isDev = process.env.NODE_ENV !== "production"
@@ -93,6 +96,17 @@ export default function ({ $axios, store, $config }) {
    * Interceptor de errores
    */
   $axios.onError((error) => {
+    // Ignore cancelled requests and duplicate requests - don't show errors
+    if ($axios.isCancel(error)) {
+      store.dispatch("hideLoading")
+      return Promise.reject(error) // Must reject so callers don't wrongly get 'undefined' on a success path
+    }
+    
+    if (error.message === 'Cancelled' || error.code === 'ECONNABORTED' || error.message?.includes('Duplicate')) {
+      store.dispatch("hideLoading")
+      return Promise.reject(error)
+    }
+    
     // Error de red
     if (error.message === "Network Error") {
       handleNetworkError()
@@ -118,6 +132,36 @@ export default function ({ $axios, store, $config }) {
   $axios.onRequest((config) => {
     // Limpia errores de validación previos
     store.dispatch("validation/clearErrors")
+
+    // Deduplicate auth validation requests
+    const authValidationEndpoints = ['auth/google/validate', 'auth/user']
+    const isAuthEndpoint = authValidationEndpoints.some(ep => config.url.includes(ep))
+    
+    if (isAuthEndpoint && config.method.toLowerCase() === 'post') {
+      const requestKey = `${config.method}_${config.url}`
+      
+      // If a request is already pending, cancel this duplicate silently
+      if (pendingAuthRequests.has(requestKey)) {
+        const CancelToken = $axios.CancelToken
+        config.cancelToken = new CancelToken((cancel) => {
+          config.__isDuplicateRequest = true
+          cancel('Duplicate request')
+        })
+      } else {
+        // Mark this as the first request
+        const CancelToken = $axios.CancelToken
+        const source = CancelToken.source()
+        config.cancelToken = source.token
+        config.__isFirstRequest = true
+        
+        pendingAuthRequests.set(requestKey, source)
+        
+        // Clean up after request completes (successful or failed)
+        setTimeout(() => {
+          pendingAuthRequests.delete(requestKey)
+        }, 1000)
+      }
+    }
 
     // Si el request trae X-Show-Loading, mostrar el spinner
     const showLoading = config.headers?.["X-Show-Loading"] === "true"

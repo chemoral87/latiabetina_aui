@@ -25,26 +25,28 @@ export default {
     if (this.isLoggingOut) return
     this.isLoggingOut = true
     
+    // Clear auth immediately to prevent duplicate auth requests
+    this.$auth.setUser(false)
+    this.$auth.strategy.token.set('')
+    
     // Breve retraso para que el usuario vea el mensaje
     setTimeout(() => {
       try {
-        // Hacer la llamada al backend logout mientras el token aún está disponible
-        this.$axios.post('/auth/logout')
-          .then(() => {
-            // Token cleared on successful logout
-            this.$auth.setUser(false)
-            // Redirect to login after logout completes
-            this.$router.push('/login')
-          })
-          .catch(() => {
-            // En caso de error, continuamos
-            this.$auth.setUser(false)
-            this.$router.push('/login')
+        // Hacer la llamada al backend logout
+        this.$axios.post('/auth/logout', {}, {
+          validateStatus: () => true // Ignore all errors
+        })
+          .finally(() => {
+            // Always redirect to login
+            setTimeout(() => {
+              this.$router.replace('/login')
+            }, 300)
           })
       } catch(e) {
         // En caso de error, continuamos
-        this.$auth.setUser(false)
-        this.$router.push('/login')
+        setTimeout(() => {
+          this.$router.replace('/login')
+        }, 300)
       }
     }, 800)
   },
