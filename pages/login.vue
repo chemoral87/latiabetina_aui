@@ -73,9 +73,6 @@ export default {
     })
     this.name_secret = process.env.BASE_URL
     // this.name_secret = process.env.NAME_SECRET;
-
-    // Maneja el callback de Google OAuth
-    this.handleGoogleCallback()
   },
 
   methods: {
@@ -94,56 +91,6 @@ export default {
       }
       
       window.location.href = googleRedirectUrl
-    },
-    async handleGoogleCallback() {
-      // Verifica si hay un token en la URL (cuando Laravel redirige de vuelta)
-      const urlParams = new URLSearchParams(window.location.search)
-      const token = urlParams.get("token")
-      const redirect = urlParams.get("redirect") // Ahora viene desde el backend
-      const error = urlParams.get("error")
-
-      if(error) {
-        window.history.replaceState({}, document.title, window.location.pathname)
-        localStorage.removeItem("loginRedirect")
-        return
-      }
-
-      if(token) {
-        try {
-          // Guarda el token
-          this.$auth.setUserToken(token)
-          
-          // Intenta obtener el usuario, pero no falla si hay error
-          try {
-            await this.$auth.fetchUser()
-          } catch(fetchError) {
-            // Si falla fetchUser, continuamos de todas formas
-            console.warn("Warning fetching user:", fetchError)
-          }
-
-          // Limpia la URL
-          window.history.replaceState({}, document.title, window.location.pathname)
-
-          // Usa el redirect del query param (viene del backend) o localStorage como fallback
-          const redirectPath = redirect || localStorage.getItem("loginRedirect") || "/"
-          
-          // Limpia los redirects guardados
-          localStorage.removeItem("loginRedirect")
-          this.$store.dispatch("clearLoginRedirect")
-
-          // Redirige con delay para asegurar que auth module termine de procesar
-          setTimeout(() => {
-            this.$router.push({
-              path: redirectPath,
-            })
-          }, 100)
-        } catch(error) {
-          // Silent error handling - don't show notification
-          window.history.replaceState({}, document.title, window.location.pathname)
-          localStorage.removeItem("loginRedirect")
-          console.error("Error during Google login:", error)
-        }
-      }
     },
     async submitLogin() {
       // this.$gtag.event("login", { method: "Google" })

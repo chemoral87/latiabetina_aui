@@ -20,35 +20,25 @@ export default {
       title: "Cerrando sesión",
     }
   },
-  mounted() {
+  async mounted() {
     // Prevent multiple logout calls
     if (this.isLoggingOut) return
     this.isLoggingOut = true
     
-    // Clear auth immediately to prevent duplicate auth requests
-    this.$auth.setUser(false)
-    this.$auth.strategy.token.set('')
-    
-    // Breve retraso para que el usuario vea el mensaje
-    setTimeout(() => {
-      try {
-        // Hacer la llamada al backend logout
-        this.$axios.post('/auth/logout', {}, {
-          validateStatus: () => true // Ignore all errors
-        })
-          .finally(() => {
-            // Always redirect to login
-            setTimeout(() => {
-              this.$router.replace('/login')
-            }, 300)
-          })
-      } catch(e) {
-        // En caso de error, continuamos
-        setTimeout(() => {
-          this.$router.replace('/login')
-        }, 300)
-      }
-    }, 800)
+    try {
+      // Hacer la llamada nativa de logout.
+      // Nuxt Auth se encarga de vaciar el store, la sesión y contactar al backend.
+      await this.$auth.logout()
+    } catch(e) {
+      console.warn("Logout warning:", e)
+      // Si el API falla, nos garantizamos resetear al usuario localmente
+      this.$auth.reset()
+    } finally {
+      // Breve retraso visual
+      setTimeout(() => {
+        this.$router.replace('/login')
+      }, 500)
+    }
   },
 }
 </script>
