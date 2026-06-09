@@ -47,21 +47,9 @@
           </v-col>
         </v-row>
 
-        <v-row v-if="item.url_image || imageLoading">
+        <v-row v-if="previewImage || imageLoading">
           <v-col cols="12">
-            <v-expand-transition>
-              <div v-if="imageLoading" class="image-loading-wrapper">
-                <v-progress-circular indeterminate color="primary" size="48" />
-                <span class="ml-3 grey--text text--darken-1">Procesando imagen…</span>
-              </div>
-              <v-img v-else :src="previewImage" max-height="200" contain>
-                <template #placeholder>
-                  <v-row class="fill-height ma-0" align="center" justify="center">
-                    <v-progress-circular indeterminate color="primary" />
-                  </v-row>
-                </template>
-              </v-img>
-            </v-expand-transition>
+            <MyPreviewImage :src="previewImage" :loading="imageLoading" loading-text="Procesando imagen..." />
           </v-col>
         </v-row>
       </v-form>
@@ -177,12 +165,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.image-loading-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 0;
-}
-</style>
