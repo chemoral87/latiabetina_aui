@@ -1,5 +1,5 @@
 <template>
-  <v-file-input v-bind="{ ...$props, ...$attrs }" v-model="image" accept="image/png, image/jpeg, image/bmp" prepend-icon="mdi-camera" @change="Preview_image"></v-file-input>
+  <v-file-input v-bind="{ ...$props, ...$attrs }" v-model="image" accept="image/png, image/jpeg, image/bmp" prepend-icon="mdi-camera" :loading="loading" @change="Preview_image"></v-file-input>
 </template>
 <script>
 const loadImage = require("blueimp-load-image")
@@ -14,6 +14,7 @@ export default {
       file: null,
       maxSize: 750, // max size for image upload after transform
       filename: "",
+      loading: false,
     }
   },
   watch: {
@@ -63,6 +64,8 @@ export default {
         this.blob = null
         this.filename = ""
       } else {
+        me.loading = true
+        me.$emit("loading")
         const _URL = window.URL || window.webkitURL
         const imgLoader = new Image()
         imgLoader.onload = function () {
@@ -82,6 +85,7 @@ export default {
 
               me.uri = img.toDataURL()
               me.$emit("update:url", me.uri)
+              me.loading = false
             },
             {
               maxWidth: _maxSize,

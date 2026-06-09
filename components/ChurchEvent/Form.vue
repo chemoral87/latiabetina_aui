@@ -54,7 +54,13 @@
                 <v-progress-circular indeterminate color="primary" size="48" />
                 <span class="ml-3 grey--text text--darken-1">Procesando imagen…</span>
               </div>
-              <v-img v-else :src="previewImage" max-height="200" contain />
+              <v-img v-else :src="previewImage" max-height="200" contain>
+                <template #placeholder>
+                  <v-row class="fill-height ma-0" align="center" justify="center">
+                    <v-progress-circular indeterminate color="primary" />
+                  </v-row>
+                </template>
+              </v-img>
             </v-expand-transition>
           </v-col>
         </v-row>
