@@ -26,10 +26,6 @@
       </v-col>
     </v-row>
 
-    <!-- Diálogo para crear/editar evento -->
-    <ChurchEventDialog v-if="churchEventDialog" :church-event="churchEvent" :loading="saving" @close="closeDialog"
-      @save="saveChurchEvent" />
-
     <!-- Diálogo de confirmación de eliminación -->
     <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
       @close="churchEventDialogDelete = false" />
@@ -43,8 +39,6 @@ export default {
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
   async asyncData({ app, error, store }) {
-    // store.dispatch("validatePermission", { error, permission: "church-event-index" })
-
     const options = {
       page: 1,
       sortBy: ["name"],
@@ -52,20 +46,13 @@ export default {
       itemsPerPage: 10,
     }
 
-
     const response = await app.$repository.ChurchEvent.index(options)
-    // Normalizar la respuesta si es un array
-    //   if (Array.isArray(response)) {
-    //     response = { data: response, total: response.length }
-    //   }
     return { response, options }
-
   },
 
   data() {
     return {
       filterChurchEvent: "",
-      churchEvent: {},
       response: { data: [], total: 0 },
       options: {
         page: 1,
@@ -73,11 +60,9 @@ export default {
         sortDesc: [false],
         itemsPerPage: 10,
       },
-      churchEventDialog: false,
       churchEventDialogDelete: false,
       dialogDelete: {},
       loading: false,
-      saving: false,
       deleting: false,
       skipFilterWatch: false, // Flag para evitar llamadas duplicadas
     }
@@ -92,7 +77,6 @@ export default {
   watch: {
     filterChurchEvent: {
       handler: debounce(function(value) {
-        // Si skipFilterWatch está activo, no ejecutar el watch
         if(this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
@@ -115,83 +99,59 @@ export default {
       })
     },
 
-    /**
-     * Maneja el cambio en el filtro de búsqueda
-     */
     async handleFilterChange(value) {
       await this.loadChurchEvents({ filter: value || "", page: 1 })
     },
 
-    /**
-     * Carga los eventos con las opciones especificadas
-     */
     async loadChurchEvents(overrides = {}) {
       try {
         this.loading = true
 
-        // Combina opciones actuales con las sobrescrituras
         const requestOptions = {
           ...this.options,
           ...overrides,
         }
 
-        // Preserva el filtro actual si no se sobrescribe explícitamente
         if(this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterChurchEvent
         }
 
         let response = await this.$repository.ChurchEvent.index(requestOptions)
 
-        // Normalizar la respuesta si es un array
         if(Array.isArray(response)) {
           response = { data: response, total: response.length }
         }
 
         this.response = response
-
-        // Actualiza las opciones después de una carga exitosa
         this.options = requestOptions
       } catch(error) {
-        this.$handleError(error)
+        if(this.$handleError) {
+          this.$handleError(error)
+        } else {
+          console.error(error)
+        }
       } finally {
         this.loading = false
       }
     },
 
-    /**
-     * Refresca la lista de eventos manteniendo las opciones actuales
-     */
     async refreshChurchEvents() {
       await this.loadChurchEvents()
     },
 
-    /**
-     * Maneja el cambio de ordenamiento desde la tabla
-     */
     async handleSorting(options) {
       this.options = options
       await this.loadChurchEvents()
     },
 
-    /**
-     * Abre el diálogo para crear un nuevo evento
-     */
     newChurchEvent() {
-      this.churchEvent = {}
-      this.churchEventDialog = true
+      this.$router.push('/church-event/new')
     },
 
-    /**
-     * Abre el diálogo para editar un evento existente
-     */
     editChurchEvent(item) {
-      this.churchEvent = { ...item }
-      this.churchEventDialog = true
+      this.$router.push(`/church-event/${item.id}`)
     },
 
-    /**
-     * Prepara el diálogo de confirmación para eliminar un evento
-     */
     beforeDeleteChurchEvent(item) {
       this.dialogDelete = {
         text: "¿Desea eliminar el Evento ",
@@ -202,70 +162,29 @@ export default {
       this.churchEventDialogDelete = true
     },
 
-    /**
-     * Elimina un evento
-     */
     async deleteChurchEvent(item) {
       try {
         this.deleting = true
         await this.$repository.ChurchEvent.delete(item.id, item)
 
-        // Activa el flag para evitar que el watch dispare una llamada adicional
         this.skipFilterWatch = true
-
-        // Limpia el filtro y recarga la primera página (solo 1 llamada GET)
         this.filterChurchEvent = ""
         await this.loadChurchEvents({ page: 1, filter: "" })
 
         this.churchEventDialogDelete = false
       } catch(error) {
-        this.$handleError(error)
+        if(this.$handleError) {
+          this.$handleError(error)
+        } else {
+          console.error(error)
+        }
       } finally {
         this.deleting = false
       }
-    },
-
-    /**
-     * Guarda un evento (crear o actualizar)
-     */
-    async saveChurchEvent(item) {
-      try {
-        this.saving = true
-
-        const isUpdate = Boolean(item.id)
-
-        if(isUpdate) {
-          await this.$repository.ChurchEvent.update(item.id, item)
-        } else {
-          await this.$repository.ChurchEvent.create(item)
-        }
-
-        this.$notify({
-          type: "success",
-          text: `Evento ${isUpdate ? "actualizado" : "creado"} exitosamente`,
-        })
-
-        // Aplica el filtro con el nombre del evento guardado y recarga
-        this.filterChurchEvent = item.name
-        this.churchEventDialog = false
-      } catch(error) {
-        this.$handleError(error)
-      } finally {
-        this.saving = false
-      }
-    },
-
-    /**
-     * Cierra el diálogo de evento
-     */
-    closeDialog() {
-      this.churchEventDialog = false
-      this.churchEvent = {}
     },
   },
 }
 </script>
 
 <style scoped>
-/* Estilos adicionales si son necesarios */
 </style>
