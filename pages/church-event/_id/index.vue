@@ -5,7 +5,8 @@
         <div v-if="loadingItem" class="text-center pa-5">
           <v-progress-circular indeterminate color="primary" />
         </div>
-        <ChurchEventForm v-else :churchEvent="churchEvent" :loading="saving" @close="close" @save="saveChurchEvent" />
+        <ChurchEventForm v-else :churchEvent="churchEvent" :loading="saving" permission="church-event-update"
+          @close="close" @save="saveChurchEvent" />
       </v-col>
     </v-row>
   </v-container>
@@ -15,13 +16,13 @@
 export default {
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
-  
+
   async asyncData({ app, params, error }) {
     try {
       const dbItem = await app.$repository.ChurchEvent.show(params.id)
-      return { 
+      return {
         churchEvent: dbItem,
-        loadingItem: false 
+        loadingItem: false
       }
     } catch(e) {
       error({ statusCode: 404, message: "Evento no encontrado" })
@@ -40,8 +41,9 @@ export default {
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
-      title: "Editar Evento de Iglesia",
+      title: "Evento de Iglesia",
       icon: "mdi-calendar-edit",
+      back: "/church-event",
     })
   },
 
@@ -49,19 +51,19 @@ export default {
     close() {
       this.$router.push('/church-event')
     },
-    
+
     async saveChurchEvent(item) {
       const payload = { ...item }
-      if (payload.org_id && typeof payload.org_id === 'object') {
+      if(payload.org_id && typeof payload.org_id === 'object') {
         payload.org_id = payload.org_id.id
       }
-      
+
       try {
         this.saving = true;
         await this.$repository.ChurchEvent.update(payload.id, payload);
         this.$notify({ type: "success", text: "Evento actualizado exitosamente" });
         this.$router.push('/church-event')
-      } catch (error) {
+      } catch(error) {
         if(this.$handleError) {
           this.$handleError(error)
         } else {

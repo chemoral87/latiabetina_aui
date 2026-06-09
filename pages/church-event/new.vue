@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <ChurchEventForm :loading="saving" @close="close" @save="saveChurchEvent" />
+        <ChurchEventForm :loading="saving" permission="church-event-insert" @close="close" @save="saveChurchEvent" />
       </v-col>
     </v-row>
   </v-container>

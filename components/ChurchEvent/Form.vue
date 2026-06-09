@@ -7,33 +7,41 @@
 
     <v-card-text>
       <v-form ref="form" @submit.prevent="save">
-        <organization-select v-model="item.org_id" hide-one :permission="'church-event-index'" outlined
-          :rules="[$vrules.required]" />
-        <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required
-          autofocus @keyup.enter="save" />
 
-        <v-textarea v-model="item.description" label="Descripción" :error-messages="errors.description"
-          :disabled="loading" rows="3" />
 
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="3">
+            <organization-select v-model="item.org_id" hide-one :permission="permission" outlined
+              :rules="[$vrules.required]" />
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-text-field v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
+              required autofocus @keyup.enter="save" />
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-textarea v-model="item.description" label="Descripción" :error-messages="errors.description"
+              :disabled="loading" rows="1" />
+          </v-col>
+
+          <v-col cols="12" md="3">
             <MyDatePicker v-model="item.start_date" label="Fecha Publicación" :error-messages="errors.start_date"
               :disabled="loading" required />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="3">
             <MyDatePicker v-model="item.end_date" label="Fecha Evento" :error-messages="errors.end_date"
               :disabled="loading" />
           </v-col>
+          <v-col cols="12" md="3">
+            <v-text-field v-model="item.time_start" label="Hora" type="time" :error-messages="errors.time_start"
+              :disabled="loading" />
+          </v-col>
+          <v-col cols="12" md="3">
+            <v-text-field v-model="item.location" label="Lugar" :error-messages="errors.location" :disabled="loading" />
+          </v-col>
         </v-row>
 
-        <v-text-field v-model="item.time_start" label="Hora" type="time" :error-messages="errors.time_start"
-          :disabled="loading" />
-
-        <v-text-field v-model="item.location" label="Ubicación" :error-messages="errors.location"
-          :disabled="loading" />
-
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" md="6">
             <MyUploadimage v-model="item.image_file" label="Imagen del evento" :url.sync="item.url_image"
               :disabled="loading" @loading="imageLoading = true" @change="imageLoading = false" />
           </v-col>
@@ -46,7 +54,7 @@
                 <v-progress-circular indeterminate color="primary" size="48" />
                 <span class="ml-3 grey--text text--darken-1">Procesando imagen…</span>
               </div>
-              <v-img v-else :src="item.url_image" max-height="200" contain />
+              <v-img v-else :src="previewImage" max-height="200" contain />
             </v-expand-transition>
           </v-col>
         </v-row>
@@ -74,6 +82,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    permission: {
+      type: String,
+      default: "church-event-index",
+    },
   },
 
   data() {
@@ -94,6 +106,13 @@ export default {
   },
 
   computed: {
+    previewImage() {
+      if(this.item.url_image && typeof this.item.url_image === 'string' && this.item.url_image.startsWith('data:')) {
+        return this.item.url_image
+      }
+      return this.item.url_image_s3
+    },
+
     isEditMode() {
       return !!this.item.id
     },
@@ -103,7 +122,7 @@ export default {
     },
 
     formTitle() {
-      return this.isEditMode ? "Editar Evento de Iglesia" : "Nuevo Evento de Iglesia"
+      return this.isEditMode ? "Editar" : "Nuevo"
     },
 
     errors() {
