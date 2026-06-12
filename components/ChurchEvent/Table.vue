@@ -25,6 +25,14 @@
       </div>
     </template>
 
+    <template #[`item.start_date`]="{ item }">
+      {{ item.start_date | moment("DD MMM YYYY") }}
+    </template>
+
+    <template #[`item.end_date`]="{ item }">
+      {{ item.end_date | moment("DD MMM YYYY") }}
+    </template>
+
     <!-- Estado vacío -->
     <template #no-data>
       <div class="text-center pa-4">
