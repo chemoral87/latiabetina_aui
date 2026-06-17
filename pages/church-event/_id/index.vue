@@ -24,7 +24,7 @@ export default {
         churchEvent: dbItem,
         loadingItem: false
       }
-    } catch(e) {
+    } catch (e) {
       error({ statusCode: 404, message: "Evento no encontrado" })
       return { churchEvent: null, loadingItem: false }
     }
@@ -54,17 +54,15 @@ export default {
 
     async saveChurchEvent(item) {
       const payload = { ...item }
-      if(payload.org_id && typeof payload.org_id === 'object') {
-        payload.org_id = payload.org_id.id
-      }
+      delete payload.org_id
 
       try {
         this.saving = true;
         await this.$repository.ChurchEvent.update(payload.id, payload);
         this.$notify({ type: "success", text: "Evento actualizado exitosamente" });
         this.$router.push('/church-event')
-      } catch(error) {
-        if(this.$handleError) {
+      } catch (error) {
+        if (this.$handleError) {
           this.$handleError(error)
         } else {
           console.error(error)

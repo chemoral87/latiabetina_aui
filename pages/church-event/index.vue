@@ -8,7 +8,7 @@
       </v-col>
 
       <!-- Botones de acción -->
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="10">
         <v-btn color="primary" class="mr-2" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
@@ -76,8 +76,8 @@ export default {
 
   watch: {
     filterChurchEvent: {
-      handler: debounce(function(value) {
-        if(this.skipFilterWatch) {
+      handler: debounce(function (value) {
+        if (this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
         }
@@ -112,20 +112,20 @@ export default {
           ...overrides,
         }
 
-        if(this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+        if (this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterChurchEvent
         }
 
         let response = await this.$repository.ChurchEvent.index(requestOptions)
 
-        if(Array.isArray(response)) {
+        if (Array.isArray(response)) {
           response = { data: response, total: response.length }
         }
 
         this.response = response
         this.options = requestOptions
-      } catch(error) {
-        if(this.$handleError) {
+      } catch (error) {
+        if (this.$handleError) {
           this.$handleError(error)
         } else {
           console.error(error)
@@ -172,8 +172,8 @@ export default {
         await this.loadChurchEvents({ page: 1, filter: "" })
 
         this.churchEventDialogDelete = false
-      } catch(error) {
-        if(this.$handleError) {
+      } catch (error) {
+        if (this.$handleError) {
           this.$handleError(error)
         } else {
           console.error(error)
@@ -186,5 +186,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

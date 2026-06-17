@@ -11,8 +11,8 @@
 
         <v-row>
           <v-col v-if="showOrgSelect" cols="12" md="3">
-            <organization-select v-model="item.org_id" hide-one :permission="permission" outlined
-              :rules="[$vrules.required]" @hidden="onOrgHidden" />
+            <organization-select v-model="item.org_id" :permission="permission" outlined :rules="[$vrules.required]"
+              :disabled="isEditMode" />
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
@@ -84,7 +84,6 @@ export default {
 
   data() {
     return {
-      showOrgSelect: true,
       imageLoading: false,
       item: {
         name: "",
@@ -102,7 +101,7 @@ export default {
 
   computed: {
     previewImage() {
-      if(this.item.url_image && typeof this.item.url_image === 'string' && this.item.url_image.startsWith('data:')) {
+      if (this.item.url_image && typeof this.item.url_image === 'string' && this.item.url_image.startsWith('data:')) {
         return this.item.url_image
       }
       return this.item.url_image_s3
@@ -125,16 +124,20 @@ export default {
       return validationErrors || {}
     },
 
+    showOrgSelect() {
+      const orgIds = this.$store.getters.permissions[this.permission]
+      return Array.isArray(orgIds) && orgIds.length > 1
+    },
+
     isValid() {
-      const orgValid = !this.showOrgSelect || !!this.item.org_id
-      return this.item.name && this.item.name.trim().length > 0 && this.item.start_date && orgValid
+      return this.item.name && this.item.name.trim().length > 0 && this.item.start_date && !!this.item.org_id
     },
   },
 
   watch: {
     churchEvent: {
       handler(newValue) {
-        if(newValue && Object.keys(newValue).length > 0) {
+        if (newValue && Object.keys(newValue).length > 0) {
           this.item = Object.assign({}, newValue)
         }
       },
@@ -149,15 +152,17 @@ export default {
 
   methods: {
     initializeForm() {
-      if(this.churchEvent && Object.keys(this.churchEvent).length > 0) {
+      if (this.churchEvent && Object.keys(this.churchEvent).length > 0) {
         this.item = Object.assign({}, this.churchEvent)
       }
+      // Auto-set org_id when user only has access to one org
+      if (!this.item.org_id && !this.showOrgSelect) {
+        const orgIds = this.$store.getters.permissions[this.permission]
+        if (Array.isArray(orgIds) && orgIds.length === 1) {
+          this.item.org_id = orgIds[0]
+        }
+      }
       this.$store.dispatch("validation/clearErrors")
-    },
-
-    onOrgHidden(orgId) {
-      this.item.org_id = orgId
-      this.showOrgSelect = false
     },
 
     close() {
@@ -165,9 +170,13 @@ export default {
     },
 
     save() {
-      if(!this.isValid || this.loading) return
+      if (!this.isValid || this.loading) return
 
-      this.$emit("save", Object.assign({}, this.item))
+      const payload = Object.assign({}, this.item)
+      if (this.isEditMode) {
+        delete payload.org_id
+      }
+      this.$emit("save", payload)
     },
   },
 }

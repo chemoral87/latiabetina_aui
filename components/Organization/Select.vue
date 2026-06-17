@@ -1,5 +1,5 @@
 <template>
-  <v-select v-show="showSelect" v-model="selected" :disabled="disabled" :items="items" :label="label" item-text="name"
+  <v-select v-show="showSelect" v-model="selected" :disabled="isDisabled" :items="items" :label="label" item-text="name"
     item-value="id" v-bind="$attrs"></v-select>
 </template>
 <script>
@@ -26,21 +26,26 @@ export default {
       type: String,
       default: "Org",
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       items: [],
       selected: null,
-      disabled: false,
+      autoDisabled: false,
     }
   },
   computed: {
+    isDisabled() {
+      return this.disabled || this.autoDisabled
+    },
     showSelect() {
-      // Si hideOne está presente y disabled es true, ocultar el select
-      if (this.hideOne && this.disabled) {
+      if (this.hideOne && this.autoDisabled) {
         return false
       }
-      // De lo contrario, mostrar solo si no está disabled
       return true
     },
   },
@@ -67,7 +72,7 @@ export default {
     if (filterOrgs.length === 1 && !this.preventAutoSelect && (this.value === null || this.value === "" || this.value === undefined)) {
       me.$nextTick(() => {
         me.selected = filterOrgs[0].id
-        me.disabled = true
+        me.autoDisabled = true
       })
       // set disabled if only one
     }
