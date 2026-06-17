@@ -25,6 +25,7 @@ v-model="model" :filter="filter" item-value="id" item-text="name" :hide-no-data=
   </div>
 </template>
 <script>
+import { debounce } from "lodash-es"
 export default {
   name: "RoleCombobox",
   props: ["roles"],
@@ -46,14 +47,13 @@ export default {
     },
   },
   watch: {
-    async search(val, prev) {
-
-      this.searching = true
-      if(!(val == null || val.trim() === "")) {
-        const itemz = await this.$repository.Role.filter({ queryText: val, ids: this.roles_id })
+    search(val) {
+      if (val == null || val.trim() === "") {
         this.searching = false
-        this.items = itemz
+        return
       }
+      this.searching = true
+      this.debouncedSearch(val)
     },
     model(val, prev) {
       if(val.length === prev.length) return
@@ -66,6 +66,13 @@ export default {
       this.model = val
       this.$emit("modelChange", val)
     },
+  },
+  created() {
+    this.debouncedSearch = debounce(async function (val) {
+      const itemz = await this.$repository.Role.filter({ queryText: val, ids: this.roles_id })
+      this.items = itemz
+      this.searching = false
+    }, 500)
   },
   mounted() {
     this.model = this.roles || []

@@ -3,7 +3,8 @@
     <v-combobox v-model="model" :filter="filter" item-value="id" item-text="name" hide-selected :hide-no-data="!search"
       :items="items" :search-input.sync="search" v-bind="$attrs" multiple>
       <template #no-data>
-        <v-list-item>Intente con otra búsqueda...</v-list-item>
+        <v-list-item v-if="!searching">Intente con otra búsqueda...</v-list-item>
+        <v-list-item v-else>Buscando...</v-list-item>
       </template>
       <template #selection="{ attrs, item, parent, selected }">
         <v-chip v-if="item === Object(item)" v-bind="attrs" color="info" :input-value="selected" label>
@@ -23,6 +24,7 @@
   </div>
 </template>
 <script>
+import { debounce } from "lodash-es"
 export default {
   name: "PermissionCombobox",
   props: ["permissionsx"],
@@ -32,6 +34,7 @@ export default {
     // x: 0,
     // y: 0,
     search: null,
+    searching: false,
   }),
   computed: {
     permissions_id() {
@@ -43,12 +46,13 @@ export default {
     },
   },
   watch: {
-    async search(val, prev) {
-
-      if(!(val == null || val.trim() === "")) {
-        const itemz = await this.$repository.Permission.filter({ queryText: val, ids: this.permissions_id })
-        this.items = itemz
+    search(val) {
+      if (val == null || val.trim() === "") {
+        this.searching = false
+        return
       }
+      this.searching = true
+      this.debouncedSearch(val)
     },
     model(val, prev) {
       if(val.length === prev.length) return
@@ -61,6 +65,13 @@ export default {
       this.model = val
       this.$emit("modelChange", val)
     },
+  },
+  created() {
+    this.debouncedSearch = debounce(async function (val) {
+      const itemz = await this.$repository.Permission.filter({ queryText: val, ids: this.permissions_id })
+      this.items = itemz
+      this.searching = false
+    }, 500)
   },
   mounted() {
     this.model = this.permissionsx || []

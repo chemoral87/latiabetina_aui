@@ -94,6 +94,7 @@ export default {
         time_start: "",
         location: "",
         url_image: "",
+        url_image_s3: "",
         image_file: null,
       },
     }
