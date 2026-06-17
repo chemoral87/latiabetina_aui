@@ -25,6 +25,10 @@
       </div>
     </template>
 
+    <template #[`item.org_code`]="{ item }">
+      {{ orgCodeById(item.org_id) }}
+    </template>
+
     <template #[`item.start_date`]="{ item }">
       {{ item.start_date | moment("DD MMM YYYY") }}
     </template>
@@ -44,6 +48,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+
 export default {
   name: "ChurchEventTable",
 
@@ -60,43 +66,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    permission: {
+      type: String,
+      default: "church-event-index",
+    },
   },
 
   data() {
     return {
       optionsTable: {},
-      headers: [
-        {
-          text: "Nombre",
-          align: "start",
-          value: "name",
-        },
-        {
-          text: "Ubicación",
-          value: "location",
-          sortable: false,
-        },
-        {
-          text: "Fecha Publicación",
-          value: "start_date",
-        },
-        {
-          text: "Fecha Evento",
-          value: "end_date",
-        },
-        {
-          text: "Acciones",
-          value: "actions",
-          sortable: false,
-          align: "center",
-          width: "150px",
-        },
-      ],
       isFirstWatch: true,
     }
   },
 
   computed: {
+    ...mapGetters(["orgCodeById"]),
+
     total() {
       return this.response && this.response.total ? this.response.total : 0
     },
@@ -104,12 +89,33 @@ export default {
     items() {
       return this.response && this.response.data ? this.response.data : []
     },
+
+    showOrgColumn() {
+      const orgIds = this.$store.getters.permissions[this.permission]
+      return Array.isArray(orgIds) && orgIds.length > 1
+    },
+
+    headers() {
+      const cols = [
+        { text: "Nombre", align: "start", value: "name" },
+      ]
+      if (this.showOrgColumn) {
+        cols.push({ text: "Org", value: "org_code", sortable: false })
+      }
+      cols.push(
+        { text: "Ubicación", value: "location", sortable: false },
+        { text: "Fecha Publicación", value: "start_date" },
+        { text: "Fecha Evento", value: "end_date" },
+        { text: "Acciones", value: "actions", sortable: false, align: "center", width: "150px" },
+      )
+      return cols
+    },
   },
 
   watch: {
     options: {
       handler(newOptions) {
-        if(newOptions) {
+        if (newOptions) {
           this.optionsTable = Object.assign({}, newOptions)
         }
       },
@@ -120,13 +126,13 @@ export default {
     optionsTable: {
       handler(newValue, oldValue) {
         // Evitar el primer watch (cuando se inicializa)
-        if(this.isFirstWatch) {
+        if (this.isFirstWatch) {
           this.isFirstWatch = false
           return
         }
 
         // Solo emitir si realmente cambió algo relevante
-        if(this.hasOptionsChanged(newValue, oldValue)) {
+        if (this.hasOptionsChanged(newValue, oldValue)) {
           this.$emit("sorting", newValue)
         }
       },
@@ -136,13 +142,13 @@ export default {
 
   methods: {
     hasOptionsChanged(newVal, oldVal) {
-      if(!oldVal) return true
+      if (!oldVal) return true
 
       // Comparar solo las propiedades relevantes
       const relevantProps = ["page", "itemsPerPage", "sortBy", "sortDesc"]
 
       return relevantProps.some((prop) => {
-        if(Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
+        if (Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
           return JSON.stringify(newVal[prop]) !== JSON.stringify(oldVal[prop])
         }
         return newVal[prop] !== oldVal[prop]
@@ -156,6 +162,8 @@ export default {
     deleteChurchEvent(item) {
       this.$emit("delete", item)
     },
+
+
   },
 }
 </script>

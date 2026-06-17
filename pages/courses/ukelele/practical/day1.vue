@@ -38,7 +38,7 @@
                     <div class="mt-3">
                       <v-btn icon :color="activeStringIndex === index ? 'primary' : 'grey'" class="elevation-1">
                         <v-icon>{{ activeStringIndex === index ? 'mdi-volume-high' : 'mdi-play-circle-outline'
-                          }}</v-icon>
+                        }}</v-icon>
                       </v-btn>
                     </div>
 
@@ -106,7 +106,7 @@
                     {{ getOptionIcon(idx) }}
                   </v-icon>
                   <span class="text-truncate text-body-2 font-weight-medium" style="color: inherit;">{{ option
-                    }}</span>
+                  }}</span>
                 </v-btn>
               </v-col>
             </v-row>
@@ -274,7 +274,7 @@
               Semitono</strong> equivale a avanzar <strong>1 traste</strong>.
             Explora la escala a continuación. Haz clic en las notas para escuchar su sonido y ver en qué traste y
             cuerda se
-            colocan tus dedos.
+            colocan tus dedos. <strong>Fórmula: 1 Tono = 2 Semitonos</strong>.
           </p>
 
           <v-row dense class="align-center">
@@ -311,7 +311,7 @@
                 <div class="d-flex align-center justify-space-between mb-2">
                   <span class="text-h5 font-weight-black text-capitalize primary--text">
                     {{ selectedNote.name }} <span class="text-subtitle-2 grey--text">({{ selectedNote.english
-                      }})</span>
+                    }})</span>
                   </span>
                   <v-chip small color="primary" outlined>
                     {{ selectedNote.role }}
@@ -321,12 +321,12 @@
                 <v-divider class="mb-3" />
 
                 <v-row dense>
-                  <v-col cols="6">
+                  <v-col cols="4">
                     <div class="text-caption grey--text">Frecuencia</div>
                     <div class="text-body-1 font-weight-bold grey--text text--darken-4">{{ selectedNote.frequency }}
                       Hz</div>
                   </v-col>
-                  <v-col cols="6">
+                  <v-col cols="8">
                     <div class="text-caption grey--text">Intervalo previo</div>
                     <div class="text-body-1 font-weight-bold font-mono amber--text text--darken-3">
                       {{ selectedNote.intervalDesc }}
@@ -334,9 +334,94 @@
                   </v-col>
                   <v-col cols="12" class="mt-2">
                     <div class="text-caption grey--text">Instrucciones de digitación</div>
-                    <div class="text-body-2 mt-1 grey--text text--darken-4">
+                    <div class="text-caption  mt-1 grey--text text--darken-4">
                       <v-icon small color="primary" class="mr-1">mdi-hand-pointing-right</v-icon>
                       {{ selectedNote.instructions }}
+                    </div>
+                  </v-col>
+                </v-row>
+
+                <v-divider class="my-3" />
+
+                <div class="text-caption font-weight-bold grey--text text--darken-2 mb-2 text-center">
+                  Posición de las manos
+                </div>
+                <v-row dense class="align-center text-center">
+                  <!-- Left hand: fretting hand -->
+                  <v-col cols="6">
+                    <svg viewBox="0 0 846.1 869.7" width="150" height="120" preserveAspectRatio="none"
+                      class="mx-auto d-block">
+                      <g transform="scale(-1,1) translate(-846.1,0)">
+                        <path
+                          d="M 600.8 394.7 C 584.0999999999999 398.5 568.5 429.2 542.6999999999999 456.7 L 542.6999999999999 398.59999999999997 L 542.6999999999999 369.79999999999995 L 542.6999999999999 211.5 C 542.6999999999999 198.1 531.8 187.2 518.4 187.2 L 515.6999999999999 187.2 C 502.29999999999995 187.2 491.3999999999999 198.1 491.3999999999999 211.5 L 491.0952819824218 370.71412353515626 L 480.99999999999994 369.8 L 480.99999999999994 160.5 C 480.99999999999994 147.1 470.09999999999997 136.2 456.69999999999993 136.2 L 453.99999999999994 136.2 C 440.59999999999997 136.2 429.69999999999993 147.1 429.69999999999993 160.5 L 429.69999999999993 375.5893981933594 L 421.90471801757803 376.5392272949219 L 421.5999999999999 192.1 C 421.5999999999999 178.7 410.69999999999993 167.79999999999998 397.19999999999993 167.79999999999998 L 394.49999999999994 167.79999999999998 C 381.09999999999997 167.79999999999998 370.19999999999993 178.7 370.19999999999993 192.1 L 370.50468749999993 389.9105041503906 L 364.20940551757803 390.82462768554683 L 363.5999999999999 239.79999999999995 C 363.5999999999999 226.39999999999995 352.69999999999993 215.49999999999994 339.2999999999999 215.49999999999994 L 336.5999999999999 215.49999999999994 C 323.19999999999993 215.49999999999994 312.2999999999999 226.39999999999995 312.2999999999999 239.79999999999995 L 312.2999999999999 369.79999999999995 L 312 369.79999999999995 L 312 542.5 C 312 542.5 312 645.4 427.4 645.4 C 499.4 645.4 529.8 611.8 539.3 588.9 C 539.4 588.8 610.9 463.9 625.8 435.2 C 640.7 406.3 622.4 389.7 600.8 394.7 Z"
+                          fill="#f0d9b8" stroke="#5a4632" stroke-width="8" stroke-linejoin="round"
+                          transform="matrix(1.2674051523208618, 0, 0, 1.2674051523208618, -153.31993103027344, -57.254132499850925)" />
+                        <!-- finger highlight markers: pulgar, índice, medio, anular, meñique -->
+                        <circle cx="607" cy="377" r="38"
+                          :fill="selectedNote.leftFinger === 0 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="503" cy="135" r="38"
+                          :fill="selectedNote.leftFinger === 1 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="424" cy="70" r="38"
+                          :fill="selectedNote.leftFinger === 2 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="350" cy="109" r="38"
+                          :fill="selectedNote.leftFinger === 3 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="276" cy="170" r="38"
+                          :fill="selectedNote.leftFinger === 4 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                      </g>
+                      <!-- finger numbers -->
+                      <text x="343.1" y="161" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.leftFinger === 1 ? '#ffffff' : 'red'">1</text>
+                      <text x="422.1" y="96" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.leftFinger === 2 ? '#ffffff' : 'red'">2</text>
+                      <text x="496.1" y="135" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.leftFinger === 3 ? '#ffffff' : 'red'">3</text>
+                      <text x="570.1" y="196" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.leftFinger === 4 ? '#ffffff' : 'red'">4</text>
+                    </svg>
+                    <div class="text-caption font-weight-bold grey--text text--darken-3 mt-1">
+                      Mano Izquierda (diapasón)
+                    </div>
+                    <div class="text-caption primary--text font-weight-bold">
+                      {{ leftHandLabel }}
+                    </div>
+                  </v-col>
+
+                  <!-- Right hand: plucking hand -->
+                  <v-col cols="6">
+                    <svg viewBox="0 0 846.1 869.7" width="150" height="120" preserveAspectRatio="none"
+                      class="mx-auto d-block">
+                      <g transform="scale(-1,1) translate(-846.1,0)">
+                        <path
+                          d="M 600.8 394.7 C 584.0999999999999 398.5 568.5 429.2 542.6999999999999 456.7 L 542.6999999999999 398.59999999999997 L 542.6999999999999 369.79999999999995 L 542.6999999999999 211.5 C 542.6999999999999 198.1 531.8 187.2 518.4 187.2 L 515.6999999999999 187.2 C 502.29999999999995 187.2 491.3999999999999 198.1 491.3999999999999 211.5 L 491.0952819824218 370.71412353515626 L 480.99999999999994 369.8 L 480.99999999999994 160.5 C 480.99999999999994 147.1 470.09999999999997 136.2 456.69999999999993 136.2 L 453.99999999999994 136.2 C 440.59999999999997 136.2 429.69999999999993 147.1 429.69999999999993 160.5 L 429.69999999999993 375.5893981933594 L 421.90471801757803 376.5392272949219 L 421.5999999999999 192.1 C 421.5999999999999 178.7 410.69999999999993 167.79999999999998 397.19999999999993 167.79999999999998 L 394.49999999999994 167.79999999999998 C 381.09999999999997 167.79999999999998 370.19999999999993 178.7 370.19999999999993 192.1 L 370.50468749999993 389.9105041503906 L 364.20940551757803 390.82462768554683 L 363.5999999999999 239.79999999999995 C 363.5999999999999 226.39999999999995 352.69999999999993 215.49999999999994 339.2999999999999 215.49999999999994 L 336.5999999999999 215.49999999999994 C 323.19999999999993 215.49999999999994 312.2999999999999 226.39999999999995 312.2999999999999 239.79999999999995 L 312.2999999999999 369.79999999999995 L 312 369.79999999999995 L 312 542.5 C 312 542.5 312 645.4 427.4 645.4 C 499.4 645.4 529.8 611.8 539.3 588.9 C 539.4 588.8 610.9 463.9 625.8 435.2 C 640.7 406.3 622.4 389.7 600.8 394.7 Z"
+                          fill="#f0d9b8" stroke="#5a4632" stroke-width="8" stroke-linejoin="round"
+                          transform="matrix(1.2674051523208618, 0, 0, 1.2674051523208618, -153.31993103027344, -57.254132499850925)" />
+                        <!-- finger highlight markers: pulgar, índice, medio, anular, meñique -->
+                        <circle cx="607" cy="377" r="38"
+                          :fill="selectedNote.rightFinger === 0 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="503" cy="135" r="38"
+                          :fill="selectedNote.rightFinger === 1 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="424" cy="70" r="38"
+                          :fill="selectedNote.rightFinger === 2 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="350" cy="109" r="38"
+                          :fill="selectedNote.rightFinger === 3 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                        <circle cx="276" cy="170" r="38"
+                          :fill="selectedNote.rightFinger === 4 ? 'var(--v-primary-base, #1976d2)' : 'transparent'" />
+                      </g>
+                      <!-- finger letters: P (pulgar), I (índice), M (medio), A (anular) -->
+                      <text x="239.1" y="403" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.rightFinger === 0 ? '#ffffff' : 'red'">P</text>
+                      <text x="343.1" y="161" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.rightFinger === 1 ? '#ffffff' : 'red'">I</text>
+                      <text x="422.1" y="96" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.rightFinger === 2 ? '#ffffff' : 'red'">M</text>
+                      <text x="496.1" y="135" text-anchor="middle" font-size="75" font-weight="bold"
+                        font-family="sans-serif" :fill="selectedNote.rightFinger === 3 ? '#ffffff' : 'red'">A</text>
+                    </svg>
+                    <div class="text-caption font-weight-bold grey--text text--darken-3 mt-1">
+                      Mano Derecha (cuerdas)
+                    </div>
+                    <div class="text-caption orange--text text--darken-3 font-weight-bold">
+                      {{ rightHandLabel }}
                     </div>
                   </v-col>
                 </v-row>
@@ -402,13 +487,14 @@
                     <div class="d-flex justify-space-around pb-2 pt-2" style="position: relative; z-index: 4;">
                       <div v-for="s in [4, 3, 2, 1]" :key="s" class="d-flex justify-center align-center"
                         style="flex: 1; height: 28px;">
-                        <v-avatar v-if="selectedNote.string === s && selectedNote.fret === 0" color="primary"
-                          size="26" class="elevation-4 scale-up-pulse font-weight-black white--text"
+                        <v-avatar v-if="selectedNote.string === s && selectedNote.fret === 0" color="primary" size="26"
+                          class="elevation-4 scale-up-pulse font-weight-black white--text"
                           style="font-size: 0.7rem; border: 2px solid white;">
                           {{ selectedNote.name }}
                         </v-avatar>
                         <div v-else class="rounded-circle"
-                          style="width: 6px; height: 6px; background: rgba(255,255,255,0.3);"></div>
+                          style="width: 6px; height: 6px; background: rgba(255,255,255,0.3);">
+                        </div>
                       </div>
                     </div>
 
@@ -428,7 +514,7 @@
                       <!-- Fret label on the left -->
                       <span class="text-caption font-weight-bold"
                         style="position: absolute; left: -28px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.62rem;">Tr.{{
-                        f }}</span>
+                          f }}</span>
 
                       <!-- Position dot on fret 3 -->
                       <div v-if="f === 3" class="rounded-circle"
@@ -606,6 +692,7 @@ export default {
       // Scale State
       selectedNoteIndex: 0,
       isPlayingScale: false,
+      fingerNames: ['Pulgar', 'Índice', 'Medio', 'Anular', 'Meñique'],
 
       scaleNotes: [
         {
@@ -617,7 +704,9 @@ export default {
           role: "Nota Raíz (Tónica)",
           intervalLabel: "T",
           intervalDesc: "Inicio de la escala",
-          instructions: "Toca la cuerda 3 al aire (sin presionar ningún traste)."
+          instructions: "Toca la cuerda 3 al aire (sin presionar ningún traste).",
+          leftFinger: null,
+          rightFinger: 1
         },
         {
           name: "Re",
@@ -628,7 +717,9 @@ export default {
           role: "Segunda Mayor",
           intervalLabel: "T",
           intervalDesc: "+1 Tono (avanza 2 trastes)",
-          instructions: "Coloca tu dedo índice o medio en el traste 2 de la cuerda 3."
+          instructions: "Coloca tu dedo índice o medio en el traste 2 de la cuerda 3.",
+          leftFinger: 2,
+          rightFinger: 1
         },
         {
           name: "Mi",
@@ -639,7 +730,9 @@ export default {
           role: "Tercera Mayor",
           intervalLabel: "S",
           intervalDesc: "+1 Tono (cambio de cuerda)",
-          instructions: "Toca la cuerda 2 al aire (sin presionar ningún traste)."
+          instructions: "Toca la cuerda 2 al aire (sin presionar ningún traste).",
+          leftFinger: null,
+          rightFinger: 2
         },
         {
           name: "Fa",
@@ -650,7 +743,9 @@ export default {
           role: "Cuarta Justa",
           intervalLabel: "T",
           intervalDesc: "+1/2 Tono (avanza 1 traste)",
-          instructions: "Presiona el traste 1 de la cuerda 2 (se suele usar el dedo índice)."
+          instructions: "Presiona el traste 1 de la cuerda 2 (se suele usar el dedo índice).",
+          leftFinger: 1,
+          rightFinger: 2
         },
         {
           name: "Sol",
@@ -661,7 +756,9 @@ export default {
           role: "Quinta Justa",
           intervalLabel: "T",
           intervalDesc: "+1 Tono (avanza 2 trastes)",
-          instructions: "Presiona el traste 3 de la cuerda 2 (se suele usar el dedo anular)."
+          instructions: "Presiona el traste 3 de la cuerda 2 (se suele usar el dedo anular).",
+          leftFinger: 3,
+          rightFinger: 2
         },
         {
           name: "La",
@@ -672,7 +769,9 @@ export default {
           role: "Sexta Mayor",
           intervalLabel: "T",
           intervalDesc: "+1 Tono (cambio de cuerda)",
-          instructions: "Toca la cuerda 1 al aire (sin presionar ningún traste)."
+          instructions: "Toca la cuerda 1 al aire (sin presionar ningún traste).",
+          leftFinger: null,
+          rightFinger: 3
         },
         {
           name: "Si",
@@ -683,7 +782,9 @@ export default {
           role: "Séptima Mayor",
           intervalLabel: "S",
           intervalDesc: "+1 Tono (avanza 2 trastes)",
-          instructions: "Presiona el traste 2 de la cuerda 1 (se suele usar el dedo medio)."
+          instructions: "Presiona el traste 2 de la cuerda 1 (se suele usar el dedo medio).",
+          leftFinger: 2,
+          rightFinger: 3
         },
         {
           name: "Do",
@@ -694,7 +795,9 @@ export default {
           role: "Octava (Tónica)",
           intervalLabel: "",
           intervalDesc: "+1/2 Tono (avanza 1 traste)",
-          instructions: "Presiona el traste 3 de la cuerda 1 (se suele usar el dedo anular)."
+          instructions: "Presiona el traste 3 de la cuerda 1 (se suele usar el dedo anular).",
+          leftFinger: 3,
+          rightFinger: 3
         }
       ]
     }
@@ -719,12 +822,23 @@ export default {
       return this.scaleNotes[this.selectedNoteIndex];
     },
 
+    leftHandLabel() {
+      const f = this.selectedNote.leftFinger;
+      if (f === null) return 'Cuerda al aire (sin presionar)';
+      return `${this.fingerNames[f]} · Traste ${this.selectedNote.fret}`;
+    },
+
+    rightHandLabel() {
+      const f = this.selectedNote.rightFinger;
+      return `${this.fingerNames[f]} · Cuerda ${this.selectedNote.string}`;
+    },
+
     quizFeedbackMessage() {
-      if(this.score === 8) {
+      if (this.score === 8) {
         return "¡Perfecto! 8/8 — Tienes una comprensión impecable de la estructura de tu ukelele. ¡Eres un estudiante excepcional!";
-      } else if(this.score >= 6) {
+      } else if (this.score >= 6) {
         return "¡Excelente trabajo! Dominás la mayoría de los conceptos. Repasa las preguntas que fallaste para completar tu comprensión.";
-      } else if(this.score >= 4) {
+      } else if (this.score >= 4) {
         return "¡Buen esfuerzo! Tenés los conceptos básicos pero hay algunos detalles que vale la pena repasar en la lección teórica del Día 1.";
       } else {
         return "¡No te desanimes! El ukelele es nuevo para vos. Te recomendamos releer el material teórico del Día 1 e intentarlo de nuevo con más confianza.";
@@ -737,8 +851,8 @@ export default {
   },
 
   beforeDestroy() {
-    if(this.stringTimeout) clearTimeout(this.stringTimeout);
-    if(this.wrongTimeout) clearTimeout(this.wrongTimeout);
+    if (this.stringTimeout) clearTimeout(this.stringTimeout);
+    if (this.wrongTimeout) clearTimeout(this.wrongTimeout);
     this.isPlayingAll = false;
     this.isPlayingScale = false;
   },
@@ -749,16 +863,16 @@ export default {
     },
 
     playTone(frequency, duration = 1.2) {
-      if(typeof window === 'undefined') return;
+      if (typeof window === 'undefined') return;
       try {
         const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-        if(!AudioCtxClass) return;
+        if (!AudioCtxClass) return;
 
-        if(!this.audioCtx || this.audioCtx.state === 'closed') {
+        if (!this.audioCtx || this.audioCtx.state === 'closed') {
           this.audioCtx = new AudioCtxClass();
         }
 
-        if(this.audioCtx.state === 'suspended') {
+        if (this.audioCtx.state === 'suspended') {
           this.audioCtx.resume();
         }
 
@@ -778,7 +892,7 @@ export default {
 
         osc.start();
         osc.stop(ctx.currentTime + duration);
-      } catch(e) {
+      } catch (e) {
         // eslint-disable-next-line no-console
         console.error("No se pudo generar sonido:", e);
       }
@@ -786,29 +900,29 @@ export default {
 
     playString(index) {
       const string = this.tuningStrings[index];
-      if(!string) return;
+      if (!string) return;
 
       this.activeStringIndex = index;
       this.playTone(string.frequencyHz, 1.4);
 
-      if(this.stringTimeout) clearTimeout(this.stringTimeout);
+      if (this.stringTimeout) clearTimeout(this.stringTimeout);
       this.stringTimeout = setTimeout(() => {
-        if(this.activeStringIndex === index) {
+        if (this.activeStringIndex === index) {
           this.activeStringIndex = null;
         }
       }, 1400);
     },
 
     async playAllStrings() {
-      if(this.isPlayingAll) {
+      if (this.isPlayingAll) {
         this.isPlayingAll = false;
         this.activeStringIndex = null;
         return;
       }
 
       this.isPlayingAll = true;
-      for(let i = 0; i < this.tuningStrings.length; i++) {
-        if(!this.isPlayingAll) break;
+      for (let i = 0; i < this.tuningStrings.length; i++) {
+        if (!this.isPlayingAll) break;
         this.playString(i);
         await new Promise((resolve) => setTimeout(resolve, 1600));
       }
@@ -818,45 +932,45 @@ export default {
     checkAnswer(optionIdx) {
       this.selectedAnswer = optionIdx;
       this.isAnswered = true;
-      if(optionIdx === this.currentQuestion.answerIndex) {
+      if (optionIdx === this.currentQuestion.answerIndex) {
         this.score++;
       }
     },
 
     getOptionColor(idx) {
-      if(!this.isAnswered) {
+      if (!this.isAnswered) {
         return "grey darken-2";
       }
-      if(idx === this.currentQuestion.answerIndex) {
+      if (idx === this.currentQuestion.answerIndex) {
         return "success";
       }
-      if(idx === this.selectedAnswer) {
+      if (idx === this.selectedAnswer) {
         return "error";
       }
       return "grey lighten-2";
     },
 
     getOptionIcon(idx) {
-      if(!this.isAnswered) {
+      if (!this.isAnswered) {
         return "mdi-radiobox-blank";
       }
-      if(idx === this.currentQuestion.answerIndex) {
+      if (idx === this.currentQuestion.answerIndex) {
         return "mdi-check-circle";
       }
-      if(idx === this.selectedAnswer) {
+      if (idx === this.selectedAnswer) {
         return "mdi-close-circle";
       }
       return "mdi-minus-circle-outline";
     },
 
     getOptionIconColor(idx) {
-      if(!this.isAnswered) {
+      if (!this.isAnswered) {
         return "grey darken-1";
       }
-      if(idx === this.currentQuestion.answerIndex) {
+      if (idx === this.currentQuestion.answerIndex) {
         return "success";
       }
-      if(idx === this.selectedAnswer) {
+      if (idx === this.selectedAnswer) {
         return "error";
       }
       return "grey lighten-1";
@@ -865,7 +979,7 @@ export default {
     nextQuestion() {
       this.isAnswered = false;
       this.selectedAnswer = null;
-      if(this.currentQuestionIndex + 1 < this.quizQuestions.length) {
+      if (this.currentQuestionIndex + 1 < this.quizQuestions.length) {
         this.currentQuestionIndex++;
       } else {
         this.quizCompleted = true;
@@ -887,25 +1001,25 @@ export default {
     },
 
     async playScaleSequence() {
-      if(this.isPlayingScale) {
+      if (this.isPlayingScale) {
         this.isPlayingScale = false;
         return;
       }
 
       this.isPlayingScale = true;
 
-      for(let i = 0; i < this.scaleNotes.length; i++) {
-        if(!this.isPlayingScale) break;
+      for (let i = 0; i < this.scaleNotes.length; i++) {
+        if (!this.isPlayingScale) break;
         this.selectNote(i);
         await new Promise((resolve) => setTimeout(resolve, 900));
       }
 
-      if(this.isPlayingScale) {
+      if (this.isPlayingScale) {
         await new Promise((resolve) => setTimeout(resolve, 200));
       }
 
-      for(let i = this.scaleNotes.length - 2; i >= 0; i--) {
-        if(!this.isPlayingScale) break;
+      for (let i = this.scaleNotes.length - 2; i >= 0; i--) {
+        if (!this.isPlayingScale) break;
         this.selectNote(i);
         await new Promise((resolve) => setTimeout(resolve, 900));
       }
@@ -914,17 +1028,17 @@ export default {
     },
 
     getStringThickness(s) {
-      if(s === 4) return 2.0;
-      if(s === 3) return 3.2;
-      if(s === 2) return 2.4;
-      if(s === 1) return 1.5;
+      if (s === 4) return 2.0;
+      if (s === 3) return 3.2;
+      if (s === 2) return 2.4;
+      if (s === 1) return 1.5;
       return 2.0;
     },
 
     // ───── Match Game ─────
     initMatchGame() {
       const arr = this.notePairs.map(p => ({ english: p.english }));
-      for(let i = arr.length - 1; i > 0; i--) {
+      for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
       }
@@ -932,33 +1046,33 @@ export default {
     },
 
     selectLatin(name) {
-      if(this.wrongLatinName) return;
+      if (this.wrongLatinName) return;
       this.selectedLatinName = this.selectedLatinName === name ? null : name;
       this.tryMatch();
     },
 
     selectEnglish(english) {
-      if(this.wrongLatinName) return;
+      if (this.wrongLatinName) return;
       this.selectedEnglishName = this.selectedEnglishName === english ? null : english;
       this.tryMatch();
     },
 
     tryMatch() {
-      if(!this.selectedLatinName || !this.selectedEnglishName) return;
+      if (!this.selectedLatinName || !this.selectedEnglishName) return;
       const pair = this.notePairs.find(p => p.latin === this.selectedLatinName);
-      if(pair && pair.english === this.selectedEnglishName) {
+      if (pair && pair.english === this.selectedEnglishName) {
         // Correct match
         this.matchedPairs.push({ latin: this.selectedLatinName, english: this.selectedEnglishName });
         this.selectedLatinName = null;
         this.selectedEnglishName = null;
-        if(this.matchedPairs.length === this.notePairs.length) {
+        if (this.matchedPairs.length === this.notePairs.length) {
           this.matchGameComplete = true;
         }
       } else {
         // Wrong match — flash red then clear
         this.wrongLatinName = this.selectedLatinName;
         this.wrongEnglishName = this.selectedEnglishName;
-        if(this.wrongTimeout) clearTimeout(this.wrongTimeout);
+        if (this.wrongTimeout) clearTimeout(this.wrongTimeout);
         this.wrongTimeout = setTimeout(() => {
           this.wrongLatinName = null;
           this.wrongEnglishName = null;
@@ -969,14 +1083,14 @@ export default {
     },
 
     getLatinBtnColor(name) {
-      if(this.wrongLatinName === name) return 'red lighten-4';
-      if(this.selectedLatinName === name) return 'primary';
+      if (this.wrongLatinName === name) return 'red lighten-4';
+      if (this.selectedLatinName === name) return 'primary';
       return 'grey lighten-3';
     },
 
     getEnglishBtnColor(english) {
-      if(this.wrongEnglishName === english) return 'red lighten-4';
-      if(this.selectedEnglishName === english) return 'orange darken-1';
+      if (this.wrongEnglishName === english) return 'red lighten-4';
+      if (this.selectedEnglishName === english) return 'orange darken-1';
       return 'grey lighten-3';
     },
 

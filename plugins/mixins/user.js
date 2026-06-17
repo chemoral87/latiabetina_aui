@@ -10,6 +10,7 @@ const User = {
           authenticated: 'authenticated',
           permissions: 'permissions',
           orgs: 'orgs',
+          orgCodeById: 'orgCodeById',
           snackbar: 'snackbar',
           showLoading: 'showLoading',
           hideNextLoading: 'hideNextLoading',

@@ -37,7 +37,7 @@ export default {
   computed: {
     showSelect() {
       // Si hideOne está presente y disabled es true, ocultar el select
-      if(this.hideOne && this.disabled) {
+      if (this.hideOne && this.disabled) {
         return false
       }
       // De lo contrario, mostrar solo si no está disabled
@@ -64,7 +64,7 @@ export default {
     me.items = filterOrgs
 
     // select if only one and no existing value and not preventing auto-select
-    if(filterOrgs.length === 1 && !this.preventAutoSelect && (this.value === null || this.value === "" || this.value === undefined)) {
+    if (filterOrgs.length === 1 && !this.preventAutoSelect && (this.value === null || this.value === "" || this.value === undefined)) {
       me.$nextTick(() => {
         me.selected = filterOrgs[0].id
         me.disabled = true

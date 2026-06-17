@@ -8,7 +8,8 @@
       <v-col v-for="profile in profiles" :key="profile.id" cols="12">
         <v-card>
           <v-card-title class="py-0">
-            <span class="text-subtitle-1 py-1">{{ profile.organization_name }} ({{ profile.organization_short_code }})</span>
+            <span class="text-subtitle-1 py-1">{{ profile.organization_name }} ({{ profile.organization_short_code
+              }})</span>
             <v-spacer />
 
             <v-btn icon :color="getColorFavorite(profile.favorite)" @click="setFavProfile(profile)">
@@ -48,7 +49,7 @@
           </v-card-text> -->
         </v-card>
       </v-col>
-
+      <!--
       <v-col cols="12" md="6">
         <RoleCombobox :roles="mUser.roles" @modelChange="setRoles"></RoleCombobox>
       </v-col>
@@ -60,19 +61,15 @@
         <v-btn color="primary" outlined class="mr-1" @click="$router.push('/user')">Cancelar</v-btn>
         <v-btn color="primary" @click="saveUserRolesPermissions()">Guardar</v-btn>
       </v-col>
+    -->
     </v-row>
 
     <ProfileDialog v-if="profileDialog" :user-id="user_id" @close="closeProfileDialog" @save="saveProfile" />
-    <DialogDelete
-      v-if="dialogDelete"
-      :dialog="dialogDeleteProp"
-      @ok="
-        (item) => {
-          deleteProfile(item)
-        }
-      "
-      @close="dialogDelete = false"
-    ></DialogDelete>
+    <DialogDelete v-if="dialogDelete" :dialog="dialogDeleteProp" @ok="
+      (item) => {
+        deleteProfile(item)
+      }
+    " @close="dialogDelete = false"></DialogDelete>
   </v-container>
 </template>
 
@@ -82,8 +79,8 @@ export default {
   async asyncData({ $axios, app, params, store, error }) {
     // sconst org_ids = await store.dispatch("validatePermission", { permission: "user-update", error })
 
-    const res = await app.$repository.User.show(params.id).catch((e) => {})
-    const res2 = await app.$repository.Profile.index(params.id).catch((e) => {})
+    const res = await app.$repository.User.show(params.id).catch((e) => { })
+    const res2 = await app.$repository.Profile.index(params.id).catch((e) => { })
     return { mUser: res, profiles: res2 }
   },
   // validate({ store, error }) {

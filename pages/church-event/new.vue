@@ -12,7 +12,7 @@
 export default {
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
-  
+
   data() {
     return {
       saving: false,
@@ -24,6 +24,7 @@ export default {
     eventBus.$emit("setNavBar", {
       title: "Nuevo Evento de Iglesia",
       icon: "mdi-calendar-plus",
+      back: "/church-event",
     })
   },
 
@@ -31,20 +32,20 @@ export default {
     close() {
       this.$router.push('/church-event')
     },
-    
+
     async saveChurchEvent(item) {
       const payload = { ...item }
       if (payload.org_id && typeof payload.org_id === 'object') {
         payload.org_id = payload.org_id.id
       }
-      
+
       try {
         this.saving = true;
         await this.$repository.ChurchEvent.create(payload);
         this.$notify({ type: "success", text: "Evento creado exitosamente" });
         this.$router.push('/church-event')
       } catch (error) {
-        if(this.$handleError) {
+        if (this.$handleError) {
           this.$handleError(error)
         } else {
           console.error(error)

@@ -10,9 +10,9 @@
 
 
         <v-row>
-          <v-col cols="12" md="3">
+          <v-col v-if="showOrgSelect" cols="12" md="3">
             <organization-select v-model="item.org_id" hide-one :permission="permission" outlined
-              :rules="[$vrules.required]" />
+              :rules="[$vrules.required]" @hidden="onOrgHidden" />
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
@@ -32,7 +32,7 @@
               :disabled="loading" />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field v-model="item.time_start" label="Hora" type="time" :error-messages="errors.time_start"
+            <MyTimePicker v-model="item.time_start" label="Hora" :error-messages="errors.time_start"
               :disabled="loading" />
           </v-col>
           <v-col cols="12" md="3">
@@ -84,6 +84,7 @@ export default {
 
   data() {
     return {
+      showOrgSelect: true,
       imageLoading: false,
       item: {
         name: "",
@@ -125,7 +126,8 @@ export default {
     },
 
     isValid() {
-      return this.item.name && this.item.name.trim().length > 0 && this.item.start_date && this.item.org_id
+      const orgValid = !this.showOrgSelect || !!this.item.org_id
+      return this.item.name && this.item.name.trim().length > 0 && this.item.start_date && orgValid
     },
   },
 
@@ -151,6 +153,11 @@ export default {
         this.item = Object.assign({}, this.churchEvent)
       }
       this.$store.dispatch("validation/clearErrors")
+    },
+
+    onOrgHidden(orgId) {
+      this.item.org_id = orgId
+      this.showOrgSelect = false
     },
 
     close() {

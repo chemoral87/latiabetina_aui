@@ -21,8 +21,8 @@
 
       <!-- Tabla de eventos -->
       <v-col cols="12">
-        <ChurchEventTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
-          @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
+        <ChurchEventTable :options="options" :response="response" :loading="loading" permission="church-event-index"
+          @sorting="handleSorting" @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
       </v-col>
     </v-row>
 

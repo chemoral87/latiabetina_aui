@@ -35,6 +35,13 @@ export const getters = {
     return state.auth?.user?.orgs ?? []
   },
 
+  orgCodeById: (state) => (orgId) => {
+    const orgs = state.auth?.user?.orgs ?? []
+    // eslint-disable-next-line eqeqeq
+    const org = orgs.find((o) => o.id == orgId)
+    return org ? org.name : ""
+  },
+
   snackbar(state) {
     return state.snackbar
   },
