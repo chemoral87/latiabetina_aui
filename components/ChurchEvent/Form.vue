@@ -38,6 +38,17 @@
           <v-col cols="12" md="3">
             <v-text-field v-model="item.location" label="Lugar" :error-messages="errors.location" :disabled="loading" />
           </v-col>
+          <v-col cols="12" md="3">
+            <v-select v-model="item.classification" :items="classificationOptions" item-text="label" item-value="value"
+              label="Clasificación" :error-messages="errors.classification" :disabled="loading" clearable>
+              <template #item="{ item: opt }">
+                <v-chip small :color="opt.color" dark class="mr-2">{{ opt.label }}</v-chip>
+              </template>
+              <template #selection="{ item: opt }">
+                <v-chip small :color="opt.color" dark>{{ opt.label }}</v-chip>
+              </template>
+            </v-select>
+          </v-col>
         </v-row>
 
         <v-row>
@@ -93,10 +104,17 @@ export default {
         end_date: "",
         time_start: "",
         location: "",
+        classification: null,
         url_image: "",
         url_image_s3: "",
         image_file: null,
       },
+      classificationOptions: [
+        { label: "jv3s", value: "jv3s", color: "orange" },
+        { label: "general", value: "general", color: "grey" },
+        { label: "jv3s-teen", value: "jv3s-teen", color: "blue" },
+        { label: "jv3s-legado", value: "jv3s-legado", color: "red" },
+      ],
     }
   },
 

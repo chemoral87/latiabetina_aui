@@ -37,6 +37,12 @@
       {{ item.end_date | moment("DD MMM YYYY") }}
     </template>
 
+    <template #[`item.classification`]="{ item }">
+      <v-chip v-if="item.classification" small dark :color="classificationColor(item.classification)">
+        {{ item.classification }}
+      </v-chip>
+    </template>
+
     <!-- Estado vacío -->
     <template #no-data>
       <div class="text-center pa-4">
@@ -104,6 +110,7 @@ export default {
       }
       cols.push(
         { text: "Ubicación", value: "location", sortable: false },
+        { text: "Clasificación", value: "classification", sortable: false },
         { text: "Fecha Publicación", value: "start_date" },
         { text: "Fecha Evento", value: "end_date" },
         { text: "Acciones", value: "actions", sortable: false, align: "center", width: "150px" },
@@ -161,6 +168,16 @@ export default {
 
     deleteChurchEvent(item) {
       this.$emit("delete", item)
+    },
+
+    classificationColor(value) {
+      const map = {
+        'jv3s': 'orange',
+        'general': 'grey',
+        'jv3s-teen': 'blue',
+        'jv3s-legado': 'red',
+      }
+      return map[value] || 'grey'
     },
 
 
