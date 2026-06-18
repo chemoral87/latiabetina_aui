@@ -8,7 +8,7 @@
       </v-col>
 
       <!-- Botones de acción -->
-      <v-col cols="12" md="10">
+      <v-col cols="auto">
         <v-btn color="primary" class="mr-2" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
@@ -18,6 +18,9 @@
           Refrescar
         </v-btn>
       </v-col>
+      <v-col cols="auto">
+        <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
+          outlined /></v-col>
 
       <!-- Tabla de eventos -->
       <v-col cols="12">
@@ -53,6 +56,7 @@ export default {
   data() {
     return {
       filterChurchEvent: "",
+      filterOrgId: null,
       response: { data: [], total: 0 },
       options: {
         page: 1,
@@ -84,6 +88,15 @@ export default {
         this.handleFilterChange(value)
       }, 500),
     },
+    filterOrgId(value) {
+      const overrides = { page: 1 }
+      if (value) {
+        overrides.org_id = value
+      } else {
+        overrides.org_id = undefined
+      }
+      this.loadChurchEvents(overrides)
+    },
   },
 
   mounted() {
@@ -114,6 +127,15 @@ export default {
 
         if (this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterChurchEvent
+        }
+
+        if (this.filterOrgId && !Object.prototype.hasOwnProperty.call(overrides, "org_id")) {
+          requestOptions.org_id = this.filterOrgId
+        }
+
+        // remove org_id from params if explicitly cleared
+        if (Object.prototype.hasOwnProperty.call(overrides, "org_id") && !overrides.org_id) {
+          delete requestOptions.org_id
         }
 
         let response = await this.$repository.ChurchEvent.index(requestOptions)
