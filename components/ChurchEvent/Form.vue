@@ -27,11 +27,11 @@
           </v-col>
 
           <v-col cols="12" md="3">
-            <MyDatePicker v-model="item.start_date" label="Fecha Publicación" :error-messages="errors.start_date"
+            <MyDatePicker v-model="item.publish_date" label="Fecha Publicación" :error-messages="errors.publish_date"
               :disabled="loading" required />
           </v-col>
           <v-col cols="12" md="3">
-            <MyDatePicker v-model="item.end_date" label="Fecha Evento" :error-messages="errors.end_date"
+            <MyDatePicker v-model="item.event_date" label="Fecha Evento" :error-messages="errors.event_date"
               :disabled="loading" />
           </v-col>
           <v-col cols="12" md="3">
@@ -103,8 +103,8 @@ export default {
         name: "",
         org_id: null,
         description: "",
-        start_date: "",
-        end_date: "",
+        publish_date: "",
+        event_date: "",
         time_start: "",
         location: "",
         classification: null,
@@ -156,7 +156,7 @@ export default {
     },
 
     isValid() {
-      return this.item.name && this.item.name.trim().length > 0 && this.item.start_date && !!this.item.org_id
+      return this.item.name && this.item.name.trim().length > 0 && this.item.publish_date && !!this.item.org_id
     },
   },
 

@@ -29,12 +29,12 @@
       {{ orgCodeById(item.org_id) }}
     </template>
 
-    <template #[`item.start_date`]="{ item }">
-      {{ item.start_date | moment("DD MMM YYYY") }}
+    <template #[`item.publish_date`]="{ item }">
+      {{ item.publish_date | moment("DD MMM YYYY") }}
     </template>
 
-    <template #[`item.end_date`]="{ item }">
-      {{ item.end_date | moment("DD MMM YYYY") }}
+    <template #[`item.event_date`]="{ item }">
+      {{ item.event_date | moment("DD MMM YYYY") }}
     </template>
 
     <template #[`item.classification`]="{ item }">
@@ -111,8 +111,8 @@ export default {
       cols.push(
         { text: "Ubicación", value: "location", sortable: false },
         { text: "Clasificación", value: "classification", sortable: false },
-        { text: "Fecha Publicación", value: "start_date" },
-        { text: "Fecha Evento", value: "end_date" },
+        { text: "Fecha Publicación", value: "publish_date" },
+        { text: "Fecha Evento", value: "event_date" },
         { text: "Acciones", value: "actions", sortable: false, align: "center", width: "150px" },
       )
       return cols
