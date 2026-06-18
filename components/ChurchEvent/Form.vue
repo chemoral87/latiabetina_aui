@@ -8,6 +8,9 @@
     <v-card-text>
       <v-form ref="form" @submit.prevent="save">
 
+        <v-alert v-if="errors.slug_name" type="error" class="mb-4" dense>
+          {{ Array.isArray(errors.slug_name) ? errors.slug_name[0] : errors.slug_name }}
+        </v-alert>
 
         <v-row>
           <v-col v-if="showOrgSelect" cols="12" md="3">
@@ -140,7 +143,11 @@ export default {
 
     errors() {
       const validationErrors = this.$store.getters["validation/errors"]
-      return validationErrors || {}
+      const errors = validationErrors ? { ...validationErrors } : {}
+      if (errors.slug_name) {
+        errors.name = errors.name ? [...errors.name, ...errors.slug_name] : [...errors.slug_name]
+      }
+      return errors
     },
 
     showOrgSelect() {
