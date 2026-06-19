@@ -10,7 +10,7 @@ NC='\033[0m'
 APP_DIR="/var/www/admin"
 RELEASES_DIR="$APP_DIR/releases"
 CURRENT_LINK="$APP_DIR/current"
-REPO_URL="https://github.com/chemoral87/latiabetina_aui.git"
+TARBALL="$APP_DIR/release.tar.gz"
 RELEASE_NAME="${1:-$(date +%Y%m%d%H%M%S)}"
 RELEASE_PATH="$RELEASES_DIR/$RELEASE_NAME"
 KEEP_RELEASES=5
@@ -22,11 +22,16 @@ error_exit() {
 
 echo -e "${YELLOW}🚀 Starting deployment: $RELEASE_NAME${NC}"
 
-mkdir -p "$RELEASES_DIR"
+if [ ! -f "$TARBALL" ]; then
+  error_exit "Release tarball not found at $TARBALL"
+fi
 
-# Clone repo at specific commit into new release folder
-echo -e "${YELLOW}📦 Cloning repository...${NC}"
-git clone --depth 1 "$REPO_URL" "$RELEASE_PATH" || error_exit "Git clone failed"
+mkdir -p "$RELEASES_DIR"
+mkdir -p "$RELEASE_PATH"
+
+# Extract release tarball into release folder
+echo -e "${YELLOW}📦 Extracting release tarball...${NC}"
+tar -xzf "$TARBALL" -C "$RELEASE_PATH" || error_exit "Tar extraction failed"
 
 cd "$RELEASE_PATH" || error_exit "Cannot enter release directory"
 
@@ -36,23 +41,6 @@ if [ -f "$APP_DIR/.env.production" ]; then
 else
   echo -e "${YELLOW}⚠️ No .env.production file found at $APP_DIR/.env.production${NC}"
 fi
-
-# Checkout specific commit if provided
-if [ -n "$1" ]; then
-  git fetch --depth 1 origin "$1" || true
-  git checkout "$1" 2>/dev/null || true
-fi
-
-# Install dependencies
-echo -e "${YELLOW}📦 Installing dependencies...${NC}"
-npm install || error_exit "npm install failed"
-
-# Clean and build
-echo -e "${YELLOW}🧹 Cleaning cache...${NC}"
-rm -rf node_modules/.vite node_modules/.cache .nuxt .output
-
-echo -e "${YELLOW}🔨 Building production...${NC}"
-npm run build || error_exit "Build failed"
 
 # Update current symlink atomically (zero downtime)
 echo -e "${YELLOW}🔗 Updating current symlink...${NC}"
@@ -73,5 +61,9 @@ nginx -t && systemctl reload nginx || error_exit "nginx reload failed"
 echo -e "${YELLOW}🧹 Cleaning old releases (keeping last $KEEP_RELEASES)...${NC}"
 cd "$RELEASES_DIR"
 ls -1dt */ | tail -n +$((KEEP_RELEASES + 1)) | xargs -r rm -rf
+
+# Remove the uploaded tarball to free space
+echo -e "${YELLOW}🧹 Removing release tarball...${NC}"
+rm -f "$TARBALL"
 
 echo -e "${GREEN}✅ Deployment $RELEASE_NAME completed successfully!${NC}"

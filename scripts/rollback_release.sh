@@ -48,7 +48,8 @@ fi
 ln -sfn "$RELEASE_PATH" "$CURRENT_LINK" || error_exit "Symlink update failed"
 
 # Restart app using ecosystem config
-pm2 startOrRestart "$CURRENT_LINK/ecosystem.config.cjs" --update-env || error_exit "pm2 restart failed"
+pm2 delete Admin || true
+pm2 start "$CURRENT_LINK/ecosystem.config.js" --update-env || error_exit "pm2 start failed"
 pm2 save
 
 # Reload nginx so it follows the rollback symlink for static files
