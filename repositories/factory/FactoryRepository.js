@@ -2,6 +2,7 @@ import UserRepository from "../UserRepository"
 import ProfileRepository from "../ProfileRepository"
 import WhatsappRepository from "../WhatsappRepository"
 import WhatsappMessageLogRepository from "../WhatsappMessageLogRepository"
+import ChurchEventRepository from "../ChurchEventRepository"
 
 import CommonRepository from "./CommonRepository"
 import ParentRepository from "./ParentRepository"
@@ -21,7 +22,7 @@ export default ($axios) => ({
   AuditoriumEventSeat: CommonRepository($axios)("/auditorium-event-seat"),
   AuditoriumEventSeatLog: CommonRepository($axios)("/auditorium-event-seat-log"),
   Testimony: CommonRepository($axios)("/testimony"),
-  ChurchEvent: CommonRepository($axios)("/church-event"),
+  ChurchEvent: ChurchEventRepository($axios)("/church-event"),
   /// ////////Admin Repository////////////////////////
   Store: CommonRepository($axios)("/store"),
   ConsoSheet: CommonRepository($axios)("/conso-sheet"),

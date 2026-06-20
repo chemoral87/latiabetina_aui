@@ -25,9 +25,13 @@
       <!-- Tabla de eventos -->
       <v-col cols="12">
         <ChurchEventTable :options="options" :response="response" :loading="loading" permission="church-event-index"
-          @sorting="handleSorting" @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" />
+          @sorting="handleSorting" @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" @copy="openCopyDialog" />
       </v-col>
     </v-row>
+
+    <!-- Diálogo de copiar evento en varias fechas -->
+    <ChurchEventCopyDialog v-if="churchEventDialogCopy" :church-event="copyingChurchEvent" :loading="copying"
+      @copy="copyChurchEvent" @close="churchEventDialogCopy = false" />
 
     <!-- Diálogo de confirmación de eliminación -->
     <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
@@ -66,6 +70,9 @@ export default {
       },
       churchEventDialogDelete: false,
       dialogDelete: {},
+      churchEventDialogCopy: false,
+      copyingChurchEvent: {},
+      copying: false,
       loading: false,
       deleting: false,
       skipFilterWatch: false, // Flag para evitar llamadas duplicadas
@@ -182,6 +189,29 @@ export default {
         payload: item,
       }
       this.churchEventDialogDelete = true
+    },
+
+    openCopyDialog(item) {
+      this.copyingChurchEvent = item
+      this.churchEventDialogCopy = true
+    },
+
+    async copyChurchEvent({ churchEvent, dates }) {
+      try {
+        this.copying = true
+        await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
+
+        this.churchEventDialogCopy = false
+        await this.loadChurchEvents()
+      } catch (error) {
+        if (this.$handleError) {
+          this.$handleError(error)
+        } else {
+          console.error(error)
+        }
+      } finally {
+        this.copying = false
+      }
     },
 
     async deleteChurchEvent(item) {

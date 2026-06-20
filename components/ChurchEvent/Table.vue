@@ -16,6 +16,16 @@
 
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
+            <v-btn outlined color="success" fab x-small class="mr-1" v-bind="attrs" v-on="on"
+              @click="copyChurchEvent(item)">
+              <v-icon small>mdi-content-copy</v-icon>
+            </v-btn>
+          </template>
+          <span>Copiar</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
             <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteChurchEvent(item)">
               <v-icon small>mdi-delete</v-icon>
             </v-btn>
@@ -164,6 +174,10 @@ export default {
 
     editChurchEvent(item) {
       this.$emit("edit", item)
+    },
+
+    copyChurchEvent(item) {
+      this.$emit("copy", item)
     },
 
     deleteChurchEvent(item) {
