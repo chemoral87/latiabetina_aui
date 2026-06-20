@@ -22,6 +22,9 @@
           full-width
           locale="es"
           :disabled="loading"
+          :events="eventDateArray"
+          event-color="#fb8c00"
+          :allowed-dates="isAllowedDate"
         />
 
         <div v-if="selectedDates.length" class="mt-2">
@@ -76,9 +79,17 @@ export default {
     sortedDates() {
       return [...this.selectedDates].sort()
     },
+
+    eventDateArray() {
+      return this.churchEvent.event_date ? [this.churchEvent.event_date] : []
+    },
   },
 
   methods: {
+    isAllowedDate(date) {
+      return date !== this.churchEvent.event_date
+    },
+
     removeDate(date) {
       this.selectedDates = this.selectedDates.filter((d) => d !== date)
     },
@@ -99,4 +110,9 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep .v-date-picker-table .v-event {
+  border: 2px solid #fb8c00 !important;
+  background-color: transparent !important;
+}
+</style>
