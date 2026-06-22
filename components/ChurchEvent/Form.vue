@@ -21,9 +21,9 @@
             <v-text-field v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
               required autofocus @keyup.enter="save" />
           </v-col>
-          <v-col cols="12" md="3">
+          <v-col cols="12" md="6">
             <v-textarea v-model="item.description" label="Descripción" :error-messages="errors.description"
-              :disabled="loading" rows="1" />
+              :disabled="loading" rows="1" auto-grow />
           </v-col>
 
           <v-col cols="12" md="3">
