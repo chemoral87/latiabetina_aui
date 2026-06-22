@@ -79,22 +79,91 @@
             </v-row>
           </v-card>
 
-          <v-card outlined class="pa-4 grey lighten-5">
-            <div class="d-flex align-center mb-2">
-              <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
-              <span class="font-weight-bold grey--text text--darken-4">Mateo 18:20</span>
-            </div>
-            <p class="text-body-2 italic grey--text text--darken-3 mb-0">
-              "Porque donde están dos o tres congregados en mi nombre, allí estoy yo en medio de ellos."
-            </p>
-            <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
-          </v-card>
+          <v-row dense class="mb-4">
+            <v-col cols="12" md="6" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Salmo 139:7-8 (Omnipresencia)</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "¿A dónde me iré de tu Espíritu? ¿Y a dónde huiré de tu presencia? Si subiere a los cielos, allí estás tú; y si en el Seol hiciere mi estrado, he aquí, allí tú estás."
+                  </p>
+                  <p class="text-caption grey--text text--darken-2 mt-2 mb-0">
+                    <strong>Definición teológica:</strong> Dios está presente en todo lugar del universo de manera ilimitada y constante, independientemente de la conciencia o reconocimiento del hombre.
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="6" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Éxodo 33:14-15 (Manifestación)</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Y él dijo: Mi presencia irá contigo, y te daré descanso. Y Moisés respondió: Si tu presencia no ha de ir conmigo, no nos saques de aquí."
+                  </p>
+                  <p class="text-caption grey--text text--darken-2 mt-2 mb-0">
+                    <strong>Ejemplos de su manifestación:</strong> La nube en el desierto (cobertura), la columna de fuego (dirección nocturna) y el maná del cielo (sustento diario).
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+          </v-row>
         </courses-section>
 
         <!-- SECCIÓN 3: Ataque Espiritual vs Adoración -->
         <courses-section outlined title="El Poder de la Adoración: 1 Hora Reprendiendo al enemigo vs 1 Hora Adorando a Dios" icon="mdi-shield-account" text-class="">
           <p class="text-body-1 grey--text text--darken-3 mb-4">
-            La diferencia entre desgastarnos luchando solos y traer la presencia de Dios al campo de batalla es abismal. Consideremos este contraste:
+            La diferencia entre desgastarnos luchando solos y traer la presencia de Dios al campo de batalla es abismal. La Biblia nos enseña que la verdadera guerra espiritual comienza con la sumisión a Dios y se manifiesta en la alabanza:
+          </p>
+
+          <v-row dense class="mb-4">
+            <v-col cols="12" md="6" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">Santiago 4:7</span>
+                  </div>
+                  <p class="text-caption grey--text text--darken-2 mb-2">
+                    <strong>Contexto:</strong> Santiago enseña que la victoria sobre el mal no proviene de una confrontación directa basada en nuestras fuerzas, sino de un orden espiritual: primero la sumisión a Dios (adoración) y luego la resistencia.
+                  </p>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Someteos, pues, a Dios; resistid al diablo, y huirá de vosotros."
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="6" class="d-flex">
+              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+                <div>
+                  <div class="d-flex align-center mb-2">
+                    <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="font-weight-bold grey--text text--darken-4">2 Crónicas 20:21-22</span>
+                  </div>
+                  <p class="text-caption grey--text text--darken-2 mb-2">
+                    <strong>Contexto:</strong> Ante un ejército masivo que los superaba, el rey Josafat colocó a los cantores en la vanguardia de sus tropas. Al comenzar la alabanza, Dios derrotó a los enemigos sin que Judá tuviera que pelear.
+                  </p>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Y habiendo aconsejado con el pueblo, puso a algunos que cantasen y alabasen a Jehová... Y cuando comenzaron a entonar cantos de alabanza, Jehová puso contra los enemigos emboscadas..."
+                  </p>
+                </div>
+                <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <p class="text-body-2 grey--text text--darken-3 mb-4">
+            Consideremos este contraste práctico entre desgastarnos batallando directamente y rendirnos a la adoración:
           </p>
 
           <v-row dense class="mb-4">
@@ -166,10 +235,10 @@
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
-                    <span class="font-weight-bold grey--text text--darken-4">1 Juan 4:18</span>
+                    <span class="font-weight-bold grey--text text--darken-4">Salmo 27:1, 4</span>
                   </div>
                   <p class="text-body-2 italic grey--text text--darken-3 mb-0">
-                    "En el amor no hay temor, sino que el perfecto amor echa fuera el temor; porque el temor lleva en sí castigo. De donde el que teme, no ha sido perfeccionado en el amor."
+                    "Jehová es mi luz y mi salvación; ¿de quién temeré?... Una cosa he demandado a Jehová, esta buscaré; Que esté yo en la casa de Jehová todos los días de mi vida, para contemplar la hermosura de Jehová, y para buscarle en su templo."
                   </p>
                 </div>
                 <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
