@@ -1,5 +1,6 @@
 export const classifications = [
   { value: 'general',     label: 'General',     hex: '#9e9e9e' },
+  { value: 'kids',        label: 'Kids',        hex: '#4CAF50' },
   { value: 'jv3s',        label: 'JV3S',        hex: '#f97316' },
   { value: 'jv3s-teen',   label: 'JV3S Teen',   hex: '#2196f3' },
   { value: 'jv3s-legado', label: 'JV3S Legado', hex: '#f44336' },
