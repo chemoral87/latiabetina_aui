@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { classifications } from "./classifications.js"
+
 export default {
   name: "ChurchEventForm",
 
@@ -112,16 +114,15 @@ export default {
         url_image_s3: "",
         image_file: null,
       },
-      classificationOptions: [
-        { label: "jv3s", value: "jv3s", color: "orange" },
-        { label: "general", value: "general", color: "grey" },
-        { label: "jv3s-teen", value: "jv3s-teen", color: "blue" },
-        { label: "jv3s-legado", value: "jv3s-legado", color: "red" },
-      ],
+    
     }
   },
 
   computed: {
+    classificationOptions() {
+      return classifications.map(c => ({ ...c, color: c.hex }))
+    },
+
     previewImage() {
       if (this.item.url_image && typeof this.item.url_image === 'string' && this.item.url_image.startsWith('data:')) {
         return this.item.url_image

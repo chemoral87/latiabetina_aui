@@ -65,6 +65,7 @@
 
 <script>
 import { mapGetters } from "vuex"
+import { classificationColor } from "./classifications.js"
 
 export default {
   name: "ChurchEventTable",
@@ -185,13 +186,7 @@ export default {
     },
 
     classificationColor(value) {
-      const map = {
-        'jv3s': 'orange',
-        'general': 'grey',
-        'jv3s-teen': 'blue',
-        'jv3s-legado': 'red',
-      }
-      return map[value] || 'grey'
+      return classificationColor(value)
     },
 
 
