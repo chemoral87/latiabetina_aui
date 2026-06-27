@@ -38,18 +38,24 @@ export default {
     }
   },
 
+  computed: {
+    backRoute() {
+      return this.$route.query.from === 'calendar' ? '/church-event/calendar' : '/church-event'
+    },
+  },
+
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: "Evento de Iglesia",
       icon: "mdi-calendar-edit",
-      back: "/church-event",
+      back: this.backRoute,
     })
   },
 
   methods: {
     close() {
-      this.$router.push('/church-event')
+      this.$router.push(this.backRoute)
     },
 
     async saveChurchEvent(item) {
@@ -60,7 +66,7 @@ export default {
         this.saving = true;
         await this.$repository.ChurchEvent.update(payload.id, payload);
         this.$notify({ type: "success", text: "Evento actualizado exitosamente" });
-        this.$router.push('/church-event')
+        this.$router.push(this.backRoute)
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)

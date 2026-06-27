@@ -24,13 +24,19 @@ export default {
     eventBus.$emit("setNavBar", {
       title: "Nuevo Evento de Iglesia",
       icon: "mdi-calendar-plus",
-      back: "/church-event",
+      back: this.backRoute,
     })
+  },
+
+  computed: {
+    backRoute() {
+      return this.$route.query.from === 'calendar' ? '/church-event/calendar' : '/church-event'
+    },
   },
 
   methods: {
     close() {
-      this.$router.push('/church-event')
+      this.$router.push(this.backRoute)
     },
 
     async saveChurchEvent(item) {
@@ -43,7 +49,7 @@ export default {
         this.saving = true;
         await this.$repository.ChurchEvent.create(payload);
         this.$notify({ type: "success", text: "Evento creado exitosamente" });
-        this.$router.push('/church-event')
+        this.$router.push(this.backRoute)
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)

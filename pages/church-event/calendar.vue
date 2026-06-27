@@ -17,25 +17,28 @@
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn outlined color="primary" to="/church-event/calendar">
-          <v-icon left>mdi-calendar-month</v-icon>
-          Calendario
+        <v-btn outlined color="primary" to="/church-event">
+          <v-icon left>mdi-table</v-icon>
+          Tabla
         </v-btn>
       </v-col>
       <v-col cols="auto">
         <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
           outlined /></v-col>
 
-      <!-- Tabla de eventos -->
+      <!-- Calendario de eventos -->
       <v-col cols="12">
-        <ChurchEventTable :options="options" :response="response" :loading="loading" permission="church-event-index"
-          @sorting="handleSorting" @edit="editChurchEvent" @delete="beforeDeleteChurchEvent" @copy="openCopyDialog" />
+        <ChurchEventCalendarView
+          :cal-year="calYear"
+          :cal-month="calMonth"
+          :events="churchEvents"
+          @prev-month="prevMonth"
+          @next-month="nextMonth"
+          @edit="editChurchEvent"
+          @delete="beforeDeleteChurchEvent"
+        />
       </v-col>
     </v-row>
-
-    <!-- Dialogo de copiar evento en varias fechas -->
-    <ChurchEventCopyDialog v-if="churchEventDialogCopy" :church-event="copyingChurchEvent" :loading="copying"
-      @copy="copyChurchEvent" @close="churchEventDialogCopy = false" />
 
     <!-- Dialogo de confirmacion de eliminacion -->
     <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
@@ -46,43 +49,70 @@
 <script>
 import { debounce } from "lodash-es"
 
+const toIso = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+
+const buildDateRange = (year, month) => {
+  const firstDayOfWeek = new Date(year, month, 1).getDay()
+  const prevMonth = month === 0 ? 11 : month - 1
+  const prevYear = month === 0 ? year - 1 : year
+  const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate()
+  const firstVisibleDay = firstDayOfWeek === 0 ? 1 : daysInPrevMonth - (firstDayOfWeek - 1)
+  const firstVisibleMonth = firstDayOfWeek === 0 ? month : prevMonth
+  const firstVisibleYear = firstDayOfWeek === 0 ? year : prevYear
+  const startDate = toIso(firstVisibleYear, firstVisibleMonth, firstVisibleDay)
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const lastDayOfWeek = new Date(year, month, daysInMonth).getDay()
+  const trailingDays = lastDayOfWeek < 6 ? 6 - lastDayOfWeek : 0
+  const end = new Date(year, month, daysInMonth + trailingDays)
+  const endDate = toIso(end.getFullYear(), end.getMonth(), end.getDate())
+
+  return { start_date: startDate, end_date: endDate }
+}
+
 export default {
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
   async asyncData({ app, error, store }) {
+    const today = new Date()
+    const calYear = today.getFullYear()
+    const calMonth = today.getMonth()
     const options = {
       page: 1,
       sortBy: ["event_date"],
-      sortDesc: [true],
-      itemsPerPage: 10,
+      sortDesc: [false],
+      itemsPerPage: 100,
+      ...buildDateRange(calYear, calMonth),
     }
 
     const response = await app.$repository.ChurchEvent.index(options)
-    return { response, options }
+    return { response, options, calYear, calMonth }
   },
 
   data() {
     return {
       filterChurchEvent: "",
       filterOrgId: null,
+      calYear: new Date().getFullYear(),
+      calMonth: new Date().getMonth(),
       response: { data: [], total: 0 },
       options: {
-
+        page: 1,
+        sortBy: ["event_date"],
+        sortDesc: [false],
+        itemsPerPage: 100,
       },
       churchEventDialogDelete: false,
       dialogDelete: {},
-      churchEventDialogCopy: false,
-      copyingChurchEvent: {},
-      copying: false,
       loading: false,
       deleting: false,
-      skipFilterWatch: false, // Flag para evitar llamadas duplicadas
+      skipFilterWatch: false,
     }
   },
 
   computed: {
-    hasChurchEvents() {
-      return this.response?.data?.length > 0
+    churchEvents() {
+      return this.response?.data || []
     },
   },
 
@@ -115,13 +145,18 @@ export default {
     setNavBar() {
       const eventBus = this.$eventBus || this.$nuxt
       eventBus.$emit("setNavBar", {
-        title: "Eventos de Iglesia",
-        icon: "mdi-calendar",
+        title: "Calendario de Eventos",
+        icon: "mdi-calendar-month",
+        back: "/church-event",
       })
     },
 
     async handleFilterChange(value) {
       await this.loadChurchEvents({ filter: value || "", page: 1 })
+    },
+
+    buildDateRange() {
+      return buildDateRange(this.calYear, this.calMonth)
     },
 
     async loadChurchEvents(overrides = {}) {
@@ -130,7 +165,12 @@ export default {
 
         const requestOptions = {
           ...this.options,
+          ...this.buildDateRange(),
           ...overrides,
+          page: 1,
+          itemsPerPage: 100,
+          sortBy: ["event_date"],
+          sortDesc: [false],
         }
 
         if (this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
@@ -141,7 +181,6 @@ export default {
           requestOptions.org_id = this.filterOrgId
         }
 
-        // remove org_id from params if explicitly cleared
         if (Object.prototype.hasOwnProperty.call(overrides, "org_id") && !overrides.org_id) {
           delete requestOptions.org_id
         }
@@ -169,17 +208,32 @@ export default {
       await this.loadChurchEvents()
     },
 
-    async handleSorting(options) {
-      this.options = options
-      await this.loadChurchEvents()
+    async prevMonth() {
+      if (this.calMonth === 0) {
+        this.calMonth = 11
+        this.calYear -= 1
+      } else {
+        this.calMonth -= 1
+      }
+      await this.loadChurchEvents({ page: 1 })
+    },
+
+    async nextMonth() {
+      if (this.calMonth === 11) {
+        this.calMonth = 0
+        this.calYear += 1
+      } else {
+        this.calMonth += 1
+      }
+      await this.loadChurchEvents({ page: 1 })
     },
 
     newChurchEvent() {
-      this.$router.push({ path: '/church-event/new', query: { from: 'table' } })
+      this.$router.push({ path: '/church-event/new', query: { from: 'calendar' } })
     },
 
     editChurchEvent(item) {
-      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'table' } })
+      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'calendar' } })
     },
 
     beforeDeleteChurchEvent(item) {
@@ -190,29 +244,6 @@ export default {
         payload: item,
       }
       this.churchEventDialogDelete = true
-    },
-
-    openCopyDialog(item) {
-      this.copyingChurchEvent = item
-      this.churchEventDialogCopy = true
-    },
-
-    async copyChurchEvent({ churchEvent, dates }) {
-      try {
-        this.copying = true
-        await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
-
-        this.churchEventDialogCopy = false
-        await this.loadChurchEvents()
-      } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.copying = false
-      }
     },
 
     async deleteChurchEvent(item) {
