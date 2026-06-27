@@ -12,8 +12,22 @@ export default ($axios) => (resource) => {
     return $axios.$post(`${resource}/${id}/copy`, payload, Object.keys(config).length > 0 ? config : undefined)
   }
 
+  const calendar = (params, options = {}) => {
+    const { showLoading = false, ...axiosOptions } = options
+    const fullOptions = { ...axiosOptions }
+    if (params) {
+      fullOptions.params = params
+    }
+    if (showLoading) {
+      fullOptions.headers = { ...fullOptions.headers, "X-Show-Loading": "true" }
+    }
+    const getOptions = Object.keys(fullOptions).length > 0 ? fullOptions : undefined
+    return $axios.$get(`${resource}/calendar`, getOptions)
+  }
+
   return {
     ...commonRepo,
     copy,
+    calendar,
   }
 }

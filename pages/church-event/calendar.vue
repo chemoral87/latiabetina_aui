@@ -77,16 +77,12 @@ export default {
     const today = new Date()
     const calYear = today.getFullYear()
     const calMonth = today.getMonth()
-    const options = {
-      page: 1,
-      sortBy: ["event_date"],
-      sortDesc: [false],
-      itemsPerPage: 100,
+    const params = {
       ...buildDateRange(calYear, calMonth),
     }
 
-    const response = await app.$repository.ChurchEvent.index(options)
-    return { response, options, calYear, calMonth }
+    const response = await app.$repository.ChurchEvent.calendar(params)
+    return { response, calYear, calMonth }
   },
 
   data() {
@@ -96,12 +92,6 @@ export default {
       calYear: new Date().getFullYear(),
       calMonth: new Date().getMonth(),
       response: { data: [], total: 0 },
-      options: {
-        page: 1,
-        sortBy: ["event_date"],
-        sortDesc: [false],
-        itemsPerPage: 100,
-      },
       churchEventDialogDelete: false,
       dialogDelete: {},
       loading: false,
@@ -127,7 +117,7 @@ export default {
       }, 500),
     },
     filterOrgId(value) {
-      const overrides = { page: 1 }
+      const overrides = {}
       if (value) {
         overrides.org_id = value
       } else {
@@ -152,7 +142,7 @@ export default {
     },
 
     async handleFilterChange(value) {
-      await this.loadChurchEvents({ filter: value || "", page: 1 })
+      await this.loadChurchEvents({ filter: value || "" })
     },
 
     buildDateRange() {
@@ -163,36 +153,25 @@ export default {
       try {
         this.loading = true
 
-        const requestOptions = {
-          ...this.options,
+        const params = {
           ...this.buildDateRange(),
           ...overrides,
-          page: 1,
-          itemsPerPage: 100,
-          sortBy: ["event_date"],
-          sortDesc: [false],
         }
 
         if (this.filterChurchEvent && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
-          requestOptions.filter = this.filterChurchEvent
+          params.filter = this.filterChurchEvent
         }
 
         if (this.filterOrgId && !Object.prototype.hasOwnProperty.call(overrides, "org_id")) {
-          requestOptions.org_id = this.filterOrgId
+          params.org_id = this.filterOrgId
         }
 
         if (Object.prototype.hasOwnProperty.call(overrides, "org_id") && !overrides.org_id) {
-          delete requestOptions.org_id
+          delete params.org_id
         }
 
-        let response = await this.$repository.ChurchEvent.index(requestOptions)
-
-        if (Array.isArray(response)) {
-          response = { data: response, total: response.length }
-        }
-
+        const response = await this.$repository.ChurchEvent.calendar(params)
         this.response = response
-        this.options = requestOptions
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)
@@ -215,7 +194,7 @@ export default {
       } else {
         this.calMonth -= 1
       }
-      await this.loadChurchEvents({ page: 1 })
+      await this.loadChurchEvents()
     },
 
     async nextMonth() {
@@ -225,7 +204,7 @@ export default {
       } else {
         this.calMonth += 1
       }
-      await this.loadChurchEvents({ page: 1 })
+      await this.loadChurchEvents()
     },
 
     newChurchEvent() {
@@ -253,7 +232,7 @@ export default {
 
         this.skipFilterWatch = true
         this.filterChurchEvent = ""
-        await this.loadChurchEvents({ page: 1, filter: "" })
+        await this.loadChurchEvents({ filter: "" })
 
         this.churchEventDialogDelete = false
       } catch (error) {

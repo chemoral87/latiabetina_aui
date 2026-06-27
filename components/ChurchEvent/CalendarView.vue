@@ -34,8 +34,24 @@
             @click="selectDay(cell)"
             @keydown.enter="selectDay(cell)"
           >
-            <div class="big-cal-day-number font-weight-bold" :class="{ 'today-badge': cell.isToday }">
-              {{ cell.day }}
+            <div class="big-cal-day-header">
+              <div class="big-cal-day-number font-weight-bold" :class="{ 'today-badge': cell.isToday }">
+                {{ cell.day }}
+              </div>
+              <v-tooltip bottom>
+                <template #activator="{ on, attrs }">
+                  <button
+                    class="cell-add-btn"
+                    aria-label="Nuevo evento"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click.stop="$emit('new', cell.iso)"
+                  >
+                    <v-icon size="14" color="success">mdi-plus-circle</v-icon>
+                  </button>
+                </template>
+                <span>Nuevo evento</span>
+              </v-tooltip>
             </div>
 
             <div
@@ -344,6 +360,13 @@ export default {
   color: #bbb;
 }
 
+.big-cal-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
 .big-cal-day-number {
   display: inline-flex;
   align-items: center;
@@ -351,14 +374,31 @@ export default {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  margin-bottom: 2px;
   font-size: 11px;
   color: #444;
+  flex-shrink: 0;
 }
 
 .today-badge {
   background: #041845;
   color: #fff !important;
+}
+
+.cell-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.big-cal-cell:hover .cell-add-btn {
+  opacity: 1;
 }
 
 .event-pill {
@@ -517,6 +557,10 @@ export default {
 
   .big-cal-has-events {
     cursor: pointer;
+  }
+
+  .cell-add-btn {
+    display: none;
   }
 }
 
