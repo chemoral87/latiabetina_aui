@@ -79,10 +79,10 @@ const buildDateRange = (year, month) => {
 export default {
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
-  async asyncData({ app, error, store }) {
+  async asyncData({ app, error, store, route }) {
     const today = new Date()
-    const calYear = today.getFullYear()
-    const calMonth = today.getMonth()
+    const calYear = route.query.cal_year ? parseInt(route.query.cal_year) : today.getFullYear()
+    const calMonth = route.query.cal_month !== undefined ? parseInt(route.query.cal_month) : today.getMonth()
     const params = {
       ...buildDateRange(calYear, calMonth),
     }
@@ -217,11 +217,11 @@ export default {
     },
 
     newChurchEvent() {
-      this.$router.push({ path: '/church-event/new', query: { from: 'calendar' } })
+      this.$router.push({ path: '/church-event/new', query: { from: 'calendar', cal_year: this.calYear, cal_month: this.calMonth } })
     },
 
     newChurchEventOnDate(dateIso) {
-      this.$router.push({ path: '/church-event/new', query: { from: 'calendar', event_date: dateIso } })
+      this.$router.push({ path: '/church-event/new', query: { from: 'calendar', event_date: dateIso, cal_year: this.calYear, cal_month: this.calMonth } })
     },
 
     openCopyDialog(item) {
@@ -248,7 +248,7 @@ export default {
     },
 
     editChurchEvent(item) {
-      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'calendar' } })
+      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'calendar', cal_year: this.calYear, cal_month: this.calMonth } })
     },
 
     beforeDeleteChurchEvent(item) {

@@ -44,7 +44,7 @@
     </template>
 
     <template #[`item.event_date`]="{ item }">
-      {{ item.event_date | moment("DD MMM YYYY") }}
+      {{ item.event_date | moment("DD MMM YYYY") }}<span v-if="item.time_start" class="ml-1 grey--text text--darken-1">{{ formatTime(item.time_start) }}</span>
     </template>
 
     <template #[`item.classification`]="{ item }">
@@ -187,6 +187,14 @@ export default {
 
     classificationColor(value) {
       return classificationColor(value)
+    },
+
+    formatTime(value) {
+      if (!value) return ''
+      const [hour, minute] = value.split(':').map(Number)
+      const period = hour >= 12 ? 'pm' : 'am'
+      const h = hour % 12 || 12
+      return `${h}:${String(minute).padStart(2, '0')} ${period}`
     },
 
 

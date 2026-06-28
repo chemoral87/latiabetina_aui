@@ -40,7 +40,13 @@ export default {
 
   computed: {
     backRoute() {
-      return this.$route.query.from === 'calendar' ? '/church-event/calendar' : '/church-event'
+      if (this.$route.query.from === 'calendar') {
+        const q = {}
+        if (this.$route.query.cal_year) q.cal_year = this.$route.query.cal_year
+        if (this.$route.query.cal_month !== undefined) q.cal_month = this.$route.query.cal_month
+        return { path: '/church-event/calendar', query: q }
+      }
+      return '/church-event'
     },
   },
 
