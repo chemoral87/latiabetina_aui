@@ -76,6 +76,14 @@
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
+                    <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" @click.stop="$emit('copy', event)">
+                      <v-icon size="14">mdi-content-copy</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Copiar</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <template #activator="{ on, attrs }">
                     <v-btn icon x-small color="error" v-bind="attrs" v-on="on" @click.stop="$emit('delete', event)">
                       <v-icon size="14">mdi-delete</v-icon>
                     </v-btn>
@@ -118,6 +126,9 @@
               <div class="d-flex flex-nowrap ml-2">
                 <v-btn icon x-small color="primary" aria-label="Editar" @click.stop="$emit('edit', event)">
                   <v-icon size="16">mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn icon x-small color="orange" aria-label="Copiar" @click.stop="$emit('copy', event)">
+                  <v-icon size="16">mdi-content-copy</v-icon>
                 </v-btn>
                 <v-btn icon x-small color="error" aria-label="Eliminar" @click.stop="$emit('delete', event)">
                   <v-icon size="16">mdi-delete</v-icon>

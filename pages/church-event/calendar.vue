@@ -36,10 +36,15 @@
           @next-month="nextMonth"
           @new="newChurchEventOnDate"
           @edit="editChurchEvent"
+          @copy="openCopyDialog"
           @delete="beforeDeleteChurchEvent"
         />
       </v-col>
     </v-row>
+
+    <!-- Dialogo de copiar evento en varias fechas -->
+    <ChurchEventCopyDialog v-if="churchEventDialogCopy" :church-event="copyingChurchEvent" :loading="copying"
+      @copy="copyChurchEvent" @close="churchEventDialogCopy = false" />
 
     <!-- Dialogo de confirmacion de eliminacion -->
     <DialogDelete v-if="churchEventDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteChurchEvent"
@@ -95,6 +100,9 @@ export default {
       response: { data: [], total: 0 },
       churchEventDialogDelete: false,
       dialogDelete: {},
+      churchEventDialogCopy: false,
+      copyingChurchEvent: {},
+      copying: false,
       loading: false,
       deleting: false,
       skipFilterWatch: false,
@@ -214,6 +222,29 @@ export default {
 
     newChurchEventOnDate(dateIso) {
       this.$router.push({ path: '/church-event/new', query: { from: 'calendar', event_date: dateIso } })
+    },
+
+    openCopyDialog(item) {
+      this.copyingChurchEvent = item
+      this.churchEventDialogCopy = true
+    },
+
+    async copyChurchEvent({ churchEvent, dates }) {
+      try {
+        this.copying = true
+        await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
+
+        this.churchEventDialogCopy = false
+        await this.loadChurchEvents()
+      } catch (error) {
+        if (this.$handleError) {
+          this.$handleError(error)
+        } else {
+          console.error(error)
+        }
+      } finally {
+        this.copying = false
+      }
     },
 
     editChurchEvent(item) {

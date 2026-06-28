@@ -1,67 +1,34 @@
 <template>
-  <v-menu
-    ref="timeMenu"
-    v-model="timeMenu"
-    :close-on-content-click="false"
-    transition="scale-transition"
-    offset-y
-    :nudge-width="200"
-    :disabled="disabled"
-  >
+  <v-menu ref="timeMenu" v-model="timeMenu" :close-on-content-click="false" transition="scale-transition" offset-y
+    :nudge-width="200" :disabled="disabled">
     <template #activator="{ on, attrs }">
-      <v-text-field
-        :value="displayValue"
-        :label="label"
-        prepend-inner-icon="mdi-clock-outline"
-        readonly
-        :error-messages="errorMessages"
-        :disabled="disabled"
-        :dense="dense"
-        :outlined="outlined"
-        :hide-details="hideDetails"
-        v-bind="attrs"
-        v-on="on"
-        @click:prepend-inner="on.click"
-      />
+      <v-text-field :value="displayValue" :label="label" prepend-inner-icon="mdi-clock-outline" readonly
+        :error-messages="errorMessages" :disabled="disabled" :dense="dense" :outlined="outlined"
+        :hide-details="hideDetails" v-bind="attrs" v-on="on" @click:prepend-inner="on.click" />
     </template>
 
     <v-card min-width="220">
       <v-row no-gutters>
         <!-- Hours column -->
         <v-col cols="4" class="tp-col">
-          <div
-            v-for="h in hours"
-            :key="h"
-            class="tp-item"
-            :class="{ 'tp-item--selected': selectedHour === h }"
-            @click="selectedHour = h"
-          >
+          <div v-for="h in hours" :key="h" class="tp-item" :class="{ 'tp-item--selected': selectedHour === h }"
+            @click="selectedHour = h">
             {{ h }}
           </div>
         </v-col>
 
         <!-- Minutes column -->
         <v-col cols="4" class="tp-col">
-          <div
-            v-for="m in minutes"
-            :key="m"
-            class="tp-item"
-            :class="{ 'tp-item--selected': selectedMinute === m }"
-            @click="selectedMinute = m"
-          >
+          <div v-for="m in minutes" :key="m" class="tp-item" :class="{ 'tp-item--selected': selectedMinute === m }"
+            @click="selectedMinute = m">
             {{ m }}
           </div>
         </v-col>
 
         <!-- AM/PM column -->
         <v-col cols="4" class="tp-col">
-          <div
-            v-for="p in periods"
-            :key="p"
-            class="tp-item"
-            :class="{ 'tp-item--selected': selectedPeriod === p }"
-            @click="selectedPeriod = p"
-          >
+          <div v-for="p in periods" :key="p" class="tp-item" :class="{ 'tp-item--selected': selectedPeriod === p }"
+            @click="selectedPeriod = p">
             {{ p }}
           </div>
         </v-col>
@@ -97,7 +64,7 @@ export default {
       selectedMinute: "00",
       selectedPeriod: "AM",
       hours: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-      minutes: ["00", "30"],
+      minutes: ["00", "15", "30", "45"],
       periods: ["AM", "PM"],
     }
   },
@@ -175,9 +142,11 @@ export default {
   max-height: 220px;
   overflow-y: auto;
 }
+
 .tp-col:last-child {
   border-right: none;
 }
+
 .tp-item {
   padding: 10px 0;
   text-align: center;
@@ -188,9 +157,11 @@ export default {
   margin: 2px 4px;
   transition: background-color 0.15s;
 }
+
 .tp-item:hover {
   background-color: rgba(25, 118, 210, 0.12);
 }
+
 .tp-item--selected {
   background-color: #1976d2;
   color: #fff;
