@@ -59,7 +59,7 @@ const toIso = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0"
 
 const toWeekColumn = (jsDay, weekStartsOnMonday) => (weekStartsOnMonday ? (jsDay + 6) % 7 : jsDay)
 
-const buildDateRange = (year, month, weekStartsOnMonday = false) => {
+const buildDateRange = (year, month, weekStartsOnMonday = true) => {
   const firstDayOfWeek = toWeekColumn(new Date(year, month, 1).getDay(), weekStartsOnMonday)
   const prevMonth = month === 0 ? 11 : month - 1
   const prevYear = month === 0 ? year - 1 : year
@@ -85,7 +85,7 @@ export default {
     const today = new Date()
     const calYear = route.query.cal_year ? parseInt(route.query.cal_year) : today.getFullYear()
     const calMonth = route.query.cal_month !== undefined ? parseInt(route.query.cal_month) : today.getMonth()
-    const weekStartsOnMonday = route.query.week_start === "monday"
+    const weekStartsOnMonday = route.query.week_start !== "sunday"
     const params = {
       ...buildDateRange(calYear, calMonth, weekStartsOnMonday),
     }

@@ -155,7 +155,7 @@ export default {
     calYear: { type: Number, required: true },
     calMonth: { type: Number, required: true },
     events: { type: Array, default: () => [] },
-    weekStartsOnMonday: { type: Boolean, default: false },
+    weekStartsOnMonday: { type: Boolean, default: true },
   },
 
   data() {
