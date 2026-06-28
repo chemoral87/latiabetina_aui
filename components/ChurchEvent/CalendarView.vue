@@ -19,34 +19,20 @@
             {{ day }}
           </div>
 
-          <div
-            v-for="cell in allCells"
-            :key="cell.iso"
-            class="big-cal-cell"
-            :class="{
-              'big-cal-today': cell.isToday,
-              'big-cal-other-month': cell.otherMonth,
-              'big-cal-has-events': cell.events.length,
-              'big-cal-selected': selectedDayIso === cell.iso,
-            }"
-            role="button"
-            tabindex="0"
-            @click="selectDay(cell)"
-            @keydown.enter="selectDay(cell)"
-          >
+          <div v-for="cell in allCells" :key="cell.iso" class="big-cal-cell" :class="{
+            'big-cal-today': cell.isToday,
+            'big-cal-other-month': cell.otherMonth,
+            'big-cal-has-events': cell.events.length,
+            'big-cal-selected': selectedDayIso === cell.iso,
+          }" role="button" tabindex="0" @click="selectDay(cell)" @keydown.enter="selectDay(cell)">
             <div class="big-cal-day-header">
               <div class="big-cal-day-number font-weight-bold" :class="{ 'today-badge': cell.isToday }">
                 {{ cell.day }}
               </div>
               <v-tooltip bottom>
                 <template #activator="{ on, attrs }">
-                  <button
-                    class="cell-add-btn"
-                    aria-label="Nuevo evento"
-                    v-bind="attrs"
-                    v-on="on"
-                    @click.stop="$emit('new', cell.iso)"
-                  >
+                  <button class="cell-add-btn" aria-label="Nuevo evento" v-bind="attrs" v-on="on"
+                    @click.stop="$emit('new', cell.iso)">
                     <v-icon size="20" color="success">mdi-plus-circle</v-icon>
                   </button>
                 </template>
@@ -54,13 +40,12 @@
               </v-tooltip>
             </div>
 
-            <div
-              v-for="event in cell.events"
-              :key="event.id"
-              class="event-pill text-caption d-none d-sm-flex"
-              :style="{ borderColor: classificationColor(event.classification) }"
-              :title="event.name"
-            >
+            <div v-for="event in cell.events" :key="event.id" class="event-pill text-caption d-none d-sm-flex"
+              :style="{ borderColor: classificationColor(event.classification) }" :title="event.name">
+              <div v-if="event.url_image_s3 || event.url_image" class="event-pill-thumb"
+                @click.stop="$emit('edit', event)">
+                <img :src="event.url_image_s3 || event.url_image" class="event-thumb-img" />
+              </div>
               <div class="event-pill-main" @click.stop="$emit('edit', event)">
                 <span class="event-pill-name">{{ event.name }}</span>
                 <span v-if="event.time_start" class="event-pill-time">{{ formatEventTime(event.time_start) }}</span>
@@ -94,12 +79,8 @@
             </div>
 
             <div v-if="cell.events.length" class="event-dots d-flex d-sm-none">
-              <span
-                v-for="event in cell.events"
-                :key="event.id"
-                class="event-dot"
-                :style="{ backgroundColor: classificationColor(event.classification) }"
-              ></span>
+              <span v-for="event in cell.events" :key="event.id" class="event-dot"
+                :style="{ backgroundColor: classificationColor(event.classification) }"></span>
             </div>
           </div>
         </div>
@@ -110,12 +91,8 @@
         </div>
 
         <div v-if="selectedDayEvents.length" class="d-flex d-sm-none flex-column px-3 pb-3 pt-2 mobile-events">
-          <div
-            v-for="event in selectedDayEvents"
-            :key="event.id"
-            class="mobile-event-card"
-            :style="{ borderColor: classificationColor(event.classification) }"
-          >
+          <div v-for="event in selectedDayEvents" :key="event.id" class="mobile-event-card"
+            :style="{ borderColor: classificationColor(event.classification) }">
             <div class="d-flex align-start justify-space-between">
               <div class="mobile-event-main" @click="$emit('edit', event)">
                 <div class="font-weight-bold text-body-2 calendar-primary-text">{{ event.name }}</div>
@@ -139,11 +116,8 @@
         </div>
 
         <div v-if="activeClassifications.length" class="d-flex align-center flex-wrap px-4 pb-3 pt-2 legend-row">
-          <span
-            v-for="classification in activeClassifications"
-            :key="classification.value"
-            class="d-flex align-center legend-item"
-          >
+          <span v-for="classification in activeClassifications" :key="classification.value"
+            class="d-flex align-center legend-item">
             <span class="legend-dot" :style="{ borderColor: classification.hex }"></span>
             <span class="text-caption grey--text text--darken-1">{{ classification.label }}</span>
           </span>
@@ -420,9 +394,30 @@ export default {
   overflow: hidden;
   border-width: 3px;
   border-style: solid;
+  display: flex;
+  gap: 4px;
+}
+
+.event-pill-thumb {
+  flex: 0 0 28%;
+  max-width: 28%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.event-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
 }
 
 .event-pill-main {
+  flex: 1 1 0;
   min-width: 0;
   padding-right: 38px;
   cursor: pointer;
