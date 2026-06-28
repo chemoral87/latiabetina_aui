@@ -23,8 +23,21 @@
           <p class="text-subtitle-2 font-weight-medium mb-3">Las 12 notas de la escala cromática</p>
           <v-row dense class="mb-4">
             <v-col cols="12">
+              <p class="text-caption grey--text text--darken-2 mb-2"><strong>Con Sostenidos (#)</strong></p>
               <v-chip-group column>
                 <v-chip v-for="note in chromaticScale" :key="note" :color="getColorForNote(note)" dark small label
+                  class="font-weight-medium">
+                  {{ note }}
+                </v-chip>
+              </v-chip-group>
+            </v-col>
+          </v-row>
+
+          <v-row dense class="mb-4">
+            <v-col cols="12">
+              <p class="text-caption grey--text text--darken-2 mb-2"><strong>Con Bemoles (b)</strong></p>
+              <v-chip-group column>
+                <v-chip v-for="note in chromaticScaleFlats" :key="note" :color="getColorForNote(note)" dark small label
                   class="font-weight-medium">
                   {{ note }}
                 </v-chip>
@@ -210,6 +223,10 @@ export default {
       chromaticScale: [
         "Do", "Do#", "Re", "Re#", "Mi", "Fa",
         "Fa#", "Sol", "Sol#", "La", "La#", "Si"
+      ],
+      chromaticScaleFlats: [
+        "Do", "Reb", "Re", "Mib", "Mi", "Fa",
+        "Solb", "Sol", "Lab", "La", "Sib", "Si"
       ],
       majorScaleC: ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"],
       pentatonicScaleC: ["Do", "Re", "Mi", "Sol", "La"],
