@@ -54,7 +54,7 @@
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
                     <v-btn icon x-small color="primary" v-bind="attrs" v-on="on" @click.stop="$emit('edit', event)">
-                      <v-icon size="14">mdi-pencil</v-icon>
+                      <v-icon size="18">mdi-pencil</v-icon>
                     </v-btn>
                   </template>
                   <span>Editar</span>
@@ -62,7 +62,7 @@
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
                     <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" @click.stop="$emit('copy', event)">
-                      <v-icon size="14">mdi-content-copy</v-icon>
+                      <v-icon size="18">mdi-content-copy</v-icon>
                     </v-btn>
                   </template>
                   <span>Copiar</span>
@@ -70,7 +70,7 @@
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
                     <v-btn icon x-small color="error" v-bind="attrs" v-on="on" @click.stop="$emit('delete', event)">
-                      <v-icon size="14">mdi-delete</v-icon>
+                      <v-icon size="18">mdi-delete</v-icon>
                     </v-btn>
                   </template>
                   <span>Eliminar</span>
@@ -396,7 +396,7 @@ export default {
   background: transparent;
   color: #333;
   border-radius: 3px;
-  padding: 2px 4px;
+  padding: 2px 4px 24px 4px;
   margin-bottom: 2px;
   font-size: 10px;
   line-height: 1.3;
@@ -428,7 +428,7 @@ export default {
 .event-pill-main {
   flex: 1 1 0;
   min-width: 0;
-  padding-right: 38px;
+  padding-right: 4px;
   cursor: pointer;
 }
 
@@ -447,12 +447,12 @@ export default {
 
 .event-actions {
   position: absolute;
-  top: 0;
   right: 2px;
+  bottom: 2px;
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 0 0 0 4px;
+  border-radius: 4px 0 0 0;
 }
 
 .legend-row {
