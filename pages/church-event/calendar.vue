@@ -26,19 +26,19 @@
         <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
           outlined /></v-col>
 
+      <v-col cols="auto">
+        <v-btn-toggle v-model="weekStartsOnMonday" mandatory dense @change="changeWeekStart">
+          <v-btn :value="false">Dom</v-btn>
+          <v-btn :value="true">Lun</v-btn>
+        </v-btn-toggle>
+      </v-col>
+
       <!-- Calendario de eventos -->
       <v-col cols="12">
-        <ChurchEventCalendarView
-          :cal-year="calYear"
-          :cal-month="calMonth"
-          :events="churchEvents"
-          @prev-month="prevMonth"
-          @next-month="nextMonth"
-          @new="newChurchEventOnDate"
-          @edit="editChurchEvent"
-          @copy="openCopyDialog"
-          @delete="beforeDeleteChurchEvent"
-        />
+        <ChurchEventCalendarView :cal-year="calYear" :cal-month="calMonth" :events="churchEvents"
+          :week-starts-on-monday="weekStartsOnMonday" @prev-month="prevMonth" @next-month="nextMonth"
+          @new="newChurchEventOnDate" @edit="editChurchEvent" @copy="openCopyDialog"
+          @delete="beforeDeleteChurchEvent" />
       </v-col>
     </v-row>
 
@@ -57,8 +57,10 @@ import { debounce } from "lodash-es"
 
 const toIso = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
 
-const buildDateRange = (year, month) => {
-  const firstDayOfWeek = new Date(year, month, 1).getDay()
+const toWeekColumn = (jsDay, weekStartsOnMonday) => (weekStartsOnMonday ? (jsDay + 6) % 7 : jsDay)
+
+const buildDateRange = (year, month, weekStartsOnMonday = false) => {
+  const firstDayOfWeek = toWeekColumn(new Date(year, month, 1).getDay(), weekStartsOnMonday)
   const prevMonth = month === 0 ? 11 : month - 1
   const prevYear = month === 0 ? year - 1 : year
   const daysInPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate()
@@ -68,7 +70,7 @@ const buildDateRange = (year, month) => {
   const startDate = toIso(firstVisibleYear, firstVisibleMonth, firstVisibleDay)
 
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const lastDayOfWeek = new Date(year, month, daysInMonth).getDay()
+  const lastDayOfWeek = toWeekColumn(new Date(year, month, daysInMonth).getDay(), weekStartsOnMonday)
   const trailingDays = lastDayOfWeek < 6 ? 6 - lastDayOfWeek : 0
   const end = new Date(year, month, daysInMonth + trailingDays)
   const endDate = toIso(end.getFullYear(), end.getMonth(), end.getDate())
@@ -83,18 +85,20 @@ export default {
     const today = new Date()
     const calYear = route.query.cal_year ? parseInt(route.query.cal_year) : today.getFullYear()
     const calMonth = route.query.cal_month !== undefined ? parseInt(route.query.cal_month) : today.getMonth()
+    const weekStartsOnMonday = route.query.week_start === "monday"
     const params = {
-      ...buildDateRange(calYear, calMonth),
+      ...buildDateRange(calYear, calMonth, weekStartsOnMonday),
     }
 
     const response = await app.$repository.ChurchEvent.calendar(params)
-    return { response, calYear, calMonth }
+    return { response, calYear, calMonth, weekStartsOnMonday }
   },
 
   data() {
     return {
       filterChurchEvent: "",
       filterOrgId: null,
+      weekStartsOnMonday: true,
       calYear: new Date().getFullYear(),
       calMonth: new Date().getMonth(),
       response: { data: [], total: 0 },
@@ -155,7 +159,17 @@ export default {
     },
 
     buildDateRange() {
-      return buildDateRange(this.calYear, this.calMonth)
+      return buildDateRange(this.calYear, this.calMonth, this.weekStartsOnMonday)
+    },
+
+    async changeWeekStart() {
+      await this.loadChurchEvents()
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          week_start: this.weekStartsOnMonday ? "monday" : "sunday",
+        },
+      })
     },
 
     async loadChurchEvents(overrides = {}) {

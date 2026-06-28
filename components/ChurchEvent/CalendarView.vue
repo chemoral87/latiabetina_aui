@@ -15,7 +15,7 @@
         </div>
 
         <div class="big-cal-grid">
-          <div v-for="day in weekdayNames" :key="day" class="big-cal-header text-caption font-weight-bold">
+          <div v-for="day in currentWeekdayNames" :key="day" class="big-cal-header text-caption font-weight-bold">
             {{ day }}
           </div>
 
@@ -145,7 +145,8 @@ const monthNames = [
   "diciembre",
 ]
 
-const weekdayNames = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
+const weekdayNamesSundayFirst = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
+const weekdayNamesMondayFirst = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"]
 
 export default {
   name: "ChurchEventCalendarView",
@@ -154,12 +155,12 @@ export default {
     calYear: { type: Number, required: true },
     calMonth: { type: Number, required: true },
     events: { type: Array, default: () => [] },
+    weekStartsOnMonday: { type: Boolean, default: false },
   },
 
   data() {
     return {
       monthNames,
-      weekdayNames,
       selectedDayIso: null,
       isMobile: false,
       today: new Date(),
@@ -170,6 +171,10 @@ export default {
     activeClassifications() {
       const usedValues = new Set(this.events.map(event => event.classification).filter(Boolean))
       return classifications.filter(classification => usedValues.has(classification.value))
+    },
+
+    currentWeekdayNames() {
+      return this.weekStartsOnMonday ? weekdayNamesMondayFirst : weekdayNamesSundayFirst
     },
 
     eventsByDate() {
@@ -194,7 +199,7 @@ export default {
     },
 
     leadingCells() {
-      const firstDayOfWeek = new Date(this.calYear, this.calMonth, 1).getDay()
+      const firstDayOfWeek = this.toWeekColumn(new Date(this.calYear, this.calMonth, 1).getDay())
       if (firstDayOfWeek === 0) return []
 
       const prevMonth = this.calMonth === 0 ? 11 : this.calMonth - 1
@@ -232,7 +237,7 @@ export default {
         })
       }
 
-      const lastDayOfWeek = new Date(this.calYear, this.calMonth, daysInMonth).getDay()
+      const lastDayOfWeek = this.toWeekColumn(new Date(this.calYear, this.calMonth, daysInMonth).getDay())
       if (lastDayOfWeek < 6) {
         const nextMonth = this.calMonth === 11 ? 0 : this.calMonth + 1
         const nextYear = this.calMonth === 11 ? this.calYear + 1 : this.calYear
@@ -280,6 +285,10 @@ export default {
 
     toIso(year, month, day) {
       return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+    },
+
+    toWeekColumn(jsDay) {
+      return this.weekStartsOnMonday ? (jsDay + 6) % 7 : jsDay
     },
 
     classificationColor(value) {
