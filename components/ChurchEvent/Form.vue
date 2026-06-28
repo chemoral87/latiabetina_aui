@@ -96,6 +96,10 @@ export default {
       type: String,
       default: "church-event-index",
     },
+    initialEventDate: {
+      type: String,
+      default: null,
+    },
   },
 
   data() {
@@ -181,6 +185,15 @@ export default {
     initializeForm() {
       if (this.churchEvent && Object.keys(this.churchEvent).length > 0) {
         this.item = Object.assign({}, this.churchEvent)
+      }
+      // Pre-fill event_date from calendar click
+      if (this.initialEventDate && !this.item.event_date) {
+        this.item.event_date = this.initialEventDate
+      }
+      // Pre-fill publish_date with today if not set
+      if (!this.item.publish_date) {
+        const today = new Date()
+        this.item.publish_date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
       }
       // Auto-set org_id when user only has access to one org
       if (!this.item.org_id && !this.showOrgSelect) {

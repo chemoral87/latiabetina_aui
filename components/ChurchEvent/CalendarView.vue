@@ -47,7 +47,7 @@
                     v-on="on"
                     @click.stop="$emit('new', cell.iso)"
                   >
-                    <v-icon size="14" color="success">mdi-plus-circle</v-icon>
+                    <v-icon size="20" color="success">mdi-plus-circle</v-icon>
                   </button>
                 </template>
                 <span>Nuevo evento</span>
@@ -392,13 +392,8 @@ export default {
   border: none;
   padding: 0;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.15s;
-  line-height: 1;
-}
-
-.big-cal-cell:hover .cell-add-btn {
   opacity: 1;
+  line-height: 1;
 }
 
 .event-pill {

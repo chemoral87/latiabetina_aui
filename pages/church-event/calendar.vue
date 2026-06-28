@@ -34,6 +34,7 @@
           :events="churchEvents"
           @prev-month="prevMonth"
           @next-month="nextMonth"
+          @new="newChurchEventOnDate"
           @edit="editChurchEvent"
           @delete="beforeDeleteChurchEvent"
         />
@@ -209,6 +210,10 @@ export default {
 
     newChurchEvent() {
       this.$router.push({ path: '/church-event/new', query: { from: 'calendar' } })
+    },
+
+    newChurchEventOnDate(dateIso) {
+      this.$router.push({ path: '/church-event/new', query: { from: 'calendar', event_date: dateIso } })
     },
 
     editChurchEvent(item) {
