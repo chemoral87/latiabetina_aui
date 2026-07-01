@@ -5,13 +5,14 @@
     <v-expand-transition>
       <div v-if="showContent" class="pa-4">
         <!-- SECCIÓN 1: La Consagración — Separado para Sonar -->
-        <courses-section outlined title="La Consagración — Separado para Sonar" icon="mdi-star-david" text-class="">
+        <courses-section outlined title="La Consagración — Separado para Sonar" icon="mdi-star-circle-outline" text-class="">
           <p class="text-body-1 grey--text text--darken-3 mb-4">
-            Un instrumento consagrado es un instrumento apartado. En el Antiguo Testamento, los
-            instrumentos que se usaban en el Templo no podían usarse para ninguna otra cosa. Habían sido
-            dedicados a Dios, y esa dedicación los definía. Lo mismo ocurre con el creyente: la
-            consagración no es un nivel de espiritualidad para unos pocos elegidos; es la vocación
-            de todo aquel que ha sido redimido por la sangre de Cristo.
+            Un instrumento consagrado es un instrumento apartado. En el Antiguo Testamento, los levitas
+            y sus instrumentos estaban dedicados al servicio del culto: no improvisaban por cuenta propia,
+            sino que servían en la función para la que habían sido apartados (1 Cr 15:16-22). Esa
+            dedicación los definía. Lo mismo ocurre con el creyente: la consagración no es un nivel de
+            espiritualidad para unos pocos elegidos; es la vocación de todo aquel que ha sido redimido
+            por la sangre de Cristo.
           </p>
 
           <v-row dense>
@@ -120,11 +121,12 @@
                 </p>
                 <v-divider class="mb-3" />
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
-                  La palabra "limpiarse" implica un proceso continuo, no una acción puntual. La
-                  consagración es un estilo de vida: cada día eliges apartarte de lo que contamina y
-                  orientarte hacia lo que honra a Dios. Como el músico que cada día limpia su instrumento,
-                  lo mantiene afinado y lo guarda bien, el creyente consagrado cuida su vida espiritual
-                  con disciplina y amor.
+                  La palabra griega aquí traducida como "instrumento" significa "vaso" o "utensilio", no
+                  instrumento musical; pero la imagen encaja: lo consagrado es lo apartado para uso honorable.
+                  "Limpiarse" implica un proceso continuo, no una acción puntual. La consagración es un
+                  estilo de vida: cada día eliges apartarte de lo que contamina y orientarte hacia lo que
+                  honra a Dios. Como el músico que cada día limpia su instrumento, lo mantiene afinado y
+                  lo guarda bien, el creyente consagrado cuida su vida espiritual con disciplina y amor.
                 </p>
               </div>
             </div>

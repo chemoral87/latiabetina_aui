@@ -9,7 +9,11 @@
           <p class="text-body-1 grey--text text--darken-3 mb-4">
             Así como un acorde no nace de una sola cuerda sino de varias notas distintas sonando juntas en
             perfecta proporción, la Iglesia no es una voz solitaria, sino un cuerpo compuesto por muchos
-            miembros diferentes que, unidos, producen una sola alabanza agradable a Dios.
+            miembros diferentes que, unidos, producen una sola alabanza agradable a Dios. Al leer en
+            contexto los salmos y relatos del culto israelita, la Escritura no presenta un solo canal
+            —voz, instrumento o registro— como suficiente, sino que <strong>cada medio de alabanza
+            tiene un lugar irremplazable</strong>: los instrumentos, las voces graves y las voces agudas
+            convergen en una sola ofrenda.
           </p>
 
           <v-row dense>
@@ -47,15 +51,164 @@
 
           <v-alert type="info" border="left" colored-border elevation="1" class="mt-2 mb-0">
             <div class="text-body-2 font-weight-medium grey--text text--darken-4">
-              La palabra "armonía" en el Salmo 133 describe exactamente lo que ocurre cuando varias notas
-              distintas —como el Do, el Mi y el Sol de un acorde mayor— suenan al mismo tiempo sin
-              chocar entre sí, sino complementándose. La unidad de la Iglesia funciona igual: personas
-              diferentes, dones diferentes, voces diferentes, unidas en un mismo propósito.
+              El Salmo 133 celebra la unidad fraterna —hermanos que habitan juntos—. La RVR1960 traduce
+              "armonía", y esa imagen nos recuerda lo que ocurre cuando varias notas distintas —como el
+              Do, el Mi y el Sol de un acorde mayor— suenan juntas sin chocar, sino complementándose. La
+              unidad de la Iglesia funciona así: personas diferentes, dones diferentes, voces diferentes,
+              unidas en un mismo propósito.
             </div>
           </v-alert>
         </courses-section>
 
-        <!-- SECCIÓN 2: La Analogía del Acorde -->
+        <!-- SECCIÓN 2: Todos son necesarios en la alabanza -->
+        <courses-section outlined title="Todos son necesarios en la alabanza" icon="mdi-book-search-outline" text-class="">
+          <p class="text-body-1 grey--text text--darken-3 mb-4">
+            Para entender bien los textos sobre adoración conviene observar <strong>quién participa, con
+            qué medios y en qué función</strong>. Leer Salmo 150, por ejemplo, no como un menú de
+            opciones sino como el clímax deliberado del libro de los Salmos, muestra que Dios recibe con
+            agrado una alabanza rica y variada: no porque un instrumento o una voz sea superior a otro,
+            sino porque juntos reflejan la plenitud de un pueblo que lo exalta con todo lo que tiene.
+          </p>
+
+          <v-card outlined class="pa-4 mb-4 blue lighten-5">
+            <p class="text-subtitle-2 font-weight-bold blue--text text--darken-3 mb-3">
+              <v-icon color="blue darken-3" class="mr-2">mdi-lightbulb-on</v-icon>
+              Tres claves para leer sobre adoración
+            </p>
+            <v-row dense>
+              <v-col cols="12" md="4">
+                <div class="pa-3 rounded fill-height" style="background-color: rgba(63, 81, 181, 0.1);">
+                  <p class="text-subtitle-2 font-weight-bold blue--text text--darken-3 mb-2">El contexto literario</p>
+                  <p class="text-body-2 grey--text text--darken-3 mb-0">
+                    Salmo 150 cierra el libro repitiendo "Alabadle con…" siete veces. Esa repetición no
+                    agota la lista: la amplía. El autor quiere que el lector entienda que la alabanza
+                    legítima abarca <em>todos</em> los medios mencionados, no solo uno favorito.
+                  </p>
+                </div>
+              </v-col>
+              <v-col cols="12" md="4">
+                <div class="pa-3 rounded fill-height" style="background-color: rgba(76, 175, 80, 0.1);">
+                  <p class="text-subtitle-2 font-weight-bold green--text text--darken-3 mb-2">El contexto histórico</p>
+                  <p class="text-body-2 grey--text text--darken-3 mb-0">
+                    En 1 Crónicas 15:16-22 David asigna a levitas cantores <em>y</em> instrumentistas con
+                    roles distintos. Nadie improvisaba solo: cada uno servía en su función para que el
+                    conjunto sonara completo ante el arca de Dios.
+                  </p>
+                </div>
+              </v-col>
+              <v-col cols="12" md="4">
+                <div class="pa-3 rounded fill-height" style="background-color: rgba(255, 152, 0, 0.1);">
+                  <p class="text-subtitle-2 font-weight-bold orange--text text--darken-3 mb-2">La analogía del cuerpo</p>
+                  <p class="text-body-2 grey--text text--darken-3 mb-0">
+                    Pablo pregunta en 1 Corintios 12:17 si el oído puede decir que no necesita al ojo.
+                    Aplicado a la alabanza: ningún registro vocal, ningún instrumento ni ningún don puede
+                    declararse prescindible sin empobrecer al conjunto.
+                  </p>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
+
+          <h3 class="text-subtitle-1 font-weight-bold primary--text mb-3">
+            Tres voces de la alabanza: instrumentos, graves y agudas
+          </h3>
+          <p class="text-body-2 grey--text text--darken-3 mb-4">
+            En la música, los registros graves aportan fundamento y peso —como la raíz de un acorde—,
+            mientras las voces agudas llevan la melodía y la claridad hacia arriba. Los instrumentos
+            tejen el paisaje sonoro entre ambos. La Biblia no usa la terminología moderna de "registro",
+            pero sí describe un culto donde <strong>cuerdas, viento, percusión y canto humano conviven
+            sin competir</strong>. Ninguno sustituye a los demás; cada uno completa lo que falta al otro.
+          </p>
+
+          <v-row dense class="mb-4">
+            <v-col cols="12" md="4">
+              <v-card outlined class="pa-4 fill-height" style="border-radius:12px;">
+                <div class="d-flex align-center mb-3">
+                  <v-icon size="36" color="primary" class="mr-2">mdi-guitar-acoustic</v-icon>
+                  <h3 class="text-subtitle-1 font-weight-bold primary--text mb-0">Los instrumentos</h3>
+                </div>
+                <p class="text-body-2 grey--text text--darken-3 mb-3">
+                  Salmo 150 no dice "alabadle solo con arpa", sino con bocina, salterio, pandero, cuerdas,
+                  flautas y címbalos. Cada timbre añade una textura distinta. El ukelele que aprendes a
+                  tocar encaja en esa tradición: no es adorno de fondo, sino voz propia dentro del coro
+                  de la adoración.
+                </p>
+                <v-card outlined class="pa-3 grey lighten-5">
+                  <div class="d-flex align-center mb-1">
+                    <v-icon color="primary" small class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="text-caption font-weight-bold grey--text text--darken-4">Salmo 150:3-5</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Alabadle a son de bocina… con salterio y arpa… con pandero y danza… con cuerdas y
+                    flautas… con címbalos resonantes."
+                  </p>
+                </v-card>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="4">
+              <v-card outlined class="pa-4 fill-height" style="border-radius:12px;">
+                <div class="d-flex align-center mb-3">
+                  <v-icon size="36" color="primary" class="mr-2">mdi-account-voice</v-icon>
+                  <h3 class="text-subtitle-1 font-weight-bold primary--text mb-0">Las voces graves</h3>
+                </div>
+                <p class="text-body-2 grey--text text--darken-3 mb-3">
+                  Las voces graves —bajos y contraltos en el lenguaje coral— sostienen la armonía desde
+                  abajo, como el bajo eléctrico o la cuerda más grave del ukelele. Sin ellas, la alabanza
+                  pierde profundidad y firmeza. En el culto del templo, hombres y mujeres cantaban juntos;
+                  Los registros más graves daban peso y estabilidad al canto común del pueblo.
+                </p>
+                <v-card outlined class="pa-3 grey lighten-5">
+                  <div class="d-flex align-center mb-1">
+                    <v-icon color="primary" small class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="text-caption font-weight-bold grey--text text--darken-4">Salmo 96:1-2</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Cantad a Jehová cántico nuevo; cantad al Jehová, toda la tierra. Cantad a Jehová,
+                    bendecid su nombre; Anunciad de día en día su salvación."
+                  </p>
+                </v-card>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="4">
+              <v-card outlined class="pa-4 fill-height" style="border-radius:12px;">
+                <div class="d-flex align-center mb-3">
+                  <v-icon size="36" color="primary" class="mr-2">mdi-account-music</v-icon>
+                  <h3 class="text-subtitle-1 font-weight-bold primary--text mb-0">Las voces agudas</h3>
+                </div>
+                <p class="text-body-2 grey--text text--darken-3 mb-3">
+                  Las voces agudas —sopranos y tenores altos— no "dominan" la alabanza por ser más
+                  audibles; aportan luminosidad, júbilo y la línea melódica que el oído recuerda. Miriam
+                  y las mujeres de Israel levantaron cantos de victoria con tamborines; su participación
+                  no era secundaria, sino parte esencial del testimonio de liberación.
+                </p>
+                <v-card outlined class="pa-3 grey lighten-5">
+                  <div class="d-flex align-center mb-1">
+                    <v-icon color="primary" small class="mr-2">mdi-book-open-variant</v-icon>
+                    <span class="text-caption font-weight-bold grey--text text--darken-4">Éxodo 15:20-21</span>
+                  </div>
+                  <p class="text-body-2 italic grey--text text--darken-3 mb-0">
+                    "Entonces María la profetisa… tomó un pandero en su mano, y todas las mujeres
+                    salieron en pos de ella con panderos y danzas. Y María respondía…"
+                  </p>
+                </v-card>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-alert type="success" border="left" colored-border elevation="1" class="mb-0">
+            <div class="text-body-2 font-weight-medium grey--text text--darken-4">
+              <strong>Para aplicar:</strong> Cuando un pasaje enumera medios de alabanza,
+              pregúntate qué estaría incompleto si eliminaras uno. ¿Salmo 150 sin percusión? ¿Un coro sin
+              graves? ¿Una congregación donde solo cantan los que tienen voz aguda? La Escritura construye
+              una imagen de plenitud: <em>todos son importantes, todos son bienvenidos, todos suman</em>.
+              No compiten por el centro; se distribuyen en el acorde común de la adoración.
+            </div>
+          </v-alert>
+        </courses-section>
+
+        <!-- SECCIÓN 3: La Analogía del Acorde -->
         <courses-section outlined title="La Analogía del Acorde" icon="mdi-guitar-pick-outline" text-class="">
           <p class="text-body-1 grey--text text--darken-3 mb-4">
             En la teoría musical aprendimos que un acorde mayor se construye con tres notas distintas: la
@@ -82,9 +235,9 @@
                 <v-icon size="40" color="primary" class="mb-2">mdi-numeric-3-circle-outline</v-icon>
                 <h3 class="text-subtitle-1 font-weight-bold primary--text mb-2">Tres notas distintas</h3>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
-                  Do, Mi y Sol no son iguales entre sí; cada una vibra a su propia frecuencia. Pero
-                  precisamente por ser distintas y estar correctamente ordenadas, al sonar juntas generan
-                  un acorde mayor: pleno, estable y agradable al oído.
+                  Do, Mi y Sol no son iguales entre sí; cada una vibra a su propia frecuencia —grave,
+                  media y aguda. Pero precisamente por ser distintas y estar correctamente ordenadas, al
+                  sonar juntas generan un acorde mayor: pleno, estable y agradable al oído.
                 </p>
               </v-card>
             </v-col>
@@ -94,9 +247,9 @@
                 <v-icon size="40" color="primary" class="mb-2">mdi-handshake-outline</v-icon>
                 <h3 class="text-subtitle-1 font-weight-bold primary--text mb-2">Un cuerpo, muchos dones</h3>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
-                  En la iglesia, el que predica, el que sirve, el que canta y el que toca un instrumento
-                  no compiten entre sí. Cada don, en su lugar correcto, suma a una sola alabanza que honra
-                  a Dios.
+                  En la iglesia, el que predica, el que sirve, el que canta con voz grave, el que canta
+                  con voz aguda y el que toca un instrumento no compiten entre sí. Cada don —y cada
+                  registro, y cada timbre— en su lugar correcto, suma a una sola alabanza que honra a Dios.
                 </p>
               </v-card>
             </v-col>
@@ -112,7 +265,7 @@
                 </h3>
                 <p class="text-body-2 grey--text text--darken-3 mb-3">
                   Basta con que una sola cuerda del ukelele esté desafinada para que todo el acorde suene
-                  mal, aunque las otras dos estén perfectas. No hace falta que las tres cuerdas estén mal
+                  mal, aunque las demás estén perfectas. No hace falta que las cuatro cuerdas estén mal
                   afinadas; con una sola es suficiente para romper la armonía de todo el conjunto.
                 </p>
                 <v-divider class="mb-3" />
@@ -128,7 +281,7 @@
           </v-card>
         </courses-section>
 
-        <!-- SECCIÓN 3: La Unidad como Testimonio -->
+        <!-- SECCIÓN 4: La Unidad como Testimonio -->
         <courses-section outlined title="La Unidad como Testimonio" icon="mdi-seal" text-class="">
           <p class="text-body-1 grey--text text--darken-3 mb-4">
             La unidad de la iglesia no es solo un ideal agradable; es un mandato y, según Jesús mismo, una
@@ -171,9 +324,10 @@
           <v-alert type="warning" border="left" colored-border elevation="1" class="my-0">
             <div class="text-body-2 font-weight-medium grey--text text--darken-4">
               <strong>Aplicación práctica:</strong> Cuando tocas un acorde mayor en tu ukelele, recuerda que
-              cada cuerda debe estar afinada y debe sonar en su lugar correcto, sin opacar a las demás,
-              para que el resultado sea hermoso. Sirve en la iglesia con esa misma actitud: usa tu don sin
-              competir, afina tu corazón en humildad, y suma tu voz a la armonía del cuerpo de Cristo.
+              cada cuerda —grave, media y aguda— debe estar afinada y sonar en su lugar, sin opacar a las
+              demás. Si tu voz es grave, ancla la armonía; si es aguda, lleva el júbilo; si tocas un
+              instrumento, aporta tu timbre único. Sirve con esa misma actitud: usa tu don sin competir,
+              afina tu corazón en humildad, y suma tu parte a la armonía del cuerpo de Cristo.
             </div>
           </v-alert>
         </courses-section>

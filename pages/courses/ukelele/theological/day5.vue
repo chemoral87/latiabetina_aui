@@ -37,12 +37,11 @@
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
-                    <span class="font-weight-bold grey--text text--darken-4">Romanos 15:5-6</span>
+                    <span class="font-weight-bold grey--text text--darken-4">Efesios 4:2-3</span>
                   </div>
                   <p class="text-body-2 italic grey--text text--darken-3 mb-0">
-                    "Pero el Dios de la paciencia y de la consolación os dé entre vosotros un mismo
-                    sentir según Cristo Jesús, para que unánimes, a una voz, glorifiquéis al Dios y Padre
-                    de nuestro Señor Jesucristo."
+                    "Con toda humildad y mansedumbre, soportándoos con paciencia los unos a los otros en
+                    amor, solícitos en guardar la unidad del Espíritu en el vínculo de la paz."
                   </p>
                 </div>
                 <div class="text-caption primary--text font-weight-bold mt-2 text-right">RVR1960</div>
@@ -52,9 +51,10 @@
 
           <v-alert type="info" border="left" colored-border elevation="1" class="mt-2 mb-0">
             <div class="text-body-2 font-weight-medium grey--text text--darken-4">
-              "A una voz" —dice Pablo— no significa que todos digan exactamente lo mismo en el mismo tono.
-              Significa que todos apuntan a la misma gloria. En música, eso es armonía vocal: voces
-              distintas, alturas distintas, pero convergiendo en el mismo destino melódico.
+              Guardar la unidad del Espíritu no significa que todos piensen, hablen o canten en la misma
+              altura. Significa que todos apuntan a la misma gloria. En música, eso es armonía vocal:
+              voces distintas, registros distintos, pero convergiendo en la misma melodía y el mismo
+              destino.
             </div>
           </v-alert>
         </courses-section>
