@@ -54,6 +54,7 @@
 
 <script>
 import { debounce } from "lodash-es"
+import churchEventActions from "@/mixins/churchEventActions"
 
 const toIso = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
 
@@ -79,6 +80,7 @@ const buildDateRange = (year, month, weekStartsOnMonday = true) => {
 }
 
 export default {
+  mixins: [churchEventActions],
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
   async asyncData({ app, error, store, route }) {
@@ -238,63 +240,15 @@ export default {
       this.$router.push({ path: '/church-event/new', query: { from: 'calendar', event_date: dateIso, cal_year: this.calYear, cal_month: this.calMonth } })
     },
 
-    openCopyDialog(item) {
-      this.copyingChurchEvent = item
-      this.churchEventDialogCopy = true
+    // Required by churchEventActions mixin
+    routeQuery() {
+      return { from: 'calendar', cal_year: this.calYear, cal_month: this.calMonth }
     },
 
-    async copyChurchEvent({ churchEvent, dates }) {
-      try {
-        this.copying = true
-        await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
-
-        this.churchEventDialogCopy = false
-        await this.loadChurchEvents()
-      } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.copying = false
-      }
+    deleteReloadOverrides() {
+      return {}
     },
 
-    editChurchEvent(item) {
-      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'calendar', cal_year: this.calYear, cal_month: this.calMonth } })
-    },
-
-    beforeDeleteChurchEvent(item) {
-      this.dialogDelete = {
-        text: "Desea eliminar el Evento ",
-        strong: item.name,
-        text2: "?",
-        payload: item,
-      }
-      this.churchEventDialogDelete = true
-    },
-
-    async deleteChurchEvent(item) {
-      try {
-        this.deleting = true
-        await this.$repository.ChurchEvent.delete(item.id, item)
-
-        this.skipFilterWatch = true
-        this.filterChurchEvent = ""
-        await this.loadChurchEvents({ filter: "" })
-
-        this.churchEventDialogDelete = false
-      } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.deleting = false
-      }
-    },
   },
 }
 </script>

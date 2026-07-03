@@ -71,7 +71,7 @@ export default {
       try {
         this.saving = true;
         await this.$repository.ChurchEvent.update(payload.id, payload);
-        this.$notify({ type: "success", text: "Evento actualizado exitosamente" });
+
         this.$router.push(this.backRoute)
       } catch (error) {
         if (this.$handleError) {

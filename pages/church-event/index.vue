@@ -45,8 +45,10 @@
 
 <script>
 import { debounce } from "lodash-es"
+import churchEventActions from "@/mixins/churchEventActions"
 
 export default {
+  mixins: [churchEventActions],
   middleware: ["authenticated", "permission"],
   meta: { permission: "church-event-index" },
   async asyncData({ app, error, store }) {
@@ -178,63 +180,15 @@ export default {
       this.$router.push({ path: '/church-event/new', query: { from: 'table' } })
     },
 
-    editChurchEvent(item) {
-      this.$router.push({ path: `/church-event/${item.id}`, query: { from: 'table' } })
+    // Required by churchEventActions mixin
+    routeQuery() {
+      return { from: 'table' }
     },
 
-    beforeDeleteChurchEvent(item) {
-      this.dialogDelete = {
-        text: "Desea eliminar el Evento ",
-        strong: item.name,
-        text2: "?",
-        payload: item,
-      }
-      this.churchEventDialogDelete = true
+    deleteReloadOverrides() {
+      return { page: 1 }
     },
 
-    openCopyDialog(item) {
-      this.copyingChurchEvent = item
-      this.churchEventDialogCopy = true
-    },
-
-    async copyChurchEvent({ churchEvent, dates }) {
-      try {
-        this.copying = true
-        await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
-
-        this.churchEventDialogCopy = false
-        await this.loadChurchEvents()
-      } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.copying = false
-      }
-    },
-
-    async deleteChurchEvent(item) {
-      try {
-        this.deleting = true
-        await this.$repository.ChurchEvent.delete(item.id, item)
-
-        this.skipFilterWatch = true
-        this.filterChurchEvent = ""
-        await this.loadChurchEvents({ page: 1, filter: "" })
-
-        this.churchEventDialogDelete = false
-      } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.deleting = false
-      }
-    },
   },
 }
 </script>

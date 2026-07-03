@@ -2,7 +2,8 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <ChurchEventForm :loading="saving" :initial-event-date="$route.query.event_date || null" permission="church-event-insert" @close="close" @save="saveChurchEvent" />
+        <ChurchEventForm :loading="saving" :initial-event-date="$route.query.event_date || null"
+          permission="church-event-insert" @close="close" @save="saveChurchEvent" />
       </v-col>
     </v-row>
   </v-container>
@@ -54,7 +55,7 @@ export default {
       try {
         this.saving = true;
         await this.$repository.ChurchEvent.create(payload);
-        this.$notify({ type: "success", text: "Evento creado exitosamente" });
+
         this.$router.push(this.backRoute)
       } catch (error) {
         if (this.$handleError) {

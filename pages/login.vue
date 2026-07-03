@@ -120,3 +120,14 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Force Vuetify label to float when browser autofills the input */
+:deep(.v-text-field--outlined) input:-webkit-autofill ~ .v-label,
+:deep(.v-text-field--outlined) input:-webkit-autofill:focus ~ .v-label {
+  transform: translateY(-24px) scale(0.75);
+  top: 0px;
+  background: white;
+  padding: 0 4px;
+}
+</style>
