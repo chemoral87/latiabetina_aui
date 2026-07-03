@@ -49,32 +49,32 @@
               <div class="event-pill-main" @click.stop="$emit('edit', event)">
                 <span class="event-pill-name">{{ event.name }}</span>
                 <span v-if="event.time_start" class="event-pill-time">{{ formatEventTime(event.time_start) }}</span>
-              </div>
-              <div class="event-actions">
-                <v-tooltip bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-btn icon x-small color="primary" v-bind="attrs" v-on="on" @click.stop="$emit('edit', event)">
-                      <v-icon size="18">mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Editar</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" @click.stop="$emit('copy', event)">
-                      <v-icon size="18">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Copiar</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-btn icon x-small color="error" v-bind="attrs" v-on="on" @click.stop="$emit('delete', event)">
-                      <v-icon size="18">mdi-delete</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Eliminar</span>
-                </v-tooltip>
+                <div class="event-actions">
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon x-small color="primary" v-bind="attrs" v-on="on" @click.stop="$emit('edit', event)">
+                        <v-icon size="18">mdi-pencil</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Editar</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" @click.stop="$emit('copy', event)">
+                        <v-icon size="18">mdi-content-copy</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Copiar</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon x-small color="error" v-bind="attrs" v-on="on" @click.stop="$emit('delete', event)">
+                        <v-icon size="18">mdi-delete</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Eliminar</span>
+                  </v-tooltip>
+                </div>
               </div>
             </div>
 
@@ -391,12 +391,11 @@ export default {
 }
 
 .event-pill {
-  position: relative;
   align-items: stretch;
   background: transparent;
   color: #333;
   border-radius: 3px;
-  padding: 2px 4px 24px 4px;
+  padding: 2px 4px;
   margin-bottom: 2px;
   font-size: 10px;
   line-height: 1.3;
@@ -426,9 +425,11 @@ export default {
 }
 
 .event-pill-main {
+  position: relative;
   flex: 1 1 0;
   min-width: 0;
   padding-right: 4px;
+  padding-bottom: 24px;
   cursor: pointer;
 }
 
