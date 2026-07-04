@@ -58,11 +58,7 @@ export default {
 
         this.$router.push(this.backRoute)
       } catch (error) {
-        if (this.$handleError) {
-          this.$handleError(error)
-        } else {
-          console.error(error)
-        }
+
       } finally {
         this.saving = false;
       }

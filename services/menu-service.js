@@ -30,6 +30,14 @@ export class MenuService {
         menu.push({ icon: "mdi-store", title: "Tiendas", to: "/store" })
       }
 
+      if (this.hasPermission("product-index")) {
+        menu.push({ icon: "mdi-package-variant", title: "Productos", to: "/pos/products" })
+      }
+
+      if (this.hasPermission("sale-index")) {
+        menu.push({ icon: "mdi-receipt-text", title: "Ventas", to: "/pos/sales" })
+      }
+
       if (this.hasPermission("expense-ticket-index")) {
         menu.push({ icon: "mdi-receipt", title: "Ticket de Gastos", to: "/expense-ticket" })
       }

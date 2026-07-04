@@ -118,7 +118,7 @@ export default {
         url_image_s3: "",
         image_file: null,
       },
-    
+
     }
   },
 
