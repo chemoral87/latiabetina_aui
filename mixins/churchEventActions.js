@@ -20,10 +20,11 @@ export default {
       this.churchEventDialogCopy = true
     },
 
-    async copyChurchEvent({ churchEvent, dates }) {
+    async copyChurchEvent({ churchEvent, dates, recurrence }) {
       try {
         this.copying = true
-        const result = await this.$repository.ChurchEvent.copy(churchEvent.id, { dates })
+        const payload = dates ? { dates } : { recurrence }
+        const result = await this.$repository.ChurchEvent.copy(churchEvent.id, payload)
 
         this.churchEventDialogCopy = false
 
@@ -35,7 +36,7 @@ export default {
         }
 
         if (skipped.length > 0) {
-          const dateList = skipped.map(d => this.$moment(d).format('D MMM. YYYY')).join(', ')
+          const dateList = skipped.map(d => this.$moment(d).format('D MMM \'YY')).join(', ')
           this.$notify({ type: 'warning', message: `Las siguientes fechas no se copiaron porque ya existe un evento con el mismo nombre: ${dateList}` })
         }
 
