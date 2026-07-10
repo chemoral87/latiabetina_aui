@@ -63,6 +63,17 @@
             />
           </v-col>
 
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="item.order"
+              label="Orden"
+              type="number"
+              outlined
+              dense
+              :error-messages="errors.order"
+            />
+          </v-col>
+
           <v-col cols="12" md="6">
             <v-textarea
               v-model="item.description"
@@ -154,6 +165,7 @@ export default {
         requires_preparation: false,
         price: 0,
         stock: 0,
+        order: 0,
         image: '',
         image_file: null,
       },
@@ -242,6 +254,7 @@ export default {
         ...this.item,
         price: Number(this.item.price || 0),
         stock: Number(this.item.stock || 0),
+        order: Number(this.item.order || 0),
       }
 
       this.$emit('save', payload)
