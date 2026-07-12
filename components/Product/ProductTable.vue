@@ -5,7 +5,8 @@
       <div class="d-flex flex-nowrap justify-center">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
-            <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editProduct(item)">
+            <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on"
+              @click="editProduct(item)">
               <v-icon small>mdi-pencil</v-icon>
             </v-btn>
           </template>
@@ -85,6 +86,7 @@ export default {
     headers() {
       const cols = [
         { text: 'Nombre', align: 'start', value: 'name' },
+        { text: 'Orden', value: 'order', sortable: true },
       ]
       if (this.showOrgColumn) {
         cols.push({ text: 'Org', value: 'org_code', sortable: false })
@@ -143,5 +145,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

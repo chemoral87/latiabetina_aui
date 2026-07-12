@@ -35,6 +35,7 @@ export class MenuService {
       }
 
       if (this.hasPermission("sale-index")) {
+        menu.push({ icon: "mdi-cart", title: "POS", to: "/pos" })
         menu.push({ icon: "mdi-receipt-text", title: "Ventas", to: "/pos/sales" })
       }
 

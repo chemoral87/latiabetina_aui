@@ -1,5 +1,14 @@
 <template>
-  <v-card outlined class="d-flex flex-column fill-height">
+  <v-card outlined class="d-flex flex-column fill-height" style="position: relative;">
+    <div class="product-card__order-btns">
+      <v-btn icon x-small class="order-btn" :disabled="isFirst" @click="$emit('move-left', product)">
+        <v-icon x-small>mdi-chevron-left</v-icon>
+      </v-btn>
+      <v-btn icon x-small class="order-btn" :disabled="isLast" @click="$emit('move-right', product)">
+        <v-icon x-small>mdi-chevron-right</v-icon>
+      </v-btn>
+    </div>
+
     <div
       class="d-flex flex-column flex-grow-1"
       :style="product.hidden ? 'opacity: 0.7; background-color: #b0b0b0;' : ''"
@@ -78,8 +87,45 @@ export default {
       type: Object,
       required: true,
     },
+    isFirst: {
+      type: Boolean,
+      default: false,
+    },
+    isLast: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  emits: ['toggle-preparation', 'toggle-hidden', 'edit', 'delete'],
+  emits: ['toggle-preparation', 'toggle-hidden', 'edit', 'delete', 'move-left', 'move-right'],
 }
 </script>
+
+<style scoped>
+.product-card__order-btns {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+}
+
+.order-btn {
+  background-color: #ff6f00 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.order-btn .v-icon {
+  color: #ffffff !important;
+}
+
+.order-btn.v-btn--disabled {
+  background-color: rgba(0, 0, 0, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.order-btn.v-btn--disabled .v-icon {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+</style>

@@ -42,9 +42,10 @@
 
       <v-col cols="12" v-else>
         <v-row dense>
-          <v-col v-for="product in response.data" :key="product.id" cols="6" sm="4" md="4">
-            <ProductCard :product="product" @toggle-preparation="toggleRequiresPreparation"
-              @toggle-hidden="toggleHidden" @edit="editProduct" @delete="beforeDeleteProduct" />
+          <v-col v-for="(product, index) in response.data" :key="product.id" cols="6" sm="4" md="4">
+            <ProductCard :product="product" :is-first="index === 0" :is-last="index === response.data.length - 1"
+              @toggle-preparation="toggleRequiresPreparation" @toggle-hidden="toggleHidden" @edit="editProduct"
+              @delete="beforeDeleteProduct" @move-left="moveProduct(index, -1)" @move-right="moveProduct(index, 1)" />
           </v-col>
           <v-col cols="12" v-if="response.data.length === 0" class="text-center pa-8">
             <v-icon color="grey lighten-1" size="48">mdi-package-variant</v-icon>
@@ -61,17 +62,20 @@
 
 <script>
 import { debounce } from 'lodash-es'
+import ProductTable from '@/components/Product/ProductTable.vue'
+import ProductCard from '@/components/Product/ProductCard.vue'
 
 export default {
+  components: { ProductTable, ProductCard },
 
   middleware: ['authenticated', 'permission'],
   meta: { permission: 'product-index' },
   async asyncData({ app, error }) {
     const options = {
       page: 1,
-      sortBy: ['name'],
+      sortBy: ['order'],
       sortDesc: [false],
-      itemsPerPage: 10,
+      itemsPerPage: 20,
     }
 
     const response = await app.$repository.Product.index(options)
@@ -261,6 +265,28 @@ export default {
           hidden: nextValue,
         })
         product.hidden = nextValue
+      } catch (error) {
+        if (this.$handleError) {
+          this.$handleError(error)
+        }
+      }
+    },
+
+    moveProduct(index, direction) {
+      const data = this.response.data
+      const targetIndex = index + direction
+      if (targetIndex < 0 || targetIndex >= data.length) return
+
+      const item = data.splice(index, 1)[0]
+      data.splice(targetIndex, 0, item)
+
+      this.sendReorder()
+    },
+
+    async sendReorder() {
+      try {
+        const ids = this.response.data.map((p) => p.id)
+        await this.$repository.Product.reorder(ids)
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)
