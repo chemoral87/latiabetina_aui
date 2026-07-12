@@ -44,10 +44,12 @@
               v-model="item.price"
               label="Precio"
               type="number"
+              placeholder="0"
               outlined
               dense
               :error-messages="errors.price"
               required
+              class="no-spinners"
             />
           </v-col>
 
@@ -56,10 +58,12 @@
               v-model="item.stock"
               label="Stock"
               type="number"
+              placeholder="0"
               outlined
               dense
               :error-messages="errors.stock"
               required
+              class="no-spinners"
             />
           </v-col>
 
@@ -68,9 +72,11 @@
               v-model="item.order"
               label="Orden"
               type="number"
+              placeholder="0"
               outlined
               dense
               :error-messages="errors.order"
+              class="no-spinners"
             />
           </v-col>
 
@@ -262,3 +268,15 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Remove number input spinners */
+.no-spinners ::v-deep input[type='number']::-webkit-outer-spin-button,
+.no-spinners ::v-deep input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinners ::v-deep input[type='number'] {
+  -moz-appearance: textfield;
+}
+</style>

@@ -66,13 +66,11 @@
           {{ product.hidden ? 'mdi-eye-off' : 'mdi-eye' }}
         </v-icon>
       </v-btn>
-      <v-btn text small color="primary" @click="$emit('edit', product)">
-        <v-icon left small>mdi-pencil</v-icon>
-        Editar
+      <v-btn icon small color="primary" @click="$emit('edit', product)">
+        <v-icon small>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn text small color="error" @click="$emit('delete', product)">
-        <v-icon left small>mdi-delete</v-icon>
-        Eliminar
+      <v-btn icon small color="error" @click="$emit('delete', product)">
+        <v-icon small>mdi-delete</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>

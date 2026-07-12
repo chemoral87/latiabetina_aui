@@ -212,7 +212,7 @@ export default {
     },
 
     editProduct(item) {
-      this.$router.push(`/pos/${item.id}`)
+      this.$router.push(`/pos/product/${item.id}`)
     },
 
     beforeDeleteProduct(item) {
