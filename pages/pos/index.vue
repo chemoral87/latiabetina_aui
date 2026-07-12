@@ -6,25 +6,23 @@
       <v-progress-circular indeterminate color="primary" size="48" />
     </div>
 
-    <!-- Product grid: 2 cols on mobile, 3 on sm, 4 on md+ -->
+    <!-- Product grid -->
     <v-row v-else dense>
       <v-col v-for="product in products" :key="product.id" cols="6" sm="4" md="3">
         <v-card outlined class="pos-product-card d-flex flex-column"
           :class="{ 'pos-product-card--in-cart': cartQty(product.id) > 0 }">
-          <!-- Image -->
+
           <v-img :src="product.image_s3 || ''" height="140px" contain class="grey lighten-4 flex-shrink-0">
             <template #placeholder>
               <v-row class="fill-height ma-0" align="center" justify="center">
                 <v-icon color="grey lighten-2" size="40">mdi-package-variant</v-icon>
               </v-row>
             </template>
-
             <v-chip v-if="cartQty(product.id) > 0" color="primary" dark small class="pos-cart-badge font-weight-bold">
               {{ cartQty(product.id) }}
             </v-chip>
           </v-img>
 
-          <!-- Info -->
           <div class="px-2 pt-2 flex-grow-1">
             <div class="pos-info-row">
               <div class="pos-name text-body-2 font-weight-bold">{{ product.name }}</div>
@@ -36,15 +34,11 @@
             </div>
           </div>
 
-          <!-- Controls -->
           <div class="pos-card-controls">
-            <!-- Not in cart yet -->
             <v-btn v-if="cartQty(product.id) === 0" block depressed color="primary" class="pos-add-btn"
               :disabled="product.stock === 0" @click="addToCart(product)">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
-
-            <!-- Already in cart -->
             <div v-else class="pos-qty-row">
               <v-btn fab small depressed color="error" class="pos-qty-btn" @click="decreaseCart(product)">
                 <v-icon>mdi-minus</v-icon>
@@ -69,41 +63,84 @@
 
     <!-- ── Floating footer ── -->
     <div class="pos-footer">
-      <div class="pos-footer-top">
-        <!-- Cart chips -->
-        <div class="pos-footer-cart">
-          <div v-for="(item, index) in cart" :key="item.product.id" class="pos-chip">
-            <span class="pos-chip-name">{{ item.product.name }}</span>
-            <span class="pos-chip-qty">×{{ item.quantity }}</span>
-            <span class="pos-chip-price">${{ (item.product.price * item.quantity).toFixed(2) }}</span>
-            <v-btn icon x-small class="ml-1" @click="removeFromCart(index)">
-              <v-icon x-small color="error">mdi-close</v-icon>
-            </v-btn>
-          </div>
-          <span v-if="cart.length === 0" class="text-caption grey--text">Sin artículos</span>
+
+      <!-- Toggle bar -->
+      <div class="pos-footer-toggle-bar" @click="showCart = !showCart">
+        <div class="d-flex align-center">
+          <v-icon small class="mr-1" color="primary">mdi-cart</v-icon>
+          <span class="text-caption font-weight-bold">
+            {{ cartItemCount }} artículo(s)
+          </span>
+          <v-chip v-if="cart.length > 0" x-small color="primary" dark class="ml-2 font-weight-bold">
+            ${{ total }}
+          </v-chip>
         </div>
+        <v-icon small :color="showCart ? 'primary' : 'grey'">
+          {{ showCart ? 'mdi-chevron-down' : 'mdi-chevron-up' }}
+        </v-icon>
       </div>
 
+      <!-- Cart table (collapsible) -->
+      <div v-show="showCart" class="pos-cart-panel">
+        <div v-if="cart.length === 0" class="text-caption grey--text pa-2 text-center">
+          Sin artículos en el carrito
+        </div>
+        <table v-else class="pos-cart-table">
+          <thead>
+            <tr>
+              <th class="text-left">Producto</th>
+              <th class="text-center">Cant.</th>
+              <th class="text-right">Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in cart" :key="item.product.id">
+              <td class="pos-ct-name">{{ item.product.name }}</td>
+              <td class="pos-ct-qty">
+                <div class="d-flex align-center justify-center" style="gap:4px">
+                  <v-btn icon x-small @click="changeQuantity(index, -1)">
+                    <v-icon x-small>mdi-minus</v-icon>
+                  </v-btn>
+                  <span class="font-weight-bold">{{ item.quantity }}</span>
+                  <v-btn icon x-small @click="changeQuantity(index, 1)">
+                    <v-icon x-small>mdi-plus</v-icon>
+                  </v-btn>
+                </div>
+              </td>
+              <td class="pos-ct-total primary--text font-weight-bold">
+                ${{ (item.product.price * item.quantity).toFixed(2) }}
+              </td>
+              <td class="pos-ct-del">
+                <v-btn icon x-small @click="removeFromCart(index)">
+                  <v-icon x-small color="error">mdi-close</v-icon>
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Fields + cobrar -->
       <div class="pos-footer-bottom">
-        <!-- Row 1: fields -->
         <div class="pos-footer-fields-row">
           <v-text-field v-model="customerName" label="Cliente" outlined dense hide-details class="pos-field" />
           <v-select v-model="paymentMethod" :items="paymentMethods" label="Método de pago" outlined dense hide-details
             class="pos-field" />
         </div>
-        <!-- Row 2: total + cobrar -->
         <div class="pos-footer-action-row">
           <div class="pos-total-block">
             <div class="text-caption grey--text">{{ cartItemCount }} artículo(s)</div>
             <div class="text-h5 font-weight-black primary--text">${{ total }}</div>
           </div>
-          <v-btn color="primary" x-large block :loading="saving" :disabled="cart.length === 0" class="pos-cobrar-btn"
-            @click="registerSale">
+          <v-btn color="primary" x-large block :loading="saving" :disabled="cart.length === 0"
+            class="pos-cobrar-btn" @click="registerSale">
             <v-icon left>mdi-cash-register</v-icon>
             Cobrar
           </v-btn>
         </div>
       </div>
+
     </div>
 
   </v-container>
@@ -119,6 +156,7 @@ export default {
       products: [],
       loadingProducts: false,
       cart: [],
+      showCart: false,
       customerName: '',
       paymentMethod: 'cash',
       paymentMethods: [
@@ -191,6 +229,14 @@ export default {
       if (index !== -1) this.cart.splice(index, 1)
     },
 
+    changeQuantity(index, delta) {
+      const item = this.cart[index]
+      if (!item) return
+      const next = item.quantity + delta
+      if (next <= 0) this.cart.splice(index, 1)
+      else item.quantity = next
+    },
+
     removeFromCart(index) {
       this.cart.splice(index, 1)
     },
@@ -215,6 +261,7 @@ export default {
         this.cart = []
         this.customerName = ''
         this.paymentMethod = 'cash'
+        this.showCart = false
         this.$notify?.({ type: 'success', text: 'Venta registrada' })
         this.loadProducts()
       } catch (error) {
@@ -228,9 +275,8 @@ export default {
 </script>
 
 <style scoped>
-/* Leave room for the fixed footer */
 .pos-page {
-  padding-bottom: 185px;
+  padding-bottom: 160px;
 }
 
 /* ── Product card ── */
@@ -272,7 +318,6 @@ export default {
   font-size: 0.95rem;
 }
 
-/* Controls area at the bottom of each card */
 .pos-card-controls {
   padding: 8px;
 }
@@ -303,10 +348,6 @@ export default {
   color: #212121;
 }
 
-.pos-remove-btn {
-  margin: 0 -2px;
-}
-
 .pos-qty-btn-delete {
   width: 26px !important;
   height: 26px !important;
@@ -325,53 +366,80 @@ export default {
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.13);
 }
 
-/* Cart chips row */
-.pos-footer-top {
-  padding: 4px 12px;
+/* Toggle bar */
+.pos-footer-toggle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
   border-bottom: 1px solid #f0f0f0;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  overflow-x: auto;
-  gap: 6px;
-  flex-wrap: nowrap;
+  cursor: pointer;
+  user-select: none;
+  background: #fafafa;
 }
 
-.pos-footer-cart {
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  align-items: center;
+.pos-footer-toggle-bar:active {
+  background: #f0f0f0;
 }
 
-.pos-chip {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  background: #e3f2fd;
-  border-radius: 20px;
-  padding: 3px 8px;
+/* Cart table panel */
+.pos-cart-panel {
+  max-height: 220px;
+  overflow-y: auto;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pos-cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.pos-cart-table thead tr {
+  background: #f5f5f5;
+}
+
+.pos-cart-table th {
+  padding: 4px 8px;
+  font-weight: 700;
+  color: #555;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   white-space: nowrap;
-  font-size: 0.78rem;
 }
 
-.pos-chip-name {
-  font-weight: 600;
-  max-width: 80px;
+.pos-cart-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.pos-cart-table td {
+  padding: 4px 8px;
+  vertical-align: middle;
+}
+
+.pos-ct-name {
+  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.pos-chip-qty {
-  color: #1976d2;
-  font-weight: 700;
+.pos-ct-qty {
+  white-space: nowrap;
 }
 
-.pos-chip-price {
-  color: #555;
+.pos-ct-total {
+  text-align: right;
+  white-space: nowrap;
 }
 
-/* Bottom action row */
+.pos-ct-del {
+  text-align: center;
+  width: 28px;
+}
+
+/* Footer bottom */
 .pos-footer-bottom {
   padding: 8px 10px;
   display: flex;
