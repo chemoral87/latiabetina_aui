@@ -35,6 +35,11 @@ export const getters = {
     return state.auth?.user?.orgs ?? []
   },
 
+  roles(state) {
+    const roles = state.auth?.user?.roles_org
+    return roles && typeof roles === "object" && !Array.isArray(roles) ? roles : {}
+  },
+
   orgCodeById: (state) => (orgId) => {
     const orgs = state.auth?.user?.orgs ?? []
     // eslint-disable-next-line eqeqeq

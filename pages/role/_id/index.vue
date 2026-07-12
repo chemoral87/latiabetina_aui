@@ -9,12 +9,8 @@
             Permisos del rol
           </v-card-title>
           <v-card-text>
-            <PermissionCombobox
-              :key="comboboxKey"
-              label="Buscar y asignar permisos"
-              :permissionsx="mRole.permissions"
-              @modelChange="setPermissions"
-            />
+            <PermissionCombobox :key="comboboxKey" label="Buscar y asignar permisos" :permissionsx="mRole.permissions"
+              @modelChange="setPermissions" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -29,26 +25,13 @@
           <v-card-text class="pb-2">
             <v-row dense align="center">
               <v-col>
-                <v-text-field
-                  v-model="newPermissionName"
-                  label="Nombre del permiso"
-                  placeholder="ej. product-create"
-                  outlined
-                  dense
-                  clearable
-                  hide-details
-                  :loading="creatingPermission"
-                  :disabled="creatingPermission"
-                  @keyup.enter="createAndAddPermission"
-                />
+                <v-text-field v-model="newPermissionName" label="Nombre del permiso" placeholder="ej. product-create"
+                  outlined dense clearable hide-details :loading="creatingPermission" :disabled="creatingPermission"
+                  @keyup.enter="createAndAddPermission" />
               </v-col>
               <v-col cols="auto">
-                <v-btn
-                  color="success"
-                  :disabled="!newPermissionName || creatingPermission"
-                  :loading="creatingPermission"
-                  @click="createAndAddPermission"
-                >
+                <v-btn color="success" :disabled="!newPermissionName || creatingPermission"
+                  :loading="creatingPermission" @click="createAndAddPermission">
                   <v-icon left>mdi-plus</v-icon>
                   Crear y agregar
                 </v-btn>
@@ -75,7 +58,7 @@
 export default {
   middleware: ["authenticated"],
   async asyncData({ $axios, app, params, store, error }) {
-    const res = await app.$repository.Role.show(params.id).catch((e) => {})
+    const res = await app.$repository.Role.show(params.id).catch((e) => { })
     return { mRole: res }
   },
   data() {

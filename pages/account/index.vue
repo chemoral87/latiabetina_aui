@@ -14,6 +14,24 @@
         <v-btn color="success" @click="dialogPassword = true">Cambiar contraseña</v-btn>
       </v-col>
       <v-col cols="12">
+        <div class="text-h6">Roles:</div>
+        <ul>
+          <li v-for="(orgIds, role) in roles_org" :key="role">
+            <strong>{{ role }}</strong>
+            :
+            <span v-if="orgIds && orgIds.length">
+              [
+              <span v-for="(oid, i) in orgIds" :key="oid">
+                {{ getOrgNameById(oid) }}
+                <span v-if="i < orgIds.length - 1">,</span>
+              </span>
+              ]
+            </span>
+            <span v-else>[Sin organización]</span>
+          </li>
+        </ul>
+      </v-col>
+      <v-col cols="12">
         <div class="text-h6">Permisos:</div>
         <ul>
           <li v-for="(orgIds, perm) in permissions_org" :key="perm">
@@ -45,6 +63,9 @@ export default {
   computed: {
     permissions_org() {
       return this.$store.getters.permissions || {}
+    },
+    roles_org() {
+      return this.$store.getters.roles || {}
     },
     orgs() {
       return this.$store.getters.orgs || []
