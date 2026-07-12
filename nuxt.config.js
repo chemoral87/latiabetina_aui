@@ -2,7 +2,7 @@ const colors = require("vuetify/lib/util/colors").default
 
 const isDev = process.env.NODE_ENV !== "production"
 const port = 3001
-const APP_VERSION = "1.0.26"
+const { version: APP_VERSION } = require("./package.json")
 const BUILD_TIMESTAMP = Date.now()
 
 // Carga de variables de entorno
