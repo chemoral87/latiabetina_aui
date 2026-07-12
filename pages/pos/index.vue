@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pos-page pa-2">
+  <v-container fluid class="pos-page px-2 pt-2" :style="{ paddingBottom: footerHeight + 'px' }">
 
     <!-- Loading -->
     <div v-if="loadingProducts" class="text-center py-10">
@@ -62,7 +62,7 @@
     </v-row>
 
     <!-- ── Floating footer ── -->
-    <div class="pos-footer">
+    <div ref="posFooter" class="pos-footer">
 
       <!-- Toggle bar -->
       <div class="pos-footer-toggle-bar" @click="showCart = !showCart">
@@ -133,8 +133,8 @@
             <div class="text-caption grey--text">{{ cartItemCount }} artículo(s)</div>
             <div class="text-h5 font-weight-black primary--text">${{ total }}</div>
           </div>
-          <v-btn color="primary" x-large block :loading="saving" :disabled="cart.length === 0"
-            class="pos-cobrar-btn" @click="registerSale">
+          <v-btn color="primary" x-large block :loading="saving" :disabled="cart.length === 0" class="pos-cobrar-btn"
+            @click="registerSale">
             <v-icon left>mdi-cash-register</v-icon>
             Cobrar
           </v-btn>
@@ -165,6 +165,7 @@ export default {
         { text: 'Transferencia', value: 'transfer' },
       ],
       saving: false,
+      footerHeight: 160,
     }
   },
 
@@ -186,13 +187,31 @@ export default {
       icon: 'mdi-point-of-sale',
     })
     this.loadProducts()
+    this.$nextTick(() => {
+      const footer = this.$refs.posFooter
+      if (footer && typeof ResizeObserver !== 'undefined') {
+        this.footerObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            this.footerHeight = entry.contentRect.height + 8
+          }
+        })
+        this.footerObserver.observe(footer)
+        this.footerHeight = footer.offsetHeight + 8
+      }
+    })
+  },
+
+  beforeDestroy() {
+    if (this.footerObserver) {
+      this.footerObserver.disconnect()
+    }
   },
 
   methods: {
     async loadProducts() {
       this.loadingProducts = true
       try {
-        const response = await this.$repository.Product.pos()
+        const response = await this.$repository.Product.pos(null, { cacheMs: 500 })
         this.products = response?.data || []
       } catch (error) {
         this.$handleError?.(error)
@@ -262,8 +281,8 @@ export default {
         this.customerName = ''
         this.paymentMethod = 'cash'
         this.showCart = false
-        this.$notify?.({ type: 'success', text: 'Venta registrada' })
-        this.loadProducts()
+
+        // this.loadProducts()
       } catch (error) {
         this.$handleError?.(error)
       } finally {
@@ -276,7 +295,7 @@ export default {
 
 <style scoped>
 .pos-page {
-  padding-bottom: 160px;
+  padding-bottom: 16px;
 }
 
 /* ── Product card ── */
