@@ -24,7 +24,7 @@
           </v-card-title>
           <v-card-text class="pb-2">
             <v-row dense align="center">
-              <v-col>
+              <v-col col="12">
                 <v-text-field v-model="newPermissionName" label="Nombre del permiso" placeholder="ej. product-create"
                   outlined dense clearable hide-details :loading="creatingPermission" :disabled="creatingPermission"
                   @keyup.enter="createAndAddPermission" />
