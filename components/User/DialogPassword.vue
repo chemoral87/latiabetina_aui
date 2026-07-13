@@ -11,10 +11,10 @@
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-text-field v-model="item.password" label="Contraseña" type="password" hide-details @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.password" label="Contraseña" :type="showPassword ? 'text' : 'password'" hide-details @keyup.enter="save" :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showPassword = !showPassword" autocomplete="new-password" class="password-field"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="item.confirm_password" label="Confirme Contraseña" :error-messages="error.confirm_password" type="password" @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.confirm_password" label="Confirme Contraseña" :error-messages="error.confirm_password" :type="showConfirmPassword ? 'text' : 'password'" @keyup.enter="save" :append-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showConfirmPassword = !showConfirmPassword" autocomplete="new-password" class="password-field"></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -35,6 +35,8 @@ export default {
     return {
       item: {},
       error: {},
+      showPassword: false,
+      showConfirmPassword: false,
     }
   },
   computed: {
@@ -66,3 +68,19 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.password-field ::v-deep .v-input__control {
+  position: relative;
+}
+
+.password-field ::v-deep input {
+  padding-right: 40px !important;
+  letter-spacing: 0.1em;
+}
+
+.password-field ::v-deep .v-input__append-inner {
+  padding-right: 8px;
+  cursor: pointer;
+}
+</style>
