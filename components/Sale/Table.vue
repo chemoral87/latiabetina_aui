@@ -11,6 +11,20 @@
       <span>{{ formatDate(item.created_at) }}</span>
     </template>
 
+    <!-- Columna de método de pago -->
+    <template #[`item.payment_method`]="{ item }">
+      <v-chip small :color="paymentMethodColor(item.payment_method)" text-color="white" class="font-weight-medium">
+        {{ paymentMethodLabel(item.payment_method) }}
+      </v-chip>
+    </template>
+
+    <!-- Columna de estado -->
+    <template #[`item.status`]="{ item }">
+      <v-chip small :color="statusColor(item.status)" dark class="font-weight-medium">
+        {{ statusLabel(item.status) }}
+      </v-chip>
+    </template>
+
     <!-- Columna de acciones -->
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
@@ -20,6 +34,15 @@
           </v-btn>
         </template>
         <span>Ver detalle</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="warning" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editSale(item)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+        </template>
+        <span>Editar</span>
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -75,6 +98,20 @@ export default {
           value: 'customer_name',
         },
         {
+          text: 'Teléfono',
+          value: 'customer_phone',
+        },
+        {
+          text: 'Pago',
+          value: 'payment_method',
+          sortable: false,
+        },
+        {
+          text: 'Estado',
+          value: 'status',
+          sortable: false,
+        },
+        {
           text: 'Total',
           value: 'total',
           align: 'end',
@@ -88,7 +125,7 @@ export default {
           value: 'actions',
           sortable: false,
           align: 'center',
-          width: '140px',
+          width: '180px',
         },
       ],
       isFirstWatch: true,
@@ -160,8 +197,50 @@ export default {
       })
     },
 
+    paymentMethodLabel(method) {
+      const labels = {
+        cash: 'Efectivo',
+        card: 'Tarjeta',
+        transfer: 'Transferencia',
+      }
+      return labels[method] || method || '—'
+    },
+
+    paymentMethodColor(method) {
+      const colors = {
+        cash: 'success',
+        card: 'primary',
+        transfer: 'info',
+      }
+      return colors[method] || 'grey'
+    },
+
+    statusLabel(status) {
+      const labels = {
+        completed: 'Completada',
+        cancelled: 'Cancelada',
+        refunded: 'Reembolsada',
+        pending: 'Pendiente',
+      }
+      return labels[status] || status || '—'
+    },
+
+    statusColor(status) {
+      const colors = {
+        completed: 'success',
+        cancelled: 'error',
+        refunded: 'warning',
+        pending: 'orange',
+      }
+      return colors[status] || 'grey'
+    },
+
     viewDetail(item) {
       this.$emit('view', item)
+    },
+
+    editSale(item) {
+      this.$emit('edit', item)
     },
 
     deleteSale(item) {

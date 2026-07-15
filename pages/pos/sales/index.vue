@@ -18,7 +18,7 @@
       <!-- Tabla de ventas -->
       <v-col cols="12">
         <SaleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
-          @view="viewDetail" @delete="beforeDeleteSale" />
+          @view="viewDetail" @edit="editSale" @delete="beforeDeleteSale" />
       </v-col>
     </v-row>
 
@@ -143,6 +143,10 @@ export default {
 
     viewDetail(item) {
       this.$router.push(`/pos/sales/${item.id}`)
+    },
+
+    editSale(item) {
+      this.$router.push(`/pos/sales/${item.id}/edit`)
     },
 
     beforeDeleteSale(item) {

@@ -47,7 +47,7 @@
               <v-btn fab small depressed color="success" class="pos-qty-btn" @click="addToCart(product)">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
-              <v-btn fab x-small outlined color="error" class="pos-qty-btn-delete" @click="removeProduct(product)">
+              <v-btn fab x-small outlined color="error" class="ml-2 pos-qty-btn-delete" @click="removeProduct(product)">
                 <v-icon small>mdi-delete</v-icon>
               </v-btn>
             </div>
