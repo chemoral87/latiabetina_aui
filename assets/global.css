@@ -6,3 +6,11 @@
   background-color: white !important;
   padding: 0 4px !important;
 }
+
+/* Reducir padding horizontal de celdas en todas las tablas.
+   Se excluyen td con pa-1 (como la columna de edición) para preservar su padding más ajustado. */
+.v-data-table td:not(.pa-1),
+.v-data-table th {
+  padding-left: 7px !important;
+  padding-right: 7px !important;
+}

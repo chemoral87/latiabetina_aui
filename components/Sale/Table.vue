@@ -1,6 +1,18 @@
 <template>
   <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
-    :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1">
+    :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth1000">
+    <!-- Columna de edición (antes de Número) -->
+    <template #[`item.edit`]="{ item }">
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="primary" fab x-small v-bind="attrs" v-on="on" @click="editSale(item)">
+            <v-icon small>mdi-pencil</v-icon>
+          </v-btn>
+        </template>
+        <span>Editar</span>
+      </v-tooltip>
+    </template>
+
     <!-- Columna de total -->
     <template #[`item.total`]="{ item }">
       <span class="font-weight-medium">${{ Number(item.total).toLocaleString() }}</span>
@@ -36,14 +48,7 @@
         <span>Ver detalle</span>
       </v-tooltip>
 
-      <v-tooltip bottom>
-        <template #activator="{ on, attrs }">
-          <v-btn outlined color="warning" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editSale(item)">
-            <v-icon small>mdi-pencil</v-icon>
-          </v-btn>
-        </template>
-        <span>Editar</span>
-      </v-tooltip>
+
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
@@ -88,6 +93,14 @@ export default {
     return {
       optionsTable: {},
       headers: [
+        {
+          text: '',
+          value: 'edit',
+          sortable: false,
+          align: 'center',
+          width: '40px',
+
+        },
         {
           text: 'Número',
           align: 'start',
