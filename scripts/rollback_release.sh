@@ -7,6 +7,15 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+LOCKFILE="/tmp/latiabetina_aui_deployment.lock"
+
+# Acquire exclusive lock
+exec 200>"$LOCKFILE"
+if ! flock -n 200; then
+  echo -e "${RED}❌ Error: Another deployment or rollback is already in progress.${NC}"
+  exit 1
+fi
+
 APP_DIR="/var/www/admin"
 RELEASES_DIR="$APP_DIR/releases"
 CURRENT_LINK="$APP_DIR/current"

@@ -23,7 +23,7 @@
         <template v-if="mode === 'dates'">
           <v-date-picker v-model="selectedDates" multiple full-width locale="es" :disabled="loading"
             :events="eventDateArray" event-color="#fb8c00" :allowed-dates="isAllowedDate"
-            :picker-date.sync="initialPickerDate" />
+            :picker-date.sync="pickerDate" />
 
           <div v-if="selectedDates.length" class="mt-2">
             <v-chip v-for="date in sortedDates" :key="date" small class="mr-1 mb-1" close :disabled="loading"
@@ -95,6 +95,7 @@ export default {
 
   data() {
     const today = this.$moment().format('YYYY-MM-DD')
+    const initialMonth = this.churchEvent.event_date ? this.churchEvent.event_date.substring(0, 7) : this.$moment().format('YYYY-MM')
 
     return {
       mode: 'dates',
@@ -106,6 +107,7 @@ export default {
       },
       startDateMenu: false,
       endDateMenu: false,
+      pickerDate: initialMonth,
       weekDays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
     }
   },
@@ -125,10 +127,6 @@ export default {
       }
 
       return !!this.recurrence.start_date && !!this.recurrence.end_date && this.recurrence.days_of_week.length > 0
-    },
-
-    initialPickerDate() {
-      return this.churchEvent.event_date ? this.churchEvent.event_date.substring(0, 7) : this.$moment().format('YYYY-MM')
     },
   },
 
