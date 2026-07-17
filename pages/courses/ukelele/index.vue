@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-4" style="max-width: 900px">
+  <v-container class="pa-4">
     <h2 class="text-h5 mb-4">Curso de Ukelele</h2>
 
     <v-alert v-if="error" type="error" dense outlined class="mb-4">
@@ -83,12 +83,12 @@ export default {
 
         const folderOrder = this.parseOrder(this.$route.query.order)
 
-        if(folder) {
+        if (folder) {
           this.blocks = this.loadFromFolder(folder, day)
-        } else if(day) {
+        } else if (day) {
           this.blocks = this.loadByDay(day, folderOrder)
         }
-      } catch(err) {
+      } catch (err) {
         this.error = err.message || "No se pudo cargar el contenido."
       } finally {
         this.loading = false
@@ -96,22 +96,22 @@ export default {
     },
 
     parseDay(value) {
-      if(value === undefined || value === null || value === "") {
+      if (value === undefined || value === null || value === "") {
         return null
       }
       const day = parseInt(String(value), 10)
-      if(!Number.isFinite(day) || day < 1) {
+      if (!Number.isFinite(day) || day < 1) {
         throw new Error("El parámetro «day» debe ser un número mayor que 0.")
       }
       return day
     },
 
     parseFolder(value) {
-      if(!value) {
+      if (!value) {
         return null
       }
       const folder = String(value).toLowerCase().trim()
-      if(!FOLDERS.includes(folder)) {
+      if (!FOLDERS.includes(folder)) {
         const options = FOLDERS.map((name) => getFolderLabel(name)).join(", ")
         throw new Error(`Carpeta no válida. Usa: ${options}.`)
       }
@@ -128,19 +128,19 @@ export default {
 
       const folders = []
 
-      for(const code of codes) {
+      for (const code of codes) {
         const folder = FOLDER_CODES[code]
-        if(!folder) {
+        if (!folder) {
           throw new Error(`Código de orden no válido: «${code}». Usa P, TL o TR.`)
         }
-        if(!folders.includes(folder)) {
+        if (!folders.includes(folder)) {
           folders.push(folder)
         }
       }
 
-      for(const code of DEFAULT_ORDER_CODES) {
+      for (const code of DEFAULT_ORDER_CODES) {
         const folder = FOLDER_CODES[code]
-        if(!folders.includes(folder)) {
+        if (!folders.includes(folder)) {
           folders.push(folder)
         }
       }
@@ -152,16 +152,16 @@ export default {
       const fileName = `day${day}.vue`
       const blocks = []
 
-      for(const folder of folderOrder) {
+      for (const folder of folderOrder) {
         const ctx = folderContexts[folder]
         const key = `./${fileName}`
-        if(!ctx.keys().includes(key)) {
+        if (!ctx.keys().includes(key)) {
           continue
         }
         blocks.push(this.makeBlock(folder, key, ctx))
       }
 
-      if(!blocks.length) {
+      if (!blocks.length) {
         throw new Error(`No hay lecciones para el día ${day}.`)
       }
 
@@ -172,10 +172,10 @@ export default {
       const ctx = folderContexts[folder]
       let keys = ctx.keys().sort()
 
-      if(day) {
+      if (day) {
         const target = `./day${day}.vue`
         keys = keys.filter((key) => key === target)
-        if(!keys.length) {
+        if (!keys.length) {
           throw new Error(`No existe day${day}.vue en «${getFolderLabel(folder)}».`)
         }
       }

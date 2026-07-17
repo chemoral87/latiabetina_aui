@@ -2,29 +2,19 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <ProductForm
-          :product="product"
-          :loading="saving"
-          permission="product-insert"
-          title="Nuevo Producto"
-          icon="mdi-package-variant"
-          @save="saveProduct"
-          @close="goBack"
-        />
+        <ProductForm :product="product" :loading="saving" permission="product-insert" title="Nuevo Producto"
+          icon="mdi-package-variant" @save="saveProduct" @close="goBack" />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import ProductForm from '@/components/Product/Form.vue'
 
 export default {
   middleware: ['authenticated', 'permission'],
   meta: { permission: 'product-insert' },
-  components: {
-    ProductForm,
-  },
+
   data() {
     return {
       saving: false,
@@ -47,12 +37,12 @@ export default {
     eventBus.$emit('setNavBar', {
       title: 'Nuevo Producto',
       icon: 'mdi-package-variant',
-      back: '/pos/products',
+      back: '/pos/product',
     })
   },
   methods: {
     goBack() {
-      this.$router.push('/pos/products')
+      this.$router.push('/pos/product')
     },
     async saveProduct(payload) {
       try {
@@ -60,8 +50,13 @@ export default {
         if (payload.org_id && typeof payload.org_id === 'object') {
           payload.org_id = payload.org_id.id
         }
-        await this.$repository.Product.create(payload)
-        this.$router.push('/pos/products')
+        const created = await this.$repository.Product.create(payload)
+        // Update store with the new product
+        const product = created?.data || created
+        if (product) {
+          this.$store.commit('products/ADD_PRODUCT', product)
+        }
+        this.$router.push('/pos/product')
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)

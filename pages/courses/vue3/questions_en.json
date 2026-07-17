@@ -1,0 +1,4862 @@
+[
+  {
+    "question": "What is Vue 3?",
+    "answers": [
+      {
+        "text": "A progressive JavaScript framework built with TypeScript",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A Python web framework",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS framework",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A database system",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-1"
+  },
+  {
+    "question": "How do you create a Vue 3 application?",
+    "answers": [
+      {
+        "text": "Using createApp() instead of new Vue()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using new Vue()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using Vue.create()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using Vue.start()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-2"
+  },
+  {
+    "question": "What is the Composition API in Vue 3?",
+    "answers": [
+      {
+        "text": "A new way to organize component logic using setup() and composables",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "The old Options API renamed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS composition tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A state management library",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-3"
+  },
+  {
+    "question": "What does the ref() function do in Vue 3?",
+    "answers": [
+      {
+        "text": "Creates a reactive reference to a value",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Creates a reference to a DOM element",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "References another component",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates a computed reference",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-4"
+  },
+  {
+    "question": "How do you access the value of a ref in the script?",
+    "answers": [
+      {
+        "text": "Using .value property",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Directly as a variable",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using $ref",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using this.ref",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-5"
+  },
+  {
+    "question": "What does reactive() do in Vue 3?",
+    "answers": [
+      {
+        "text": "Makes an object deeply reactive",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Makes a primitive value reactive",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Reacts to API calls",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates reactive CSS",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-6"
+  },
+  {
+    "question": "What is the difference between ref and reactive?",
+    "answers": [
+      {
+        "text": "ref wraps primitives and objects with .value; reactive only works with objects",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "ref is for objects; reactive is for primitives",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "They are identical",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "reactive is deprecated in Vue 3",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-7"
+  },
+  {
+    "question": "What is the setup() function?",
+    "answers": [
+      {
+        "text": "The entry point for Composition API where reactive state is declared",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A lifecycle hook that runs after mount",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A configuration function",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A function for setting props",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-8"
+  },
+  {
+    "question": "How does v-model work in Vue 3?",
+    "answers": [
+      {
+        "text": "v-model uses :modelValue and @update:modelValue by default",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "v-model uses :value and @input as in Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "v-model was removed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "v-model uses v-bind and v-on",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-9"
+  },
+  {
+    "question": "What is Teleport in Vue 3?",
+    "answers": [
+      {
+        "text": "A built-in component that renders content to a different DOM node",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A way to send data between components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS positioning technique",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A routing feature",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-10"
+  },
+  {
+    "question": "What is a Fragment in Vue 3?",
+    "answers": [
+      {
+        "text": "Components can have multiple root nodes, no wrapping required",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A new component type",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A lifecycle hook",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A performance optimization",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-11"
+  },
+  {
+    "question": "What is onMounted in Vue 3?",
+    "answers": [
+      {
+        "text": "A lifecycle hook registered inside setup() equivalent to mounted",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS pseudo-class",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A DOM event listener",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A computed property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-12"
+  },
+  {
+    "question": "How do you define a computed property in Composition API?",
+    "answers": [
+      {
+        "text": "Using the computed() function inside setup()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using the computed option",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using computed: {} syntax",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using defineComputed()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-13"
+  },
+  {
+    "question": "How do you watch a reactive value in Vue 3?",
+    "answers": [
+      {
+        "text": "Using the watch() function",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using the watch option",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using observe()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using track()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-14"
+  },
+  {
+    "question": "What is script setup in Vue 3?",
+    "answers": [
+      {
+        "text": "A syntax sugar for Composition API with less boilerplate",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A way to set up scripts",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A testing utility",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A plugin configuration",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-15"
+  },
+  {
+    "question": "How do you define props in script setup?",
+    "answers": [
+      {
+        "text": "Using defineProps()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using props: {}",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using defineEmits()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using reactive()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-16"
+  },
+  {
+    "question": "How do you emit events in script setup?",
+    "answers": [
+      {
+        "text": "Using defineEmits()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using $emit",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using emit()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using trigger()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-17"
+  },
+  {
+    "question": "What is the Suspense component in Vue 3?",
+    "answers": [
+      {
+        "text": "A built-in component for handling async dependencies in the template",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A component for lazy loading",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A loading spinner",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A state management tool",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-18"
+  },
+  {
+    "question": "What is the new provide/inject in Vue 3?",
+    "answers": [
+      {
+        "text": "provide/inject works with Composition API using provide() and inject()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "provide/inject was removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "provide/inject only works with Options API",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "provide/inject is now synchronous",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-19"
+  },
+  {
+    "question": "How does the Composition API replace mixins?",
+    "answers": [
+      {
+        "text": "Using composable functions (custom hooks) for reusable logic",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Mixins are still the only way",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using class inheritance",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using higher-order components",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-20"
+  },
+  {
+    "question": "How do you define emits in Options API Vue 3?",
+    "answers": [
+      {
+        "text": "Using the emits option array or object",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Emits are defined automatically",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using emit property",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using events option",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-21"
+  },
+  {
+    "question": "What is the defineComponent function?",
+    "answers": [
+      {
+        "text": "A helper for type inference when defining components",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A required function for all components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A component registration utility",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A runtime component factory",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-22"
+  },
+  {
+    "question": "How do you bind multiple values with v-model in Vue 3?",
+    "answers": [
+      {
+        "text": "Using multiple v-model directives like v-model:name, v-model:email",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using v-model with an object",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Multiple v-model is not supported",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using v-bind.sync",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-23"
+  },
+  {
+    "question": "What is the onUnmounted lifecycle hook?",
+    "answers": [
+      {
+        "text": "The Composition API equivalent of destroyed/beforeDestroy",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A hook for unmounting components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS animation hook",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A routing hook",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-24"
+  },
+  {
+    "question": "How do you create a template ref in Vue 3 Composition API?",
+    "answers": [
+      {
+        "text": "Declare a ref with the same name as the template ref attribute",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using this.$refs",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using document.getElementById",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using ref() with a string argument",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-25"
+  },
+  {
+    "question": "What is nextTick in Vue 3?",
+    "answers": [
+      {
+        "text": "A function that waits for the next DOM update cycle",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A timer utility",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A lifecycle hook",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A computed property helper",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-26"
+  },
+  {
+    "question": "How do you import nextTick in Vue 3?",
+    "answers": [
+      {
+        "text": "import { nextTick } from 'vue'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "nextTick is global",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "import nextTick from 'vue'",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Vue.nextTick() only",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-27"
+  },
+  {
+    "question": "What is the new v-model modifier for Vue 3?",
+    "answers": [
+      {
+        "text": ".number, .trim, and .lazy work the same as Vue 2",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": ".number was removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "All modifiers are new",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Modifiers no longer exist",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-28"
+  },
+  {
+    "question": "Can you use both Options API and Composition API in the same component?",
+    "answers": [
+      {
+        "text": "Yes, Vue 3 supports both APIs in the same component",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No, you must choose one",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Only in development mode",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Only with TypeScript",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-29"
+  },
+  {
+    "question": "What is the new event API in Vue 3?",
+    "answers": [
+      {
+        "text": "$on, $once, $off were removed; use external libraries or provide/inject",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "$on is still available",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A new $listen method was added",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Events use addEventListener now",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-30"
+  },
+  {
+    "question": "How do you create a global component in Vue 3?",
+    "answers": [
+      {
+        "text": "Using app.component('name', Component)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using Vue.component('name', Component)",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using components: {} in root",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using registerComponent()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-31"
+  },
+  {
+    "question": "How do you create a Vue 3 plugin?",
+    "answers": [
+      {
+        "text": "An object with install(app) method",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "An object with install(Vue) method",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A function that returns a Vue instance",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A class extending VuePlugin",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-32"
+  },
+  {
+    "question": "What is app.config.globalProperties?",
+    "answers": [
+      {
+        "text": "Global properties available to all components in the app",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Global CSS properties",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A configuration file",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Environment variables",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-33"
+  },
+  {
+    "question": "What is the new CSS v-bind() in Vue 3?",
+    "answers": [
+      {
+        "text": "A way to bind reactive values to CSS properties",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS framework",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS preprocessor",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A new directive for styling",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-34"
+  },
+  {
+    "question": "How does the key attribute work in Vue 3 transitions?",
+    "answers": [
+      {
+        "text": "Same as Vue 2; required for transition-group for element tracking",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Key was removed from transitions",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Key is automatic in Vue 3",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Key is optional",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-35"
+  },
+  {
+    "question": "What is the style scoped behavior change in Vue 3?",
+    "answers": [
+      {
+        "text": "Scoped styles use a different hash algorithm but work similarly",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Scoped styles were removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Scoped now uses Shadow DOM",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Scoped only works with CSS variables",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-36"
+  },
+  {
+    "question": "How do you use render functions in Vue 3?",
+    "answers": [
+      {
+        "text": "Using the h() function imported from 'vue'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using createElement()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using render: {}",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using Vue.compile()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-37"
+  },
+  {
+    "question": "What is the v-once directive in Vue 3?",
+    "answers": [
+      {
+        "text": "Same as Vue 2; renders content only once",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Removed in Vue 3",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Renamed to v-single",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Now requires a value",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-38"
+  },
+  {
+    "question": "What is the v-memo directive in Vue 3?",
+    "answers": [
+      {
+        "text": "A new directive for memoizing parts of templates",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Renamed from v-once",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A memory cache directive",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A directive for memoizing functions",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-39"
+  },
+  {
+    "question": "How do you handle slot content in Vue 3 Composition API?",
+    "answers": [
+      {
+        "text": "Using useSlots() and useAttrs()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using this.$slots",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using slots property",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using context.slots",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-40"
+  },
+  {
+    "question": "What is Vue 3?",
+    "answers": [
+      {
+        "text": "The latest major version of Vue.js with Composition API",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS framework",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A backend framework",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A database tool",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-41"
+  },
+  {
+    "question": "What is setup() in Vue 3?",
+    "answers": [
+      {
+        "text": "The new component option that replaces data, computed, and methods",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A lifecycle hook for initialization",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A method for setting up routes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A function to configure plugins",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-42"
+  },
+  {
+    "question": "How do you create a reactive property in Vue 3?",
+    "answers": [
+      {
+        "text": "Using ref() or reactive() from the Composition API",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using new Reactive()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using Vue.reactive()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using createReactive()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-43"
+  },
+  {
+    "question": "What is the ref() function in Vue 3?",
+    "answers": [
+      {
+        "text": "Creates a reactive reference to a value",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "References a DOM element",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Calls an external API",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates a computed property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-44"
+  },
+  {
+    "question": "What is reactive() in Vue 3?",
+    "answers": [
+      {
+        "text": "Makes an object deeply reactive",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Creates a reactive string",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Makes a function reactive",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates a reactive component",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-45"
+  },
+  {
+    "question": "What is the Composition API in Vue 3?",
+    "answers": [
+      {
+        "text": "A new way to organize component logic using functions instead of options",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS composition library",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A function composition tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A new templating engine",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-46"
+  },
+  {
+    "question": "What is createApp() in Vue 3?",
+    "answers": [
+      {
+        "text": "The new way to create a Vue application instance",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Creates a new component",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Creates a new route",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates a new plugin",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-47"
+  },
+  {
+    "question": "How do you define a computed property in Vue 3 Composition API?",
+    "answers": [
+      {
+        "text": "Using the computed() function imported from Vue",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using new Computed()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using Vue.computed()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using computed: {}",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-48"
+  },
+  {
+    "question": "What is teleport in Vue 3?",
+    "answers": [
+      {
+        "text": "A component that renders its content to a different DOM location",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function to send data between components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A network communication tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A CSS transform property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-49"
+  },
+  {
+    "question": "What is the <Suspense> component in Vue 3?",
+    "answers": [
+      {
+        "text": "Handles asynchronous dependencies in the component tree",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A loading spinner component",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A suspenseful animation",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A data fetching library",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-50"
+  },
+  {
+    "question": "What is toRef in Vue 3?",
+    "answers": [
+      {
+        "text": "Creates a ref for a property on a reactive object",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Converts a ref to a reactive object",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Creates a reference to a component",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A function for type conversion",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-51"
+  },
+  {
+    "question": "What is toRefs in Vue 3?",
+    "answers": [
+      {
+        "text": "Converts a reactive object to a plain object with each property as a ref",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Converts refs to reactive object",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Creates multiple refs",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A CSS transformation utility",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-52"
+  },
+  {
+    "question": "What is watchEffect in Vue 3?",
+    "answers": [
+      {
+        "text": "A function that automatically tracks reactive dependencies and re-runs on changes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A more powerful version of watch",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "An effect that watches CSS",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A side effect manager",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-53"
+  },
+  {
+    "question": "What is the difference between watch and watchEffect?",
+    "answers": [
+      {
+        "text": "watch watches specific sources; watchEffect auto-tracks dependencies",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "watch is async; watchEffect is sync",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "watch is for refs; watchEffect is for reactive",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "They are the same",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-54"
+  },
+  {
+    "question": "What is shallowRef in Vue 3?",
+    "answers": [
+      {
+        "text": "A ref that only tracks .value changes, not deep reactivity",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A ref that is not reactive",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A shallow reactive object",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A computed that doesn't cache",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-55"
+  },
+  {
+    "question": "What is shallowReactive in Vue 3?",
+    "answers": [
+      {
+        "text": "A reactive object that only tracks top-level property changes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A reactive object with no depth",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A non-reactive wrapper",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A computed reactive property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-56"
+  },
+  {
+    "question": "What is triggerRef in Vue 3?",
+    "answers": [
+      {
+        "text": "Manually triggers effects associated with a shallowRef",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Triggers a DOM event",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Triggers a watcher",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Triggers a component update",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-57"
+  },
+  {
+    "question": "What is customRef in Vue 3?",
+    "answers": [
+      {
+        "text": "Creates a ref with custom track and trigger behavior",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A custom reactive reference",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A custom component ref",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A ref for custom elements",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-58"
+  },
+  {
+    "question": "What is readonly in Vue 3?",
+    "answers": [
+      {
+        "text": "Makes a reactive object or ref read-only",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS property",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A computed that is read-only",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A TypeScript utility",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-59"
+  },
+  {
+    "question": "What is shallowReadonly in Vue 3?",
+    "answers": [
+      {
+        "text": "A shallow read-only reactive wrapper",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A read-only that is not reactive",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A type of computed property",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A CSS utility",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-60"
+  },
+  {
+    "question": "What is isRef in Vue 3?",
+    "answers": [
+      {
+        "text": "A utility to check if a value is a ref",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function that checks if a ref exists",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A method to check ref type",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A validator for refs",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-61"
+  },
+  {
+    "question": "What is isReactive in Vue 3?",
+    "answers": [
+      {
+        "text": "A utility to check if an object is reactive",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function that checks component reactivity",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A method to check data binding",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A validator for reactive data",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-62"
+  },
+  {
+    "question": "What is the new reactivity system in Vue 3?",
+    "answers": [
+      {
+        "text": "Uses JavaScript Proxy for more complete reactivity",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Uses Object.defineProperty like Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Uses Web Workers",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Uses Service Workers",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-63"
+  },
+  {
+    "question": "What advantage does Vue 3 Proxy-based reactivity have?",
+    "answers": [
+      {
+        "text": "Detects new properties, array index changes, and more",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "It's slower but more accurate",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "It uses less memory",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "It works without JavaScript",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-64"
+  },
+  {
+    "question": "How do you watch multiple sources in Vue 3?",
+    "answers": [
+      {
+        "text": "Pass an array to watch: watch([ref1, ref2], callback)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Create multiple watch calls",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Use watchAll()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Use watchEffect for multiple",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-65"
+  },
+  {
+    "question": "What is the onBeforeMount hook in Vue 3?",
+    "answers": [
+      {
+        "text": "Called before the component is mounted to the DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called before data is initialized",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called before each update",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called before the app starts",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-66"
+  },
+  {
+    "question": "What is the onBeforeUpdate hook?",
+    "answers": [
+      {
+        "text": "Called before the DOM is updated due to reactive changes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called before the component is created",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called before props are set",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called before the component unmounts",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-67"
+  },
+  {
+    "question": "What is the onUpdated hook?",
+    "answers": [
+      {
+        "text": "Called after the DOM has been updated",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called after data changes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called after the component mounts",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called after errors are captured",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-68"
+  },
+  {
+    "question": "What is the onActivated hook in Vue 3?",
+    "answers": [
+      {
+        "text": "Called when a kept-alive component is activated",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called when the component is created",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called when the component is mounted",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called when the route changes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-69"
+  },
+  {
+    "question": "What is the onDeactivated hook?",
+    "answers": [
+      {
+        "text": "Called when a kept-alive component is deactivated",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called before the component unmounts",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called when the component is destroyed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called when the component is disabled",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-70"
+  },
+  {
+    "question": "What is the onErrorCaptured hook?",
+    "answers": [
+      {
+        "text": "Called when an error is propagated from a descendant component",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called when capturing a screenshot",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called for console errors",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called for network errors",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-71"
+  },
+  {
+    "question": "What is the onRenderTracked hook in Vue 3?",
+    "answers": [
+      {
+        "text": "Called when a reactive dependency is tracked during component render",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called during render optimization",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called for performance tracking",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called for tracking component usage",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-72"
+  },
+  {
+    "question": "What is the onRenderTriggered hook?",
+    "answers": [
+      {
+        "text": "Called when a reactive change triggers a component re-render",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Called for triggering animations",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Called to trigger event handlers",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Called to trigger DOM updates",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-73"
+  },
+  {
+    "question": "What is defineAsyncComponent in Vue 3?",
+    "answers": [
+      {
+        "text": "A utility for defining async components with options",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function for async data fetching",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A replacement for Vue.lazy()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A dynamic import syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-74"
+  },
+  {
+    "question": "How do you create an async component in Vue 3?",
+    "answers": [
+      {
+        "text": "Using defineAsyncComponent(() => import('./Comp.vue'))",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using Vue.lazy()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using async keyword on component",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using new Promise() in setup",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-75"
+  },
+  {
+    "question": "What is the Transition component in Vue 3?",
+    "answers": [
+      {
+        "text": "Similar to Vue 2 but with new transition class names",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Removed in Vue 3",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Now only works with CSS animations",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Renamed to VueTransition",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-76"
+  },
+  {
+    "question": "What is the TransitionGroup component?",
+    "answers": [
+      {
+        "text": "For animating lists with transitions",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "For grouping transitions",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "For animating groups of elements",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A CSS animation library",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-77"
+  },
+  {
+    "question": "What are the new transition class names in Vue 3?",
+    "answers": [
+      {
+        "text": "v-enter-from, v-leave-from instead of v-enter, v-leave",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "enter-class, leave-class",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "from-enter, to-leave",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-78"
+  },
+  {
+    "question": "What is the v-bind in CSS feature?",
+    "answers": [
+      {
+        "text": "Bind reactive state directly to CSS values",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A new directive for inline styles",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS preprocessor feature",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A way to bind CSS classes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-79"
+  },
+  {
+    "question": "What is the new App instance structure in Vue 3?",
+    "answers": [
+      {
+        "text": "createApp() returns an app instance with .mount(), .component(), etc.",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Same as Vue 2 with new Vue()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue.createApp() returns a Vue instance",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "App instances are not used in Vue 3",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-80"
+  },
+  {
+    "question": "How do you mount a Vue 3 app?",
+    "answers": [
+      {
+        "text": "app.mount('#app')",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "new Vue({ el: '#app' })",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue.mount('#app')",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "mount(app, '#app')",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-81"
+  },
+  {
+    "question": "How do you add a global mixin in Vue 3?",
+    "answers": [
+      {
+        "text": "Using app.mixin()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using Vue.mixin()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using mixin() function",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using globalMixins option",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-82"
+  },
+  {
+    "question": "How do you use a directive globally in Vue 3?",
+    "answers": [
+      {
+        "text": "Using app.directive()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using Vue.directive()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using directive()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using registerDirective()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-83"
+  },
+  {
+    "question": "What is unref in Vue 3?",
+    "answers": [
+      {
+        "text": "Returns the raw value if given a ref, otherwise returns the value itself",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Removes a ref from memory",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Converts a ref to a reactive object",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Deletes a ref property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-84"
+  },
+  {
+    "question": "What is toValue in Vue 3.3+?",
+    "answers": [
+      {
+        "text": "Similar to unref but also unwraps getters",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Converts a value to reactive",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Returns a snapshot of a ref",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A type conversion utility",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-85"
+  },
+  {
+    "question": "What is the effectScope API in Vue 3?",
+    "answers": [
+      {
+        "text": "An API to manage effect lifetimes for better cleanup",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A scoped effects system",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS scope utility",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A computed effect helper",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-86"
+  },
+  {
+    "question": "What is getCurrentInstance in Vue 3?",
+    "answers": [
+      {
+        "text": "Returns the current component instance for advanced use cases",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A way to create new instances",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Returns the app instance",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A factory function",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-87"
+  },
+  {
+    "question": "What is the new v-if/v-for priority in Vue 3?",
+    "answers": [
+      {
+        "text": "v-if has higher priority than v-for",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "v-for has higher priority than v-if",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "They have the same priority",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "They cannot be used together",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-88"
+  },
+  {
+    "question": "How do you access slots in script setup?",
+    "answers": [
+      {
+        "text": "Using useSlots() composable",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using context.slots",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using this.$slots",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using slots property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-89"
+  },
+  {
+    "question": "How do you access attrs in script setup?",
+    "answers": [
+      {
+        "text": "Using useAttrs() composable",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using context.attrs",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using this.$attrs",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using attrs property",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-90"
+  },
+  {
+    "question": "What is the $attr behavior change in Vue 3?",
+    "answers": [
+      {
+        "text": "All attributes pass through to root element by default",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Attributes are no longer inherited",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "$attrs includes class and style",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "$attrs was removed",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-91"
+  },
+  {
+    "question": "What is defineExpose in Vue 3?",
+    "answers": [
+      {
+        "text": "Exposes properties and methods from script setup to parent via template refs",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Exposes component errors",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Exposes reactive state to debug",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Exposes CSS variables",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-92"
+  },
+  {
+    "question": "What is defineOptions in Vue 3.3+?",
+    "answers": [
+      {
+        "text": "Define component options like name, inheritAttrs in script setup",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Define routing options",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Define store options",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Define build options",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-93"
+  },
+  {
+    "question": "What is defineModel in Vue 3.4+?",
+    "answers": [
+      {
+        "text": "A macro for declaring two-way binding props with v-model",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A model definition for Vuex",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A model for TypeScript types",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A data model for forms",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-94"
+  },
+  {
+    "question": "What is the new router in Vue 3?",
+    "answers": [
+      {
+        "text": "Vue Router 4 with createRouter() and history mode",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Same as Vue Router 3",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue Router was removed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Integrated into core",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-95"
+  },
+  {
+    "question": "How do you create a Vue Router 4 instance?",
+    "answers": [
+      {
+        "text": "createRouter({ history: createWebHistory(), routes })",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "new VueRouter({ routes })",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue.createRouter({ routes })",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Router.create({ routes })",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-96"
+  },
+  {
+    "question": "What is Vuex 4 in Vue 3?",
+    "answers": [
+      {
+        "text": "Vuex 4 works with Vue 3 with createStore()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Vuex 4 is the same as Vuex 3",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vuex was replaced by Pinia",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Vuex 4 only works with Options API",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-97"
+  },
+  {
+    "question": "What is Pinia?",
+    "answers": [
+      {
+        "text": "The recommended state management for Vue 3 with full TypeScript support",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A CSS framework",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A testing tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A build tool",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-98"
+  },
+  {
+    "question": "How do you create a Pinia store?",
+    "answers": [
+      {
+        "text": "Using defineStore() or defineStore() with setup syntax",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using createStore()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using new Pinia.Store()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using Vuex.createStore()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-99"
+  },
+  {
+    "question": "What is the Composition API store syntax in Pinia?",
+    "answers": [
+      {
+        "text": "A setup function with ref, computed, and methods returning state and actions",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "An object with state, getters, and actions",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A class extending PiniaStore",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A function that returns a reactive object",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-100"
+  },
+  {
+    "question": "What are generic components in Vue 3.3+?",
+    "answers": [
+      {
+        "text": "Components with type parameters for better TypeScript inference",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Generic reusable components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Components for multiple purposes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Generic Vue plugins",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-101"
+  },
+  {
+    "question": "How does Vue 3 handle render functions differently?",
+    "answers": [
+      {
+        "text": "Render functions use the h() function from 'vue' and are globally available",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Render functions were removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Render functions use createElement",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Render functions are only for JSX",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-102"
+  },
+  {
+    "question": "What is the VNode structure change in Vue 3?",
+    "answers": [
+      {
+        "text": "VNodes are more lightweight with flat props structure",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "VNodes are the same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "VNodes were replaced by strings",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "VNodes use XML format",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-103"
+  },
+  {
+    "question": "How does Vue 3 optimize static content?",
+    "answers": [
+      {
+        "text": "Static content is hoisted and reused across renders",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Static content is re-rendered every time",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Static content is not optimized",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Static content uses caching only",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-104"
+  },
+  {
+    "question": "What is static tree hoisting in Vue 3?",
+    "answers": [
+      {
+        "text": "Hoisting static VNodes outside the render function",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A tree optimization algorithm",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS hoisting technique",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A build optimization",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-105"
+  },
+  {
+    "question": "What is patch flag optimization in Vue 3?",
+    "answers": [
+      {
+        "text": "Compiler adds flags to VNodes to skip unnecessary diffing",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A flag system for patches",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A debugging tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A version control system",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-106"
+  },
+  {
+    "question": "What are dynamic nodes in Vue 3 compiler?",
+    "answers": [
+      {
+        "text": "Nodes that are marked as dynamic for targeted updates",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Asynchronously loaded nodes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Nodes with dynamic content",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "JavaScript dynamic imports",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-107"
+  },
+  {
+    "question": "What is the new v-if/v-for compiler optimization?",
+    "answers": [
+      {
+        "text": "The compiler now handles v-if and v-for more efficiently",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No optimization changes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "v-if/v-for are now deprecated",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Use v-show instead of v-if",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-108"
+  },
+  {
+    "question": "What is the Suspense component lifecycle?",
+    "answers": [
+      {
+        "text": "Suspense shows fallback until all async dependencies in its default slot are resolved",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Suspense shows a loading state forever",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Suspense only works with lazy components",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Suspense is experimental in Vue 3",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-109"
+  },
+  {
+    "question": "How does Suspense handle multiple async components?",
+    "answers": [
+      {
+        "text": "Waits for all nested async components and dependencies to resolve",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Renders them one by one",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Only the first async component triggers suspense",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Suspense only works with one async component",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-110"
+  },
+  {
+    "question": "What is the onServerPrefetch hook?",
+    "answers": [
+      {
+        "text": "A hook for fetching data during server-side rendering",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A hook for pre-fetching on the client",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A hook for cache prefetching",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A hook for network prefetching",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-111"
+  },
+  {
+    "question": "How does Vue 3 handle SSR differently?",
+    "answers": [
+      {
+        "text": "Uses @vue/server-renderer with pipeToNodeWritable for streaming",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Same as Vue 2 SSR",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "SSR was removed in Vue 3",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "SSR only works with Nuxt",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-112"
+  },
+  {
+    "question": "What is the createSSRApp function?",
+    "answers": [
+      {
+        "text": "Creates an app for server-side rendering with hydration",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Creates a secure app",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Creates an SSR-only component",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Creates a SSR plugin",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-113"
+  },
+  {
+    "question": "What is the useSSRContext composable?",
+    "answers": [
+      {
+        "text": "Accesses the SSR context for providing request-specific data",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A composable for SSR configuration",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A hook for SSR testing",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "An SSR state utility",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-114"
+  },
+  {
+    "question": "How does Vue 3 TypeScript integration improve?",
+    "answers": [
+      {
+        "text": "Vue 3 was written in TypeScript with full type inference",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "TypeScript support is the same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue 3 does not support TypeScript",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "TypeScript requires additional plugins",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-115"
+  },
+  {
+    "question": "What is the PropType utility in Vue 3?",
+    "answers": [
+      {
+        "text": "A utility for typing complex prop types in Options API",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A prop validation library",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A TypeScript decorator",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A runtime prop type checker",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-116"
+  },
+  {
+    "question": "How do you type emits in Vue 3?",
+    "answers": [
+      {
+        "text": "Emits can be typed with object syntax or TypeScript generics",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Emits cannot be typed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Emits use PropTypes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Emits are automatically typed",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-117"
+  },
+  {
+    "question": "What is the Composition API with TypeScript advantage?",
+    "answers": [
+      {
+        "text": "Better type inference with ref, reactive, and computed generics",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No advantage over JavaScript",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "TypeScript only works with Options API",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Composition API is slower with TypeScript",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-118"
+  },
+  {
+    "question": "What is the new custom renderer API?",
+    "answers": [
+      {
+        "text": "createRenderer() for creating custom renderers for different platforms",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A rendering library",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A CSS renderer",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A server-side renderer",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-119"
+  },
+  {
+    "question": "How do you create a custom renderer in Vue 3?",
+    "answers": [
+      {
+        "text": "Using createRenderer() with node operations",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Extending the Vue renderer class",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using Vue.extend()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using a webpack plugin",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-120"
+  },
+  {
+    "question": "What is the effectScope for memory management?",
+    "answers": [
+      {
+        "text": "Groups effects together for easier cleanup and disposal",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A scope for CSS effects",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A performance monitoring tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A side effect manager",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-121"
+  },
+  {
+    "question": "How do you create an effect scope?",
+    "answers": [
+      {
+        "text": "Using effectScope() and scope.run()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using createEffectScope()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using new EffectScope()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using scope()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-122"
+  },
+  {
+    "question": "What is the markRaw function in Vue 3?",
+    "answers": [
+      {
+        "text": "Marks an object so it is never converted to a reactive proxy",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Marks an object for raw HTML output",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Marks an object as dirty for re-rendering",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Marks an object for garbage collection",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-123"
+  },
+  {
+    "question": "What is toRaw in Vue 3?",
+    "answers": [
+      {
+        "text": "Returns the original object from a reactive proxy",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Converts an object to raw data",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A type conversion utility",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "An object serialization function",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-124"
+  },
+  {
+    "question": "What is the new Teleport behavior for modals?",
+    "answers": [
+      {
+        "text": "Teleport can be used to render modals outside the component tree",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Teleport is only for CSS positioning",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Teleport is not suitable for modals",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Teleport replaces Portal from React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-125"
+  },
+  {
+    "question": "How does the Teleport component work with the DOM?",
+    "answers": [
+      {
+        "text": "Teleport renders content to a target DOM element specified by the 'to' prop",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Teleport teleports content to another dimension",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Teleport is a CSS transform",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Teleport is used for animations",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-126"
+  },
+  {
+    "question": "What is the v-html directive security concern in Vue 3?",
+    "answers": [
+      {
+        "text": "Same as Vue 2; can cause XSS if used with unsanitized user input",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "v-html is safe in Vue 3",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "v-html was removed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "v-html auto-escapes HTML",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-127"
+  },
+  {
+    "question": "What is the new Functional Component behavior in Vue 3?",
+    "answers": [
+      {
+        "text": "Functional components must use a function syntax with setup",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Functional components were removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Functional components are the default",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Functional components use the options API",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-128"
+  },
+  {
+    "question": "How do you define a functional component in Vue 3?",
+    "answers": [
+      {
+        "text": "A function receiving props and context, returning VNodes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Using functional: true option",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Using Vue.functional()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Using defineFunctionalComponent()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-129"
+  },
+  {
+    "question": "What is the async component loading behavior change?",
+    "answers": [
+      {
+        "text": "defineAsyncComponent provides more control over error and loading states",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Async components work the same",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Async components are not supported",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Async components load synchronously",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-130"
+  },
+  {
+    "question": "What is the hydration mismatch handling in Vue 3 SSR?",
+    "answers": [
+      {
+        "text": "Vue 3 handles hydration mismatches more gracefully with warnings",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Hydration mismatches break the app",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Hydration is automatic with no checks",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Hydration only works in development",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-131"
+  },
+  {
+    "question": "What is the v-memo directive for performance?",
+    "answers": [
+      {
+        "text": "Memoizes a template fragment based on dependencies",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Memoizes entire components",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Memoizes computed values in templates",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A memoization cache for async data",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-132"
+  },
+  {
+    "question": "What is the new tree-shaking support in Vue 3?",
+    "answers": [
+      {
+        "text": "Unused Vue features are tree-shaken; core is ~10KB gzipped",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Tree-shaking is the same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Vue 3 cannot be tree-shaken",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Tree-shaking only works with ES modules",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-133"
+  },
+  {
+    "question": "What APIs are not tree-shakable in Vue 3?",
+    "answers": [
+      {
+        "text": "All APIs are tree-shakable; unused features are removed from the bundle",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Lifecycle hooks are not tree-shakable",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Directives are not tree-shakable",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Transitions are not tree-shakable",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-134"
+  },
+  {
+    "question": "How does the new slot compilation differ in Vue 3?",
+    "answers": [
+      {
+        "text": "Slots are compiled into functions for better performance",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Slots are the same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Slots are compiled at runtime",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Slots are not optimized",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-135"
+  },
+  {
+    "question": "What is the scope slot change in Vue 3?",
+    "answers": [
+      {
+        "text": "Scoped slots and normal slots are unified; v-slot is the only syntax",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Scoped slots were removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "slot-scope is the main syntax",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Scoped slots use different syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-136"
+  },
+  {
+    "question": "What is the $scopedSlots change in Vue 3?",
+    "answers": [
+      {
+        "text": "$scopedSlots is merged with $slots; both are functions",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "$scopedSlots was removed",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "$scopedSlots is the same",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "$scopedSlots uses different syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-137"
+  },
+  {
+    "question": "How do you use JSX in Vue 3?",
+    "answers": [
+      {
+        "text": "Using @vue/babel-plugin-jsx for JSX support",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "JSX is built-in",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "JSX is not supported",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "JSX only works with TypeScript",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-138"
+  },
+  {
+    "question": "What is the Vue 3 event listener change?",
+    "answers": [
+      {
+        "text": "Event listeners are now a simple function call, no modifier parsing needed",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Event listeners work the same",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Event listeners use addEventListener",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Event listeners are deprecated",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-139"
+  },
+  {
+    "question": "How does the new emition of custom events work?",
+    "answers": [
+      {
+        "text": "Custom events no longer need .native modifier; they are all treated as custom",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Custom events use .native modifier",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Custom events must be declared",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Custom events use a different syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-140"
+  },
+  {
+    "question": "What is the .native modifier removal in Vue 3?",
+    "answers": [
+      {
+        "text": ".native modifier was removed; all events are now treated as custom unless declared",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": ".native is still required",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": ".native was replaced by .dom",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": ".native is auto-inferred",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-141"
+  },
+  {
+    "question": "What is the new runtime compiler behavior?",
+    "answers": [
+      {
+        "text": "The runtime compiler is optional; pre-compilation is recommended",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "The runtime compiler is required",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "The runtime compiler was removed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "The runtime compiler is faster",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-142"
+  },
+  {
+    "question": "What is the h() function specifically?",
+    "answers": [
+      {
+        "text": "createVNode alias for creating virtual nodes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A helper for HTML binding",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A function for creating components",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A JSX alternative",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-143"
+  },
+  {
+    "question": "How does Vue 3 handle custom elements?",
+    "answers": [
+      {
+        "text": "Using defineCustomElement() for custom element support",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Custom elements are auto-detected",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Custom elements use the is attribute",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Custom elements are not supported",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-144"
+  },
+  {
+    "question": "What is the Vue 3 memory management improvement?",
+    "answers": [
+      {
+        "text": "Better memory management with effect scopes and component-level cleanup",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Same as Vue 2",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Worse because of Proxy overhead",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Memory is managed automatically",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-145"
+  },
+  {
+    "question": "What is the v-is directive replacement?",
+    "answers": [
+      {
+        "text": "v-is was removed; use the :is attribute on <component>",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "v-is is still available",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "v-is was renamed to v-component",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "v-is is now default",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-146"
+  },
+  {
+    "question": "How do you migrate from Vue 2 to Vue 3?",
+    "answers": [
+      {
+        "text": "Using migration build that warns about Vue 2 behavior differences",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No migration tool is available",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Manual rewrite is required",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Vue 2 and Vue 3 are compatible",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-147"
+  },
+  {
+    "question": "What is the filter removal in Vue 3?",
+    "answers": [
+      {
+        "text": "Filters are removed; use computed or methods instead",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Filters are kept for backward compatibility",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Filters are now global only",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Filters use different syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-148"
+  },
+  {
+    "question": "What is the inline-template removal?",
+    "answers": [
+      {
+        "text": "inline-template attribute was removed; use default slots instead",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "inline-template is still available",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "inline-template was renamed",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "inline-template uses different syntax",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-149"
+  },
+  {
+    "question": "What is the key attribute change for v-if/v-else-if/v-else?",
+    "answers": [
+      {
+        "text": "Key for branches is still supported for forcing re-render",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Key no longer works with conditionals",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Key is auto-inferred",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Key was removed from conditionals",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-150"
+  },
+  {
+    "question": "What is JavaScript?",
+    "answers": [
+      {
+        "text": "A high-level, interpreted programming language primarily used for web development",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A markup language for styling web pages",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A database query language",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A server-side only language",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-151"
+  },
+  {
+    "question": "How do you declare a constant variable in JavaScript?",
+    "answers": [
+      {
+        "text": "const myVar = value",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "let myVar = value",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "var myVar = value",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "constant myVar = value",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-152"
+  },
+  {
+    "question": "Which of the following is NOT a JavaScript data type?",
+    "answers": [
+      {
+        "text": "Integer",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "String",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Boolean",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Object",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-153"
+  },
+  {
+    "question": "How do you write a comment in JavaScript?",
+    "answers": [
+      {
+        "text": "// This is a comment",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<!-- This is a comment -->",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "# This is a comment",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "/* This is a comment */ but single-line",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-154"
+  },
+  {
+    "question": "What does the === operator do?",
+    "answers": [
+      {
+        "text": "Checks strict equality (value and type)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Checks value equality only",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Assigns a value",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Checks if values are different",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-155"
+  },
+  {
+    "question": "How do you define a function in JavaScript?",
+    "answers": [
+      {
+        "text": "function myFunc() {}",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "def myFunc():",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "func myFunc() {}",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "define myFunc()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-156"
+  },
+  {
+    "question": "What is an array in JavaScript?",
+    "answers": [
+      {
+        "text": "An ordered collection of elements",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A key-value data structure",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A type of function",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A CSS style rule",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-157"
+  },
+  {
+    "question": "How do you access the first element of an array called arr?",
+    "answers": [
+      {
+        "text": "arr[0]",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "arr[1]",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "arr.first()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "arr.getItem(0)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-158"
+  },
+  {
+    "question": "What does the typeof operator return for a string?",
+    "answers": [
+      {
+        "text": "'string'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "'String'",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "'text'",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "'typeof string'",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-159"
+  },
+  {
+    "question": "What is the correct way to write an if statement in JavaScript?",
+    "answers": [
+      {
+        "text": "if (condition) { }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "if condition then { }",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "if { condition }",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "if condition: { }",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "vue3-160"
+  },
+  {
+    "question": "What is a closure in JavaScript?",
+    "answers": [
+      {
+        "text": "A function that has access to its outer function's variables even after the outer function has returned",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function that closes the browser tab",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A block of code wrapped in curly braces",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A method that closes all open connections",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-161"
+  },
+  {
+    "question": "How does the 'this' keyword behave in an arrow function?",
+    "answers": [
+      {
+        "text": "It inherits 'this' from the enclosing lexical scope",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "It refers to the global object",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "It refers to the function itself",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "It is undefined",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-162"
+  },
+  {
+    "question": "What is a Promise in JavaScript?",
+    "answers": [
+      {
+        "text": "An object representing the eventual completion or failure of an async operation",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A guarantee that code will execute synchronously",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A callback-based pattern",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A way to make HTTP requests",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-163"
+  },
+  {
+    "question": "What is hoisting in JavaScript?",
+    "answers": [
+      {
+        "text": "The behavior of moving declarations to the top of their scope before code execution",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Lifting a variable from local to global scope",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A DOM manipulation technique",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A method for optimizing performance",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-164"
+  },
+  {
+    "question": "What is the event loop?",
+    "answers": [
+      {
+        "text": "A mechanism that handles asynchronous callbacks by managing the call stack and task queues",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A loop that iterates over DOM events",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A jQuery method for event handling",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A browser API for scheduling tasks",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-165"
+  },
+  {
+    "question": "What is the spread operator (...) used for?",
+    "answers": [
+      {
+        "text": "Expanding iterables like arrays or objects into individual elements",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Spreading values across multiple variables",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Creating a new function with spread arguments",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Dividing an array into smaller pieces",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-166"
+  },
+  {
+    "question": "What is prototypal inheritance in JavaScript?",
+    "answers": [
+      {
+        "text": "Objects can inherit properties and methods from other objects via the prototype chain",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A class-based inheritance model like Java",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A way to create multiple copies of an object",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Inheritance through function constructors only",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-167"
+  },
+  {
+    "question": "What does the .map() method do on an array?",
+    "answers": [
+      {
+        "text": "Creates a new array by applying a function to each element",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Modifies the original array in place",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Filters elements based on a condition",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Finds a single element in the array",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-168"
+  },
+  {
+    "question": "What is destructuring in JavaScript?",
+    "answers": [
+      {
+        "text": "A syntax that allows unpacking values from arrays or properties from objects into distinct variables",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Removing properties from an object",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Deleting elements from an array",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A method for resetting variable values",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-169"
+  },
+  {
+    "question": "What is the difference between null and undefined?",
+    "answers": [
+      {
+        "text": "null is an assigned value representing 'no value'; undefined means a variable has been declared but not assigned",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "They are exactly the same",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "undefined is a user-assigned value; null is automatic",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "null is for objects; undefined is for primitives",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "vue3-170"
+  },
+  {
+    "question": "What is a generator function in JavaScript?",
+    "answers": [
+      {
+        "text": "A function that can be paused and resumed using the yield keyword, returning an iterator",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A function that generates random numbers",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A function that creates other functions",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A constructor function for objects",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-171"
+  },
+  {
+    "question": "What is the Proxy object used for?",
+    "answers": [
+      {
+        "text": "Creating an object that wraps another object to intercept and redefine fundamental operations",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A network proxy for HTTP requests",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A security mechanism for authentication",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A caching layer for API calls",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-172"
+  },
+  {
+    "question": "What is the Reflect API?",
+    "answers": [
+      {
+        "text": "A built-in object that provides methods for interceptable JavaScript operations",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "An API for reflecting DOM elements",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A debugging tool for examining objects",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A method for creating object mirrors",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-173"
+  },
+  {
+    "question": "What are Symbols in JavaScript?",
+    "answers": [
+      {
+        "text": "Unique and immutable primitive values used as identifiers for object properties",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Mathematical symbols represented as strings",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A way to create private class members",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Aliases for primitive values",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-174"
+  },
+  {
+    "question": "What is the difference between WeakMap and Map?",
+    "answers": [
+      {
+        "text": "WeakMap holds weak references to keys, allowing garbage collection; Map holds strong references",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "WeakMap is faster than Map",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "WeakMap only works with string keys",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "WeakMap is a subclass of Map",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-175"
+  },
+  {
+    "question": "What are microtasks and macrotasks in the event loop?",
+    "answers": [
+      {
+        "text": "Microtasks (Promise callbacks) run before macrotasks (setTimeout, I/O) in each event loop iteration",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Microtasks run after macrotasks",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "They are the same thing",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Macrotasks have higher priority",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-176"
+  },
+  {
+    "question": "What is the difference between Object.freeze() and Object.seal()?",
+    "answers": [
+      {
+        "text": "freeze() makes an object immutable; seal() prevents adding/deleting properties but allows modifying existing ones",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "They are identical",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "seal() is stricter than freeze()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "freeze() only works on arrays",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-177"
+  },
+  {
+    "question": "What is a tail call optimization in JavaScript?",
+    "answers": [
+      {
+        "text": "An optimization where the engine reuses the current stack frame when a function call is in tail position",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A way to call functions at the end of a loop",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A method for optimizing the last line of a function",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A technique for chaining function calls",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-178"
+  },
+  {
+    "question": "What is the Temporal API (or Intl.DateTimeFormat)?",
+    "answers": [
+      {
+        "text": "An API for handling dates and times with timezone and locale support",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A temporary storage API",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A time-travel debugging tool",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A timer utility for measuring performance",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-179"
+  },
+  {
+    "question": "What is the module pattern in JavaScript?",
+    "answers": [
+      {
+        "text": "A design pattern using IIFE closures to create encapsulated, private scopes for code organization",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A pattern for importing ES modules",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A Node.js package structure",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A way to modularize CSS",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "vue3-180"
+  }
+]

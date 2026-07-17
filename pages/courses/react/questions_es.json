@@ -1,0 +1,4862 @@
+[
+  {
+    "question": "¿Qué es React?",
+    "answers": [
+      {
+        "text": "Una biblioteca de JavaScript para construir interfaces de usuario",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un framework de JavaScript para backend",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un lenguaje de programación",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un editor de código",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-1"
+  },
+  {
+    "question": "¿Qué es JSX en React?",
+    "answers": [
+      {
+        "text": "Una extensión de sintaxis para JavaScript que permite escribir XML/HTML junto con lógica JS",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un nuevo lenguaje de programación",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una base de datos de React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un tipo de componente",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-2"
+  },
+  {
+    "question": "¿Cómo se crea un componente funcional en React?",
+    "answers": [
+      {
+        "text": "function MyComponent() { return <div>Hola</div>; }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "class MyComponent { render() { return <div>Hola</div>; } }",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const MyComponent = createComponent('<div>Hola</div>');",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React.component('MyComponent', { render: () => <div>Hola</div> })",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-3"
+  },
+  {
+    "question": "¿Cómo se pasan datos de un componente padre a un hijo en React?",
+    "answers": [
+      {
+        "text": "Mediante props",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Mediante state global",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Mediante variables globales",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Mediante eventos del DOM",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-4"
+  },
+  {
+    "question": "¿Qué método del ciclo de vida se ejecuta después de que el componente se monta por primera vez en React 16?",
+    "answers": [
+      {
+        "text": "componentDidMount",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentWillMount",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "componentDidUpdate",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "componentWillUnmount",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-5"
+  },
+  {
+    "question": "¿Cuál es la forma correcta de actualizar el estado en un componente de clase de React?",
+    "answers": [
+      {
+        "text": "this.setState({ contador: this.state.contador + 1 })",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "this.state.contador++",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "this.state = { contador: this.state.contador + 1 }",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React.setState({ contador: this.state.contador + 1 })",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-6"
+  },
+  {
+    "question": "¿Qué hook se usa para manejar estado en un componente funcional?",
+    "answers": [
+      {
+        "text": "useState",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "useEffect",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "useContext",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "useReducer",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-7"
+  },
+  {
+    "question": "¿Qué devuelve el hook useState?",
+    "answers": [
+      {
+        "text": "Un array con dos elementos: el valor actual y una función para actualizarlo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un objeto con el valor actual y un método set",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Solo el valor actual",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una promesa con el valor actual",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-8"
+  },
+  {
+    "question": "¿Cómo se renderiza una lista en React?",
+    "answers": [
+      {
+        "text": "Usando .map() y asignando una key a cada elemento",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando un bucle for dentro de JSX",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando el componente <List>",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando .forEach() directamente en JSX",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-9"
+  },
+  {
+    "question": "¿Para qué sirve el atributo key en una lista de React?",
+    "answers": [
+      {
+        "text": "Ayuda a React a identificar qué elementos cambiaron, se agregaron o eliminaron",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Define el orden de renderizado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Es necesario para aplicar estilos CSS",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Sirve para encriptar los datos de la lista",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-10"
+  },
+  {
+    "question": "¿Qué es un evento sintético (SyntheticEvent) en React?",
+    "answers": [
+      {
+        "text": "Un wrapper cross-browser del evento nativo del navegador",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un evento que solo existe en React Native",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un evento que no se propaga",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un evento asíncrono",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-11"
+  },
+  {
+    "question": "¿Cómo se maneja un evento click en React?",
+    "answers": [
+      {
+        "text": "<button onClick={handleClick}>Click</button>",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<button onclick={handleClick}>Click</button>",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "<button on-click={handleClick}>Click</button>",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "<button @click={handleClick}>Click</button>",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-12"
+  },
+  {
+    "question": "¿Qué es el Virtual DOM en React?",
+    "answers": [
+      {
+        "text": "Una representación ligera en memoria del DOM real que React usa para optimizar actualizaciones",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "El DOM real del navegador",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un DOM alternativo para pruebas",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un editor visual de componentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-13"
+  },
+  {
+    "question": "¿Cuál es la diferencia principal entre props y state?",
+    "answers": [
+      {
+        "text": "Props son inmutables y pasadas del padre, state es mutable y local al componente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Props son mutables y state es inmutable",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Props solo existen en componentes de clase",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "State solo existe en componentes funcionales",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-14"
+  },
+  {
+    "question": "¿Cómo se renderiza condicionalmente en React?",
+    "answers": [
+      {
+        "text": "Usando operador ternario: {condicion ? <A /> : <B />}",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando un if dentro de JSX",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando el componente <If>",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando el atributo v-if",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-15"
+  },
+  {
+    "question": "¿Qué hace ReactDOM.render()?",
+    "answers": [
+      {
+        "text": "Renderiza un elemento React en el DOM real dentro de un contenedor",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Crea un nuevo componente React",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Actualiza el Virtual DOM sin tocar el DOM real",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Elimina un componente del DOM",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-16"
+  },
+  {
+    "question": "¿Qué son los Fragmentos (Fragments) en React 16?",
+    "answers": [
+      {
+        "text": "Una forma de agrupar múltiples elementos sin agregar nodos extra al DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Partes de un componente que se renderizan por separado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Componentes que no tienen estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Métodos del ciclo de vida fragmentados",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-17"
+  },
+  {
+    "question": "¿Cómo se importa React en un archivo?",
+    "answers": [
+      {
+        "text": "import React from 'react'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "import React from 'react-dom'",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const React = require('react-dom')",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "import { React } from 'react-dom'",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-18"
+  },
+  {
+    "question": "¿Qué es un componente controlado en React?",
+    "answers": [
+      {
+        "text": "Un componente de formulario cuyo valor es controlado por React state",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente que no puede ser modificado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente que solo funciona con Redux",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un componente que controla otros componentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-19"
+  },
+  {
+    "question": "¿Cómo se define una prop por defecto en un componente funcional?",
+    "answers": [
+      {
+        "text": "Usando defaultProps en el componente o asignando valores por defecto en los parámetros",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando la función setDefaultProps()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Definiendo un objeto defaults en el componente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando el hook useDefaultProps()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-20"
+  },
+  {
+    "question": "¿Qué método del ciclo de vida se llama justo antes de que un componente se elimine del DOM?",
+    "answers": [
+      {
+        "text": "componentWillUnmount",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentDidMount",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "componentWillUpdate",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "componentDidUnmount",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-21"
+  },
+  {
+    "question": "¿Cuál es la sintaxis correcta para un evento onChange en React?",
+    "answers": [
+      {
+        "text": "<input onChange={handleChange} />",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<input onchange={handleChange} />",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "<input on-change={handleChange} />",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "<input @change={handleChange} />",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-22"
+  },
+  {
+    "question": "¿Qué significa 'props.children' en React?",
+    "answers": [
+      {
+        "text": "El contenido que se pasa entre las etiquetas de apertura y cierre de un componente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Los hijos directos del componente en el árbol del DOM",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Las props que son de tipo child",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Los componentes anidados en el Virtual DOM",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-23"
+  },
+  {
+    "question": "¿Es obligatorio que un componente React tenga un método render?",
+    "answers": [
+      {
+        "text": "Solo en componentes de clase",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Siempre, en todos los componentes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Nunca, React lo genera automáticamente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Solo en componentes funcionales",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-24"
+  },
+  {
+    "question": "¿Qué devuelve un componente funcional de React?",
+    "answers": [
+      {
+        "text": "Un elemento React (JSX)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un objeto JavaScript cualquiera",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un string HTML",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un nodo del DOM real",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-25"
+  },
+  {
+    "question": "¿Cómo se comenta en JSX?",
+    "answers": [
+      {
+        "text": "{/* comentario */}",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<!-- comentario -->",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "// comentario",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "/* comentario */",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-26"
+  },
+  {
+    "question": "¿Qué hace React.StrictMode?",
+    "answers": [
+      {
+        "text": "Es una herramienta para detectar problemas potenciales en la aplicación durante el desarrollo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Activa el modo estricto de JavaScript en React",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Previene la renderización de componentes con errores",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Mejora el rendimiento en producción",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-27"
+  },
+  {
+    "question": "¿Cuál es la forma correcta de mostrar una variable en JSX?",
+    "answers": [
+      {
+        "text": "<h1>{miVariable}</h1>",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<h1>{{miVariable}}</h1>",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "<h1>$miVariable</h1>",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "<h1>{% miVariable %}</h1>",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-28"
+  },
+  {
+    "question": "¿Qué es un componente puro (PureComponent) en React?",
+    "answers": [
+      {
+        "text": "Un componente que implementa shouldComponentUpdate con una comparación superficial de props y state",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente que no tiene efectos secundarios",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente que solo usa props",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un componente que no puede tener estado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-29"
+  },
+  {
+    "question": "¿Cómo se define un componente de clase en React 16?",
+    "answers": [
+      {
+        "text": "class MiComponente extends React.Component { render() { ... } }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "function MiComponente { render() { ... } }",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const MiComponente = React.createClass({ render() { ... } })",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "class MiComponente extends Componente { ... }",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-30"
+  },
+  {
+    "question": "¿Qué es el lifting state up en React?",
+    "answers": [
+      {
+        "text": "Mover el estado a un componente ancestro común para compartirlo entre componentes hijos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Elevar el estado a un servidor externo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usar Redux para manejar todo el estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Declarar el estado en el componente más anidado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-31"
+  },
+  {
+    "question": "¿Qué sucede si llamas a setState con el mismo valor que el estado actual?",
+    "answers": [
+      {
+        "text": "React puede omitir el re-renderizado si detecta que el valor no cambió",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Siempre fuerza un re-renderizado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Lanza un error",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React crea un nuevo estado vacío",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-32"
+  },
+  {
+    "question": "¿Cómo se accede a una prop llamada 'nombre' en un componente funcional?",
+    "answers": [
+      {
+        "text": "A través del parámetro props: props.nombre",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "A través de this.props.nombre",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "A través de state.nombre",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "A través de variables globales",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-33"
+  },
+  {
+    "question": "¿Cuál es la extensión de archivo típica para componentes React?",
+    "answers": [
+      {
+        "text": ".js o .jsx",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": ".react",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": ".html",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": ".rct",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-34"
+  },
+  {
+    "question": "¿Qué método de ciclo de vida se ejecuta después de que las props o el state se actualizan?",
+    "answers": [
+      {
+        "text": "componentDidUpdate",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentDidMount",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "componentWillReceiveProps",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "componentWillUpdate",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-35"
+  },
+  {
+    "question": "¿Cómo se evita que un formulario se recargue al enviarlo en React?",
+    "answers": [
+      {
+        "text": "Llamando a event.preventDefault() en el manejador onSubmit",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando return false en el manejador",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Agregando type=\"button\" al botón de submit",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando event.stopPropagation()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-36"
+  },
+  {
+    "question": "¿Qué es el Children prop en React?",
+    "answers": [
+      {
+        "text": "Una propiedad especial que contiene los elementos hijos pasados a un componente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una prop llamada 'children' que se pasa explícitamente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una función para iterar sobre los hijos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un hook para manejar componentes hijos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-37"
+  },
+  {
+    "question": "¿Cómo se define una clase CSS en un elemento JSX?",
+    "answers": [
+      {
+        "text": "className=\"mi-clase\"",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "class=\"mi-clase\"",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "cssClass=\"mi-clase\"",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "styleClass=\"mi-clase\"",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-38"
+  },
+  {
+    "question": "¿Se pueden usar estilos inline en React?",
+    "answers": [
+      {
+        "text": "Sí, usando el atributo style con un objeto JavaScript",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No, React no soporta estilos inline",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Sí, usando el atributo style con un string CSS",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Solo en componentes funcionales",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-39"
+  },
+  {
+    "question": "¿Qué retorna el hook useEffect si se le pasa una función de limpieza?",
+    "answers": [
+      {
+        "text": "Nada (undefined), la función de limpieza se ejecuta al desmontar o antes de re-ejecutar el efecto",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un booleano indicando si el efecto se ejecutó",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una promesa que se resuelve cuando el efecto termina",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "El mismo efecto para encadenamiento",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-40"
+  },
+  {
+    "question": "¿Cuál es la forma correcta de importar useState?",
+    "answers": [
+      {
+        "text": "import React, { useState } from 'react'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "import { useState } from 'react-dom'",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "import useState from 'react'",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "import [useState] from 'react'",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-41"
+  },
+  {
+    "question": "¿Qué es un componente no controlado en React?",
+    "answers": [
+      {
+        "text": "Un componente de formulario que mantiene su propio estado interno en el DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente que no tiene estado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente roto o con bugs",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un componente que no renderiza nada",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-42"
+  },
+  {
+    "question": "¿Qué función se usa para crear una referencia (ref) en un componente funcional?",
+    "answers": [
+      {
+        "text": "useRef",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "useRefs",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "createRef",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "useCallbackRef",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-43"
+  },
+  {
+    "question": "¿Qué es un Higher-Order Component (HOC)?",
+    "answers": [
+      {
+        "text": "Una función que toma un componente y devuelve un nuevo componente con funcionalidad adicional",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente que está en la parte superior del árbol",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente con muchas props",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un componente que solo existe en React 16",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-44"
+  },
+  {
+    "question": "¿Cómo se actualiza el estado basándose en el estado anterior en un componente funcional?",
+    "answers": [
+      {
+        "text": "setState(prevState => prevState + 1)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "setState(state + 1)",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "state = state + 1",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "this.setState(prevState => prevState + 1)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-45"
+  },
+  {
+    "question": "¿Qué es el 'one-way data binding' en React?",
+    "answers": [
+      {
+        "text": "Los datos fluyen en una sola dirección: de padres a hijos mediante props",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Los datos fluyen de hijos a padres",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Los datos fluyen en ambas direcciones simultáneamente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Los datos no fluyen entre componentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-46"
+  },
+  {
+    "question": "¿Qué método se usa para cambiar el estado en un componente de clase?",
+    "answers": [
+      {
+        "text": "this.setState()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "this.state = {}",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "this.updateState()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "this.changeState()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-47"
+  },
+  {
+    "question": "¿Cómo se define el estado inicial en un componente de clase?",
+    "answers": [
+      {
+        "text": "En el constructor: this.state = { ... }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "En el método render",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando la función initState()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Como propiedad estática de la clase",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-48"
+  },
+  {
+    "question": "¿Qué hace el método render() en un componente de clase?",
+    "answers": [
+      {
+        "text": "Define qué se debe renderizar en el DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Actualiza el estado del componente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Maneja los eventos del componente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Inicializa las props del componente",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-49"
+  },
+  {
+    "question": "¿Cuál de los siguientes NO es un nombre de método del ciclo de vida en React 16?",
+    "answers": [
+      {
+        "text": "componentWillInitialize",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentDidMount",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "componentDidUpdate",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "componentWillUnmount",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-50"
+  },
+  {
+    "question": "¿Qué es el Context API en React?",
+    "answers": [
+      {
+        "text": "Una forma de pasar datos a través del árbol de componentes sin usar props manualmente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una API para manejar el contexto de ejecución de JavaScript",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para depurar componentes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una biblioteca externa para manejo de estado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-51"
+  },
+  {
+    "question": "¿Cómo se crea un contexto en React?",
+    "answers": [
+      {
+        "text": "const MiContexto = React.createContext(valorPorDefecto)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "const MiContexto = useContext(valorPorDefecto)",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const MiContexto = new ReactContext(valorPorDefecto)",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "const MiContexto = Context(valorPorDefecto)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-52"
+  },
+  {
+    "question": "¿Qué hook se usa para consumir un contexto en un componente funcional?",
+    "answers": [
+      {
+        "text": "useContext",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "useConsumer",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "useRef",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "useReducer",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-53"
+  },
+  {
+    "question": "¿Qué es un Portal en React 16?",
+    "answers": [
+      {
+        "text": "Una forma de renderizar un componente hijo en un nodo DOM diferente fuera de la jerarquía del padre",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente especial para navegación",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una API para conectar React con otros frameworks",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para importar módulos externos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-54"
+  },
+  {
+    "question": "¿Cuál es la sintaxis correcta para crear un Portal?",
+    "answers": [
+      {
+        "text": "ReactDOM.createPortal(<MiComponente />, nodoDOM)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React.createPortal(<MiComponente />, nodoDOM)",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Portal.render(<MiComponente />, nodoDOM)",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "ReactDOM.render(<MiComponente />, nodoDOM)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-55"
+  },
+  {
+    "question": "¿Para qué sirve React.memo?",
+    "answers": [
+      {
+        "text": "Para memorizar un componente funcional y evitar re-renderizados innecesarios si las props no cambian",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Para memorizar valores calculados",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Para memorizar funciones",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Para almacenar datos en caché",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-56"
+  },
+  {
+    "question": "¿Qué es el hook useReducer?",
+    "answers": [
+      {
+        "text": "Un hook para manejar estados complejos con una función reductora, similar a Redux",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook para reducir el tamaño del estado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un hook para optimizar el rendimiento",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un hook para eliminar partes del estado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-57"
+  },
+  {
+    "question": "¿Qué devuelve useReducer?",
+    "answers": [
+      {
+        "text": "Un array con el estado actual y una función dispatch",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un objeto con el estado y un método set",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Solo el estado actual",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una promesa con el estado actual",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-58"
+  },
+  {
+    "question": "¿Qué hace el hook useCallback?",
+    "answers": [
+      {
+        "text": "Devuelve una versión memorizada de una función que solo cambia si cambian sus dependencias",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Devuelve una versión memorizada de un valor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Crea un nuevo callback cada render",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Almacena callbacks en el estado global",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-59"
+  },
+  {
+    "question": "¿Qué hace el hook useMemo?",
+    "answers": [
+      {
+        "text": "Devuelve un valor memorizado que solo se recalcula cuando cambian sus dependencias",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Almacena valores en la memoria del navegador",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Crea un nuevo objeto en cada render",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Memoriza funciones para no recrearlas",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-60"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre useMemo y useCallback?",
+    "answers": [
+      {
+        "text": "useMemo memoriza un valor calculado, useCallback memoriza una función",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son exactamente iguales",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "useMemo memoriza funciones, useCallback memoriza valores",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "useMemo es para clases, useCallback para funciones",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-61"
+  },
+  {
+    "question": "¿Qué es un Error Boundary en React 16?",
+    "answers": [
+      {
+        "text": "Un componente que captura errores de JavaScript en su árbol de componentes hijos y muestra una UI alternativa",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un límite de errores en el compilador de JSX",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una validación de props automática",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para evitar errores en tiempo de ejecución",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-62"
+  },
+  {
+    "question": "¿Qué métodos del ciclo de vida implementa un Error Boundary?",
+    "answers": [
+      {
+        "text": "static getDerivedStateFromError() y componentDidCatch()",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentDidMount() y componentWillUnmount()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "componentDidCatch() y componentDidUpdate()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "getDerivedStateFromProps() y getSnapshotBeforeUpdate()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-63"
+  },
+  {
+    "question": "¿Los Error Boundaries pueden capturar errores en manejadores de eventos?",
+    "answers": [
+      {
+        "text": "No, los errores en manejadores de eventos no son capturados por Error Boundaries",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Sí, siempre capturan cualquier error",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Solo si se usa try-catch en el manejador",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Solo en React 16.8+",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-64"
+  },
+  {
+    "question": "¿Qué es el patrón Render Props?",
+    "answers": [
+      {
+        "text": "Una técnica para compartir código entre componentes usando una prop cuyo valor es una función que renderiza algo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una prop que se pasa al método render()",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente que renderiza props",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una función que devuelve props",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-65"
+  },
+  {
+    "question": "¿Qué es el hook useRef y para qué sirve?",
+    "answers": [
+      {
+        "text": "Un hook que devuelve un objeto mutable persistente que no causa re-renderizados al cambiar",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook para crear referencias a funciones",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un hook para referenciar componentes padres",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un hook para almacenar valores en localStorage",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-66"
+  },
+  {
+    "question": "¿Cómo se puede acceder a un elemento del DOM usando useRef?",
+    "answers": [
+      {
+        "text": "Creando una ref con useRef y asignándola al atributo ref del elemento JSX",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando document.getElementById() directamente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando el hook useDOMRef()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Pasando un string al atributo ref",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-67"
+  },
+  {
+    "question": "¿Qué método de ciclo de vida fue eliminado en React 16.3 y marcado como inseguro?",
+    "answers": [
+      {
+        "text": "componentWillReceiveProps, componentWillUpdate y componentWillMount",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "componentDidMount y componentDidUpdate",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "shouldComponentUpdate y componentWillUnmount",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "getDerivedStateFromProps y getSnapshotBeforeUpdate",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-68"
+  },
+  {
+    "question": "¿Cuál es el propósito de getDerivedStateFromProps?",
+    "answers": [
+      {
+        "text": "Actualizar el estado del componente cuando cambian las props, antes de renderizar",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Obtener las props derivadas de otros componentes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Validar que las props sean correctas",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Obtener el estado de las props del contexto",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-69"
+  },
+  {
+    "question": "¿Qué debe retornar getDerivedStateFromProps?",
+    "answers": [
+      {
+        "text": "Un objeto para actualizar el estado, o null si no hay cambios",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "El nuevo estado completo del componente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un booleano indicando si debe renderizar",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Las nuevas props derivadas",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-70"
+  },
+  {
+    "question": "¿Qué hace getSnapshotBeforeUpdate?",
+    "answers": [
+      {
+        "text": "Permite capturar información del DOM antes de que los cambios sean aplicados",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Toma una captura de pantalla del componente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Guarda una instantánea del estado antes de actualizar",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Crea un backup del Virtual DOM",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-71"
+  },
+  {
+    "question": "¿Cómo se pasa el valor devuelto por getSnapshotBeforeUpdate a componentDidUpdate?",
+    "answers": [
+      {
+        "text": "Como tercer parámetro en componentDidUpdate(prevProps, prevState, snapshot)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Como segundo parámetro en componentDidUpdate",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Se asigna automáticamente al estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Se guarda en una variable global",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-72"
+  },
+  {
+    "question": "¿Qué es el modo Concurrente (Concurrent Mode)?",
+    "answers": [
+      {
+        "text": "Un conjunto de nuevas características que permiten a React interrumpir el renderizado para priorizar tareas más urgentes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un modo donde varios componentes se renderizan al mismo tiempo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un modo para renderizar en múltiples hilos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una actualización del Virtual DOM que ocurre en paralelo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-73"
+  },
+  {
+    "question": "¿Qué es React.lazy()?",
+    "answers": [
+      {
+        "text": "Una función que permite cargar componentes de forma diferida (lazy loading)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook para retrasar la ejecución",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para optimizar el rendimiento del estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una función para reducir el tamaño del bundle",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-74"
+  },
+  {
+    "question": "¿Qué componente se usa junto con React.lazy para mostrar una UI de carga?",
+    "answers": [
+      {
+        "text": "React.Suspense",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React.Loading",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "React.Fallback",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React.Placeholder",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-75"
+  },
+  {
+    "question": "¿Cuál es la sintaxis correcta para usar React.lazy?",
+    "answers": [
+      {
+        "text": "const MiComp = React.lazy(() => import('./MiComp'))",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "const MiComp = React.lazy(import('./MiComp'))",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const MiComp = lazyLoad(() => import('./MiComp'))",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "const MiComp = React.lazy('./MiComp')",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-76"
+  },
+  {
+    "question": "¿Qué es la prop key en React y por qué es importante?",
+    "answers": [
+      {
+        "text": "Ayuda a React a identificar elementos de forma única para optimizar el reconciliado (reconciliation)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Define la clave primaria del componente en el DOM",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Es necesaria para aplicar estilos condicionales",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Es opcional y no afecta el rendimiento",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-77"
+  },
+  {
+    "question": "¿Qué sucede si se usan índices de array como key en una lista dinámica?",
+    "answers": [
+      {
+        "text": "Puede causar problemas de rendimiento y estado incorrecto si la lista se reordena o modifica",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Es la forma recomendada de usar keys",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "React lanza un error inmediato",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "No tiene ningún efecto secundario",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-78"
+  },
+  {
+    "question": "¿Qué es el patrón de composición en React?",
+    "answers": [
+      {
+        "text": "Componer componentes más pequeños y reutilizables para construir interfaces complejas",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Combinar varios estados en uno solo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un patrón para mezclar estilos CSS",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una forma de escribir JSX más corto",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-79"
+  },
+  {
+    "question": "¿Qué es PropTypes en React?",
+    "answers": [
+      {
+        "text": "Un sistema para validar los tipos de las props que recibe un componente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una propiedad especial para definir types en React",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una biblioteca de tipado estático para React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para crear prototipos de componentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-80"
+  },
+  {
+    "question": "¿Cómo se define que una prop es obligatoria con PropTypes?",
+    "answers": [
+      {
+        "text": "MiComponente.propTypes = { nombre: PropTypes.string.isRequired }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "MiComponente.propTypes = { nombre: PropTypes.required }",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "MiComponente.propTypes = { nombre: PropTypes.mandatory }",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "MiComponente.propTypes = { nombre: PropTypes.string.required }",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-81"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre React.memo y PureComponent?",
+    "answers": [
+      {
+        "text": "React.memo es para componentes funcionales, PureComponent es para componentes de clase",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son exactamente iguales",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "PureComponent es para funcionales, memo es para clases",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "PureComponent está obsoleto en React 16",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-82"
+  },
+  {
+    "question": "¿Qué hace el segundo argumento de useEffect?",
+    "answers": [
+      {
+        "text": "Es un array de dependencias que controla cuándo se ejecuta el efecto",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Es el timeout para ejecutar el efecto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Es la prioridad del efecto",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Es el contexto en el que se ejecuta el efecto",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-83"
+  },
+  {
+    "question": "¿Qué sucede si pasas un array vacío [] como dependencias a useEffect?",
+    "answers": [
+      {
+        "text": "El efecto se ejecuta solo una vez, después del primer renderizado",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "El efecto nunca se ejecuta",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "El efecto se ejecuta en cada render",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React lanza un warning",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-84"
+  },
+  {
+    "question": "¿Cómo se limpia un efecto en useEffect?",
+    "answers": [
+      {
+        "text": "Retornando una función de limpieza desde el efecto",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Llamando a cleanup() al final del efecto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Pasando una función de limpieza como segundo argumento",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando el hook useCleanup",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-85"
+  },
+  {
+    "question": "¿Qué es el modo estricto (StrictMode) en React?",
+    "answers": [
+      {
+        "text": "Un wrapper que activa verificaciones adicionales y advertencias para sus descendientes en desarrollo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un modo que evita errores en producción",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una configuración del compilador de JSX",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un conjunto de reglas de estilo para componentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-86"
+  },
+  {
+    "question": "¿Qué detecta React.StrictMode en desarrollo?",
+    "answers": [
+      {
+        "text": "Componentes con ciclos de vida inseguros, uso de strings como refs, y efectos secundarios en el render",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Errores de sintaxis en JSX",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Problemas de rendimiento",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Errores en las props",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-87"
+  },
+  {
+    "question": "¿Qué es el reconcilaidor (Reconciler) en React?",
+    "answers": [
+      {
+        "text": "El algoritmo que compara el Virtual DOM actual con el anterior para determinar qué cambios hacer en el DOM real",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "El compilador de JSX",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "El gestor de paquetes de React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "La API de renderizado de React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-88"
+  },
+  {
+    "question": "¿Qué es el algoritmo de reconciliación (reconciliation) de React?",
+    "answers": [
+      {
+        "text": "El proceso mediante el cual React actualiza el DOM comparando el nuevo Virtual DOM con el anterior",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un algoritmo para ordenar listas",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un algoritmo de compresión de datos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para validar formularios",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-89"
+  },
+  {
+    "question": "¿Qué es el modo de depuración 'why did you render'?",
+    "answers": [
+      {
+        "text": "Una técnica/patrón para identificar por qué un componente se está re-renderizando innecesariamente",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook oficial de React",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método del ciclo de vida",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una herramienta de línea de comandos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-90"
+  },
+  {
+    "question": "¿Qué es un Fragment con sintaxis corta?",
+    "answers": [
+      {
+        "text": "<></> que es equivalente a <React.Fragment></React.Fragment>",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<!></!>",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "<F></F>",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "<#></#>",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-91"
+  },
+  {
+    "question": "¿Se pueden pasar props a un Fragment?",
+    "answers": [
+      {
+        "text": "Solo la prop key, y solo con <React.Fragment> explícito",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Sí, cualquier prop",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "No, los Fragment no aceptan props",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Solo con la sintaxis <></>",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-92"
+  },
+  {
+    "question": "¿Qué es una ref callback?",
+    "answers": [
+      {
+        "text": "Una función que recibe el nodo del DOM como argumento para asignar la referencia",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una función callback que se ejecuta al hacer ref",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un hook para crear referencias",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una prop que se pasa a un componente hijo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-93"
+  },
+  {
+    "question": "¿Qué es forwardRef en React?",
+    "answers": [
+      {
+        "text": "Una función que permite a los componentes pasar refs a sus componentes hijos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una forma de enviar refs al servidor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un hook para reenviar eventos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para redirigir el flujo de datos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-94"
+  },
+  {
+    "question": "¿Cómo se usa React.forwardRef?",
+    "answers": [
+      {
+        "text": "React.forwardRef((props, ref) => <div ref={ref}>...</div>)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React.forwardRef((ref, props) => <div ref={ref}>...</div>)",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "React.createForwardRef((props) => <div>...</div>)",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React.ref((props, ref) => <div ref={ref}>...</div>)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-95"
+  },
+  {
+    "question": "¿Qué es una función reductora (reducer) en el contexto de useReducer?",
+    "answers": [
+      {
+        "text": "Una función que recibe el estado actual y una acción, y devuelve el nuevo estado",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una función que reduce el número de renderizados",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una función que reduce el tamaño del bundle",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una función que comprime los datos del estado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-96"
+  },
+  {
+    "question": "¿Qué es el patrón de Context con useContext?",
+    "answers": [
+      {
+        "text": "Una forma limpia y sencilla de consumir contexto en componentes funcionales",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook para crear contextos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una función para eliminar el contexto",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para depurar el contexto",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-97"
+  },
+  {
+    "question": "¿Cuándo es apropiado usar useReducer en lugar de useState?",
+    "answers": [
+      {
+        "text": "Cuando el estado es complejo, tiene muchas sub-propiedades o la lógica de actualización es compleja",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Solo cuando se usa Redux",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Siempre, porque es más eficiente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Nunca, useState es siempre la mejor opción",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-98"
+  },
+  {
+    "question": "¿Qué es el contexto de renderizado en React 16?",
+    "answers": [
+      {
+        "text": "La forma en que React determina qué y cuándo renderizar basado en cambios de estado y props",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "El contexto de ejecución de las funciones del ciclo de vida",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un objeto global disponible en todos los componentes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "El entorno de desarrollo de React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-99"
+  },
+  {
+    "question": "¿Cómo se puede compartir lógica entre componentes en React sin usar HOCs ni Render Props?",
+    "answers": [
+      {
+        "text": "Usando Hooks personalizados (Custom Hooks)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando herencia de clases",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando variables globales",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando el patrón Singleton",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-100"
+  },
+  {
+    "question": "¿Qué es el Fiber Architecture en React 16?",
+    "answers": [
+      {
+        "text": "Una reescritura del algoritmo de reconciliación para permitir renderizado incremental y priorización",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una nueva forma de crear componentes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un nuevo patrón de diseño para estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una biblioteca de componentes para React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-101"
+  },
+  {
+    "question": "¿Qué problema resuelve React Fiber?",
+    "answers": [
+      {
+        "text": "Permite dividir el trabajo de renderizado en unidades pequeñas que pueden ser pausadas, interrumpidas y reanudadas",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Aumenta la velocidad del Virtual DOM",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Reduce el tamaño del bundle de React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Elimina la necesidad del Virtual DOM",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-102"
+  },
+  {
+    "question": "¿Qué son los 'side effects' en el contexto del ciclo de renderizado de React?",
+    "answers": [
+      {
+        "text": "Operaciones que afectan algo fuera del alcance del componente, como fetching de datos, suscripciones o manipulación del DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Efectos secundarios de las props",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Errores que ocurren durante el renderizado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Cambios en el Virtual DOM que no se reflejan en el DOM real",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-103"
+  },
+  {
+    "question": "¿Qué es el 'render phase' vs 'commit phase' en React 16?",
+    "answers": [
+      {
+        "text": "Render phase crea el Virtual DOM (puede ser interrumpido), Commit phase aplica los cambios al DOM (no interrumpible)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Render phase es para componentes de clase, Commit phase para funcionales",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Son dos fases del montaje inicial del componente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Render phase genera el bundle, Commit phase lo ejecuta",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-104"
+  },
+  {
+    "question": "¿Qué es una 'key' estable en el contexto de listas dinámicas?",
+    "answers": [
+      {
+        "text": "Una key que identifica de forma única y consistente un elemento a través de re-renderizados",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una key que nunca cambia de valor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una key que se define como constante",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una key que usa el índice del array",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-105"
+  },
+  {
+    "question": "¿Qué estrategia usa React para decidir si debe re-renderizar un componente?",
+    "answers": [
+      {
+        "text": "Por defecto, React re-renderiza el componente si cambia su estado o las props de su padre",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React re-renderiza todos los componentes en cada cambio",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "React usa un algoritmo de machine learning para decidir",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React nunca re-renderiza a menos que se llame a forceUpdate",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-106"
+  },
+  {
+    "question": "¿Qué es la 'comparación superficial' (shallow comparison) en React?",
+    "answers": [
+      {
+        "text": "Comparar referencias de objetos/arrays para determinar si son el mismo objeto, no su contenido",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Comparar solo las propiedades de primer nivel de un objeto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Ignorar propiedades anidadas en la comparación",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Comparar solo el tipo de dato, no el valor",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-107"
+  },
+  {
+    "question": "¿Cómo afecta la inmutabilidad al rendimiento de React?",
+    "answers": [
+      {
+        "text": "Permite comparaciones eficientes con === para detectar cambios y decidir si re-renderizar",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Hace que React sea más lento porque necesita copiar objetos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "No tiene ningún efecto en el rendimiento",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React no requiere inmutabilidad para funcionar bien",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-108"
+  },
+  {
+    "question": "¿Qué es el 'bail-out' de renderizado en React?",
+    "answers": [
+      {
+        "text": "Cuando React decide no re-renderizar un componente porque detecta que no hubo cambios relevantes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Cuando React no puede renderizar un componente y muestra un error",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Cuando el desarrollador cancela manualmente el renderizado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Cuando un componente se elimina del árbol",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-109"
+  },
+  {
+    "question": "¿Qué factores pueden impedir el 'bail-out' de un componente?",
+    "answers": [
+      {
+        "text": "El uso de context, refs, o props que cambian por referencia aunque el valor sea el mismo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Tener muchos componentes hijos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usar componentes funcionales",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "No usar React.memo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-110"
+  },
+  {
+    "question": "¿Qué es el patrón 'Compound Component' en React?",
+    "answers": [
+      {
+        "text": "Un patrón donde múltiples componentes coexisten y comparten estado implícitamente a través de un contexto común",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Componentes que combinan varias props",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un componente formado por varios componentes más pequeños",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un patrón para mezclar varios HOCs",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-111"
+  },
+  {
+    "question": "¿Qué es 'render hijacking' en el contexto de HOCs?",
+    "answers": [
+      {
+        "text": "La capacidad de un HOC de modificar el renderizado del componente envuelto",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Robar código de renderizado de otros componentes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usar props del padre para renderizar",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Renderizar un componente dentro de otro sin permiso",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-112"
+  },
+  {
+    "question": "¿Qué diferencia hay entre React.createContext y el patrón Provider/Consumer?",
+    "answers": [
+      {
+        "text": "createContext devuelve un objeto con dos componentes: Provider y Consumer",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son dos formas diferentes de crear contexto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Provider/Consumer es anterior a createContext",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "createContext no usa Provider/Consumer",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-113"
+  },
+  {
+    "question": "¿Cuándo se debe usar Context API vs Redux?",
+    "answers": [
+      {
+        "text": "Context es ideal para estado global simple de baja frecuencia de cambio; Redux para estado complejo con alta frecuencia de cambios y requirements específicos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Siempre se debe usar Redux porque Context es ineficiente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Siempre se debe usar Context porque Redux está obsoleto",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Son intercambiables, no hay diferencia",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-114"
+  },
+  {
+    "question": "¿Qué es la 'prop drilling' y cómo se soluciona?",
+    "answers": [
+      {
+        "text": "Pasar props a través de muchos niveles de componentes, se soluciona con Context o composición",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un bug en React que causa renders infinitos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una técnica para perforar el DOM",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para optimizar el paso de props",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-115"
+  },
+  {
+    "question": "¿Qué es el patrón 'State Reducer' en React?",
+    "answers": [
+      {
+        "text": "Un patrón donde el consumidor de un componente puede controlar cómo se actualiza el estado interno del mismo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una función reduce aplicada al estado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para reducir el estado a sus valores mínimos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un hook para comprimir el estado",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-116"
+  },
+  {
+    "question": "¿Qué es el 'tearing' en el contexto de Concurrent Mode?",
+    "answers": [
+      {
+        "text": "Un problema donde diferentes partes de la UI pueden mostrar valores inconsistentes del mismo estado debido a renderizados interrumpibles",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Cuando un componente se rompe visualmente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un error en la renderización de listas",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "La separación del Virtual DOM en fragmentos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-117"
+  },
+  {
+    "question": "¿Cómo resuelve React el problema del 'tearing' en Concurrent Mode?",
+    "answers": [
+      {
+        "text": "Usando un sistema de doble buffer y asegurando que los cambios sean atómicos en el commit phase",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Eliminando la concurrencia",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando transacciones de base de datos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "No resuelve el problema, se considera aceptable",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-118"
+  },
+  {
+    "question": "¿Qué es 'Time Slicing' en React?",
+    "answers": [
+      {
+        "text": "La capacidad de React de dividir el trabajo de renderizado en múltiples fotogramas (frames)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una técnica para medir el tiempo de renderizado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para optimizar slices de estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una herramienta de profiling",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-119"
+  },
+  {
+    "question": "¿Qué diferencia hay entre el modo 'sync' y 'concurrent' en React 16?",
+    "answers": [
+      {
+        "text": "Sync renderiza todo de una vez bloqueando el hilo principal, Concurrent puede interrumpir y priorizar tareas",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Sync es más rápido que Concurrent",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Concurrent usa web workers, Sync no",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Sync funciona en producción, Concurrent solo en desarrollo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-120"
+  },
+  {
+    "question": "¿Cómo se implementa un Custom Hook que use useReducer y useContext para estado global?",
+    "answers": [
+      {
+        "text": "Creando un contexto que provee el estado y dispatch de useReducer a los componentes hijos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando Redux en lugar de useReducer",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Importando createStore de React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando useState en el provider y pasando props",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-121"
+  },
+  {
+    "question": "¿Qué es el 'Lazy Initialization' en useState?",
+    "answers": [
+      {
+        "text": "Pasar una función a useState que se ejecuta solo en el render inicial para calcular el valor inicial",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usar useEffect para inicializar el estado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una técnica para retardar la inicialización del estado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Inicializar el estado dentro de un condicional",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-122"
+  },
+  {
+    "question": "¿Qué sucede si llamas a setState múltiples veces en el mismo evento?",
+    "answers": [
+      {
+        "text": "React agrupa (batches) las llamadas y realiza una sola actualización para optimizar el rendimiento",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Cada llamada causa un re-renderizado independiente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Solo la última llamada tiene efecto",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React lanza un error por demasiadas actualizaciones",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-123"
+  },
+  {
+    "question": "¿Qué es el 'batching' de actualizaciones en React?",
+    "answers": [
+      {
+        "text": "El proceso de agrupar múltiples actualizaciones de estado en una sola para evitar re-renderizados innecesarios",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Agrupar varios componentes en un batch de renderizado",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para procesar actualizaciones en lotes en el servidor",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "La descarga de componentes en lotes desde el servidor",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-124"
+  },
+  {
+    "question": "¿Cuándo NO agrupa React las llamadas a setState?",
+    "answers": [
+      {
+        "text": "Dentro de setTimeout, promesas, y manejadores de eventos nativos (antes de React 18)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Dentro de useEffect",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Dentro de onClick de React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Dentro de componentDidMount",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-125"
+  },
+  {
+    "question": "¿Qué es 'shouldComponentUpdate' y cómo se relaciona con React.memo?",
+    "answers": [
+      {
+        "text": "shouldComponentUpdate es un método de ciclo de vida de clase para controlar re-renderizados; React.memo es su equivalente funcional",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son dos formas diferentes de hacer lo mismo pero shouldComponentUpdate es más eficiente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "shouldComponentUpdate es para funcionales, React.memo para clases",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "shouldComponentUpdate reemplaza a React.memo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-126"
+  },
+  {
+    "question": "¿Qué parámetros recibe shouldComponentUpdate?",
+    "answers": [
+      {
+        "text": "nextProps, nextState, y el nextContext opcional",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "prevProps, prevState",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "newProps, newState, snapshot",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "props, state",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-127"
+  },
+  {
+    "question": "¿Cómo se implementa un patrón de 'controlled inputs' con useState para un formulario complejo?",
+    "answers": [
+      {
+        "text": "Usando un objeto de estado y actualizando propiedades específicas con el nombre del campo",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Creando un estado independiente para cada input",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando el DOM directamente para obtener los valores",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando useReducer con acciones por cada campo",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-128"
+  },
+  {
+    "question": "¿Qué es el 'Reconciliation' en el contexto de React y cómo difiere de 'Rendering'?",
+    "answers": [
+      {
+        "text": "Reconciliation es el algoritmo que determina qué cambió en el Virtual DOM; Rendering es la generación del Virtual DOM",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son el mismo proceso",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Rendering ocurre antes de Reconciliation",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Reconciliation solo ocurre en componentes de clase",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-129"
+  },
+  {
+    "question": "¿Qué es un 'memoization' y cómo se aplica en React?",
+    "answers": [
+      {
+        "text": "Almacenar en caché el resultado de cálculos costosos para no recalcular si las dependencias no cambian",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un método para comprimir datos en memoria",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una técnica para organizar el código",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un patrón de diseño para bases de datos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-130"
+  },
+  {
+    "question": "¿Cómo se implementa useMemo para optimizar un cálculo costoso?",
+    "answers": [
+      {
+        "text": "const resultado = useMemo(() => calcular(datos), [datos])",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "const resultado = useMemo(datos, () => calcular(datos))",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "const resultado = useMemo([datos], () => calcular(datos))",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "const resultado = useMemo(calcular(datos), [datos])",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-131"
+  },
+  {
+    "question": "¿Qué problema resuelve el hook useDebugValue?",
+    "answers": [
+      {
+        "text": "Permite mostrar etiquetas personalizadas en las React DevTools para custom hooks",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Depura errores en tiempo de ejecución",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Muestra warnings en consola",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Valida los valores de los hooks",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-132"
+  },
+  {
+    "question": "¿Qué es 'useImperativeHandle' y para qué sirve?",
+    "answers": [
+      {
+        "text": "Permite personalizar el valor de la instancia expuesta cuando se usa ref con forwardRef",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un hook para manejar eventos imperativos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para forzar el renderizado",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una función para manejar side effects imperativos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-133"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre useEffect y useLayoutEffect?",
+    "answers": [
+      {
+        "text": "useEffect es asíncrono y se ejecuta después de pintar en pantalla; useLayoutEffect es síncrono y se ejecuta antes de pintar",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "useEffect es para componentes funcionales, useLayoutEffect para clases",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Son exactamente iguales",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "useLayoutEffect está obsoleto en React 16",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-134"
+  },
+  {
+    "question": "¿Cuándo se debe usar useLayoutEffect en lugar de useEffect?",
+    "answers": [
+      {
+        "text": "Cuando necesitas leer medidas del DOM o hacer mutaciones síncronas antes de que el usuario vea el resultado",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Siempre, porque es más rápido",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Nunca, useEffect es suficiente para todo",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Solo en componentes de clase",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-135"
+  },
+  {
+    "question": "¿Qué es el 'StrictMode' y cómo afecta a la ejecución de efectos en desarrollo?",
+    "answers": [
+      {
+        "text": "En StrictMode, React monta y desmonta dos veces los componentes para detectar efectos sin limpieza adecuada",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "StrictMode ejecuta los efectos solo una vez",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "StrictMode no afecta a los efectos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "StrictMode optimiza automáticamente los efectos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-136"
+  },
+  {
+    "question": "¿Cómo se manejan los errores asíncronos en un Error Boundary?",
+    "answers": [
+      {
+        "text": "Los Error Boundaries no capturan errores asíncronos directamente; debes usar try-catch y luego setState para mostrar el error",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Los Error Boundaries capturan todos los errores incluyendo asíncronos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "React asigna automáticamente los errores asíncronos al Error Boundary más cercano",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Los errores asíncronos son ignorados por React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-137"
+  },
+  {
+    "question": "¿Qué es el 'event pooling' en React y cómo funciona?",
+    "answers": [
+      {
+        "text": "React reutiliza objetos SyntheticEvent para mejorar el rendimiento, pero sus propiedades se anulan después del callback",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Agrupar varios eventos en uno solo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para crear pools de eventos personalizados",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Almacenar eventos en un pool de memoria",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-138"
+  },
+  {
+    "question": "¿Cómo se accede a las propiedades de un SyntheticEvent en un callback asíncrono?",
+    "answers": [
+      {
+        "text": "Llamando a event.persist() para quitar el evento del pool, o extrayendo las propiedades antes de la llamada asíncrona",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "No se puede acceder, es un bug conocido",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando event.currentTarget directamente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Los SyntheticEvent ya no usan pooling en React 16",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-139"
+  },
+  {
+    "question": "¿Qué es ReactDOMServer y para qué se usa?",
+    "answers": [
+      {
+        "text": "Un módulo para renderizar componentes React en el servidor y generar HTML estático",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un servidor para alojar aplicaciones React",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una herramienta de testing para React",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un middleware para conectar React con bases de datos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-140"
+  },
+  {
+    "question": "¿Qué diferencias hay entre renderToString y renderToStaticMarkup?",
+    "answers": [
+      {
+        "text": "renderToString incluye atributos data-reactroot para hidratación; renderToStaticMarkup los omite para HTML estático",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "renderToString es para servidor, renderToStaticMarkup es para cliente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Son equivalentes",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "renderToStaticMarkup es más rápido pero menos seguro",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-141"
+  },
+  {
+    "question": "¿Cómo funciona la hidratación (hydration) en React?",
+    "answers": [
+      {
+        "text": "ReactDOM.hydrate() adjunta event listeners y reconstruye el estado del componente sobre HTML renderizado en servidor",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React inyecta agua en el DOM para hidratarlo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un proceso de compilación que optimiza el bundle",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "La instalación de dependencias de React",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-142"
+  },
+  {
+    "question": "¿Qué sucede si el HTML del servidor no coincide con el renderizado del cliente durante la hidratación?",
+    "answers": [
+      {
+        "text": "React muestra una advertencia en desarrollo y corrige el DOM del cliente para que coincida",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "React lanza un error y la aplicación no carga",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "El servidor sobreescribe el DOM del cliente",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "React ignora la discrepancia y continúa",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-143"
+  },
+  {
+    "question": "¿Qué es un 'Código de Error 418' en el contexto de React?",
+    "answers": [
+      {
+        "text": "No es un código de error real de React, es un chiste (HTCPCP 'I'm a teapot')",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un error común en la hidratación de SSR",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un error en la compilación de JSX",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un warning de React.StrictMode",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-144"
+  },
+  {
+    "question": "¿Qué es la prop 'key' con valor de array o string en el contexto de React 16?",
+    "answers": [
+      {
+        "text": "La key debe ser un string o número; los arrays y objetos se convierten automáticamente a string",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "La key puede ser cualquier tipo de dato",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "La key debe ser siempre un número",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "La key debe ser siempre un string",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-145"
+  },
+  {
+    "question": "¿Cómo se puede optimizar un componente que recibe muchas props que cambian frecuentemente?",
+    "answers": [
+      {
+        "text": "Usando React.memo con una función de comparación personalizada como segundo argumento",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Convirtiendo todas las props a un solo objeto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usando useState para almacenar las props",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Eliminando props y usando variables globales",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-146"
+  },
+  {
+    "question": "¿Qué es el patrón 'Provider Pattern' con React Context?",
+    "answers": [
+      {
+        "text": "Un componente que envuelve la aplicación y provee valores de contexto a todos los componentes hijos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un componente que provee servicios web",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un patrón para inyección de dependencias",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una forma de proveer props a componentes lejanos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-147"
+  },
+  {
+    "question": "¿Cómo se puede evitar renderizados innecesarios cuando se usa Context?",
+    "answers": [
+      {
+        "text": "Dividiendo el contexto en múltiples contextos más pequeños y específicos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Usando un solo contexto grande para todo",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Evitando el uso de Context por completo",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Usando useState en lugar de Context",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-148"
+  },
+  {
+    "question": "¿Qué es la técnica de 'separación de contextos' para optimizar el rendimiento?",
+    "answers": [
+      {
+        "text": "Crear contextos separados para datos que cambian con diferente frecuencia para minimizar re-renderizados",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Separar el contexto en archivos diferentes",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Usar useContext en componentes separados",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Dividir la aplicación en contextos aislados",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-149"
+  },
+  {
+    "question": "¿Qué es un 'Derived State' y cuándo es problemático en React?",
+    "answers": [
+      {
+        "text": "Estado calculado a partir de props que puede causar problemas de sincronización y renderizados extras",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Estado derivado de otros estados del componente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Estado que se calcula en el método constructor",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Estado que se obtiene de una API",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-150"
+  },
+  {
+    "question": "¿Qué es JavaScript?",
+    "answers": [
+      {
+        "text": "Un lenguaje de programación interpretado de alto nivel usado principalmente para desarrollo web",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un lenguaje de marcado para estilos de páginas web",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un lenguaje de consulta de bases de datos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un lenguaje solo del lado del servidor",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-151"
+  },
+  {
+    "question": "¿Cómo declaras una variable constante en JavaScript?",
+    "answers": [
+      {
+        "text": "const miVar = valor",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "let miVar = valor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "var miVar = valor",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "constant miVar = valor",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-152"
+  },
+  {
+    "question": "¿Cuál de los siguientes NO es un tipo de dato en JavaScript?",
+    "answers": [
+      {
+        "text": "Integer",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "String",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Boolean",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Object",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-153"
+  },
+  {
+    "question": "¿Cómo escribes un comentario en JavaScript?",
+    "answers": [
+      {
+        "text": "// Esto es un comentario",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "<!-- Esto es un comentario -->",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "# Esto es un comentario",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "/* Esto es un comentario */ pero de una línea",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-154"
+  },
+  {
+    "question": "¿Qué hace el operador ===?",
+    "answers": [
+      {
+        "text": "Comprueba igualdad estricta (valor y tipo)",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Comprueba solo igualdad de valor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Asigna un valor",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Comprueba si los valores son diferentes",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-155"
+  },
+  {
+    "question": "¿Cómo se define una función en JavaScript?",
+    "answers": [
+      {
+        "text": "function miFuncion() {}",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "def miFuncion():",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "func miFuncion() {}",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "define miFuncion()",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-156"
+  },
+  {
+    "question": "¿Qué es un array en JavaScript?",
+    "answers": [
+      {
+        "text": "Una colección ordenada de elementos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una estructura de datos clave-valor",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un tipo de función",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una regla de estilo CSS",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-157"
+  },
+  {
+    "question": "¿Cómo accedes al primer elemento de un array llamado arr?",
+    "answers": [
+      {
+        "text": "arr[0]",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "arr[1]",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "arr.first()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "arr.getItem(0)",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-158"
+  },
+  {
+    "question": "¿Qué devuelve el operador typeof para un string?",
+    "answers": [
+      {
+        "text": "'string'",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "'String'",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "'text'",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "'typeof string'",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-159"
+  },
+  {
+    "question": "¿Cuál es la forma correcta de escribir un if en JavaScript?",
+    "answers": [
+      {
+        "text": "if (condicion) { }",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "if condicion then { }",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "if { condicion }",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "if condicion: { }",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "basic",
+    "id": "react-160"
+  },
+  {
+    "question": "¿Qué es un closure en JavaScript?",
+    "answers": [
+      {
+        "text": "Una función que tiene acceso a las variables de su función externa incluso después de que ésta haya retornado",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una función que cierra la pestaña del navegador",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un bloque de código envuelto en llaves",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método que cierra todas las conexiones abiertas",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-161"
+  },
+  {
+    "question": "¿Cómo se comporta la palabra clave 'this' en una arrow function?",
+    "answers": [
+      {
+        "text": "Here da 'this' del ámbito léxico que la envuelve",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Se refiere al objeto global",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Se refiere a la función misma",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Es undefined",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-162"
+  },
+  {
+    "question": "¿Qué es una Promise en JavaScript?",
+    "answers": [
+      {
+        "text": "Un objeto que representa la eventual finalización o fallo de una operación asíncrona",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una garantía de que el código se ejecutará síncronamente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un patrón basado en callbacks",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una forma de hacer peticiones HTTP",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-163"
+  },
+  {
+    "question": "¿Qué es el hoisting en JavaScript?",
+    "answers": [
+      {
+        "text": "El comportamiento de mover las declaraciones al inicio de su ámbito antes de ejecutar el código",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Elevar una variable de ámbito local a global",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una técnica de manipulación del DOM",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para optimizar el rendimiento",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-164"
+  },
+  {
+    "question": "¿Qué es el event loop?",
+    "answers": [
+      {
+        "text": "Un mecanismo que maneja callbacks asíncronos gestionando la pila de llamadas y las colas de tareas",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un bucle que itera sobre eventos del DOM",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método de jQuery para manejo de eventos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una API del navegador para programar tareas",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-165"
+  },
+  {
+    "question": "¿Para qué sirve el operador spread (...)?",
+    "answers": [
+      {
+        "text": "Expandir iterables como arrays u objetos en elementos individuales",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Distribuir valores entre múltiples variables",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Crear una nueva función con argumentos expandidos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Dividir un array en partes más pequeñas",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-166"
+  },
+  {
+    "question": "¿Qué es la herencia prototípica en JavaScript?",
+    "answers": [
+      {
+        "text": "Los objetos pueden heredar propiedades y métodos de otros objetos a través de la cadena de prototipos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un modelo de herencia basado en clases como Java",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una forma de crear múltiples copias de un objeto",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Herencia solo a través de constructores de funciones",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-167"
+  },
+  {
+    "question": "¿Qué hace el método .map() en un array?",
+    "answers": [
+      {
+        "text": "Crea un nuevo array aplicando una función a cada elemento",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Modifica el array original directamente",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Filtra elementos basado en una condición",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Encuentra un solo elemento en el array",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-168"
+  },
+  {
+    "question": "¿Qué es la desestructuración en JavaScript?",
+    "answers": [
+      {
+        "text": "Una sintaxis que permite extraer valores de arrays o propiedades de objetos en variables distintas",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Eliminar propiedades de un objeto",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Borrar elementos de un array",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para reiniciar valores de variables",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-169"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre null y undefined?",
+    "answers": [
+      {
+        "text": "null es un valor asignado que representa 'sin valor'; undefined significa que una variable fue declarada pero no asignada",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son exactamente iguales",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "undefined es un valor asignado por el usuario; null es automático",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "null es para objetos; undefined es para primitivos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "intermediate",
+    "id": "react-170"
+  },
+  {
+    "question": "¿Qué es una función generadora en JavaScript?",
+    "answers": [
+      {
+        "text": "Una función que puede ser pausada y reanudada usando la palabra clave yield, devolviendo un iterador",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una función que genera números aleatorios",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una función que crea otras funciones",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una función constructora para objetos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-171"
+  },
+  {
+    "question": "¿Para qué se usa el objeto Proxy?",
+    "answers": [
+      {
+        "text": "Crear un objeto que envuelve a otro para interceptar y redefinir operaciones fundamentales",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un proxy de red para peticiones HTTP",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un mecanismo de seguridad para autenticación",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una capa de caché para llamadas API",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-172"
+  },
+  {
+    "question": "¿Qué es la API Reflect?",
+    "answers": [
+      {
+        "text": "Un objeto integrado que proporciona métodos para operaciones JavaScript interceptables",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una API para reflejar elementos del DOM",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una herramienta de depuración para examinar objetos",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Un método para crear espejos de objetos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-173"
+  },
+  {
+    "question": "¿Qué son los Symbols en JavaScript?",
+    "answers": [
+      {
+        "text": "Valores primitivos únicos e inmutables usados como identificadores para propiedades de objetos",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Símbolos matemáticos representados como strings",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una forma de crear miembros privados de clases",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Alias para valores primitivos",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-174"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre WeakMap y Map?",
+    "answers": [
+      {
+        "text": "WeakMap tiene referencias débiles a las claves, permitiendo recolección de basura; Map tiene referencias fuertes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "WeakMap es más rápido que Map",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "WeakMap solo funciona con claves string",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "WeakMap es una subclase de Map",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-175"
+  },
+  {
+    "question": "¿Qué son las microtasks y macrotasks en el event loop?",
+    "answers": [
+      {
+        "text": "Las microtasks (callbacks de Promise) se ejecutan antes que las macrotasks (setTimeout, I/O) en cada iteración del event loop",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Las microtasks se ejecutan después de las macrotasks",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Son lo mismo",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Las macrotasks tienen mayor prioridad",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-176"
+  },
+  {
+    "question": "¿Cuál es la diferencia entre Object.freeze() y Object.seal()?",
+    "answers": [
+      {
+        "text": "freeze() hace un objeto inmutable; seal() previene añadir/eliminar propiedades pero permite modificar las existentes",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Son idénticos",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "seal() es más estricto que freeze()",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "freeze() solo funciona en arrays",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-177"
+  },
+  {
+    "question": "¿Qué es la optimización de llamadas en cola (tail call) en JavaScript?",
+    "answers": [
+      {
+        "text": "Una optimización donde el motor reutiliza el stack frame actual cuando una llamada está en posición tail",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una forma de llamar funciones al final de un bucle",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Un método para optimizar la última línea de una función",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una técnica para encadenar llamadas de funciones",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-178"
+  },
+  {
+    "question": "¿Qué es la API Temporal (o Intl.DateTimeFormat)?",
+    "answers": [
+      {
+        "text": "Una API para manejar fechas y horas con soporte de zonas horarias y locales",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Una API de almacenamiento temporal",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una herramienta de depuración de viaje en el tiempo",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una utilidad de temporizador para medir rendimiento",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-179"
+  },
+  {
+    "question": "¿Qué es el patrón módulo en JavaScript?",
+    "answers": [
+      {
+        "text": "Un patrón de diseño que usa closures IIFE para crear ámbitos privados encapsulados para organización de código",
+        "isCorrect": true,
+        "childId": 0
+      },
+      {
+        "text": "Un patrón para importar módulos ES",
+        "isCorrect": false,
+        "childId": 1
+      },
+      {
+        "text": "Una estructura de paquetes de Node.js",
+        "isCorrect": false,
+        "childId": 2
+      },
+      {
+        "text": "Una forma de modularizar CSS",
+        "isCorrect": false,
+        "childId": 3
+      }
+    ],
+    "level": "expert",
+    "id": "react-180"
+  }
+]

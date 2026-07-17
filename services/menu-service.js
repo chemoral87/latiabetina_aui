@@ -31,7 +31,7 @@ export class MenuService {
       }
 
       if (this.hasPermission("product-index")) {
-        menu.push({ icon: "mdi-package-variant", title: "Productos", to: "/pos/products" })
+        menu.push({ icon: "mdi-package-variant", title: "Productos", to: "/pos/product" })
       }
 
       if (this.hasPermission("sale-index")) {

@@ -145,6 +145,10 @@ export default {
 
   mounted() {
     this.setNavBar()
+    // Populate store if empty so other pages (POS, edit sale) can use cached products
+    if (this.$store.getters['products/allProducts'].length === 0) {
+      this.$store.dispatch('products/fetchProducts')
+    }
   },
 
   methods: {
@@ -189,6 +193,10 @@ export default {
 
         this.response = response
         this.options = requestOptions
+        // Keep store in sync with latest product data
+        if (response?.data) {
+          this.$store.commit('products/SET_PRODUCTS', response.data)
+        }
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)
@@ -208,7 +216,7 @@ export default {
     },
 
     newProduct() {
-      this.$router.push({ path: '/pos/products/new' })
+      this.$router.push({ path: '/pos/product/new' })
     },
 
     editProduct(item) {
@@ -236,6 +244,8 @@ export default {
         await this.loadProducts({ filter: '', page: 1 })
 
         this.productDialogDelete = false
+        // Remove from store
+        this.$store.commit('products/REMOVE_PRODUCT', item.id)
       } catch (error) {
         if (this.$handleError) {
           this.$handleError(error)

@@ -153,8 +153,6 @@ export default {
 
   data() {
     return {
-      products: [],
-      loadingProducts: false,
       cart: [],
       showCart: false,
       customerName: '',
@@ -170,6 +168,12 @@ export default {
   },
 
   computed: {
+    products() {
+      return this.$store.getters['products/allProducts']
+    },
+    loadingProducts() {
+      return this.$store.getters['products/loading']
+    },
     total() {
       return this.cart
         .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
@@ -186,7 +190,10 @@ export default {
       title: 'Punto de Venta',
       icon: 'mdi-point-of-sale',
     })
-    this.loadProducts()
+    // Load products into store only if empty (skip if already populated)
+    if (this.products.length === 0) {
+      this.$store.dispatch('products/fetchProducts')
+    }
     this.$nextTick(() => {
       const footer = this.$refs.posFooter
       if (footer && typeof ResizeObserver !== 'undefined') {
@@ -208,18 +215,6 @@ export default {
   },
 
   methods: {
-    async loadProducts() {
-      this.loadingProducts = true
-      try {
-        const response = await this.$repository.Product.pos(null, { cacheMs: 500 })
-        this.products = response?.data || []
-      } catch (error) {
-        this.$handleError?.(error)
-      } finally {
-        this.loadingProducts = false
-      }
-    },
-
     cartQty(productId) {
       return this.cart.find((i) => i.product.id === productId)?.quantity ?? 0
     },

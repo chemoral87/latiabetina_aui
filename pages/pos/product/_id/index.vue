@@ -40,12 +40,12 @@ export default {
     eventBus.$emit('setNavBar', {
       title: 'Editar artículo',
       icon: 'mdi-package-variant',
-      back: '/pos/products',
+      back: '/pos/product',
     })
   },
   methods: {
     goBack() {
-      this.$router.push('/pos/products')
+      this.$router.push('/pos/product')
     },
     async saveProduct(payload) {
       try {
@@ -54,7 +54,10 @@ export default {
           payload.org_id = payload.org_id.id
         }
         await this.$repository.Product.update(this.product.id, payload)
-        this.$router.push('/pos/products')
+        // Update store with the edited product
+        const updated = { ...this.product, ...payload }
+        this.$store.commit('products/UPDATE_PRODUCT', updated)
+        this.$router.push('/pos/product')
       } catch (error) {
         this.$handleError?.(error)
       } finally {
