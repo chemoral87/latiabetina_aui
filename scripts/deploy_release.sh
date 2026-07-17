@@ -49,8 +49,8 @@ tar -xzf "$TARBALL" -C "$RELEASE_PATH" || error_exit "Tar extraction failed"
 
 cd "$RELEASE_PATH" || error_exit "Cannot enter release directory"
 
-if [ ! -f package.json ] || [ ! -f package-lock.json ] || [ ! -f ecosystem.config.js ]; then
-  error_exit "Release archive must contain the application files at its root"
+if [ ! -f package.json ] || [ ! -f ecosystem.config.js ] || [ ! -d .nuxt ] || [ ! -d node_modules ]; then
+  error_exit "Release archive must contain package.json, ecosystem.config.js, .nuxt, and node_modules at its root"
 fi
 
 if [ -f "$APP_DIR/.env.production" ]; then
@@ -59,14 +59,6 @@ if [ -f "$APP_DIR/.env.production" ]; then
 else
   echo -e "${YELLOW}⚠️ No .env.production file found at $APP_DIR/.env.production${NC}"
 fi
-
-# A Nuxt production server serves the generated .nuxt directory. Rebuild this
-# release so it cannot serve stale build artifacts contained in the archive.
-echo -e "${YELLOW}Installing dependencies...${NC}"
-npm ci || error_exit "Dependency installation failed"
-
-echo -e "${YELLOW}Building production release...${NC}"
-npm run build:prod || error_exit "Production build failed"
 
 # Update current symlink atomically (zero downtime)
 echo -e "${YELLOW}🔗 Updating current symlink...${NC}"
