@@ -13,6 +13,10 @@
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
+        <v-btn color="secondary" class="ml-2" to="/pos">
+          <v-icon left>mdi-point-of-sale</v-icon>
+          Ir al POS
+        </v-btn>
       </v-col>
 
       <!-- Tabla de ventas -->
@@ -101,7 +105,7 @@ export default {
     eventBus.$emit('setNavBar', {
       title: 'Ventas',
       icon: 'mdi-receipt-text',
-      back: '/pos',
+
     })
   },
 
