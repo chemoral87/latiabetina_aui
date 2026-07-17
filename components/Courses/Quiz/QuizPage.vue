@@ -39,7 +39,7 @@
         <QuizProgressChips
           :chips="progressChips"
           :current-index="currentQuestionIndex"
-          @go-to="GO_TO_QUESTION"
+          @go-to="goToQuestion"
         />
         <QuizProgressAutoPass
           :auto-pass="autoPass"
@@ -70,8 +70,8 @@
         :answered="answeredCount"
         :all-answered="allAnswered"
         :translations="translations"
-        @previous="PREVIOUS_QUESTION"
-        @next="NEXT_QUESTION"
+        @previous="goToPreviousQuestion"
+        @next="goToNextQuestion"
         @finish="finishQuiz"
       />
     </template>
@@ -179,6 +179,7 @@ export default {
       countdownProgress: 0,
       countdownTimer: null,
       countdownInterval: null,
+      countdownToken: 0,
     }
   },
 
@@ -313,17 +314,21 @@ export default {
       this.clearCountdown()
       this.countdownActive = true
       this.countdownProgress = 0
+      this.countdownToken += 1
+      const token = this.countdownToken
 
       const totalMs = this.autoPassDelay * 1000
       const stepMs = 50
       let elapsed = 0
 
       this.countdownInterval = setInterval(() => {
+        if (token !== this.countdownToken) return
         elapsed += stepMs
         this.countdownProgress = Math.min(100, (elapsed / totalMs) * 100)
       }, stepMs)
 
       this.countdownTimer = setTimeout(() => {
+        if (token !== this.countdownToken) return
         this.clearCountdown()
         if (this.currentQuestionIndex < this.questions.length - 1) {
           this.NEXT_QUESTION()
@@ -334,6 +339,7 @@ export default {
     },
 
     clearCountdown() {
+      this.countdownToken += 1
       if (this.countdownTimer) {
         clearTimeout(this.countdownTimer)
         this.countdownTimer = null
@@ -344,6 +350,21 @@ export default {
       }
       this.countdownActive = false
       this.countdownProgress = 0
+    },
+
+    goToNextQuestion() {
+      this.clearCountdown()
+      this.NEXT_QUESTION()
+    },
+
+    goToPreviousQuestion() {
+      this.clearCountdown()
+      this.PREVIOUS_QUESTION()
+    },
+
+    goToQuestion(index) {
+      this.clearCountdown()
+      this.GO_TO_QUESTION(index)
     },
 
     finishQuiz() {
