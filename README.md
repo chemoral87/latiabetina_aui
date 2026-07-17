@@ -1,4 +1,4 @@
-# latiabetina_aui ok
+# latiabetina_aui
 
 ## Build Setup
 
