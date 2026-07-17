@@ -3,7 +3,7 @@
     <!-- Full-width header bar when quiz is active -->
     <div id="quiz-header" v-if="quizStarted" style="background: #fafafa; border-bottom: 1px solid #e0e0e0;">
       <v-container fluid class="py-2 px-4">
-        <v-row>
+        <v-row align="center">
           <v-col cols="3" md="3">
             <QuizHeaderTitle icon="mdi-atom" :title="t('title')" :subtitle="t('subtitle')" />
           </v-col>
@@ -267,47 +267,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.answer-option {
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-  cursor: pointer;
-  user-select: none;
-}
-
-.answer-unanswered:hover {
-  background-color: #f5f5f5;
-  border-color: #e0e0e0;
-}
-
-.answer-correct {
-  background-color: #e8f5e9 !important;
-  border-color: #4caf50 !important;
-}
-
-.answer-wrong {
-  background-color: #ffebee !important;
-  border-color: #f44336 !important;
-}
-
-.answer-disabled {
-  opacity: 0.6;
-  cursor: default !important;
-}
-
-.theme--dark .answer-unanswered:hover {
-  background-color: #424242;
-  border-color: #616161;
-}
-
-.theme--dark .answer-correct {
-  background-color: #1b5e20 !important;
-  border-color: #4caf50 !important;
-}
-
-.theme--dark .answer-wrong {
-  background-color: #b71c1c !important;
-  border-color: #f44336 !important;
-}
-</style>
