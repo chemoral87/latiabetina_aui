@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -36,7 +36,12 @@ if [ ! -f "$TARBALL" ]; then
 fi
 
 mkdir -p "$RELEASES_DIR"
-mkdir -p "$RELEASE_PATH"
+
+if [ -e "$RELEASE_PATH" ]; then
+  error_exit "Release path already exists: $RELEASE_PATH"
+fi
+
+mkdir "$RELEASE_PATH"
 
 # Extract release tarball into release folder
 echo -e "${YELLOW}📦 Extracting release tarball...${NC}"
@@ -44,12 +49,24 @@ tar -xzf "$TARBALL" -C "$RELEASE_PATH" || error_exit "Tar extraction failed"
 
 cd "$RELEASE_PATH" || error_exit "Cannot enter release directory"
 
+if [ ! -f package.json ] || [ ! -f package-lock.json ] || [ ! -f ecosystem.config.js ]; then
+  error_exit "Release archive must contain the application files at its root"
+fi
+
 if [ -f "$APP_DIR/.env.production" ]; then
   echo -e "${YELLOW}📄 Copying .env.production file...${NC}"
   cp -f "$APP_DIR/.env.production" "$RELEASE_PATH/.env.production" || error_exit "Failed to copy .env.production"
 else
   echo -e "${YELLOW}⚠️ No .env.production file found at $APP_DIR/.env.production${NC}"
 fi
+
+# A Nuxt production server serves the generated .nuxt directory. Rebuild this
+# release so it cannot serve stale build artifacts contained in the archive.
+echo -e "${YELLOW}Installing dependencies...${NC}"
+npm ci || error_exit "Dependency installation failed"
+
+echo -e "${YELLOW}Building production release...${NC}"
+npm run build:prod || error_exit "Production build failed"
 
 # Update current symlink atomically (zero downtime)
 echo -e "${YELLOW}🔗 Updating current symlink...${NC}"
