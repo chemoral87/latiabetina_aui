@@ -64,9 +64,10 @@ fi
 echo -e "${YELLOW}🔗 Updating current symlink...${NC}"
 ln -sfn "$RELEASE_PATH" "$CURRENT_LINK" || error_exit "Symlink update failed"
 
-# Restart app with pm2 using ecosystem config (graceful, zero-downtime)
+# Recreate the PM2 process so it runs from the new release directory.
 echo -e "${YELLOW}🔄 Restarting app...${NC}"
-pm2 startOrRestart "$CURRENT_LINK/ecosystem.config.js" --update-env || error_exit "pm2 restart failed"
+pm2 delete Admin || true
+pm2 start "$CURRENT_LINK/ecosystem.config.js" --update-env || error_exit "pm2 start failed"
 pm2 save
 
 # Reload nginx so it follows the new symlink for static files
