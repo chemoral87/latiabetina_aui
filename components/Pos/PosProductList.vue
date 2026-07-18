@@ -23,7 +23,13 @@
       </div>
       <!-- Name -->
       <div class="pos-list-col-name">
-        <div class="pos-list-name text-body-2 font-weight-bold">{{ product.name }}</div>
+        <div class="pos-list-name text-body-2 font-weight-bold">{{ product.name }}<v-icon v-if="product.requires_preparation" small class="ml-1 orange--text">mdi-chef-hat</v-icon></div>
+        <div v-if="showStock && product.stock < 5" class="text-caption font-weight-medium green--text">
+          {{ product.stock === 0 ? 'Sin stock' : `Solo ${product.stock} restantes` }}
+        </div>
+        <div v-else-if="!showStock && product.stock === 0" class="text-caption font-weight-medium error--text">
+          Sin stock
+        </div>
       </div>
       <!-- Price -->
       <div class="pos-list-col-price">
@@ -61,6 +67,7 @@ export default {
   props: {
     products: { type: Array, required: true },
     cart: { type: Array, required: true },
+    showStock: { type: Boolean, default: false },
   },
   methods: {
     cartQty(productId) {

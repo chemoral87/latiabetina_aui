@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "react-211",
+    "level": "expert",
+    "question": {
+      "en": "What does this useImperativeHandle expose?\n```jsx\nconst FancyInput = forwardRef((props, ref) => {\n  const inputRef = useRef()\n  useImperativeHandle(ref, () => ({\n    focus: () => inputRef.current.focus(),\n    clear: () => { inputRef.current.value = '' }\n  }))\n  return <input ref={inputRef} />\n})\n```",
+      "es": "¿Qué expone este useImperativeHandle?\n```jsx\nconst FancyInput = forwardRef((props, ref) => {\n  const inputRef = useRef()\n  useImperativeHandle(ref, () => ({\n    focus: () => inputRef.current.focus(),\n    clear: () => { inputRef.current.value = '' }\n  }))\n  return <input ref={inputRef} />\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Exposes only focus() and clear() to the parent through the ref, hiding the raw DOM node",
+          "es": "Expone solo focus() y clear() al padre a través del ref, ocultando el nodo DOM sin procesar"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Exposes every DOM property of the input to the parent",
+          "es": "Expone todas las propiedades DOM del input al padre"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useImperativeHandle must be used without forwardRef",
+          "es": "Lanza un error porque useImperativeHandle debe usarse sin forwardRef"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Makes the component rerender whenever focus() or clear() is called",
+          "es": "Hace que el componente se re-renderice cada vez que se llama a focus() o clear()"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-212",
+    "level": "expert",
+    "question": {
+      "en": "What does this concurrent feature do?\n```jsx\nconst [isPending, startTransition] = useTransition()\n\nfunction handleInput(value) {\n  startTransition(() => {\n    setFilteredList(computeHeavyFilter(value))\n  })\n}\n```",
+      "es": "¿Qué hace esta característica concurrente?\n```jsx\nconst [isPending, startTransition] = useTransition()\n\nfunction handleInput(value) {\n  startTransition(() => {\n    setFilteredList(computeHeavyFilter(value))\n  })\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Marks the filter update as non-urgent so React can interrupt it to keep the input responsive; isPending is true while the transition is in progress",
+          "es": "Marca la actualización del filtro como no urgente para que React pueda interrumpirla y mantener el input responsivo; isPending es true mientras la transición está en curso"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs computeHeavyFilter in a Web Worker to avoid blocking the main thread",
+          "es": "Ejecuta computeHeavyFilter en un Web Worker para no bloquear el hilo principal"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Debounces the state update by 300ms automatically",
+          "es": "Aplica debounce a la actualización de estado automáticamente durante 300ms"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Batches all state updates within startTransition into a single synchronous update",
+          "es": "Agrupa todas las actualizaciones de estado dentro de startTransition en una única actualización síncrona"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-213",
+    "level": "expert",
+    "question": {
+      "en": "What does this useDeferredValue pattern do?\n```jsx\nconst deferredQuery = useDeferredValue(query)\nconst results = useMemo(\n  () => filterItems(items, deferredQuery),\n  [items, deferredQuery]\n)\n```",
+      "es": "¿Qué hace este patrón useDeferredValue?\n```jsx\nconst deferredQuery = useDeferredValue(query)\nconst results = useMemo(\n  () => filterItems(items, deferredQuery),\n  [items, deferredQuery]\n)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Defers updates to deferredQuery so the heavy filter re-computation can be interrupted by more urgent updates like typing",
+          "es": "Difiere las actualizaciones de deferredQuery para que el costoso recálculo del filtro pueda ser interrumpido por actualizaciones más urgentes como escribir"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Throttles query updates to fire at most once per second",
+          "es": "Regula las actualizaciones de query para dispararse como máximo una vez por segundo"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Caches results permanently across component remounts",
+          "es": "Almacena en caché los resultados permanentemente entre remontajes del componente"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useDeferredValue cannot be combined with useMemo",
+          "es": "Lanza un error porque useDeferredValue no puede combinarse con useMemo"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-214",
+    "level": "expert",
+    "question": {
+      "en": "What does this server action pattern do in React 19?\n```jsx\nasync function submitForm(formData) {\n  'use server'\n  await db.save(formData.get('name'))\n}\n\n<form action={submitForm}>\n  <input name=\"name\" />\n  <button type=\"submit\">Save</button>\n</form>\n```",
+      "es": "¿Qué hace este patrón de server action en React 19?\n```jsx\nasync function submitForm(formData) {\n  'use server'\n  await db.save(formData.get('name'))\n}\n\n<form action={submitForm}>\n  <input name=\"name\" />\n  <button type=\"submit\">Save</button>\n</form>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Defines a server-side async function that runs on the server when the form is submitted, without a separate API route",
+          "es": "Define una función asíncrona del lado del servidor que se ejecuta en el servidor cuando se envía el formulario, sin una ruta API separada"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs submitForm on the client as a regular async event handler",
+          "es": "Ejecuta submitForm en el cliente como un manejador de eventos asíncrono regular"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Is identical to an onSubmit handler with an API fetch call",
+          "es": "Es idéntico a un manejador onSubmit con una llamada fetch a una API"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because 'use server' cannot be inside a function body",
+          "es": "Lanza un error porque 'use server' no puede estar dentro del cuerpo de una función"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-215",
+    "level": "expert",
+    "question": {
+      "en": "What does this fiber reconciliation behavior mean?\n```jsx\n// Both renders produce the same component type at the same position\n{condition ? <Input key=\"a\" /> : <Input key=\"b\" />}\n```",
+      "es": "¿Qué significa este comportamiento de reconciliación de fiber?\n```jsx\n// Ambos renders producen el mismo tipo de componente en la misma posición\n{condition ? <Input key=\"a\" /> : <Input key=\"b\" />}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Changing the key forces React to unmount the old Input and mount a fresh one, resetting all internal state",
+          "es": "Cambiar la key fuerza a React a desmontar el Input antiguo y montar uno nuevo, reiniciando todo el estado interno"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "The key has no effect because the component type is the same",
+          "es": "La key no tiene efecto porque el tipo de componente es el mismo"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "React reuses the existing DOM node but re-initializes only the props",
+          "es": "React reutiliza el nodo DOM existente pero reinicializa solo las props"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws a warning because keys must be numbers, not strings",
+          "es": "Lanza una advertencia porque las keys deben ser números, no cadenas"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-216",
+    "level": "expert",
+    "question": {
+      "en": "What does this selector pattern with useContextSelector avoid?\n```jsx\nconst count = useContextSelector(StoreContext, s => s.count)\n```",
+      "es": "¿Qué evita este patrón de selector con useContextSelector?\n```jsx\nconst count = useContextSelector(StoreContext, s => s.count)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Prevents re-renders when unrelated parts of the context change by subscribing only to the count slice",
+          "es": "Evita re-renders cuando partes no relacionadas del context cambian, suscribiéndose solo al slice count"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Is identical to useContext with no performance difference",
+          "es": "Es idéntico a useContext sin diferencia de rendimiento"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useContextSelector is not a built-in React hook",
+          "es": "Lanza un error porque useContextSelector no es un hook integrado de React"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Memoizes the entire context value, not just count",
+          "es": "Memoriza todo el valor del context, no solo count"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-217",
+    "level": "expert",
+    "question": {
+      "en": "What does this use() hook do in React 19?\n```jsx\nfunction UserProfile({ userPromise }) {\n  const user = use(userPromise)\n  return <h1>{user.name}</h1>\n}\n```",
+      "es": "¿Qué hace este hook use() en React 19?\n```jsx\nfunction UserProfile({ userPromise }) {\n  const user = use(userPromise)\n  return <h1>{user.name}</h1>\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Suspends the component until userPromise resolves, then renders with the resolved value — must be wrapped in Suspense",
+          "es": "Suspende el componente hasta que userPromise se resuelva, luego renderiza con el valor resuelto — debe estar envuelto en Suspense"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Immediately returns undefined and re-renders when the promise resolves",
+          "es": "Devuelve undefined inmediatamente y se re-renderiza cuando la promesa se resuelve"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Is identical to await inside an async component",
+          "es": "Es idéntico a await dentro de un componente asíncrono"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error if called conditionally inside the component",
+          "es": "Lanza un error si se llama condicionalmente dentro del componente"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-218",
+    "level": "expert",
+    "question": {
+      "en": "What does this startViewTransition integration do?\n```jsx\nfunction navigate(to) {\n  document.startViewTransition(() => {\n    flushSync(() => setPage(to))\n  })\n}\n```",
+      "es": "¿Qué hace esta integración de startViewTransition?\n```jsx\nfunction navigate(to) {\n  document.startViewTransition(() => {\n    flushSync(() => setPage(to))\n  })\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Wraps a React state update in the View Transitions API so the browser can animate between the old and new page states",
+          "es": "Envuelve una actualización de estado de React en la API View Transitions para que el navegador pueda animar entre los estados de página antiguo y nuevo"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Uses CSS transitions internally and has no relation to the browser View Transitions API",
+          "es": "Usa transiciones CSS internamente y no tiene relación con la API View Transitions del navegador"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because flushSync cannot be called inside a transition",
+          "es": "Lanza un error porque flushSync no puede llamarse dentro de una transición"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Defers the navigation until the current render cycle finishes",
+          "es": "Difiere la navegación hasta que el ciclo de renderizado actual finalice"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-219",
+    "level": "expert",
+    "question": {
+      "en": "What does this RSC (React Server Component) constraint mean?\n```jsx\n// server component\nexport default async function Page() {\n  const data = await db.query()\n  return <div>{data.title}</div>\n}\n```",
+      "es": "¿Qué significa esta restricción de RSC (React Server Component)?\n```jsx\n// server component\nexport default async function Page() {\n  const data = await db.query()\n  return <div>{data.title}</div>\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Runs only on the server — can use async/await and access databases directly, but cannot use useState, useEffect, or browser APIs",
+          "es": "Se ejecuta solo en el servidor — puede usar async/await y acceder a bases de datos directamente, pero no puede usar useState, useEffect ni APIs del navegador"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs on both server and client like a regular React component",
+          "es": "Se ejecuta tanto en servidor como en cliente como un componente React normal"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Behaves exactly like a Next.js getServerSideProps function",
+          "es": "Se comporta exactamente como una función getServerSideProps de Next.js"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because async components are not supported in React",
+          "es": "Lanza un error porque los componentes asíncronos no están soportados en React"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-220",
+    "level": "expert",
+    "question": {
+      "en": "What does this batching behavior produce in React 18+?\n```jsx\nsetTimeout(() => {\n  setCount(c => c + 1)\n  setFlag(f => !f)\n  // How many renders occur?\n}, 1000)\n```",
+      "es": "¿Qué produce este comportamiento de batching en React 18+?\n```jsx\nsetTimeout(() => {\n  setCount(c => c + 1)\n  setFlag(f => !f)\n  // ¿Cuántos renders ocurren?\n}, 1000)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Only one render — React 18 automatically batches state updates in timeouts, promises, and native events via automatic batching",
+          "es": "Solo un render — React 18 agrupa automáticamente las actualizaciones de estado en timeouts, promesas y eventos nativos mediante el batching automático"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Two renders — one for each setState call because timeouts are outside React's event system",
+          "es": "Dos renders — uno por cada llamada setState porque los timeouts están fuera del sistema de eventos de React"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "No renders until flushSync() is called",
+          "es": "Ningún render hasta que se llame a flushSync()"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because setState cannot be called inside setTimeout",
+          "es": "Lanza un error porque setState no puede llamarse dentro de setTimeout"
+        }
+      }
+    ]
+  }
 ]

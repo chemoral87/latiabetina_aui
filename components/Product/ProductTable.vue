@@ -32,6 +32,12 @@
       {{ item.hidden ? 'Sí' : 'No' }}
     </template>
 
+    <template #[`item.requires_preparation`]="{ item }">
+      <v-icon :color="item.requires_preparation ? 'orange darken-1' : 'grey lighten-2'">
+        mdi-chef-hat
+      </v-icon>
+    </template>
+
     <template #no-data>
       <div class="text-center pa-4">
         <v-icon color="grey lighten-1">mdi-package-variant</v-icon>
@@ -93,6 +99,7 @@ export default {
       }
       cols.push(
         { text: 'SKU', value: 'sku', sortable: false },
+        { text: 'Requiere Prep.', value: 'requires_preparation', sortable: false },
         { text: 'Oculto', value: 'hidden', sortable: false },
         { text: 'Precio', value: 'price', align: 'right' },
         { text: 'Stock', value: 'stock', align: 'right' },

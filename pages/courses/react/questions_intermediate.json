@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "react-201",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this useReducer setup do?\n```jsx\nconst [state, dispatch] = useReducer((state, action) => {\n  switch (action.type) {\n    case 'increment': return { count: state.count + 1 }\n    default: return state\n  }\n}, { count: 0 })\n```",
+      "es": "¿Qué hace esta configuración de useReducer?\n```jsx\nconst [state, dispatch] = useReducer((state, action) => {\n  switch (action.type) {\n    case 'increment': return { count: state.count + 1 }\n    default: return state\n  }\n}, { count: 0 })\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Manages a count state with a reducer; dispatching { type: 'increment' } returns a new state with count incremented by 1",
+          "es": "Gestiona un estado count con un reducer; despachar { type: 'increment' } devuelve un nuevo estado con count incrementado en 1"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Mutates state.count directly because switch statements bypass React's immutability rules",
+          "es": "Muta state.count directamente porque las sentencias switch evitan las reglas de inmutabilidad de React"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a Redux store inside the component",
+          "es": "Crea un store de Redux dentro del componente"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useReducer requires a middleware argument",
+          "es": "Lanza un error porque useReducer requiere un argumento de middleware"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-202",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this custom hook provide?\n```jsx\nfunction useFetch(url) {\n  const [data, setData] = useState(null)\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(setData)\n  }, [url])\n  return data\n}\n```",
+      "es": "¿Qué proporciona este hook personalizado?\n```jsx\nfunction useFetch(url) {\n  const [data, setData] = useState(null)\n  useEffect(() => {\n    fetch(url).then(r => r.json()).then(setData)\n  }, [url])\n  return data\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "A reusable hook that fetches JSON from a URL and returns the parsed data, re-fetching whenever the URL changes",
+          "es": "Un hook reutilizable que obtiene JSON de una URL y devuelve los datos analizados, volviendo a buscar cada vez que cambia la URL"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "A hook that caches all fetch responses globally across components",
+          "es": "Un hook que cachea todas las respuestas fetch globalmente entre componentes"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because custom hooks cannot use useEffect",
+          "es": "Lanza un error porque los hooks personalizados no pueden usar useEffect"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Fetches data once on mount and never re-fetches regardless of URL changes",
+          "es": "Obtiene datos una vez al montarse y nunca vuelve a buscar independientemente de los cambios de URL"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-203",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this Context pattern do?\n```jsx\nconst ThemeContext = createContext('light')\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <Toolbar />\n    </ThemeContext.Provider>\n  )\n}\n\nfunction Toolbar() {\n  const theme = useContext(ThemeContext)\n  return <div>{theme}</div>\n}\n```",
+      "es": "¿Qué hace este patrón de Context?\n```jsx\nconst ThemeContext = createContext('light')\n\nfunction App() {\n  return (\n    <ThemeContext.Provider value=\"dark\">\n      <Toolbar />\n    </ThemeContext.Provider>\n  )\n}\n\nfunction Toolbar() {\n  const theme = useContext(ThemeContext)\n  return <div>{theme}</div>\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Makes 'dark' available to Toolbar and all its descendants via context, without prop drilling",
+          "es": "Hace disponible 'dark' para Toolbar y todos sus descendientes mediante context, sin prop drilling"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Toolbar receives 'light' because that is the createContext default value",
+          "es": "Toolbar recibe 'light' porque ese es el valor por defecto de createContext"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useContext must be called in App, not in Toolbar",
+          "es": "Lanza un error porque useContext debe llamarse en App, no en Toolbar"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a global Redux-like store accessible by all React apps",
+          "es": "Crea un store global tipo Redux accesible por todas las apps React"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-204",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this useMemo call optimize?\n```jsx\nconst sortedList = useMemo(\n  () => [...items].sort((a, b) => a.name.localeCompare(b.name)),\n  [items]\n)\n```",
+      "es": "¿Qué optimiza esta llamada a useMemo?\n```jsx\nconst sortedList = useMemo(\n  () => [...items].sort((a, b) => a.name.localeCompare(b.name)),\n  [items]\n)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Memoizes the sorted array so the expensive sort only re-runs when items changes, not on every render",
+          "es": "Memoriza el array ordenado para que el costoso ordenamiento solo se vuelva a ejecutar cuando items cambie, no en cada renderizado"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Sorts items in place and mutates the original array",
+          "es": "Ordena items en su lugar y muta el array original"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the sort on every render because useMemo always recalculates",
+          "es": "Ejecuta el ordenamiento en cada renderizado porque useMemo siempre recalcula"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because sort cannot be used inside useMemo",
+          "es": "Lanza un error porque sort no puede usarse dentro de useMemo"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-205",
+    "level": "intermediate",
+    "question": {
+      "en": "What does useCallback do here?\n```jsx\nconst handleClick = useCallback(() => {\n  doSomething(id)\n}, [id])\n```",
+      "es": "¿Qué hace useCallback aquí?\n```jsx\nconst handleClick = useCallback(() => {\n  doSomething(id)\n}, [id])\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Returns a memoized version of handleClick that only changes when id changes, preventing unnecessary re-renders of child components",
+          "es": "Devuelve una versión memorizada de handleClick que solo cambia cuando id cambia, evitando re-renders innecesarios de componentes hijo"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Calls doSomething immediately when the component mounts",
+          "es": "Llama a doSomething inmediatamente cuando el componente se monta"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Debounces the handleClick function by 100ms",
+          "es": "Aplica debounce a la función handleClick durante 100ms"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because arrow functions cannot be memoized",
+          "es": "Lanza un error porque las funciones flecha no pueden memorizarse"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-206",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this forwardRef enable?\n```jsx\nconst Input = forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n))\n\n// Parent\nconst inputRef = useRef(null)\n<Input ref={inputRef} />\n```",
+      "es": "¿Qué habilita este forwardRef?\n```jsx\nconst Input = forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n))\n\n// Parent\nconst inputRef = useRef(null)\n<Input ref={inputRef} />\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Allows the parent to access the underlying DOM input element through inputRef, bypassing the component boundary",
+          "es": "Permite al padre acceder al elemento DOM input subyacente a través de inputRef, pasando por encima del límite del componente"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Clones the Input component and passes ref as a prop",
+          "es": "Clona el componente Input y pasa ref como prop"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Makes the Input component re-render whenever the ref changes",
+          "es": "Hace que el componente Input se re-renderice cada vez que el ref cambia"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because function components cannot receive refs without forwardRef",
+          "es": "Lanza un error porque los componentes función no pueden recibir refs sin forwardRef — pero esto ES correcto sin forwardRef, aquí sí se usa"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-207",
+    "level": "intermediate",
+    "question": {
+      "en": "What does React.memo do here?\n```jsx\nconst ExpensiveList = React.memo(function ExpensiveList({ items }) {\n  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>\n})\n```",
+      "es": "¿Qué hace React.memo aquí?\n```jsx\nconst ExpensiveList = React.memo(function ExpensiveList({ items }) {\n  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Prevents ExpensiveList from re-rendering when its parent re-renders, unless the items prop reference changes",
+          "es": "Evita que ExpensiveList se re-renderice cuando su padre se re-renderiza, a menos que la referencia de la prop items cambie"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Saves the component to localStorage for faster future renders",
+          "es": "Guarda el componente en localStorage para renderizados futuros más rápidos"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Makes a deep comparison of all props on every render",
+          "es": "Realiza una comparación profunda de todas las props en cada renderizado"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Converts the functional component into a class component internally",
+          "es": "Convierte el componente funcional en un componente de clase internamente"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-208",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this error boundary catch?\n```jsx\nclass ErrorBoundary extends React.Component {\n  state = { hasError: false }\n  static getDerivedStateFromError() {\n    return { hasError: true }\n  }\n  render() {\n    return this.state.hasError\n      ? <h1>Something went wrong</h1>\n      : this.props.children\n  }\n}\n```",
+      "es": "¿Qué captura este error boundary?\n```jsx\nclass ErrorBoundary extends React.Component {\n  state = { hasError: false }\n  static getDerivedStateFromError() {\n    return { hasError: true }\n  }\n  render() {\n    return this.state.hasError\n      ? <h1>Something went wrong</h1>\n      : this.props.children\n  }\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Catches rendering errors thrown by any child component and displays a fallback UI instead of crashing the whole tree",
+          "es": "Captura errores de renderizado lanzados por cualquier componente hijo y muestra una UI de fallback en lugar de colapsar todo el árbol"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Catches all JavaScript errors in the application including async errors",
+          "es": "Captura todos los errores JavaScript de la aplicación incluyendo errores asíncronos"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Works only with functional components, not class components",
+          "es": "Funciona solo con componentes funcionales, no con componentes de clase"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because getDerivedStateFromError must be an instance method",
+          "es": "Lanza un error porque getDerivedStateFromError debe ser un método de instancia"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-209",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this lazy loading pattern do?\n```jsx\nconst Dashboard = lazy(() => import('./Dashboard'))\n\nfunction App() {\n  return (\n    <Suspense fallback={<Spinner />}>\n      <Dashboard />\n    </Suspense>\n  )\n}\n```",
+      "es": "¿Qué hace este patrón de carga diferida?\n```jsx\nconst Dashboard = lazy(() => import('./Dashboard'))\n\nfunction App() {\n  return (\n    <Suspense fallback={<Spinner />}>\n      <Dashboard />\n    </Suspense>\n  )\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Code-splits Dashboard into a separate bundle loaded on demand, showing Spinner while it loads",
+          "es": "Divide Dashboard en un bundle separado cargado bajo demanda, mostrando Spinner mientras se carga"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Loads Dashboard in a Web Worker to avoid blocking the main thread",
+          "es": "Carga Dashboard en un Web Worker para no bloquear el hilo principal"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders Spinner and Dashboard simultaneously",
+          "es": "Renderiza Spinner y Dashboard simultáneamente"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because lazy() requires a named export",
+          "es": "Lanza un error porque lazy() requiere una exportación con nombre"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-210",
+    "level": "intermediate",
+    "question": {
+      "en": "What does the functional update form do here?\n```jsx\nsetCount(prev => prev + 1)\n```",
+      "es": "¿Qué hace la forma de actualización funcional aquí?\n```jsx\nsetCount(prev => prev + 1)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Updates count based on the latest state value, preventing stale closure bugs when multiple updates are batched",
+          "es": "Actualiza count basándose en el valor de estado más reciente, evitando bugs de cierre obsoleto cuando se agrupan múltiples actualizaciones"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Is identical to setCount(count + 1) in every scenario",
+          "es": "Es idéntico a setCount(count + 1) en todos los escenarios"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because setState updaters must be synchronous",
+          "es": "Lanza un error porque los actualizadores de setState deben ser síncronos"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the update in a separate render cycle after a 100ms delay",
+          "es": "Ejecuta la actualización en un ciclo de renderizado separado después de un retraso de 100ms"
+        }
+      }
+    ]
+  }
 ]

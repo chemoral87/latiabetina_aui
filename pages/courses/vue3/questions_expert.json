@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "vue3-181",
+    "level": "expert",
+    "question": {
+      "en": "What does this custom directive do?\n```js\napp.directive('focus', {\n  mounted(el) { el.focus() }\n})\n```",
+      "es": "¿Qué hace esta directiva personalizada?\n```js\napp.directive('focus', {\n  mounted(el) { el.focus() }\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Registers a global v-focus directive that calls focus() on the element after it is mounted to the DOM",
+          "es": "Registra una directiva global v-focus que llama a focus() sobre el elemento después de que se monta en el DOM"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a component named 'focus' that wraps input elements",
+          "es": "Crea un componente llamado 'focus' que envuelve elementos input"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because directives cannot use DOM methods",
+          "es": "Lanza un error porque las directivas no pueden usar métodos del DOM"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Adds a CSS focus style to all form elements globally",
+          "es": "Agrega un estilo CSS focus a todos los elementos de formulario globalmente"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-182",
+    "level": "expert",
+    "question": {
+      "en": "What does this render function produce?\n```js\nimport { h } from 'vue'\nconst MyComp = () => h('div', { class: 'box' }, 'Hello')\n```",
+      "es": "¿Qué produce esta función render?\n```js\nimport { h } from 'vue'\nconst MyComp = () => h('div', { class: 'box' }, 'Hello')\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "A functional component that renders a <div class=\"box\">Hello</div> VNode",
+          "es": "Un componente funcional que renderiza un VNode <div class=\"box\">Hello</div>"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "A template string that is compiled at runtime",
+          "es": "Un string de template que se compila en tiempo de ejecución"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "An error because h() requires four arguments",
+          "es": "Un error porque h() requiere cuatro argumentos"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "A component that requires a template option to render",
+          "es": "Un componente que requiere una opción template para renderizar"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-183",
+    "level": "expert",
+    "question": {
+      "en": "What does this Teleport component do?\n```html\n<Teleport to=\"body\">\n  <div class=\"modal\">I am a modal</div>\n</Teleport>\n```",
+      "es": "¿Qué hace este componente Teleport?\n```html\n<Teleport to=\"body\">\n  <div class=\"modal\">I am a modal</div>\n</Teleport>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders the modal div as a direct child of <body> in the DOM, while keeping it logically inside the component tree",
+          "es": "Renderiza el div modal como hijo directo de <body> en el DOM, manteniéndolo lógicamente dentro del árbol de componentes"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Moves the entire component to a different Vue app instance",
+          "es": "Mueve todo el componente a una instancia de app Vue diferente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a portal that duplicates the modal in every page body tag",
+          "es": "Crea un portal que duplica el modal en cada etiqueta body de la página"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because Teleport only works with named slots",
+          "es": "Lanza un error porque Teleport solo funciona con slots con nombre"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-184",
+    "level": "expert",
+    "question": {
+      "en": "What does this shallowRef behave differently from ref?\n```js\nconst state = shallowRef({ count: 0 })\nstate.value.count = 5 // Does this trigger reactivity?\n```",
+      "es": "¿En qué se diferencia shallowRef de ref?\n```js\nconst state = shallowRef({ count: 0 })\nstate.value.count = 5 // ¿Esto dispara reactividad?\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "No — shallowRef only tracks .value replacement, not nested property changes; mutating state.value.count does not trigger updates",
+          "es": "No — shallowRef solo rastrea el reemplazo de .value, no los cambios en propiedades anidadas; mutar state.value.count no dispara actualizaciones"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Yes — shallowRef is identical to ref in terms of deep reactivity",
+          "es": "Sí — shallowRef es idéntico a ref en términos de reactividad profunda"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because shallowRef cannot wrap objects",
+          "es": "Lanza un error porque shallowRef no puede envolver objetos"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Triggers reactivity only if count exceeds 0",
+          "es": "Dispara la reactividad solo si count supera 0"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-185",
+    "level": "expert",
+    "question": {
+      "en": "What does this plugin install do?\n```js\nconst MyPlugin = {\n  install(app, options) {\n    app.config.globalProperties.$translate = (key) => options[key]\n  }\n}\napp.use(MyPlugin, { hello: 'Hola' })\n```",
+      "es": "¿Qué hace esta instalación de plugin?\n```js\nconst MyPlugin = {\n  install(app, options) {\n    app.config.globalProperties.$translate = (key) => options[key]\n  }\n}\napp.use(MyPlugin, { hello: 'Hola' })\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Registers a $translate global property accessible in all components, which looks up translation keys from the options object",
+          "es": "Registra una propiedad global $translate accesible en todos los componentes, que busca claves de traducción en el objeto options"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Replaces Vue's built-in i18n system with a custom one",
+          "es": "Reemplaza el sistema i18n integrado de Vue con uno personalizado"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Makes $translate available only in the component where app.use() is called",
+          "es": "Hace $translate disponible solo en el componente donde se llama app.use()"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because install() must be an async function",
+          "es": "Lanza un error porque install() debe ser una función asíncrona"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-186",
+    "level": "expert",
+    "question": {
+      "en": "What is the effect of markRaw here?\n```js\nconst chart = markRaw(new ChartLibrary())\nconst state = reactive({ chart })\n```",
+      "es": "¿Cuál es el efecto de markRaw aquí?\n```js\nconst chart = markRaw(new ChartLibrary())\nconst state = reactive({ chart })\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "markRaw prevents Vue from making the ChartLibrary instance reactive, avoiding expensive proxy wrapping of third-party objects",
+          "es": "markRaw evita que Vue haga reactiva la instancia de ChartLibrary, evitando el costoso proxy de objetos de terceros"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "markRaw freezes the object so it cannot be mutated at all",
+          "es": "markRaw congela el objeto para que no pueda mutarse en absoluto"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "markRaw makes the ChartLibrary deeply reactive instead of shallowly reactive",
+          "es": "markRaw hace que ChartLibrary sea profundamente reactiva en lugar de superficialmente reactiva"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "markRaw serializes the object to JSON before storing it in state",
+          "es": "markRaw serializa el objeto a JSON antes de almacenarlo en state"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-187",
+    "level": "expert",
+    "question": {
+      "en": "What does this effectScope pattern accomplish?\n```js\nconst scope = effectScope()\nscope.run(() => {\n  const doubled = computed(() => count.value * 2)\n  watch(count, () => console.log('changed'))\n})\nscope.stop()\n```",
+      "es": "¿Qué logra este patrón effectScope?\n```js\nconst scope = effectScope()\nscope.run(() => {\n  const doubled = computed(() => count.value * 2)\n  watch(count, () => console.log('changed'))\n})\nscope.stop()\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Groups reactive effects (computed and watch) so they can all be stopped at once with scope.stop(), preventing memory leaks",
+          "es": "Agrupa efectos reactivos (computed y watch) para que todos puedan detenerse a la vez con scope.stop(), evitando fugas de memoria"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates an isolated Vue application context with its own reactivity system",
+          "es": "Crea un contexto de aplicación Vue aislado con su propio sistema de reactividad"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Pauses reactivity updates until scope.stop() is called",
+          "es": "Pausa las actualizaciones de reactividad hasta que se llama a scope.stop()"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because computed cannot be used inside effectScope",
+          "es": "Lanza un error porque computed no puede usarse dentro de effectScope"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-188",
+    "level": "expert",
+    "question": {
+      "en": "What does this Suspense component handle?\n```html\n<Suspense>\n  <template #default><AsyncComponent /></template>\n  <template #fallback><p>Loading...</p></template>\n</Suspense>\n```",
+      "es": "¿Qué maneja este componente Suspense?\n```html\n<Suspense>\n  <template #default><AsyncComponent /></template>\n  <template #fallback><p>Loading...</p></template>\n</Suspense>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Displays 'Loading...' while AsyncComponent is resolving its async setup, then renders the component once ready",
+          "es": "Muestra 'Loading...' mientras AsyncComponent resuelve su setup asíncrono, luego renderiza el componente cuando está listo"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Catches JavaScript errors thrown by AsyncComponent and shows the fallback",
+          "es": "Captura errores de JavaScript lanzados por AsyncComponent y muestra el fallback"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Lazy-loads the component without showing any loading state",
+          "es": "Carga el componente de forma diferida sin mostrar ningún estado de carga"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Requires the component to emit a 'ready' event before switching from fallback",
+          "es": "Requiere que el componente emita un evento 'ready' antes de cambiar desde el fallback"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-189",
+    "level": "expert",
+    "question": {
+      "en": "What does this KeepAlive usage do?\n```html\n<KeepAlive :include=\"['ComponentA']\"\n           :max=\"5\">\n  <component :is=\"currentTab\" />\n</KeepAlive>\n```",
+      "es": "¿Qué hace este uso de KeepAlive?\n```html\n<KeepAlive :include=\"['ComponentA']\"\n           :max=\"5\">\n  <component :is=\"currentTab\" />\n</KeepAlive>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Caches only ComponentA's instance when switching tabs, keeping at most 5 cached instances; LRU evicts the oldest when exceeded",
+          "es": "Cachea solo la instancia de ComponentA al cambiar pestañas, manteniendo como máximo 5 instancias en caché; LRU desaloja la más antigua cuando se supera"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Prevents ComponentA from being unmounted for the entire lifetime of the application",
+          "es": "Evita que ComponentA se desmonte durante toda la vida de la aplicación"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Caches all dynamic components regardless of the include list",
+          "es": "Cachea todos los componentes dinámicos independientemente de la lista include"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because :max requires a string value",
+          "es": "Lanza un error porque :max requiere un valor de cadena"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-190",
+    "level": "expert",
+    "question": {
+      "en": "What does this custom scheduler do in a watch call?\n```js\nwatch(source, callback, {\n  flush: 'post'\n})\n```",
+      "es": "¿Qué hace este programador personalizado en una llamada watch?\n```js\nwatch(source, callback, {\n  flush: 'post'\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "The callback runs after Vue has flushed component updates, giving access to updated DOM when the watcher fires",
+          "es": "El callback se ejecuta después de que Vue vacía las actualizaciones del componente, dando acceso al DOM actualizado cuando se dispara el watcher"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "The callback runs before the component's reactive data is updated",
+          "es": "El callback se ejecuta antes de que se actualicen los datos reactivos del componente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "The callback sends an HTTP POST request when source changes",
+          "es": "El callback envía una petición HTTP POST cuando source cambia"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "The watcher is debounced and only fires after the user stops typing",
+          "es": "El watcher tiene debounce y solo se dispara después de que el usuario deja de escribir"
+        }
+      }
+    ]
+  }
 ]

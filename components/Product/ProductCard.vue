@@ -27,8 +27,16 @@
         </template>
       </v-img>
 
-      <v-card-title class="text-subtitle-1 font-weight-bold pb-1 text-truncate d-block">
-        {{ product.name }}
+      <v-card-title class="text-subtitle-1 font-weight-bold pb-1 d-flex align-center">
+        <span class="text-truncate d-block">{{ product.name }}</span>
+        <v-icon
+          v-if="product.requires_preparation"
+          color="orange darken-1"
+          small
+          class="ml-1 flex-shrink-0"
+        >
+          mdi-chef-hat
+        </v-icon>
       </v-card-title>
 
       <v-card-subtitle class="pb-1">

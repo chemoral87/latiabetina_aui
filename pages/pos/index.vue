@@ -13,17 +13,26 @@
           <v-btn small value="grid" icon><v-icon>mdi-view-grid</v-icon></v-btn>
           <v-btn small value="list" icon><v-icon>mdi-view-list</v-icon></v-btn>
         </v-btn-toggle>
+        <v-tooltip top>
+          <template #activator="{ on }">
+            <v-btn small icon class="ml-2 pos-stock-toggle" :color="showStock ? 'green' : 'grey'"
+              v-on="on" @click="showStock = !showStock">
+              <v-icon>{{ showStock ? 'mdi-package-variant-open' : 'mdi-package-variant' }}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ showStock ? 'Ocultar stock' : 'Mostrar stock' }}</span>
+        </v-tooltip>
       </div>
 
       <!-- GRID VIEW -->
       <div id="pos-grid-view" v-if="viewMode === 'grid'">
-        <PosProductGrid :products="products" :cart="cart"
+        <PosProductGrid :products="products" :cart="cart" :show-stock="showStock"
           @add="addToCart" @decrease="decreaseCart" @remove="removeProduct" />
       </div>
 
       <!-- LIST VIEW -->
       <div id="pos-list-view" v-if="viewMode === 'list'">
-        <PosProductList :products="products" :cart="cart"
+        <PosProductList :products="products" :cart="cart" :show-stock="showStock"
           @add="addToCart" @decrease="decreaseCart" @remove="removeProduct" />
       </div>
 
@@ -68,12 +77,16 @@ export default {
       saving: false,
       footerHeight: 160,
       viewMode: localStorage.getItem('pos-view-mode') || 'grid',
+      showStock: localStorage.getItem('pos-show-stock') === 'true',
     }
   },
 
   watch: {
     viewMode(val) {
       localStorage.setItem('pos-view-mode', val)
+    },
+    showStock(val) {
+      localStorage.setItem('pos-show-stock', val)
     },
     customerName(val) {
       localStorage.setItem('pos-customer-name', val)
@@ -182,12 +195,9 @@ export default {
       const orgId = this.cart[0]?.product?.org_id
       if (!orgId) return
 
-      // Check before clearing the cart whether any item requires preparation
-      const needsKds = this.cart.some((item) => item.product?.requires_preparation === true)
-
       try {
         this.saving = true
-        const response = await this.$repository.Sale.create({
+        await this.$repository.Sale.create({
           org_id: orgId,
           customer_name: this.customerName || null,
           customer_phone: null,
@@ -203,11 +213,6 @@ export default {
         this.customerName = ''
         this.showCart = false
         localStorage.removeItem('pos-cart')
-
-        // Redirect to KDS if any product requires kitchen preparation
-        if (needsKds && response?.data?.id) {
-          this.$router.push(`/pos/kds?sale_id=${response.data.id}`)
-        }
       } catch (error) {
         this.$handleError?.(error)
       } finally {
@@ -227,6 +232,11 @@ export default {
 .pos-view-toggle {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   padding-right: 4px;
+}
+
+.pos-stock-toggle {
+  transition: color 0.2s;
 }
 </style>

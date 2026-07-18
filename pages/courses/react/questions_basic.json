@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "react-191",
+    "level": "basic",
+    "question": {
+      "en": "What does this code render?\n```jsx\nfunction Greeting({ name }) {\n  return <h1>Hello, {name}!</h1>\n}\n```",
+      "es": "¿Qué renderiza este código?\n```jsx\nfunction Greeting({ name }) {\n  return <h1>Hello, {name}!</h1>\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "A functional component that renders an <h1> element with 'Hello, ' followed by the name prop",
+          "es": "Un componente funcional que renderiza un elemento <h1> con 'Hello, ' seguido de la prop name"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "A class component that displays a static greeting",
+          "es": "Un componente de clase que muestra un saludo estático"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because JSX cannot contain JavaScript expressions",
+          "es": "Lanza un error porque JSX no puede contener expresiones JavaScript"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders the literal text '{name}' without substitution",
+          "es": "Renderiza el texto literal '{name}' sin sustitución"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-192",
+    "level": "basic",
+    "question": {
+      "en": "What happens when the button is clicked?\n```jsx\nconst [count, setCount] = useState(0)\n<button onClick={() => setCount(count + 1)}>\n  {count}\n</button>\n```",
+      "es": "¿Qué sucede cuando se hace clic en el botón?\n```jsx\nconst [count, setCount] = useState(0)\n<button onClick={() => setCount(count + 1)}>\n  {count}\n</button>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "The count state increments by 1 and the component re-renders showing the new value",
+          "es": "El estado count se incrementa en 1 y el componente se vuelve a renderizar mostrando el nuevo valor"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "The button text changes to 'clicked' and count stays at 0",
+          "es": "El texto del botón cambia a 'clicked' y count se mantiene en 0"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useState cannot be used inside JSX",
+          "es": "Lanza un error porque useState no puede usarse dentro de JSX"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "count is mutated directly without triggering a re-render",
+          "es": "count se muta directamente sin disparar un re-render"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-193",
+    "level": "basic",
+    "question": {
+      "en": "What does this JSX conditional render?\n```jsx\n{isLoggedIn ? <Dashboard /> : <Login />}\n```",
+      "es": "¿Qué renderiza este condicional JSX?\n```jsx\n{isLoggedIn ? <Dashboard /> : <Login />}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders Dashboard if isLoggedIn is true, otherwise renders Login",
+          "es": "Renderiza Dashboard si isLoggedIn es verdadero, de lo contrario renderiza Login"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders both components simultaneously",
+          "es": "Renderiza ambos componentes simultáneamente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because ternary operators are not valid in JSX",
+          "es": "Lanza un error porque los operadores ternarios no son válidos en JSX"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders Login regardless of the isLoggedIn value",
+          "es": "Renderiza Login independientemente del valor de isLoggedIn"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-194",
+    "level": "basic",
+    "question": {
+      "en": "What does this list render?\n```jsx\nconst items = ['Apple', 'Banana', 'Cherry']\nreturn (\n  <ul>\n    {items.map((item, i) => (\n      <li key={i}>{item}</li>\n    ))}\n  </ul>\n)\n```",
+      "es": "¿Qué renderiza esta lista?\n```jsx\nconst items = ['Apple', 'Banana', 'Cherry']\nreturn (\n  <ul>\n    {items.map((item, i) => (\n      <li key={i}>{item}</li>\n    ))}\n  </ul>\n)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "An unordered list with three <li> elements: Apple, Banana, Cherry",
+          "es": "Una lista no ordenada con tres elementos <li>: Apple, Banana, Cherry"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders only the first item because map returns a single value",
+          "es": "Renderiza solo el primer elemento porque map devuelve un único valor"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because key must be a string, not a number",
+          "es": "Lanza un error porque key debe ser una cadena, no un número"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders the items array as a comma-separated string",
+          "es": "Renderiza el array de elementos como una cadena separada por comas"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-195",
+    "level": "basic",
+    "question": {
+      "en": "What does this useEffect do?\n```jsx\nuseEffect(() => {\n  document.title = `Count: ${count}`\n}, [count])\n```",
+      "es": "¿Qué hace este useEffect?\n```jsx\nuseEffect(() => {\n  document.title = `Count: ${count}`\n}, [count])\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Updates the document title to 'Count: N' every time count changes",
+          "es": "Actualiza el título del documento a 'Count: N' cada vez que count cambia"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs only once when the component mounts, regardless of count",
+          "es": "Se ejecuta solo una vez cuando el componente se monta, independientemente de count"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs on every render because the dependency array is provided",
+          "es": "Se ejecuta en cada renderizado porque se proporciona el array de dependencias"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because document.title cannot be set inside useEffect",
+          "es": "Lanza un error porque document.title no puede establecerse dentro de useEffect"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-196",
+    "level": "basic",
+    "question": {
+      "en": "What does this component output when submitted?\n```jsx\nconst [value, setValue] = useState('')\n<input\n  value={value}\n  onChange={e => setValue(e.target.value)}\n/>\n```",
+      "es": "¿Qué produce este componente al escribir?\n```jsx\nconst [value, setValue] = useState('')\n<input\n  value={value}\n  onChange={e => setValue(e.target.value)}\n/>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "A controlled input that keeps value in sync with React state on every keystroke",
+          "es": "Un input controlado que mantiene value sincronizado con el estado de React en cada pulsación de tecla"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "An uncontrolled input that manages its own DOM state",
+          "es": "Un input no controlado que gestiona su propio estado del DOM"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because value and onChange cannot be used together",
+          "es": "Lanza un error porque value y onChange no pueden usarse juntos"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "The input becomes read-only because value is bound to state",
+          "es": "El input se vuelve de solo lectura porque value está vinculado al estado"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-197",
+    "level": "basic",
+    "question": {
+      "en": "What does this Fragment syntax do?\n```jsx\nreturn (\n  <>\n    <h1>Title</h1>\n    <p>Description</p>\n  </>\n)\n```",
+      "es": "¿Qué hace esta sintaxis Fragment?\n```jsx\nreturn (\n  <>\n    <h1>Title</h1>\n    <p>Description</p>\n  </>\n)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Returns multiple elements without adding an extra DOM wrapper node",
+          "es": "Devuelve múltiples elementos sin agregar un nodo DOM envolvente extra"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Wraps both elements in an invisible <div> element",
+          "es": "Envuelve ambos elementos en un elemento <div> invisible"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because components must return a single root element",
+          "es": "Lanza un error porque los componentes deben devolver un único elemento raíz"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a Shadow DOM boundary around the children",
+          "es": "Crea un límite de Shadow DOM alrededor de los hijos"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-198",
+    "level": "basic",
+    "question": {
+      "en": "What does this prop destructuring do?\n```jsx\nfunction Card({ title, children }) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      {children}\n    </div>\n  )\n}\n```",
+      "es": "¿Qué hace esta desestructuración de props?\n```jsx\nfunction Card({ title, children }) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      {children}\n    </div>\n  )\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders a card with a title heading and any nested JSX passed between the Card tags as children",
+          "es": "Renderiza una tarjeta con un encabezado de título y cualquier JSX anidado pasado entre las etiquetas Card como children"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because 'children' is a reserved word in React",
+          "es": "Lanza un error porque 'children' es una palabra reservada en React"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders only the title and ignores children prop",
+          "es": "Renderiza solo el título e ignora la prop children"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Clones the children elements before rendering them",
+          "es": "Clona los elementos children antes de renderizarlos"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-199",
+    "level": "basic",
+    "question": {
+      "en": "What does this useEffect cleanup do?\n```jsx\nuseEffect(() => {\n  const id = setInterval(() => setCount(c => c + 1), 1000)\n  return () => clearInterval(id)\n}, [])\n```",
+      "es": "¿Qué hace esta limpieza de useEffect?\n```jsx\nuseEffect(() => {\n  const id = setInterval(() => setCount(c => c + 1), 1000)\n  return () => clearInterval(id)\n}, [])\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Starts an interval that increments count every second on mount, and clears it when the component unmounts",
+          "es": "Inicia un intervalo que incrementa count cada segundo al montarse, y lo limpia cuando el componente se desmonta"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the interval on every render because the cleanup function resets it",
+          "es": "Ejecuta el intervalo en cada renderizado porque la función de limpieza lo reinicia"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "The returned function runs before the effect, not after unmount",
+          "es": "La función devuelta se ejecuta antes del efecto, no después del desmontaje"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because useEffect cannot return a function",
+          "es": "Lanza un error porque useEffect no puede devolver una función"
+        }
+      }
+    ]
+  },
+  {
+    "id": "react-200",
+    "level": "basic",
+    "question": {
+      "en": "What does defaultProps set here?\n```jsx\nfunction Button({ label, color = 'blue' }) {\n  return <button style={{ color }}>{label}</button>\n}\n```",
+      "es": "¿Qué establece el valor por defecto aquí?\n```jsx\nfunction Button({ label, color = 'blue' }) {\n  return <button style={{ color }}>{label}</button>\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "color defaults to 'blue' when not provided by the parent, using ES6 default parameter syntax",
+          "es": "color tiene valor por defecto 'blue' cuando el padre no lo proporciona, usando la sintaxis de parámetro por defecto de ES6"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because default values must use the defaultProps static property",
+          "es": "Lanza un error porque los valores por defecto deben usar la propiedad estática defaultProps"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "color is always 'blue' and cannot be overridden by the parent",
+          "es": "color es siempre 'blue' y no puede ser sobreescrito por el padre"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "The button renders without any color because style accepts only CSS class names",
+          "es": "El botón se renderiza sin ningún color porque style acepta solo nombres de clase CSS"
+        }
+      }
+    ]
+  }
 ]

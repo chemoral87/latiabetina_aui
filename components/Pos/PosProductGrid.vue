@@ -17,12 +17,14 @@
 
         <div class="px-2 pt-2 flex-grow-1">
           <div class="pos-info-row">
-            <div class="pos-name text-body-2 font-weight-bold">{{ product.name }}</div>
+            <div class="pos-name text-body-2 font-weight-bold">{{ product.name }}<v-icon v-if="product.requires_preparation" small class="ml-1 orange--text">mdi-chef-hat</v-icon></div>
             <div class="pos-price primary--text font-weight-black">${{ formatPrice(product.price) }}</div>
           </div>
-          <div v-if="product.stock < 5" class="text-caption font-weight-medium"
-            :class="product.stock > 0 ? 'warning--text' : 'error--text'">
+          <div v-if="showStock && product.stock < 5" class="text-caption font-weight-medium green--text">
             {{ product.stock === 0 ? 'Sin stock' : `Solo ${product.stock} restantes` }}
+          </div>
+          <div v-else-if="!showStock && product.stock === 0" class="text-caption font-weight-medium error--text">
+            Sin stock
           </div>
         </div>
 
@@ -60,6 +62,7 @@ export default {
   props: {
     products: { type: Array, required: true },
     cart: { type: Array, required: true },
+    showStock: { type: Boolean, default: false },
   },
   methods: {
     cartQty(productId) {

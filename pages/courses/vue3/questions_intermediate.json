@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "vue3-171",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this composable pattern do?\n```js\nfunction useCounter() {\n  const count = ref(0)\n  function increment() { count.value++ }\n  return { count, increment }\n}\n```",
+      "es": "¿Qué hace este patrón composable?\n```js\nfunction useCounter() {\n  const count = ref(0)\n  function increment() { count.value++ }\n  return { count, increment }\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Defines a reusable composable that encapsulates reactive count state and an increment function",
+          "es": "Define un composable reutilizable que encapsula el estado reactivo count y una función increment"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Defines a Vuex store module with a counter state",
+          "es": "Define un módulo de Vuex store con un estado contador"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a new Vue component instance with its own lifecycle",
+          "es": "Crea una nueva instancia de componente Vue con su propio ciclo de vida"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because functions cannot return refs",
+          "es": "Lanza un error porque las funciones no pueden devolver refs"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-172",
+    "level": "intermediate",
+    "question": {
+      "en": "What does toRefs do here?\n```js\nconst state = reactive({ x: 0, y: 0 })\nconst { x, y } = toRefs(state)\n```",
+      "es": "¿Qué hace toRefs aquí?\n```js\nconst state = reactive({ x: 0, y: 0 })\nconst { x, y } = toRefs(state)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Converts state's properties to individual refs so they can be destructured without losing reactivity",
+          "es": "Convierte las propiedades de state en refs individuales para que puedan desestructurarse sin perder reactividad"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a deep clone of the reactive object",
+          "es": "Crea un clon profundo del objeto reactivo"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Freezes the state object to prevent mutation",
+          "es": "Congela el objeto state para evitar mutaciones"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Converts the reactive object to a plain JavaScript object",
+          "es": "Convierte el objeto reactivo en un objeto JavaScript plano"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-173",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this provide/inject pattern do?\n```js\n// Parent\nprovide('theme', 'dark')\n\n// Child\nconst theme = inject('theme')\n```",
+      "es": "¿Qué hace este patrón provide/inject?\n```js\n// Parent\nprovide('theme', 'dark')\n\n// Child\nconst theme = inject('theme')\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Makes the 'dark' value available to any descendant component without prop drilling",
+          "es": "Hace disponible el valor 'dark' a cualquier componente descendiente sin prop drilling"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a two-way binding between parent and child components",
+          "es": "Crea un enlace bidireccional entre componentes padre e hijo"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Only works for sibling components, not parent-child",
+          "es": "Solo funciona para componentes hermanos, no padre-hijo"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because inject must be called in setup() before provide()",
+          "es": "Lanza un error porque inject debe llamarse en setup() antes que provide()"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-174",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this Pinia store do?\n```js\nexport const useCartStore = defineStore('cart', () => {\n  const items = ref([])\n  const total = computed(() => items.value.length)\n  function addItem(item) { items.value.push(item) }\n  return { items, total, addItem }\n})\n```",
+      "es": "¿Qué hace este store de Pinia?\n```js\nexport const useCartStore = defineStore('cart', () => {\n  const items = ref([])\n  const total = computed(() => items.value.length)\n  function addItem(item) { items.value.push(item) }\n  return { items, total, addItem }\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Defines a Pinia store using the setup syntax with reactive state, a computed total, and an addItem action",
+          "es": "Define un store de Pinia usando la sintaxis setup con estado reactivo, un total computado y una acción addItem"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Defines a Vuex module with state, getters and mutations",
+          "es": "Define un módulo de Vuex con state, getters y mutations"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a local component store that is not globally accessible",
+          "es": "Crea un store local del componente que no es accesible globalmente"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because Pinia stores cannot use computed()",
+          "es": "Lanza un error porque los stores de Pinia no pueden usar computed()"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-175",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this router guard do?\n```js\nrouter.beforeEach((to, from) => {\n  if (!isAuthenticated && to.meta.requiresAuth) {\n    return { name: 'Login' }\n  }\n})\n```",
+      "es": "¿Qué hace esta guarda de navegación?\n```js\nrouter.beforeEach((to, from) => {\n  if (!isAuthenticated && to.meta.requiresAuth) {\n    return { name: 'Login' }\n  }\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Redirects unauthenticated users to the Login route when they try to access a protected route",
+          "es": "Redirige a los usuarios no autenticados a la ruta Login cuando intentan acceder a una ruta protegida"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Blocks all navigation until isAuthenticated is set to true",
+          "es": "Bloquea toda la navegación hasta que isAuthenticated sea verdadero"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs after each route change and logs navigation events",
+          "es": "Se ejecuta después de cada cambio de ruta y registra los eventos de navegación"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Applies only to routes with the name 'Login'",
+          "es": "Se aplica solo a rutas con el nombre 'Login'"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-176",
+    "level": "intermediate",
+    "question": {
+      "en": "What does watchEffect do in this code?\n```js\nwatchEffect(() => {\n  console.log('count is', count.value)\n})\n```",
+      "es": "¿Qué hace watchEffect en este código?\n```js\nwatchEffect(() => {\n  console.log('count is', count.value)\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Runs the callback immediately and re-runs it whenever count.value changes",
+          "es": "Ejecuta el callback inmediatamente y lo vuelve a ejecutar cada vez que count.value cambia"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the callback only when count.value changes, not on initial render",
+          "es": "Ejecuta el callback solo cuando count.value cambia, no en el renderizado inicial"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Watches every reactive variable in the component automatically",
+          "es": "Observa automáticamente cada variable reactiva del componente"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Requires a dependency array like React's useEffect",
+          "es": "Requiere un array de dependencias como el useEffect de React"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-177",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this async component do?\n```js\nconst Modal = defineAsyncComponent(() =>\n  import('./components/Modal.vue')\n)\n```",
+      "es": "¿Qué hace este componente asíncrono?\n```js\nconst Modal = defineAsyncComponent(() =>\n  import('./components/Modal.vue')\n)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Lazy-loads Modal.vue only when it is first rendered, enabling code splitting",
+          "es": "Carga Modal.vue de forma diferida solo cuando se renderiza por primera vez, habilitando la división de código"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Loads Modal.vue in a Web Worker to avoid blocking the main thread",
+          "es": "Carga Modal.vue en un Web Worker para no bloquear el hilo principal"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Registers the component globally in the Vue application",
+          "es": "Registra el componente globalmente en la aplicación Vue"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because dynamic imports are not supported in Vue 3",
+          "es": "Lanza un error porque los imports dinámicos no son compatibles con Vue 3"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-178",
+    "level": "intermediate",
+    "question": {
+      "en": "What is the result of this template ref usage?\n```js\nconst inputRef = ref(null)\nonMounted(() => { inputRef.value.focus() })\n```\n```html\n<input ref=\"inputRef\" />\n```",
+      "es": "¿Cuál es el resultado de este uso de template ref?\n```js\nconst inputRef = ref(null)\nonMounted(() => { inputRef.value.focus() })\n```\n```html\n<input ref=\"inputRef\" />\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "After mounting, inputRef.value holds the DOM input element and focus() is called on it",
+          "es": "Después del montaje, inputRef.value contiene el elemento DOM input y se llama focus() sobre él"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "inputRef.value is always null because refs cannot reference DOM elements in Vue 3",
+          "es": "inputRef.value es siempre null porque los refs no pueden referenciar elementos DOM en Vue 3"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a two-way binding between inputRef and the input's value",
+          "es": "Crea un enlace bidireccional entre inputRef y el valor del input"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because focus() must be called inside a watcher",
+          "es": "Lanza un error porque focus() debe llamarse dentro de un watcher"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-179",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this slot pattern render?\n```html\n<!-- Parent -->\n<Card>\n  <template #header>My Title</template>\n  <p>Body content</p>\n</Card>\n\n<!-- Card component -->\n<div>\n  <slot name=\"header\" />\n  <slot />\n</div>\n```",
+      "es": "¿Qué renderiza este patrón de slot?\n```html\n<!-- Parent -->\n<Card>\n  <template #header>My Title</template>\n  <p>Body content</p>\n</Card>\n\n<!-- Card component -->\n<div>\n  <slot name=\"header\" />\n  <slot />\n</div>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders 'My Title' in the named header slot and 'Body content' in the default slot",
+          "es": "Renderiza 'My Title' en el slot con nombre header y 'Body content' en el slot por defecto"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because #header syntax is not valid",
+          "es": "Lanza un error porque la sintaxis #header no es válida"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders only the default slot and ignores named slots",
+          "es": "Renderiza solo el slot por defecto e ignora los slots con nombre"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders the header slot twice because it appears in both parent and child",
+          "es": "Renderiza el slot header dos veces porque aparece tanto en el padre como en el hijo"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-180",
+    "level": "intermediate",
+    "question": {
+      "en": "What does this Transition component do?\n```html\n<Transition name=\"fade\">\n  <p v-if=\"show\">Hello</p>\n</Transition>\n```\n```css\n.fade-enter-active, .fade-leave-active { transition: opacity 0.3s }\n.fade-enter-from, .fade-leave-to { opacity: 0 }\n```",
+      "es": "¿Qué hace este componente Transition?\n```html\n<Transition name=\"fade\">\n  <p v-if=\"show\">Hello</p>\n</Transition>\n```\n```css\n.fade-enter-active, .fade-leave-active { transition: opacity 0.3s }\n.fade-enter-from, .fade-leave-to { opacity: 0 }\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Applies a fade-in/fade-out opacity transition over 0.3s when the paragraph is shown or hidden",
+          "es": "Aplica una transición de opacidad fade-in/fade-out de 0.3s cuando el párrafo se muestra u oculta"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Moves the paragraph element with a slide animation",
+          "es": "Mueve el elemento párrafo con una animación deslizante"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Only transitions work when v-show is used, not v-if",
+          "es": "Las transiciones solo funcionan con v-show, no con v-if"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because Transition requires JavaScript hooks, not CSS classes",
+          "es": "Lanza un error porque Transition requiere hooks de JavaScript, no clases CSS"
+        }
+      }
+    ]
+  }
 ]

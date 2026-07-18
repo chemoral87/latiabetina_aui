@@ -2519,4 +2519,425 @@
       }
     ]
   }
+,
+  {
+    "id": "vue3-161",
+    "level": "basic",
+    "question": {
+      "en": "What does this code do?\n```js\nconst count = ref(0)\ncount.value++\n```",
+      "es": "¿Qué hace este código?\n```js\nconst count = ref(0)\ncount.value++\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Creates a reactive reference initialized to 0, then increments its value to 1",
+          "es": "Crea una referencia reactiva inicializada en 0, luego incrementa su valor a 1"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a computed property that auto-increments",
+          "es": "Crea una propiedad computada que se autoincrementa"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because ref() values are read-only",
+          "es": "Lanza un error porque los valores de ref() son de solo lectura"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a reactive object with a count property",
+          "es": "Crea un objeto reactivo con una propiedad count"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-162",
+    "level": "basic",
+    "question": {
+      "en": "What does this template directive do?\n```html\n<p v-if=\"isLoggedIn\">Welcome!</p>\n<p v-else>Please log in</p>\n```",
+      "es": "¿Qué hace esta directiva de template?\n```html\n<p v-if=\"isLoggedIn\">Welcome!</p>\n<p v-else>Please log in</p>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders 'Welcome!' if isLoggedIn is truthy, otherwise renders 'Please log in'",
+          "es": "Renderiza 'Welcome!' si isLoggedIn es verdadero, de lo contrario renderiza 'Please log in'"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders both paragraphs simultaneously",
+          "es": "Renderiza ambos párrafos simultáneamente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Toggles visibility using CSS display:none",
+          "es": "Alterna la visibilidad usando CSS display:none"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because v-else requires a condition",
+          "es": "Lanza un error porque v-else requiere una condición"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-163",
+    "level": "basic",
+    "question": {
+      "en": "What is the output of this template?\n```html\n<ul>\n  <li v-for=\"item in items\" :key=\"item.id\">\n    {{ item.name }}\n  </li>\n</ul>\n```",
+      "es": "¿Cuál es la salida de este template?\n```html\n<ul>\n  <li v-for=\"item in items\" :key=\"item.id\">\n    {{ item.name }}\n  </li>\n</ul>\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Renders an <li> element for each object in the items array, displaying each item's name",
+          "es": "Renderiza un elemento <li> por cada objeto del array items, mostrando el nombre de cada elemento"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders only the first item in the array",
+          "es": "Renderiza solo el primer elemento del array"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because :key is not allowed on v-for",
+          "es": "Lanza un error porque :key no está permitido en v-for"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders a single <li> with all item names joined",
+          "es": "Renderiza un único <li> con todos los nombres de elementos unidos"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-164",
+    "level": "basic",
+    "question": {
+      "en": "What does this code produce?\n```js\nconst state = reactive({ name: 'Vue', version: 3 })\nstate.version = 4\n```",
+      "es": "¿Qué produce este código?\n```js\nconst state = reactive({ name: 'Vue', version: 3 })\nstate.version = 4\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Creates a reactive object and updates version to 4, triggering reactivity",
+          "es": "Crea un objeto reactivo y actualiza version a 4, disparando la reactividad"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because reactive objects are immutable",
+          "es": "Lanza un error porque los objetos reactivos son inmutables"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates a shallow copy of the object with version 4",
+          "es": "Crea una copia superficial del objeto con version 4"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Logs a warning because version was already defined",
+          "es": "Registra una advertencia porque version ya estaba definida"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-165",
+    "level": "basic",
+    "question": {
+      "en": "What does this component emit?\n```js\nconst emit = defineEmits(['submit'])\nfunction handleClick() {\n  emit('submit', { user: 'Alice' })\n}\n```",
+      "es": "¿Qué emite este componente?\n```js\nconst emit = defineEmits(['submit'])\nfunction handleClick() {\n  emit('submit', { user: 'Alice' })\n}\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Emits a 'submit' event with the payload { user: 'Alice' } when handleClick is called",
+          "es": "Emite un evento 'submit' con el payload { user: 'Alice' } cuando se llama handleClick"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Dispatches a native DOM submit event",
+          "es": "Despacha un evento DOM submit nativo"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because defineEmits is not a valid composable",
+          "es": "Lanza un error porque defineEmits no es un composable válido"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Emits to all child components automatically",
+          "es": "Emite a todos los componentes hijo automáticamente"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-166",
+    "level": "basic",
+    "question": {
+      "en": "What does v-model do here?\n```html\n<input v-model=\"username\" />\n```",
+      "es": "¿Qué hace v-model aquí?\n```html\n<input v-model=\"username\" />\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Creates two-way binding between the input value and the username reactive variable",
+          "es": "Crea un enlace bidireccional entre el valor del input y la variable reactiva username"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Binds only the initial value of username to the input",
+          "es": "Vincula solo el valor inicial de username al input"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Validates the input against the username prop",
+          "es": "Valida el input contra la prop username"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Renders the username as readonly text inside the input",
+          "es": "Renderiza el username como texto de solo lectura dentro del input"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-167",
+    "level": "basic",
+    "question": {
+      "en": "What will this computed property return when price is 10 and quantity is 3?\n```js\nconst total = computed(() => price.value * quantity.value)\n```",
+      "es": "¿Qué devolverá esta propiedad computada cuando price es 10 y quantity es 3?\n```js\nconst total = computed(() => price.value * quantity.value)\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "30 — it reactively computes the product of price and quantity",
+          "es": "30 — calcula reactivamente el producto de price y quantity"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "\"103\" — it concatenates the values as strings",
+          "es": "\"103\" — concatena los valores como cadenas"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "undefined — computed requires a getter and setter",
+          "es": "undefined — computed requiere un getter y un setter"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "An error because price and quantity must be reactive objects",
+          "es": "Un error porque price y quantity deben ser objetos reactivos"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-168",
+    "level": "basic",
+    "question": {
+      "en": "What does this code do?\n```js\nconst props = defineProps({\n  title: String,\n  count: { type: Number, default: 0 }\n})\n```",
+      "es": "¿Qué hace este código?\n```js\nconst props = defineProps({\n  title: String,\n  count: { type: Number, default: 0 }\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Declares a 'title' string prop and a 'count' number prop with a default value of 0",
+          "es": "Declara una prop 'title' de tipo String y una prop 'count' de tipo Number con valor por defecto 0"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Creates reactive data properties inside the component",
+          "es": "Crea propiedades de datos reactivos dentro del componente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Defines two-way bindings that the parent can read",
+          "es": "Define enlaces bidireccionales que el padre puede leer"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Emits title and count events to the parent component",
+          "es": "Emite los eventos title y count al componente padre"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-169",
+    "level": "basic",
+    "question": {
+      "en": "What does this lifecycle hook do?\n```js\nonMounted(() => {\n  console.log('Component is mounted')\n})\n```",
+      "es": "¿Qué hace este hook del ciclo de vida?\n```js\nonMounted(() => {\n  console.log('Component is mounted')\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Runs the callback after the component has been mounted to the DOM",
+          "es": "Ejecuta el callback después de que el componente ha sido montado en el DOM"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the callback before the component template is compiled",
+          "es": "Ejecuta el callback antes de que se compile el template del componente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the callback every time the component re-renders",
+          "es": "Ejecuta el callback cada vez que el componente se vuelve a renderizar"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs the callback when the component is destroyed",
+          "es": "Ejecuta el callback cuando el componente es destruido"
+        }
+      }
+    ]
+  },
+  {
+    "id": "vue3-170",
+    "level": "basic",
+    "question": {
+      "en": "What does this watcher do?\n```js\nwatch(count, (newVal, oldVal) => {\n  console.log(newVal, oldVal)\n})\n```",
+      "es": "¿Qué hace este watcher?\n```js\nwatch(count, (newVal, oldVal) => {\n  console.log(newVal, oldVal)\n})\n```"
+    },
+    "answers": [
+      {
+        "childId": 0,
+        "isCorrect": true,
+        "text": {
+          "en": "Watches the count ref and logs the new and old values whenever count changes",
+          "es": "Observa la ref count y registra los valores nuevo y anterior cada vez que count cambia"
+        }
+      },
+      {
+        "childId": 1,
+        "isCorrect": false,
+        "text": {
+          "en": "Watches all reactive data in the component",
+          "es": "Observa todos los datos reactivos del componente"
+        }
+      },
+      {
+        "childId": 2,
+        "isCorrect": false,
+        "text": {
+          "en": "Runs once immediately and then stops watching",
+          "es": "Se ejecuta una vez inmediatamente y luego deja de observar"
+        }
+      },
+      {
+        "childId": 3,
+        "isCorrect": false,
+        "text": {
+          "en": "Throws an error because watch requires { immediate: true }",
+          "es": "Lanza un error porque watch requiere { immediate: true }"
+        }
+      }
+    ]
+  }
 ]
