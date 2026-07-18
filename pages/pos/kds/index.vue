@@ -246,9 +246,8 @@ export default {
       // Dismissed order IDs (hidden from view)
       dismissedIds: new Set(),
 
-      // Real-time
-      echoChannels: {},     // { orgId: channel }
-      subscribedOrgs: [],   // orgIds we've subscribed to
+      // Real-time — one channel handle per subscribed org
+      echoChannels: {},   // { orgId: channelInstance }
       echoConnected: false,
       incomingOrder: null,
 
@@ -279,29 +278,33 @@ export default {
       back: '/pos',
     })
 
-    // Track connection state (bind once, not per-org channel)
-    this.bindConnectionState()
+    // Subscribe to real-time channels immediately (don't wait for data load).
+    // Org IDs come from the user's pos-kds permission so the board receives
+    // broadcasts even when it opens with no active orders.
+    this.setupRealtimeListeners()
 
     // Load today's orders with preparation items
     this.loadActiveOrders()
 
     // Update elapsed times every 30 seconds
-    this.elapsedInterval = setInterval(() => {
-      this.$forceUpdate()
-    }, 30_000)
+    this.elapsedInterval = setInterval(() => this.$forceUpdate(), 30_000)
+
+    // Mobile reconnect: reload when the tab regains visibility
+    document.addEventListener('visibilitychange', this.handleVisibilityChange)
   },
 
   beforeDestroy() {
-    this.teardownAllChannels()
+    // Leave all subscribed Echo channels
+    Object.keys(this.echoChannels).forEach((orgId) => {
+      this.$echo.leave(`pos.kds.${orgId}`)
+    })
+    this.echoChannels = {}
+
     if (this.elapsedInterval) {
       clearInterval(this.elapsedInterval)
     }
-    // Unbind connection-state handlers to avoid duplicate accumulations
-    if (this.$echo?.connector?.pusher?.connection) {
-      this.$echo.connector.pusher.connection.unbind('connected')
-      this.$echo.connector.pusher.connection.unbind('disconnected')
-      this.$echo.connector.pusher.connection.unbind('unavailable')
-    }
+
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange)
   },
 
   methods: {
@@ -318,37 +321,15 @@ export default {
         // response is { data: [sale, sale, ...] }
         const allSales = response?.data || response || []
 
-        // Debug: inspect raw API response to find why prep sales aren't showing
-        console.log('[KDS] today:', today)
-        console.log('[KDS] all sales count:', allSales.length)
-        console.log('[KDS] all sales org_ids:', allSales.map(s => ({ id: s.id, org_id: s.org_id, customer: s.customer_name, sold_at: s.sold_at, items_count: s.items?.length })))
-        // Check if any sale has requires_preparation items at the API level
-        const rawPrepSales = allSales.filter(s => s.items?.some(i => i.product?.requires_preparation === true))
-        console.log('[KDS] raw prep sales (before filter):', rawPrepSales.length)
-        // Log a sample product to see its keys
-        const saleWithItems = allSales.find(s => s.items?.length > 0)
-        if (saleWithItems) {
-          const sampleItem = saleWithItems.items[0]
-          console.log('[KDS] sample product keys:', Object.keys(sampleItem.product || {}))
-          console.log('[KDS] sample requires_preparation:', sampleItem.product?.requires_preparation)
-          console.log('[KDS] sample product:', JSON.stringify(sampleItem.product))
-        }
-
-        // Filter to only sales with at least one item requiring preparation
+        // Keep only sales with at least one item that requires preparation
         const prepSales = allSales.filter((sale) =>
           sale.items?.some((item) => item.product?.requires_preparation === true)
         )
 
-        console.log('[KDS] prep sales count:', prepSales.length)
-
         this.orders = prepSales
 
-        // Collect org names for display
+        // Cache org names for the org chip
         prepSales.forEach((sale) => this.cacheOrgName(sale))
-
-        // Subscribe to real-time channels for each unique org
-        const orgIds = [...new Set(prepSales.map((s) => s.org_id).filter(Boolean))]
-        orgIds.forEach((orgId) => this.setupRealtimeListeners(orgId))
       } catch (err) {
         this.error = 'No se pudieron cargar las órdenes.'
         this.$handleError?.(err)
@@ -359,98 +340,89 @@ export default {
 
     // ── Real-time ─────────────────────────────────────────────────────────
 
-    /** Bind Pusher connection-state handlers once (not once per org). */
-    bindConnectionState() {
-      if (!this.$echo?.connector?.pusher?.connection) return
+    /**
+     * Subscribe to pos.kds.{orgId} for every org the user has pos-kds access to.
+     * Mirrors the auditorium pattern: called once in mounted(), one channel per org,
+     * cleaned up in beforeDestroy().
+     */
+    setupRealtimeListeners() {
+      if (!this.$echo) return
 
-      this.$echo.connector.pusher.connection.bind('connected', () => {
-        this.echoConnected = true
+      const orgIds = this.$store.getters.permissions['pos-kds'] ?? []
+
+      orgIds.forEach((orgId) => {
+        if (this.echoChannels[orgId]) return // already subscribed
+
+        const channelName = `pos.kds.${orgId}`
+
+        // Leave first to clear any stale listener from a previous visit
+        this.$echo.leave(channelName)
+
+        const channel = this.$echo.channel(channelName)
+
+        channel
+          .subscribed(() => { this.echoConnected = true })
+          .error(() => { this.echoConnected = false })
+          .listen('.sale.created', (data) => {
+            this.handleIncomingSale(data)
+          })
+
+        this.$set(this.echoChannels, orgId, channel)
       })
-      this.$echo.connector.pusher.connection.bind('disconnected', () => {
-        this.echoConnected = false
-      })
-      this.$echo.connector.pusher.connection.bind('unavailable', () => {
-        this.echoConnected = false
-      })
 
-      const socketState = this.$echo.connector.pusher.connection.state
-      this.echoConnected = socketState === 'connected'
-    },
-
-    setupRealtimeListeners(orgId) {
-      if (!this.$echo || !orgId) return
-      // Avoid duplicate subscriptions
-      if (this.subscribedOrgs.includes(orgId)) return
-      this.subscribedOrgs = [...this.subscribedOrgs, orgId]
-
-      const channelName = `pos.kds.${orgId}`
-      const channel = this.$echo.channel(channelName)
-      this.$set(this.echoChannels, orgId, channel)
-
-      // Listen for new sales
-      channel.listen('.sale.created', (data) => {
-        this.handleIncomingSale(data)
-      })
-    },
-
-    teardownAllChannels() {
-      Object.keys(this.echoChannels).forEach((orgId) => {
-        this.$echo.leave(`pos.kds.${orgId}`)
-      })
-      this.echoChannels = {}
-      this.subscribedOrgs = []
+      // Reflect the current Pusher connection state in the indicator
+      const state = this.$echo?.connector?.pusher?.connection?.state
+      if (state) this.echoConnected = state === 'connected'
     },
 
     handleIncomingSale(data) {
-      // Play sound if enabled
       if (this.soundEnabled) {
         this.playNotificationSound()
       }
 
-      // Show snackbar notification
       this.$notify({
         type: 'info',
         message: `Nueva orden: ${data.number}${data.customer_name ? ' — ' + data.customer_name : ''}`,
       })
 
-      // Add the incoming order to the list if it has preparation items
+      // Only show orders that have preparation items
       const hasPrepItems = data.items?.some((i) => i.product?.requires_preparation === true)
-      if (hasPrepItems) {
-        // Check if already in the list (avoid duplicates)
-        const exists = this.orders.some((o) => o.id === data.id)
-        if (!exists) {
-          // Cache org name for the org chip display
-          this.cacheOrgName(data)
+      if (!hasPrepItems) return
 
-          // Subscribe to the org channel if we haven't already
-          if (data.org_id && !this.subscribedOrgs.includes(data.org_id)) {
-            this.setupRealtimeListeners(data.org_id)
-          }
+      // Avoid duplicates
+      if (this.orders.some((o) => o.id === data.id)) return
 
-          this.orders = [...this.orders, data]
-          this.incomingOrder = data
+      this.cacheOrgName(data)
+      this.orders = [...this.orders, data]
+      this.incomingOrder = data
 
-          // Small delay to let the DOM render before scrolling
-          this.$nextTick(() => {
-            this.scrollToOrder(data.id)
-          })
-        }
+      this.$nextTick(() => this.scrollToOrder(data.id))
+    },
+
+    /**
+     * Mobile reconnect: when the tab becomes visible again, reload the daily
+     * sales so any orders missed while the screen was off are picked up.
+     * Mirrors the auditorium handleVisibilityChange pattern.
+     */
+    async handleVisibilityChange() {
+      if (document.hidden || !this.$uaParser?.isMobile?.()) return
+
+      try {
+        await this.loadActiveOrders()
+      } catch (_) {
+        // Silent — loadActiveOrders handles its own error state
       }
     },
 
     scrollToOrder(orderId) {
       const el = document.getElementById('order-' + orderId)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     },
 
     // ── Org name cache ─────────────────────────────────────────────────────
 
-    /** Extract org name from a sale (API or broadcast shape) and cache it. */
     cacheOrgName(sale) {
       if (!sale.org_id) return
-      // Broadcast data includes { organization: { id, name } }
       const orgName =
         sale.organization?.name ||
         this.orgNames[sale.org_id] ||
@@ -484,83 +456,53 @@ export default {
     markAllDone(sale) {
       const items = this.getPreparationItems(sale)
       const map = { ...(this.doneMap[sale.id] || {}) }
-      items.forEach((item) => {
-        map[item.id] = true
-      })
+      items.forEach((item) => { map[item.id] = true })
       this.$set(this.doneMap, sale.id, map)
     },
 
     dismissOrder(saleId) {
       this.dismissedIds = new Set([...this.dismissedIds, saleId])
-
-      // Auto-scroll to the next pending order after a brief moment
       this.$nextTick(() => {
-        const remaining = this.activeOrders
-        if (remaining.length > 0) {
-          this.scrollToOrder(remaining[0].id)
+        if (this.activeOrders.length > 0) {
+          this.scrollToOrder(this.activeOrders[0].id)
         }
       })
     },
 
-    /** Mark ALL items across ALL active orders as done and dismiss everything. */
     completeAllOrders() {
       if (this.completingAll || this.activeOrders.length === 0) return
       this.completingAll = true
 
       const orders = this.activeOrders
-      const orderIds = orders.map((o) => o.id)
-
-      // Mark all items done first (batched, no dismiss mutations inside the loop)
       orders.forEach((order) => {
         const items = this.getPreparationItems(order)
         const map = { ...(this.doneMap[order.id] || {}) }
-        items.forEach((item) => {
-          map[item.id] = true
-        })
+        items.forEach((item) => { map[item.id] = true })
         this.$set(this.doneMap, order.id, map)
       })
 
-      // Then batch-dismiss all at once
-      this.dismissedIds = new Set([...this.dismissedIds, ...orderIds])
+      this.dismissedIds = new Set([...this.dismissedIds, ...orders.map((o) => o.id)])
 
-      // Play a triumphant sound effect
       this.playNotificationSound()
+      this.$notify({ type: 'success', message: 'Todas las órdenes han sido completadas.' })
 
-      this.$notify({
-        type: 'success',
-        message: 'Todas las órdenes han sido completadas.',
-      })
-
-      // Re-enable after a short cooldown
-      setTimeout(() => {
-        this.completingAll = false
-      }, 2000)
+      setTimeout(() => { this.completingAll = false }, 2000)
     },
 
     // ── Elapsed time ──────────────────────────────────────────────────────
 
     elapsedTime(soldAt) {
       if (!soldAt) return '—'
-      const now = new Date()
-      const then = new Date(soldAt)
-      const diffMs = now - then
-      const diffMin = Math.floor(diffMs / 60_000)
-
+      const diffMin = Math.floor((new Date() - new Date(soldAt)) / 60_000)
       if (diffMin < 1) return 'Ahora'
       if (diffMin < 60) return `${diffMin} min`
-      const hours = Math.floor(diffMin / 60)
-      const mins = diffMin % 60
-      return `${hours}h ${mins}m`
+      return `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`
     },
 
     formatSoldAt(soldAt) {
       if (!soldAt) return ''
-      const d = new Date(soldAt)
-      return d.toLocaleString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
+      return new Date(soldAt).toLocaleString('es-MX', {
+        hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit',
       })
     },
 
@@ -574,41 +516,29 @@ export default {
         const masterGain = ctx.createGain()
         masterGain.connect(ctx.destination)
         masterGain.gain.setValueAtTime(0.3, ctx.currentTime)
-        masterGain.gain.setValueAtTime(0.3, ctx.currentTime + 0.3)
         masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.7)
 
-        // First note: F5 (698 Hz), short · 120 ms
-        const osc1 = ctx.createOscillator()
-        osc1.type = 'sine'
-        osc1.frequency.setValueAtTime(698, ctx.currentTime)
-        const gain1 = ctx.createGain()
-        gain1.gain.setValueAtTime(0, ctx.currentTime)
-        gain1.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.02)
-        gain1.gain.setValueAtTime(1, ctx.currentTime + 0.08)
-        gain1.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.12)
-        osc1.connect(gain1).connect(masterGain)
-        osc1.start(ctx.currentTime)
-        osc1.stop(ctx.currentTime + 0.12)
+        const note = (freq, start, dur) => {
+          const osc = ctx.createOscillator()
+          const g = ctx.createGain()
+          osc.type = 'sine'
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + start)
+          g.gain.setValueAtTime(0, ctx.currentTime + start)
+          g.gain.linearRampToValueAtTime(1, ctx.currentTime + start + 0.02)
+          g.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur)
+          osc.connect(g).connect(masterGain)
+          osc.start(ctx.currentTime + start)
+          osc.stop(ctx.currentTime + start + dur)
+        }
 
-        // Second note: C6 (1047 Hz), slightly longer · 200 ms
-        const osc2 = ctx.createOscillator()
-        osc2.type = 'sine'
-        osc2.frequency.setValueAtTime(1047, ctx.currentTime + 0.13)
-        const gain2 = ctx.createGain()
-        gain2.gain.setValueAtTime(0, ctx.currentTime + 0.13)
-        gain2.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.15)
-        gain2.gain.setValueAtTime(1, ctx.currentTime + 0.25)
-        gain2.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.33)
-        osc2.connect(gain2).connect(masterGain)
-        osc2.start(ctx.currentTime + 0.13)
-        osc2.stop(ctx.currentTime + 0.33)
+        note(698, 0, 0.12)    // F5
+        note(1047, 0.13, 0.2) // C6
 
         setTimeout(() => ctx.close(), 1000)
       } catch (_) {
         // Audio not supported
       }
     },
-
   },
 }
 </script>
