@@ -79,6 +79,9 @@ export default {
       loading: false,
       deleting: false,
       skipFilterWatch: false,
+      // Real-time listeners for sale updates
+      echoChannels: {}, // { orgId: channelInstance }
+      echoConnected: false,
     }
   },
 
@@ -107,6 +110,19 @@ export default {
       icon: 'mdi-receipt-text',
 
     })
+
+    // Set up real-time listeners for sale updates
+    this.setupRealtimeListeners()
+  },
+
+  beforeDestroy() {
+    // Leave all subscribed Echo channels
+    Object.keys(this.echoChannels).forEach((orgId) => {
+      if (this.$echo) {
+        this.$echo.leave(`pos.sales.${orgId}`)
+      }
+    })
+    this.echoChannels = {}
   },
 
   methods: {
@@ -177,6 +193,52 @@ export default {
         this.$handleError(error)
       } finally {
         this.deleting = false
+      }
+    },
+
+    /**
+     * Subscribe to pos.sales.{orgId} channel for real-time sale updates.
+     * Listens for sale.completed events from the KDS and updates the list.
+     */
+    setupRealtimeListeners() {
+      if (!this.$echo) return
+
+      // Get all org IDs the user has sale-index access to
+      const orgIds = this.$store.getters.permissions['sale-index'] ?? []
+
+      orgIds.forEach((orgId) => {
+        if (this.echoChannels[orgId]) return // already subscribed
+
+        const channelName = `pos.sales.${orgId}`
+
+        // Leave first to clear any stale handler
+        this.$echo.leave(channelName)
+
+        const channel = this.$echo.channel(channelName)
+
+        channel
+          .subscribed(() => { this.echoConnected = true })
+          .error(() => { this.echoConnected = false })
+          .listen('.sale.completed', (data) => {
+            this.handleSaleCompleted(data)
+          })
+
+        this.$set(this.echoChannels, orgId, channel)
+      })
+
+      const state = this.$echo?.connector?.pusher?.connection?.state
+      if (state) this.echoConnected = state === 'connected'
+    },
+
+    /**
+     * Handle sale.completed event from KDS.
+     * Updates the status of the completed order in the current list.
+     */
+    handleSaleCompleted(data) {
+      // Find and update the sale in the response
+      const saleIndex = this.response.data.findIndex((s) => s.id === data.id)
+      if (saleIndex !== -1) {
+        this.$set(this.response.data[saleIndex], 'status', data.status)
       }
     },
   },

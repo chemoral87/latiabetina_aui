@@ -234,6 +234,13 @@ export default {
         cancelled: 'Cancelada',
         refunded: 'Reembolsada',
         pending: 'Pendiente',
+        preparing: 'Preparando',
+        COM: 'Completada',
+        PEN: 'Pendiente',
+        PRE: 'Preparando',
+        CAN: 'Cancelada',
+        REF: 'Reembolsada',
+        REA: 'Listo',
       }
       return labels[status] || status || '—'
     },
@@ -244,6 +251,13 @@ export default {
         cancelled: 'error',
         refunded: 'warning',
         pending: 'orange',
+        preparing: 'deep-orange',
+        COM: 'success',
+        PEN: 'orange',
+        PRE: 'deep-orange',
+        CAN: 'error',
+        REF: 'warning',
+        REA: 'info',
       }
       return colors[status] || 'grey'
     },

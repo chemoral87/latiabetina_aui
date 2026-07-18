@@ -113,8 +113,13 @@ export default {
         cancelled: 'error',
         refunded: 'warning',
         pending: 'orange',
+        PRE: 'deep-orange',
+        COM: 'success',
+        PEN: 'orange',
+        CAN: 'error',
+        REF: 'warning',
       }
-      return colors[this.sale.status] || 'grey'
+      return colors[this.sale.status] || colors[this.sale.status?.toLowerCase()] || 'grey'
     },
     statusLabel() {
       const labels = {
@@ -122,8 +127,13 @@ export default {
         cancelled: 'Cancelada',
         refunded: 'Reembolsada',
         pending: 'Pendiente',
+        PRE: 'Preparando',
+        COM: 'Completada',
+        PEN: 'Pendiente',
+        CAN: 'Cancelada',
+        REF: 'Reembolsada',
       }
-      return labels[this.sale.status] || this.sale.status
+      return labels[this.sale.status] || labels[this.sale.status?.toLowerCase()] || this.sale.status
     },
     paymentMethodLabel() {
       const labels = {

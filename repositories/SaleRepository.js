@@ -16,8 +16,23 @@ export default ($axios) => (resource) => {
     return $axios.$get(`${resource}/daily`, { params })
   }
 
+  const preparing = () => {
+    return $axios.$get(`${resource}/kds`)
+  }
+
+  const complete = (id) => {
+    return $axios.$patch(`${resource}/${id}/complete`)
+  }
+
+  const updateItem = (saleId, itemId, status) => {
+    return $axios.$patch(`${resource}/${saleId}/item/${itemId}`, { status })
+  }
+
   return {
     ...commonRepo,
     daily,
+    preparing,
+    complete,
+    updateItem,
   }
 }

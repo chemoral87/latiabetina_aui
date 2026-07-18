@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="kds-page pa-3">
+  <v-container id="pos-kds-page" fluid class="kds-page pa-3">
     <!-- Loading -->
     <div v-if="initialLoading" class="d-flex justify-center align-center" style="min-height: 60vh">
       <v-progress-circular indeterminate color="primary" size="56" />
@@ -11,7 +11,8 @@
     </div>
 
     <!-- All done — empty state -->
-    <div v-else-if="activeOrders.length === 0" class="d-flex flex-column justify-center align-center" style="min-height: 60vh">
+    <div v-else-if="activeOrders.length === 0" class="d-flex flex-column justify-center align-center"
+      style="min-height: 60vh">
       <v-icon size="72" color="success">mdi-check-circle-outline</v-icon>
       <div class="text-h6 mt-4 grey--text">Sin órdenes pendientes</div>
       <div class="text-body-2 grey--text mt-1">Todas las órdenes han sido completadas</div>
@@ -33,28 +34,15 @@
         <v-col>
           <div class="text-h5 font-weight-bold d-flex align-center" style="gap: 12px">
             Pantalla de Cocina
-            <v-chip
-              color="orange darken-2"
-              dark
-              small
-              class="font-weight-bold"
-            >
+            <v-chip color="orange darken-2" dark small class="font-weight-bold">
               {{ activeOrders.length }} {{ activeOrders.length === 1 ? 'orden' : 'órdenes' }}
             </v-chip>
 
             <!-- Global mark-all-done button -->
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
-                <v-btn
-                  v-if="activeOrders.length > 1"
-                  x-small
-                  fab
-                  dark
-                  color="success"
-                  v-bind="attrs"
-                  v-on="on"
-                  @click="completeAllOrders"
-                >
+                <v-btn id="pos-kds-complete-all-button" v-if="activeOrders.length > 1" x-small fab dark color="success"
+                  v-bind="attrs" v-on="on" @click="completeAllOrders">
                   <v-icon>mdi-check-all</v-icon>
                 </v-btn>
               </template>
@@ -66,14 +54,8 @@
           <!-- Sound toggle -->
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
-              <v-btn
-                icon
-                small
-                v-bind="attrs"
-                v-on="on"
-                :color="soundEnabled ? 'orange darken-2' : 'grey'"
-                @click="soundEnabled = !soundEnabled"
-              >
+              <v-btn icon small v-bind="attrs" v-on="on" :color="soundEnabled ? 'orange darken-2' : 'grey'"
+                @click="soundEnabled = !soundEnabled">
                 <v-icon>{{ soundEnabled ? 'mdi-volume-high' : 'mdi-volume-off' }}</v-icon>
               </v-btn>
             </template>
@@ -94,16 +76,8 @@
 
       <!-- ── Incoming order notification banner ────────────────────────── -->
       <v-expand-transition>
-        <v-alert
-          v-if="incomingOrder"
-          type="info"
-          border="left"
-          colored-border
-          dense
-          class="mb-4"
-          dismissible
-          @input="incomingOrder = null"
-        >
+        <v-alert v-if="incomingOrder" type="info" border="left" colored-border dense class="mb-4" dismissible
+          @input="incomingOrder = null">
           <div class="d-flex align-center justify-space-between flex-wrap" style="gap: 8px">
             <span>
               <strong>Nueva orden recibida:</strong> {{ incomingOrder.number }}
@@ -119,28 +93,14 @@
 
       <!-- ── Order cards grid ──────────────────────────────────────────── -->
       <v-row>
-        <v-col
-          v-for="order in activeOrders"
-          :key="order.id"
-          :id="'order-' + order.id"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="2"
-        >
+        <v-col v-for="order in activeOrders" :key="order.id" :id="'pos-kds-order-' + order.id" cols="12" sm="6" md="4"
+          lg="3" xl="2">
           <v-card outlined class="kds-order-card" :class="{ 'kds-order-completed': allDoneForSale(order) }">
             <!-- Order header -->
             <div class="kds-order-header">
               <div class="kds-order-number">{{ order.number }}</div>
               <div class="kds-order-header-right">
-                <v-chip
-                  v-if="orgNames[order.org_id]"
-                  x-small
-                  outlined
-                  color="grey"
-                  class="kds-org-chip"
-                >
+                <v-chip v-if="orgNames[order.org_id]" x-small outlined color="grey" class="kds-org-chip">
                   {{ orgNames[order.org_id] }}
                 </v-chip>
                 <div class="kds-elapsed" :title="formatSoldAt(order.sold_at)">
@@ -159,63 +119,15 @@
             <v-divider class="mx-3 my-2" />
 
             <!-- Items list -->
-            <div class="kds-items-list pa-3 pt-0">
-              <div
-                v-for="item in getPreparationItems(order)"
-                :key="item.id"
-                class="kds-item-row"
-                :class="{ 'kds-item-row-done': isItemDone(order.id, item.id) }"
-                @click="toggleDone(order.id, item.id)"
-              >
-                <!-- Thumbnail -->
-                <div class="kds-item-thumb">
-                  <v-img
-                    v-if="item.product?.image_s3"
-                    :src="item.product.image_s3"
-                    height="36"
-                    width="36"
-                    class="rounded"
-                  >
-                    <template #placeholder>
-                      <v-sheet height="36" width="36" color="grey lighten-3" class="d-flex align-center justify-center rounded">
-                        <v-icon x-small color="grey lighten-1">mdi-food</v-icon>
-                      </v-sheet>
-                    </template>
-                  </v-img>
-                  <v-sheet v-else height="36" width="36" color="grey lighten-3" class="d-flex align-center justify-center rounded">
-                    <v-icon x-small color="grey lighten-1">mdi-food</v-icon>
-                  </v-sheet>
-                </div>
-
-                <!-- Name & qty -->
-                <div class="kds-item-info">
-                  <div class="kds-item-name">{{ item.product?.name }}</div>
-                  <div v-if="item.product?.description" class="kds-item-desc">{{ item.product.description }}</div>
-                </div>
-
-                <v-chip
-                  small
-                  :color="isItemDone(order.id, item.id) ? 'success' : 'orange darken-2'"
-                  dark
-                  class="font-weight-bold kds-item-qty"
-                >
-                  <v-icon v-if="isItemDone(order.id, item.id)" x-small class="mr-1">mdi-check</v-icon>
-                  x{{ item.quantity }}
-                </v-chip>
-              </div>
-            </div>
+            <KdsItemsList :order="order" :done-map="doneMap" :is-item-completed="isItemCompleted"
+              :status-title="statusTitle" @toggle-row-done="toggleRowDone" @undo-row-done="undoRowDone" />
 
             <!-- Footer actions -->
             <v-divider class="mx-3" />
             <v-card-actions class="pa-3">
-              <v-btn
-                block
-                small
-                :color="allDoneForSale(order) ? 'success' : 'orange darken-2'"
-                :dark="allDoneForSale(order)"
-                :outlined="!allDoneForSale(order)"
-                @click="allDoneForSale(order) ? dismissOrder(order.id) : markAllDone(order)"
-              >
+              <v-btn block small :color="allDoneForSale(order) ? 'success' : 'orange darken-2'"
+                :dark="allDoneForSale(order)" :outlined="!allDoneForSale(order)" :loading="completingOrder === order.id"
+                @click="allDoneForSale(order) ? dismissOrder(order) : markAllDone(order)">
                 <v-icon left small>{{ allDoneForSale(order) ? 'mdi-check-circle' : 'mdi-check-all' }}</v-icon>
                 {{ allDoneForSale(order) ? 'Completar orden' : 'Marcar todo listo' }}
               </v-btn>
@@ -231,6 +143,10 @@
 export default {
   name: 'KdsPage',
 
+  components: {
+    KdsItemsList: () => import('@/pages/pos/KdsItemsList.vue'),
+  },
+
   middleware: ['authenticated', 'permission'],
   meta: { permission: 'pos-kds' },
 
@@ -241,15 +157,18 @@ export default {
       initialLoading: false,
       error: null,
 
-      // Per-order, per-item done state: { saleId: { itemId: true } }
+      // Per-order, per-item done state: { saleId: { `itemId-rowIndex`: true } }
       doneMap: {},
       // Dismissed order IDs (hidden from view)
       dismissedIds: new Set(),
+      // ID of the order currently being completed via API
+      completingOrder: null,
 
       // Real-time — one channel handle per subscribed org
       echoChannels: {},   // { orgId: channelInstance }
       echoConnected: false,
       incomingOrder: null,
+      kdsInitialized: false,  // guard against double-init on hard refresh
 
       // UI
       soundEnabled: true,
@@ -275,22 +194,10 @@ export default {
     eventBus.$emit('setNavBar', {
       title: 'Pantalla de Cocina',
       icon: 'mdi-chef-hat',
-      back: '/pos',
+
     })
 
-    // Subscribe to real-time channels immediately (don't wait for data load).
-    // Org IDs come from the user's pos-kds permission so the board receives
-    // broadcasts even when it opens with no active orders.
-    this.setupRealtimeListeners()
-
-    // Load today's orders with preparation items
-    this.loadActiveOrders()
-
-    // Update elapsed times every 30 seconds
-    this.elapsedInterval = setInterval(() => this.$forceUpdate(), 30_000)
-
-    // Mobile reconnect: reload when the tab regains visibility
-    document.addEventListener('visibilitychange', this.handleVisibilityChange)
+    this.initKds()
   },
 
   beforeDestroy() {
@@ -308,6 +215,18 @@ export default {
   },
 
   methods: {
+    // ── Init (deferred until auth is ready) ───────────────────────────────
+
+    initKds() {
+      if (this.kdsInitialized) return
+      this.kdsInitialized = true
+
+      this.setupRealtimeListeners()
+      this.loadActiveOrders()
+      this.elapsedInterval = setInterval(() => this.$forceUpdate(), 30_000)
+      document.addEventListener('visibilitychange', this.handleVisibilityChange)
+    },
+
     // ── Data loading ──────────────────────────────────────────────────────
 
     async loadActiveOrders() {
@@ -315,16 +234,10 @@ export default {
         this.initialLoading = true
         this.error = null
 
-        const today = new Date().toISOString().slice(0, 10)
-        const response = await this.$repository.Sale.daily(today)
-
-        // response is { data: [sale, sale, ...] }
-        const allSales = response?.data || response || []
-
-        // Keep only sales with at least one item that requires preparation
-        const prepSales = allSales.filter((sale) =>
-          sale.items?.some((item) => item.product?.requires_preparation === true)
-        )
+        // Fetch all sales currently in 'preparing' status (no date constraint).
+        // This is the source of truth for what the kitchen still needs to make.
+        const response = await this.$repository.Sale.preparing()
+        const prepSales = response?.data || response || []
 
         this.orders = prepSales
 
@@ -355,7 +268,7 @@ export default {
 
         const channelName = `pos.kds.${orgId}`
 
-        // Leave first to clear any stale listener from a previous visit
+        // Leave first to clear any stale handler from a previous visit
         this.$echo.leave(channelName)
 
         const channel = this.$echo.channel(channelName)
@@ -370,12 +283,18 @@ export default {
         this.$set(this.echoChannels, orgId, channel)
       })
 
-      // Reflect the current Pusher connection state in the indicator
       const state = this.$echo?.connector?.pusher?.connection?.state
       if (state) this.echoConnected = state === 'connected'
     },
 
     handleIncomingSale(data) {
+      // Only show orders that have preparation items
+      const hasPrepItems = data.items?.some((i) => i.product?.requires_preparation === true)
+      if (!hasPrepItems) return
+
+      // Avoid duplicates — all side effects gated here
+      if (this.orders.some((o) => o.id === data.id)) return
+
       if (this.soundEnabled) {
         this.playNotificationSound()
       }
@@ -384,13 +303,6 @@ export default {
         type: 'info',
         message: `Nueva orden: ${data.number}${data.customer_name ? ' — ' + data.customer_name : ''}`,
       })
-
-      // Only show orders that have preparation items
-      const hasPrepItems = data.items?.some((i) => i.product?.requires_preparation === true)
-      if (!hasPrepItems) return
-
-      // Avoid duplicates
-      if (this.orders.some((o) => o.id === data.id)) return
 
       this.cacheOrgName(data)
       this.orders = [...this.orders, data]
@@ -415,7 +327,7 @@ export default {
     },
 
     scrollToOrder(orderId) {
-      const el = document.getElementById('order-' + orderId)
+      const el = document.getElementById('pos-kds-order-' + orderId)
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     },
 
@@ -432,36 +344,137 @@ export default {
 
     // ── Item / Order state ────────────────────────────────────────────────
 
+    /**
+     * Expand each preparation item into N individual rows (one per unit).
+     * e.g. { product: 'cocinar', quantity: 2 } → two rows
+     */
+    getPreparationRows(sale) {
+      const rows = []
+      const items = sale.items?.filter((i) => i.product?.requires_preparation === true) || []
+      items.forEach((item) => {
+        for (let i = 0; i < item.quantity; i++) {
+          rows.push({ item, rowIndex: i })
+        }
+      })
+      return rows
+    },
+
     getPreparationItems(sale) {
       return sale.items?.filter((item) => item.product?.requires_preparation === true) || []
     },
 
-    isItemDone(saleId, itemId) {
-      return !!this.doneMap[saleId]?.[itemId]
+    rowKey(itemId, rowIndex) {
+      return `${itemId}-${rowIndex}`
     },
 
-    toggleDone(saleId, itemId) {
-      const current = this.doneMap[saleId]?.[itemId] || false
-      this.$set(this.doneMap, saleId, {
-        ...(this.doneMap[saleId] || {}),
-        [itemId]: !current,
-      })
+    isRowDone(saleId, itemId, rowIndex) {
+      const sale = this.orders.find((o) => o.id === saleId)
+      const item = sale?.items?.find((i) => i.id === itemId)
+      if (item?.completed_quantity > rowIndex) {
+        return true
+      }
+
+      return !!this.doneMap[saleId]?.[this.rowKey(itemId, rowIndex)]
+    },
+
+    isItemCompleted(item) {
+      return item?.completed_quantity >= item?.quantity
+    },
+
+    preparationStatusLabel(code) {
+      const labels = {
+        PEN: 'Pendiente',
+        REA: 'Listo',
+        COM: 'Completada',
+      }
+      return labels[code] || code || '—'
+    },
+
+    statusTitle(item) {
+      if (!item?.preparation_status) return ''
+      return `${this.preparationStatusLabel(item.preparation_status)} ${item.preparation_status}`
+    },
+
+    getPreparationRowsForItem(sale, itemId) {
+      return this.getPreparationRows(sale).filter((r) => r.item.id === itemId)
+    },
+
+    markRowDone(saleId, itemId, rowIndex) {
+      const map = { ...(this.doneMap[saleId] || {}) }
+      map[this.rowKey(itemId, rowIndex)] = true
+      this.$set(this.doneMap, saleId, map)
+    },
+
+    async toggleRowDone(saleId, itemId, rowIndex) {
+      if (this.isRowDone(saleId, itemId, rowIndex)) return
+
+      const sale = this.orders.find((o) => o.id === saleId)
+      if (!sale) return
+
+      const key = this.rowKey(itemId, rowIndex)
+      this.markRowDone(saleId, itemId, rowIndex)
+
+      try {
+        const response = await this.$repository.Sale.updateItem(saleId, itemId, 'COM')
+        const updatedItem = response?.data
+        if (updatedItem) {
+          const itemIndex = sale.items.findIndex((i) => i.id === itemId)
+          if (itemIndex !== -1) {
+            this.$set(sale.items, itemIndex, updatedItem)
+          }
+        }
+      } catch (err) {
+        this.$handleError?.(err)
+        const map = { ...(this.doneMap[saleId] || {}) }
+        map[key] = false
+        this.$set(this.doneMap, saleId, map)
+      }
+    },
+
+    async undoRowDone(saleId, itemId, rowIndex) {
+      const sale = this.orders.find((o) => o.id === saleId)
+      if (!sale) return
+
+      const key = this.rowKey(itemId, rowIndex)
+      const map = { ...(this.doneMap[saleId] || {}) }
+      map[key] = false
+      this.$set(this.doneMap, saleId, map)
+
+      try {
+        const response = await this.$repository.Sale.updateItem(saleId, itemId, 'PEN')
+        const updatedItem = response?.data
+        if (updatedItem) {
+          const itemIndex = sale.items.findIndex((i) => i.id === itemId)
+          if (itemIndex !== -1) {
+            this.$set(sale.items, itemIndex, updatedItem)
+          }
+        }
+      } catch (err) {
+        this.$handleError?.(err)
+        this.$set(map, key, true)
+        this.$set(this.doneMap, saleId, map)
+      }
     },
 
     allDoneForSale(sale) {
-      const items = this.getPreparationItems(sale)
-      return items.length > 0 && items.every((item) => this.isItemDone(sale.id, item.id))
+      const rows = this.getPreparationRows(sale)
+      return rows.length > 0 && rows.every((r) => this.isRowDone(sale.id, r.item.id, r.rowIndex))
     },
 
     markAllDone(sale) {
-      const items = this.getPreparationItems(sale)
-      const map = { ...(this.doneMap[sale.id] || {}) }
-      items.forEach((item) => { map[item.id] = true })
-      this.$set(this.doneMap, sale.id, map)
+      return this.dismissOrder(sale)
     },
 
-    dismissOrder(saleId) {
-      this.dismissedIds = new Set([...this.dismissedIds, saleId])
+    async dismissOrder(order) {
+      this.completingOrder = order.id
+      try {
+        await this.$repository.Sale.complete(order.id)
+      } catch (err) {
+        this.$handleError?.(err)
+      } finally {
+        this.completingOrder = null
+      }
+      this.dismissedIds = new Set([...this.dismissedIds, order.id])
       this.$nextTick(() => {
         if (this.activeOrders.length > 0) {
           this.scrollToOrder(this.activeOrders[0].id)
@@ -469,17 +482,22 @@ export default {
       })
     },
 
-    completeAllOrders() {
+    async completeAllOrders() {
       if (this.completingAll || this.activeOrders.length === 0) return
       this.completingAll = true
 
       const orders = this.activeOrders
+
+      // Mark all rows done locally
       orders.forEach((order) => {
-        const items = this.getPreparationItems(order)
+        const rows = this.getPreparationRows(order)
         const map = { ...(this.doneMap[order.id] || {}) }
-        items.forEach((item) => { map[item.id] = true })
+        rows.forEach((r) => { map[this.rowKey(r.item.id, r.rowIndex)] = true })
         this.$set(this.doneMap, order.id, map)
       })
+
+      // Complete all orders via API
+      await Promise.allSettled(orders.map((o) => this.$repository.Sale.complete(o.id)))
 
       this.dismissedIds = new Set([...this.dismissedIds, ...orders.map((o) => o.id)])
 
@@ -569,9 +587,17 @@ export default {
 }
 
 @keyframes kds-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
-  70%  { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
 }
 
 /* ── Order cards ── */
@@ -633,70 +659,5 @@ export default {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-/* ── Items list ── */
-.kds-items-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.kds-item-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.kds-item-row:hover {
-  background: #fff3e0;
-}
-
-.kds-item-row-done {
-  opacity: 0.6;
-  background: #e8f5e9 !important;
-}
-
-.kds-item-row-done:hover {
-  background: #c8e6c9 !important;
-}
-
-.kds-item-thumb {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.kds-item-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.kds-item-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.3;
-}
-
-.kds-item-desc {
-  font-size: 11px;
-  color: #999;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.kds-item-qty {
-  flex-shrink: 0;
-  min-width: 44px;
-  justify-content: center;
-  font-size: 12px;
 }
 </style>
