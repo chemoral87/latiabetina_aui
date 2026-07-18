@@ -11,8 +11,13 @@
       <v-col cols="12" sm="6" md="4">
         <v-menu v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y>
           <template #activator="{ on, attrs }">
-            <v-text-field v-model="dateLabel" label="Fecha" prepend-icon="mdi-calendar" readonly outlined dense
-              hide-details v-bind="attrs" v-on="on" />
+            <v-text-field
+              v-model="dateLabel"
+              label="Fecha"
+              prepend-icon="mdi-calendar"
+              readonly outlined dense hide-details
+              v-bind="attrs" v-on="on"
+            />
           </template>
           <v-date-picker v-model="selectedDate" @input="dateMenu = false; fetchSales()" />
         </v-menu>
@@ -66,7 +71,7 @@
       </v-row>
 
       <!-- Total row -->
-      <v-card outlined class="cash-close-total-card mb-4">
+      <v-card outlined class="cash-close-total-card mb-6">
         <div class="d-flex align-center justify-space-between">
           <div>
             <div class="text-caption grey--text">Total del día</div>
@@ -78,8 +83,58 @@
         </div>
       </v-card>
 
-      <!-- Sales list -->
-      <div class="text-subtitle-1 font-weight-bold mb-2">Detalle de ventas</div>
+      <!-- Product metrics -->
+      <div class="d-flex align-center mb-3">
+        <v-icon color="orange darken-2" class="mr-2">mdi-package-variant</v-icon>
+        <span class="text-subtitle-1 font-weight-bold">Totales por producto</span>
+      </div>
+
+      <v-card outlined class="mb-6">
+        <v-simple-table dense>
+          <thead>
+            <tr>
+              <th class="text-left">Producto</th>
+              <th class="text-center">Cant. vendida</th>
+              <th class="text-right">Total recaudado</th>
+              <th class="text-right">% del total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in productTotals" :key="row.id">
+              <td class="font-weight-medium">{{ row.name }}</td>
+              <td class="text-center">
+                <v-chip x-small color="orange darken-2" dark class="font-weight-bold">
+                  {{ row.qty }}
+                </v-chip>
+              </td>
+              <td class="text-right font-weight-bold primary--text">
+                ${{ formatPrice(row.total) }}
+              </td>
+              <td class="text-right grey--text">
+                {{ row.pct }}%
+              </td>
+            </tr>
+            <tr v-if="productTotals.length === 0">
+              <td colspan="4" class="text-center py-6 grey--text">Sin datos de productos</td>
+            </tr>
+          </tbody>
+          <!-- Footer totals -->
+          <tfoot v-if="productTotals.length > 0">
+            <tr class="font-weight-bold grey lighten-4">
+              <td>Total</td>
+              <td class="text-center">{{ productTotals.reduce((a, r) => a + r.qty, 0) }}</td>
+              <td class="text-right primary--text">${{ formatPrice(summary.total) }}</td>
+              <td class="text-right">100%</td>
+            </tr>
+          </tfoot>
+        </v-simple-table>
+      </v-card>
+
+      <!-- Sales detail -->
+      <div class="d-flex align-center mb-3">
+        <v-icon color="primary" class="mr-2">mdi-receipt-text</v-icon>
+        <span class="text-subtitle-1 font-weight-bold">Detalle de ventas</span>
+      </div>
       <v-card outlined>
         <v-simple-table dense>
           <thead>
@@ -139,27 +194,49 @@ export default {
       const [y, m, d] = this.selectedDate.split('-')
       return `${d}/${m}/${y}`
     },
-    summary() {
-      const cash = this.sales
-        .filter(s => s.payment_method === 'cash')
-        .reduce((acc, s) => acc + parseFloat(s.total), 0)
-      const card = this.sales
-        .filter(s => s.payment_method === 'card')
-        .reduce((acc, s) => acc + parseFloat(s.total), 0)
-      const transfer = this.sales
-        .filter(s => s.payment_method === 'transfer')
-        .reduce((acc, s) => acc + parseFloat(s.total), 0)
 
+    summary() {
+      const cash     = this.sales.filter(s => s.payment_method === 'cash').reduce((a, s) => a + parseFloat(s.total), 0)
+      const card     = this.sales.filter(s => s.payment_method === 'card').reduce((a, s) => a + parseFloat(s.total), 0)
+      const transfer = this.sales.filter(s => s.payment_method === 'transfer').reduce((a, s) => a + parseFloat(s.total), 0)
       return {
-        cash: cash.toFixed(2),
-        cashCount: this.sales.filter(s => s.payment_method === 'cash').length,
-        card: card.toFixed(2),
-        cardCount: this.sales.filter(s => s.payment_method === 'card').length,
-        transfer: transfer.toFixed(2),
+        cash:          cash.toFixed(2),
+        cashCount:     this.sales.filter(s => s.payment_method === 'cash').length,
+        card:          card.toFixed(2),
+        cardCount:     this.sales.filter(s => s.payment_method === 'card').length,
+        transfer:      transfer.toFixed(2),
         transferCount: this.sales.filter(s => s.payment_method === 'transfer').length,
-        total: (cash + card + transfer).toFixed(2),
-        totalCount: this.sales.length,
+        total:         (cash + card + transfer).toFixed(2),
+        totalCount:    this.sales.length,
       }
+    },
+
+    /** Aggregate quantities and totals per product across all sales */
+    productTotals() {
+      const map = {}
+      const grandTotal = parseFloat(this.summary.total) || 0
+
+      this.sales.forEach((sale) => {
+        if (!Array.isArray(sale.items)) return
+        sale.items.forEach((item) => {
+          const product = item.product
+          if (!product) return
+          const id = product.id
+          if (!map[id]) {
+            map[id] = { id, name: product.name, qty: 0, total: 0 }
+          }
+          map[id].qty   += item.quantity
+          map[id].total += parseFloat(item.total_price || 0)
+        })
+      })
+
+      return Object.values(map)
+        .sort((a, b) => b.total - a.total)
+        .map((row) => ({
+          ...row,
+          total: row.total.toFixed(2),
+          pct: grandTotal > 0 ? ((row.total / grandTotal) * 100).toFixed(1) : '0.0',
+        }))
     },
   },
 
@@ -177,20 +254,10 @@ export default {
       this.loading = true
       try {
         const orgIds = this.$store.getters.permissions['sale-index']
-        const orgId = Array.isArray(orgIds) && orgIds.length === 1 ? orgIds[0] : ''
-        const params = {
-          filter: '',
-          org_id: orgId || '',
-        }
-        // Fetch all sales (we'll filter client-side by date)
-        const res = await this.$repository.Sale.index(params)
-        const allSales = res?.data || []
+        const orgId = Array.isArray(orgIds) && orgIds.length === 1 ? orgIds[0] : null
 
-        // Filter by selected date
-        this.sales = allSales.filter(s => {
-          const saleDate = s.sold_at ? s.sold_at.slice(0, 10) : s.created_at?.slice(0, 10)
-          return saleDate === this.selectedDate
-        })
+        const res = await this.$repository.Sale.daily(this.selectedDate, orgId)
+        this.sales = res?.data || []
       } catch (error) {
         this.$handleError?.(error)
       } finally {
@@ -206,18 +273,15 @@ export default {
 
     formatTime(datetime) {
       if (!datetime) return '—'
-      const d = new Date(datetime)
-      return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+      return new Date(datetime).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
     },
 
     paymentLabel(method) {
-      const labels = { cash: 'Efectivo', card: 'Tarjeta', transfer: 'Transferencia' }
-      return labels[method] || method
+      return { cash: 'Efectivo', card: 'Tarjeta', transfer: 'Transferencia' }[method] || method
     },
 
     paymentColor(method) {
-      const colors = { cash: 'green', card: 'blue', transfer: 'purple' }
-      return colors[method] || 'grey'
+      return { cash: 'green', card: 'blue', transfer: 'purple' }[method] || 'grey'
     },
   },
 }
@@ -235,15 +299,9 @@ export default {
 .cash-close-card:hover {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
-.cash-close-card--cash {
-  border-left: 4px solid #43a047;
-}
-.cash-close-card--card {
-  border-left: 4px solid #1565c0;
-}
-.cash-close-card--transfer {
-  border-left: 4px solid #7b1fa2;
-}
+.cash-close-card--cash     { border-left: 4px solid #43a047; }
+.cash-close-card--card     { border-left: 4px solid #1565c0; }
+.cash-close-card--transfer { border-left: 4px solid #7b1fa2; }
 .cash-close-card-amount {
   font-size: 1.6rem;
   line-height: 1.2;
