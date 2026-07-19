@@ -14,6 +14,14 @@ Vue.filter('humanize', function (value) {
   return moment(String(value)).fromNow()
 })
 
+Vue.filter('formatLastLogin', function (value) {
+  if (!value) return 'Nunca'
+  const date = moment(String(value))
+  const dateFormatted = date.format('D [de] MMMM YYYY h:mma')
+  const humanized = date.fromNow()
+  return `${dateFormatted} (${humanized})`
+})
+
 Vue.filter('daysDiff', function (value, otherValue) {
   if (!value || !otherValue) return ''
   const date1 = moment(value)

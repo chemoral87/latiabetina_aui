@@ -80,20 +80,21 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed" top="75px"
-      left="calc(50% - 95px)">
-      <div class="stats-panel-body"
-        style="padding: 10px 8px 8px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed"
+      :top="panelVerticalPos.top" :bottom="panelVerticalPos.bottom" left="calc(50% - 95px)">
+      <div class="mark-grid">
         <!-- Loop through active status configs -->
-        <div v-for="(config, key) in activeStatusConfig" :key="key"
-          style="display: flex; flex-direction: column; align-items: center">
-          <v-btn class="mb-1" icon :title="config.label"
-            :style="`background-color: ${config.color} !important; color: white`"
-            @click="setEventSeat(key == 'e' ? null : key)">
-            <v-icon>{{ getIconName(key) }}</v-icon>
-          </v-btn>
-          <span style="font-size: 9px; text-align: center">{{ config.label }}</span>
-        </div>
+        <template v-for="(config, key) in activeStatusConfig">
+          <div v-if="key === '_'" :key="key" class="mark-item mark-spacer"></div>
+          <div v-else :key="key" class="mark-item">
+            <v-btn class="mb-1" icon :title="config.label"
+              :style="`background-color: ${config.color} !important; color: white`"
+              @click="setEventSeat(key == 'e' ? null : key)">
+              <v-icon>{{ getIconName(key) }}</v-icon>
+            </v-btn>
+            <span class="mark-label">{{ config.label }}</span>
+          </div>
+        </template>
       </div>
     </MyDragPanel>
 
@@ -138,6 +139,7 @@ export default {
       dragMode: null, // 'x', 'y', or null for both axes
       cachedControlHeight: 50, // altura inicial del control row
       selectedSeatsArray: [], // Array of selected seat IDs
+      lastClickClientY: null, // Y position of the last seat click (viewport coordinates)
       blinkState: false, // Toggle for blinking animation
       blinkInterval: null, // Interval reference
       fitstate: null, // 'width' or 'height' - tracks current fit mode
@@ -146,6 +148,7 @@ export default {
       isTwoFingerGesture: false, // Track if two fingers are active
       isDraggingStage: false, // Track if user is dragging the stage
       dragStartPos: null, // Starting position of potential drag
+      markPanelVisible: false, // Explicit visibility flag (avoids v-model + computed pitfalls)
       // History
       historyDialog: false,
       historyLog: [],
@@ -155,18 +158,49 @@ export default {
   },
   computed: {
     activeStatusConfig() {
-      // Filter STATUS_CONFIG to only include active items
-      return Object.keys(STATUS_CONFIG)
-        .filter(key => STATUS_CONFIG[key].active !== false)
+      // Custom order for the grid.
+      // Row1: Vacío, Hombre, Nuevo, Teen
+      // Row2: (blank), Mujer, Nueva, Niño  — blank ensures Mujer sits below Hombre
+      const order = ['e', 'h', 'i', 't', '_', 'm', 'n', 'c']
+      return order
+        .filter(key => key === '_' || (STATUS_CONFIG[key] && STATUS_CONFIG[key].active !== false))
         .reduce((acc, key) => {
-          acc[key] = STATUS_CONFIG[key]
+          acc[key] = key === '_' ? null : STATUS_CONFIG[key]
           return acc
         }, {})
     },
 
     showMarkPanel: {
-      get() { return this.selectedSeatsArray.length > 0 },
-      set(val) { if(!val) this.clearSelectedSeats() }
+      get() { return this.markPanelVisible },
+      set(val) {
+        if(!val) {
+          this.markPanelVisible = false
+          this.clearSelectedSeats()
+          this.lastClickClientY = null
+          this.isDraggingStage = false
+          this.dragStartPos = null
+        }
+      },
+    },
+
+    /**
+     * Dynamic panel vertical position based on where the user last clicked.
+     * - If click is in the TOP half of the viewport → position panel at the BOTTOM
+     * - If click is in the BOTTOM half → position panel at the TOP
+     * - If no click data yet → default to bottom
+     */
+    panelVerticalPos() {
+      if(this.lastClickClientY === null || typeof window === 'undefined') {
+        return { bottom: '90px', top: null }
+      }
+      const viewportMid = window.innerHeight / 2
+      if(this.lastClickClientY < viewportMid) {
+        // Click in top half → panel at bottom (tight margin so less seat area is covered)
+        return { bottom: '20px', top: null }
+      } else {
+        // Click in bottom half → panel at top (just below app bar)
+        return { top: '60px', bottom: null }
+      }
     },
 
     seatSpacing() {
@@ -311,6 +345,10 @@ export default {
           this.cachedControlHeight = this.getControlRowHeight()
         }, 100)
       })
+    },
+
+    selectedSeatsArray(arr) {
+      this.markPanelVisible = arr.length > 0
     },
   },
   mounted() {
@@ -753,7 +791,35 @@ export default {
       }
     },
     handleSeatClick(payload) {
-      const { seat } = payload
+      const { seat, event } = payload
+
+      // Store click position for dynamic panel placement.
+      // Try multiple coordinate sources for maximum browser/device compatibility.
+      let clickY = null
+      if(event) {
+        // Konva event → native DOM event
+        if(event.evt && typeof event.evt.clientY === 'number') {
+          clickY = event.evt.clientY
+        }
+        // Konva pointer position relative to stage container (fallback)
+        // Note: getPointerPosition() returns CSS/DOM pixels relative to the
+        // stage container's top-left — no zoom or stage-offset correction needed.
+        if(clickY === null && event.target) {
+          try {
+            const stage = event.target.getStage()
+            if(stage) {
+              const pointer = stage.getPointerPosition()
+              if(pointer) {
+                const stageRect = stage.container().getBoundingClientRect()
+                clickY = stageRect.top + pointer.y
+              }
+            }
+          } catch(_) { /* ignore */ }
+        }
+      }
+      if(clickY !== null) {
+        this.lastClickClientY = clickY
+      }
 
       this.isIOS = this.$uaParser.isIOS()
       this.isAndroid = this.$uaParser.isAndroid()
@@ -1063,5 +1129,27 @@ export default {
   .stage-container {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* ── Mark panel grid layout (3 items per row) ────────────── */
+.mark-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px 8px;
+  padding: 8px 6px 6px;
+  justify-items: center;
+}
+
+.mark-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mark-label {
+  font-size: 9px;
+  text-align: center;
+  line-height: 1.1;
+  color: #333;
 }
 </style>

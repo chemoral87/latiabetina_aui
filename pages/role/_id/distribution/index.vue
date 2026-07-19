@@ -8,7 +8,7 @@
           :items="organizationOptions"
           item-text="name"
           item-value="id"
-          label="Filtrar por organización"
+          label="Organización"
           clearable
           outlined
           dense
@@ -29,7 +29,6 @@
             <v-data-table
               :headers="headers"
               :items="filteredProfiles"
-              :loading="loading"
               :items-per-page="10"
               class="elevation-0"
               no-data-text="No hay perfiles asignados a este rol"
@@ -41,7 +40,7 @@
                 {{ item.organization_name }} ({{ item.organization_short_code }})
               </template>
               <template #[`item.lastLogin`]="{ item }">
-                {{ formatLastLogin(item.user.last_login_at) }}
+                {{ item.user.last_login_at | formatLastLogin }}
               </template>
             </v-data-table>
           </v-card-text>
@@ -66,9 +65,9 @@
 export default {
   middleware: ["authenticated"],
 
-  async asyncData({ $axios, params, error }) {
+  async asyncData({ $repository, params, error }) {
     try {
-      const response = await $axios.$get(`/role/${params.id}/distribution`)
+      const response = await $repository.Role.distribution(params.id)
       return { role: response.role, profiles: response.profiles }
     } catch(e) {
       error({ statusCode: e.response?.status || 500, message: "Error al cargar la distribución del rol" })
@@ -80,7 +79,6 @@ export default {
     return {
       role: {},
       profiles: [],
-      loading: false,
       selectedOrganization: null,
       headers: [
         { text: "Usuario", value: "user" },
@@ -127,54 +125,6 @@ export default {
   methods: {
     userName(user) {
       return [user?.name, user?.last_name, user?.second_last_name].filter(Boolean).join(" ")
-    },
-
-    formatLastLogin(lastLoginAt) {
-      if (!lastLoginAt) {
-        return "Nunca";
-      }
-      try {
-        const date = new Date(lastLoginAt);
-        const now = new Date();
-
-        // Format: "19 Julio 2026 12:52am"
-        const monthNames = [
-          "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ];
-        const day = date.getDate();
-        const month = monthNames[date.getMonth()];
-        const year = date.getFullYear();
-        const hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-        const ampm = hours >= 12 ? "pm" : "am";
-        const displayHours = hours % 12 || 12;
-
-        const formattedDate = `${day} ${month} ${year} ${displayHours}:${minutes}${ampm}`;
-
-        // Calculate relative time
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        let relativeTime = "";
-        if (diffMins < 1) {
-          relativeTime = "Hace poco";
-        } else if (diffMins < 60) {
-          relativeTime = `Hace ${diffMins} ${diffMins === 1 ? "minuto" : "minutos"}`;
-        } else if (diffHours < 24) {
-          relativeTime = `Hace ${diffHours} ${diffHours === 1 ? "hora" : "horas"}`;
-        } else if (diffDays <= 7) {
-          relativeTime = `Hace ${diffDays} ${diffDays === 1 ? "día" : "días"}`;
-        } else {
-          relativeTime = `Hace ${Math.floor(diffDays / 7)} ${Math.floor(diffDays / 7) === 1 ? "semana" : "semanas"}`;
-        }
-
-        return `${formattedDate} (${relativeTime})`;
-      } catch (e) {
-        return "—";
-      }
     },
   },
 }
