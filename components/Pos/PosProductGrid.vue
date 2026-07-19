@@ -20,10 +20,10 @@
             <div class="pos-name text-body-2 font-weight-bold">{{ product.name }}<v-icon v-if="product.requires_preparation" small class="ml-1 orange--text">mdi-chef-hat</v-icon></div>
             <div class="pos-price primary--text font-weight-black">${{ formatPrice(product.price) }}</div>
           </div>
-          <div v-if="showStock && product.stock < 5" class="text-caption font-weight-medium green--text">
-            {{ product.stock === 0 ? 'Sin stock' : `Solo ${product.stock} restantes` }}
+          <div v-if="showStock" class="text-caption font-weight-medium" :class="stockColor(product.stock)">
+            {{ product.stock === 0 ? 'Sin stock' : `Stock: ${product.stock}` }}
           </div>
-          <div v-else-if="!showStock && product.stock === 0" class="text-caption font-weight-medium error--text">
+          <div v-else-if="product.stock === 0" class="text-caption font-weight-medium error--text">
             Sin stock
           </div>
         </div>
@@ -72,6 +72,11 @@ export default {
       const num = parseFloat(val)
       if (isNaN(num)) return val
       return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    },
+    stockColor(stock) {
+      if (stock === 0) return 'error--text'
+      if (stock < 5) return 'warning--text'
+      return 'grey--text'
     },
   },
 }

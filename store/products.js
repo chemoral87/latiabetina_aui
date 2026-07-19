@@ -50,8 +50,10 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchProducts({ commit }, { apiOptions = {} } = {}) {
-    commit('SET_LOADING', true)
+  async fetchProducts({ commit }, { apiOptions = {}, skipLoading = false } = {}) {
+    if (!skipLoading) {
+      commit('SET_LOADING', true)
+    }
     try {
       const res = await this.$repository.Product.pos(null, { cacheMs: 500, ...apiOptions })
       const products = res?.data || []
@@ -60,7 +62,9 @@ export const actions = {
     } catch {
       return []
     } finally {
-      commit('SET_LOADING', false)
+      if (!skipLoading) {
+        commit('SET_LOADING', false)
+      }
     }
   },
 }

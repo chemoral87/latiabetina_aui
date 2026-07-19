@@ -15,9 +15,9 @@
         </v-btn-toggle>
         <v-tooltip top>
           <template #activator="{ on }">
-            <v-btn small icon class="ml-2 pos-stock-toggle" :color="showStock ? 'green' : 'grey'"
-              v-on="on" @click="showStock = !showStock">
-              <v-icon>{{ showStock ? 'mdi-package-variant-open' : 'mdi-package-variant' }}</v-icon>
+            <v-btn small icon class="ml-2 pos-stock-toggle" :color="showStock ? 'blue' : 'blue darken-3'" v-on="on"
+              @click="showStock = !showStock">
+              <v-icon>{{ showStock ? 'mdi-package-variant' : 'mdi-package-variant-closed' }}</v-icon>
             </v-btn>
           </template>
           <span>{{ showStock ? 'Ocultar stock' : 'Mostrar stock' }}</span>
@@ -26,26 +26,22 @@
 
       <!-- GRID VIEW -->
       <div id="pos-grid-view" v-if="viewMode === 'grid'">
-        <PosProductGrid :products="products" :cart="cart" :show-stock="showStock"
-          @add="addToCart" @decrease="decreaseCart" @remove="removeProduct" />
+        <PosProductGrid :products="products" :cart="cart" :show-stock="showStock" @add="addToCart"
+          @decrease="decreaseCart" @remove="removeProduct" />
       </div>
 
       <!-- LIST VIEW -->
       <div id="pos-list-view" v-if="viewMode === 'list'">
-        <PosProductList :products="products" :cart="cart" :show-stock="showStock"
-          @add="addToCart" @decrease="decreaseCart" @remove="removeProduct" />
+        <PosProductList :products="products" :cart="cart" :show-stock="showStock" @add="addToCart"
+          @decrease="decreaseCart" @remove="removeProduct" />
       </div>
 
       <!-- Footer -->
-      <PosCartFooter ref="posFooterEl" :cart="cart" :show-cart="showCart"
-        :customer-name="customerName" :payment-method="paymentMethod"
-        :payment-methods="paymentMethods" :saving="saving"
-        @toggle-cart="showCart = !showCart"
-        @change-qty="changeQuantity($event.index, $event.delta)"
-        @remove-cart-item="removeFromCart"
-        @update:customerName="customerName = $event"
-        @update:paymentMethod="paymentMethod = $event"
-        @checkout="registerSale" />
+      <PosCartFooter ref="posFooterEl" :cart="cart" :show-cart="showCart" :customer-name="customerName"
+        :payment-method="paymentMethod" :payment-methods="paymentMethods" :saving="saving"
+        @toggle-cart="showCart = !showCart" @change-qty="changeQuantity($event.index, $event.delta)"
+        @remove-cart-item="removeFromCart" @update:customerName="customerName = $event"
+        @update:paymentMethod="paymentMethod = $event" @checkout="registerSale" />
 
     </div><!-- /v-else -->
 
@@ -213,6 +209,12 @@ export default {
         this.customerName = ''
         this.showCart = false
         localStorage.removeItem('pos-cart')
+
+        // Refresh product stock from server (silent — don't hide products)
+        await this.$store.dispatch('products/fetchProducts', {
+          skipLoading: true,
+          apiOptions: { cacheMs: 0 }
+        })
       } catch (error) {
         this.$handleError?.(error)
       } finally {
