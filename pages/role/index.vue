@@ -1,14 +1,14 @@
-<template>
+﻿<template>
   <v-container fluid>
     <v-row dense>
-      <!-- Filtro de búsqueda -->
+      <!-- Filtro de bÃºsqueda -->
       <v-col cols="12" md="2">
         <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
           dense />
       </v-col>
 
-      <!-- Botones de acción -->
-      <v-col cols="12" md="3">
+      <!-- Botones de acciÃ³n -->
+      <v-col cols="12" md="auto">
         <v-btn color="primary" class="mr-2" @click="newRole">
           <v-icon>mdi-plus</v-icon>
           Nuevo
@@ -22,14 +22,14 @@
       <!-- Tabla de roles -->
       <v-col cols="12">
         <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
-          @editPermissions="editRolePermissions" @edit="editRole" @delete="beforeDeleteRole" />
+          @editPermissions="editRolePermissions" @distribution="distributeRole" @edit="editRole" @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
 
-    <!-- Diálogo para crear/editar rol -->
+    <!-- DiÃ¡logo para crear/editar rol -->
     <RoleDialog v-if="roleDialog" :role="role" :loading="saving" @close="closeDialog" @save="saveRole" />
 
-    <!-- Diálogo de confirmación de eliminación -->
+    <!-- DiÃ¡logo de confirmaciÃ³n de eliminaciÃ³n -->
     <DialogDelete v-if="roleDialogDelete" :dialog="dialogDelete" :loading="deleting" @ok="deleteRole"
       @close="roleDialogDelete = false" />
   </v-container>
@@ -94,7 +94,7 @@ export default {
   watch: {
     filterRole: {
       handler: debounce(function(value) {
-        // Si skipFilterWatch está activo, no ejecutar el watch
+        // Si skipFilterWatch estÃ¡ activo, no ejecutar el watch
         if(this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
@@ -118,7 +118,7 @@ export default {
     },
 
     /**
-     * Maneja el cambio en el filtro de búsqueda
+     * Maneja el cambio en el filtro de bÃºsqueda
      */
     async handleFilterChange(value) {
       await this.loadRoles({ filter: value || "", page: 1 })
@@ -137,14 +137,14 @@ export default {
           ...overrides,
         }
 
-        // Preserva el filtro actual si no se sobrescribe explícitamente
+        // Preserva el filtro actual si no se sobrescribe explÃ­citamente
         if(this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterRole
         }
 
         this.response = await this.$repository.Role.index(requestOptions)
 
-        // Actualiza las opciones después de una carga exitosa
+        // Actualiza las opciones despuÃ©s de una carga exitosa
         this.options = requestOptions
       } catch(error) {
         this.$handleError(error)
@@ -169,7 +169,7 @@ export default {
     },
 
     /**
-     * Abre el diálogo para crear un nuevo rol
+     * Abre el diÃ¡logo para crear un nuevo rol
      */
     newRole() {
       this.role = {}
@@ -177,7 +177,7 @@ export default {
     },
 
     /**
-     * Abre el diálogo para editar un rol existente
+     * Abre el diÃ¡logo para editar un rol existente
      */
     editRole(item) {
       this.role = { ...item }
@@ -185,18 +185,21 @@ export default {
     },
 
     /**
-     * Navega a la página de permisos del rol
+     * Navega a la pÃ¡gina de permisos del rol
      */
     editRolePermissions(item) {
       this.$router.push(`/role/${item.id}`)
     },
 
+    distributeRole(item) {
+      this.editRolePermissions(item)
+    },
     /**
-     * Prepara el diálogo de confirmación para eliminar un rol
+     * Prepara el diÃ¡logo de confirmaciÃ³n para eliminar un rol
      */
     beforeDeleteRole(item) {
       this.dialogDelete = {
-        text: "¿Desea eliminar el Rol ",
+        text: "Â¿Desea eliminar el Rol ",
         strong: item.name,
         text2: "?",
         payload: item,
@@ -215,7 +218,7 @@ export default {
         // Activa el flag para evitar que el watch dispare una llamada adicional
         this.skipFilterWatch = true
 
-        // Limpia el filtro y recarga la primera página (solo 1 llamada GET)
+        // Limpia el filtro y recarga la primera pÃ¡gina (solo 1 llamada GET)
         this.filterRole = ""
         await this.loadRoles({ page: 1, filter: "" })
 
@@ -266,7 +269,7 @@ export default {
     },
 
     /**
-     * Cierra el diálogo de rol
+     * Cierra el diÃ¡logo de rol
      */
     closeDialog() {
       this.roleDialog = false
@@ -279,3 +282,5 @@ export default {
 <style scoped>
 /* Estilos adicionales si son necesarios */
 </style>
+
+

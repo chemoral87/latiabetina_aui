@@ -42,9 +42,13 @@
       </v-col>
 
       <!-- Acciones -->
-      <v-col cols="12" class="d-flex gap-2">
-        <v-btn color="primary" outlined @click="$router.push('/role')">Cancelar</v-btn>
-        <v-btn color="primary" class="ml-2" @click="saveRolePermissions()">Guardar</v-btn>
+      <v-col cols="12">
+        <v-card outlined>
+          <v-card-text class="d-flex justify-start gap-2 pa-4">
+            <v-btn color="primary" outlined @click="$router.push('/role')">Cancelar</v-btn>
+            <v-btn color="primary" @click="saveRolePermissions()">Guardar</v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
 

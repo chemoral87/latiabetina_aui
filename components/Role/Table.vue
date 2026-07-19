@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
     :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
     <!-- Columna de permisos -->
@@ -14,9 +14,9 @@
     <!-- Columna de acciones -->
     <template #[`item.actions`]="{ item }">
 
-      <v-tooltip bottom>
+      <v-tooltip bottom >
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
+          <v-btn outlined color="primary" fab x-small class="my-1 mr-1"  v-bind="attrs" v-on="on" @click="editRole(item)">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -35,7 +35,17 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteRole(item)">
+          <v-btn outlined color="info" fab x-small class="my-1 mr-1" v-bind="attrs" v-on="on"
+            @click="distributeRole(item)">
+            <v-icon small>mdi-share-variant</v-icon>
+          </v-btn>
+        </template>
+        <span>Distribuir</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn outlined color="error" fab x-small v-bind="attrs" class="my-1" v-on="on" @click="deleteRole(item)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>
@@ -44,7 +54,7 @@
 
     </template>
 
-    <!-- Estado vacío -->
+    <!-- Estado vacÃ­o -->
     <template #no-data>
       <div class="text-center pa-4">
         <v-icon color="grey lighten-1">mdi-redhat</v-icon>
@@ -92,7 +102,7 @@ export default {
           value: "actions",
           sortable: false,
           align: "center",
-          width: "200px",
+          width: "240px",
         },
       ],
       isFirstWatch: true,
@@ -128,7 +138,7 @@ export default {
           return
         }
 
-        // Solo emitir si realmente cambió algo relevante
+        // Solo emitir si realmente cambiÃ³ algo relevante
         if(this.hasOptionsChanged(newValue, oldValue)) {
           this.$emit("sorting", newValue)
         }
@@ -164,6 +174,9 @@ export default {
       this.$emit("editPermissions", item)
     },
 
+    distributeRole(item) {
+      this.$emit("distribution", item)
+    },
     deleteRole(item) {
       this.$emit("delete", item)
     },
@@ -176,3 +189,5 @@ export default {
   margin: 2px !important;
 }
 </style>
+
+

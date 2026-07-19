@@ -1,16 +1,16 @@
 <template>
-  <div>
+
     <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1">
       <template #[`item.actions`]="{ item }">
-        <v-btn color="primary" fab small outlined class="mr-1 my-1" @click="editItem(item)">
+        <v-btn color="primary" fab x-small outlined class="mr-1 my-1" @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn color="error" fab small outlined class="my-1" @click="deleteItem(item)">
+        <v-btn color="error" fab x-small outlined class="my-1" @click="deleteItem(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
     </v-data-table>
-  </div>
+ 
 </template>
 <script>
 export default {

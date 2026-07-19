@@ -6,7 +6,7 @@
 v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="auto">
         <v-btn class="mr-1" color="primary" @click="newPermission()">
           <v-icon>mdi-plus</v-icon>
           Nuevo

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items"
+    <v-data-table dense mobile-breakpoint="0" :must-sort="true"  :headers="headers" :items="items"
       :options.sync="optionsTable" :server-items-length="total" :loading="loading" class="elevation-1">
       <template #[`item.roles`]="{ item }">
         <v-chip v-for="it in item.roles" :key="it.id" class="ma-2" color="primary">
@@ -14,10 +14,10 @@
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-btn title="Editar" class="mr-1" color="primary" outlined fab x-small @click="edit(item)">
+        <v-btn title="Editar" class="mr-1 my-1" color="primary"  outlined fab x-small @click="edit(item)">
           <v-icon small>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn title="Perfiles" class="mr-1" color="success" outlined fab x-small @click="editProfiles(item)">
+        <v-btn title="Perfiles" class="mr-1 my-1" color="success" outlined fab x-small @click="editProfiles(item)">
           <v-icon small>mdi-redhat</v-icon>
         </v-btn>
         <!-- <v-btn title="Roles y Permisos" class="ma-1" color="info" outlined fab small @click="editRoles(item)">

@@ -59,6 +59,7 @@ import Vue from "vue"
 import VueKonva from "vue-konva"
 
 import { STAGE_CATEGORIES, DEFAULT_SETTINGS, STATUS_CONFIG } from "~/constants/auditorium"
+import { createRealtimeListeners } from "~/utils/realtime"
 
 
 Vue.use(VueKonva)
@@ -82,7 +83,6 @@ export default {
       stageCategories: STAGE_CATEGORIES,
       loading: false,
       loadingSeats: [],
-      echoChannel: null,
       statsPanel: false,
     }
   },
@@ -226,11 +226,8 @@ export default {
   },
 
   beforeDestroy() {
-    // Clean up Echo channel when component is destroyed
-    if(this.echoChannel) {
-      this.$echo.leave(`auditorium-event.${this.eventAuditorium.id}`)
-      this.echoChannel = null
-    }
+    // Clean up Echo subscriptions managed by createRealtimeListeners
+    if(this._realtimeCleanup) this._realtimeCleanup()
 
     // Remove visibility change listener
     document.removeEventListener("visibilitychange", this.handleVisibilityChange)
@@ -634,19 +631,14 @@ export default {
     },
 
     setupRealtimeListeners() {
-      if(!this.$echo || !this.eventAuditorium?.id) {
-        return
+      if(!this.eventAuditorium?.id) return
+
+      // Prevent duplicate subscriptions — cleanup any stale listeners first
+      if (this._realtimeCleanup) {
+        this._realtimeCleanup()
       }
 
-      // Subscribe to the auditorium event channel
-      const channelName = `auditorium-event.${this.eventAuditorium.id}`
-
-      this.echoChannel = this.$echo.channel(channelName)
-
-      // Listen for seat updates
-      this.echoChannel.listen(".seat.updated", (data) => {
-
-
+      const handleSeatUpdate = (data) => {
         // s: status, z: seatsIds in array, t: timestamp
         const timestamp = data.t || data.timestamp
         const seatIds = data.z || data.seats || data.seat_ids
@@ -659,7 +651,7 @@ export default {
         // Update local seats with the real-time data
         if(seatIds && Array.isArray(seatIds)) {
           seatIds.forEach((item) => {
-            // Support both array of strings (new compressed format) 
+            // Support both array of strings (new compressed format)
             // and array of objects (legacy format)
             const id = typeof item === "string" ? item : item.z || item.seat_id
             const seatStatus = typeof item === "object" && item !== null ? item.s || item.status || status : status
@@ -670,7 +662,14 @@ export default {
             }
           })
         }
-      })
+      }
+
+      this._realtimeCleanup = createRealtimeListeners(this.$echo, [{
+        name: `auditorium-event.${this.eventAuditorium.id}`,
+        events: {
+          '.seat.updated': handleSeatUpdate,
+        },
+      }])
     },
 
   },
