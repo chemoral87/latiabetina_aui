@@ -633,11 +633,6 @@ export default {
     setupRealtimeListeners() {
       if(!this.eventAuditorium?.id) return
 
-      // Prevent duplicate subscriptions — cleanup any stale listeners first
-      if (this._realtimeCleanup) {
-        this._realtimeCleanup()
-      }
-
       const handleSeatUpdate = (data) => {
         // s: status, z: seatsIds in array, t: timestamp
         const timestamp = data.t || data.timestamp
@@ -669,7 +664,7 @@ export default {
         events: {
           '.seat.updated': handleSeatUpdate,
         },
-      }])
+      }], {}, this._realtimeCleanup)
     },
 
   },

@@ -38,16 +38,19 @@
       <!-- Actions -->
       <div class="pos-list-col-actions">
         <div v-if="cartQty(product.id) === 0" class="pos-actions-single">
-          <v-btn fab small depressed color="primary" @click="$emit('add', product)">
+          <v-btn fab small depressed color="primary" class="pos-list-add-fab" @click="$emit('add', product)">
             <v-icon small>mdi-plus</v-icon>
           </v-btn>
         </div>
         <div v-else class="pos-actions-group">
+          <v-btn fab x-small outlined color="error" class="pos-list-btn-delete" @click="$emit('remove', product)">
+            <v-icon small>mdi-delete</v-icon>
+          </v-btn>
           <v-btn fab small depressed color="error" @click="$emit('decrease', product)">
             <v-icon small>mdi-minus</v-icon>
           </v-btn>
           <span class="pos-list-qty font-weight-black">{{ cartQty(product.id) }}</span>
-          <v-btn fab small depressed color="success" @click="$emit('add', product)">
+          <v-btn fab small depressed color="success" class="pos-list-plus" @click="$emit('add', product)">
             <v-icon small>mdi-plus</v-icon>
           </v-btn>
         </div>
@@ -137,12 +140,20 @@ export default {
   justify-content: flex-end;
   width: 100%;
 }
+.pos-list-add-fab {
+  width: 38px !important;
+  height: 38px !important;
+}
 .pos-actions-group {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
   width: 100%;
+}
+.pos-list-btn-delete {
+  width: 26px !important;
+  height: 26px !important;
 }
 .pos-list-thumb {
   border-radius: 8px;

@@ -44,8 +44,8 @@
       <!-- Acciones -->
       <v-col cols="12">
         <v-card outlined>
-          <v-card-text class="d-flex justify-start gap-2 pa-4">
-            <v-btn color="primary" outlined @click="$router.push('/role')">Cancelar</v-btn>
+          <v-card-text class="d-flex justify-end pa-4">
+            <v-btn color="primary" outlined class="mr-2" @click="$router.push('/role')">Cancelar</v-btn>
             <v-btn color="primary" @click="saveRolePermissions()">Guardar</v-btn>
           </v-card-text>
         </v-card>
@@ -103,7 +103,7 @@ export default {
         (p) => p.name.toLowerCase() === name.toLowerCase()
       )
       if (alreadyAssigned) {
-        this.showSnackbar(`El permiso "${name}" ya está asignado al rol.`, "warning")
+        this.showSnackbar(`El permiso "${name}" ya estÃ¡ asignado al rol.`, "warning")
         return
       }
 

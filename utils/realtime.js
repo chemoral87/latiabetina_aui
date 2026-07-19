@@ -17,6 +17,9 @@ const channelSubscriptions = new Set()
  * @param {function} [callbacks.onConnected]
  * @param {function} [callbacks.onDisconnected]
  * @param {function} [callbacks.onError]
+ * @param {function} [previousCleanup] - Optional cleanup function from a previous
+ *        call. If provided, it will be invoked before setting up new listeners
+ *        to prevent duplicate subscriptions on the same component instance.
  * @returns {function} A cleanup function that leaves all subscribed channels.
  *
  * @example
@@ -26,12 +29,18 @@ const channelSubscriptions = new Set()
  *   ], {
  *     onConnected: () => { this.echoConnected = true },
  *     onDisconnected: () => { this.echoConnected = false },
- *   })
+ *   }, this._realtimeCleanup)
  *
  *   // In beforeDestroy():
  *   if (this._realtimeCleanup) this._realtimeCleanup()
  */
-export function createRealtimeListeners(echo, channelConfigs, callbacks = {}) {
+export function createRealtimeListeners(echo, channelConfigs, callbacks = {}, previousCleanup) {
+  // Clean up any existing listeners before setting up new ones.
+  // This prevents duplicate subscriptions when called multiple times
+  // on the same component instance (e.g. during hot-reload).
+  if (typeof previousCleanup === 'function') {
+    previousCleanup()
+  }
   if (!echo || !channelConfigs || channelConfigs.length === 0) return () => {}
 
   /** @type {Record<string, object>} */

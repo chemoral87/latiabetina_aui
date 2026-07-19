@@ -192,7 +192,7 @@ export default {
     },
 
     distributeRole(item) {
-      this.editRolePermissions(item)
+      this.$router.push(`/role/${item.id}/distribution`)
     },
     /**
      * Prepara el diÃ¡logo de confirmaciÃ³n para eliminar un rol
@@ -282,5 +282,6 @@ export default {
 <style scoped>
 /* Estilos adicionales si son necesarios */
 </style>
+
 
 

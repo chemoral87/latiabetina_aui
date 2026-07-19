@@ -31,9 +31,6 @@
       <div class="kds-item-info">
         <div class="kds-item-name">{{ row.item.product?.name }}</div>
         <div v-if="row.item.product?.description" class="kds-item-desc">{{ row.item.product.description }}</div>
-        <div v-if="row.item.preparation_status" class="kds-item-status">
-          {{ statusTitle(row.item) }}
-        </div>
       </div>
 
       <v-btn
@@ -41,25 +38,26 @@
         :id="`pos-kds-item-undo-${order.id}-${row.item.id}-${rowIndex}`"
         fab
         small
+        color="orange darken-2"
+        dark
         class="kds-undo-button"
         @click.stop="undoRow(row.item.id, rowIndex)"
       >
         <v-icon small>mdi-undo-variant</v-icon>
       </v-btn>
 
-      <v-chip
+      <v-btn
+        fab
         small
         :color="isRowDone(row) || isItemCompleted(row.item) ? 'success' : 'orange darken-2'"
         dark
-        class="font-weight-bold kds-item-qty"
+        class="kds-toggle-button"
+        @click.stop="toggleRow(row.item.id, rowIndex)"
       >
-        <v-icon
-          v-if="isRowDone(row) || isItemCompleted(row.item)"
-          x-small
-          class="mr-1"
-        >mdi-check</v-icon>
-        <v-icon v-else x-small class="mr-1">mdi-chef-hat</v-icon>
-      </v-chip>
+        <v-icon small>
+          {{ isRowDone(row) || isItemCompleted(row.item) ? 'mdi-check' : 'mdi-chef-hat' }}
+        </v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -106,8 +104,13 @@ export default {
     },
 
     isRowDone(row) {
+      // Local doneMap is the source of truth for UI actions (toggle/undo).
+      // Only fall back to server-side completed_quantity if no local state.
       const map = this.doneMap?.[this.order.id] || {}
-      return !!map[this.rowKey(row.item.id, row.rowIndex)] || row.item?.completed_quantity > row.rowIndex
+      const doneEntry = map[this.rowKey(row.item.id, row.rowIndex)]
+      if (doneEntry !== undefined) return !!doneEntry
+
+      return row.item?.completed_quantity > row.rowIndex
     },
 
     toggleRow(itemId, rowIndex) {
@@ -151,18 +154,18 @@ export default {
   background: #c8e6c9 !important;
 }
 
+.kds-toggle-button {
+  min-width: 28px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
 .kds-undo-button {
   min-width: 28px;
   width: 28px;
   height: 28px;
-  padding: 0;
   margin-left: auto;
-  color: #fff;
-  background-color: rgba(76, 175, 80, 0.9);
-}
-
-.kds-undo-button:hover {
-  background-color: rgba(76, 175, 80, 1);
 }
 
 .kds-item-thumb {
@@ -193,10 +196,4 @@ export default {
   text-overflow: ellipsis;
 }
 
-.kds-item-qty {
-  flex-shrink: 0;
-  min-width: 44px;
-  justify-content: center;
-  font-size: 12px;
-}
 </style>

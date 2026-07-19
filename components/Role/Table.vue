@@ -177,6 +177,7 @@ export default {
     distributeRole(item) {
       this.$emit("distribution", item)
     },
+
     deleteRole(item) {
       this.$emit("delete", item)
     },
@@ -189,5 +190,6 @@ export default {
   margin: 2px !important;
 }
 </style>
+
 
 

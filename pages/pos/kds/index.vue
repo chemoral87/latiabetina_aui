@@ -7,12 +7,11 @@
       :error="error"
       :echo-connected="echoConnected"
       :sound-enabled="soundEnabled"
-      :incoming-order="incomingOrder"
       :is-item-completed="isItemCompleted"
       :status-title="statusTitle"
       @reload="loadActiveOrders"
       @update:sound-enabled="soundEnabled = $event"
-      @clear-incoming-order="incomingOrder = null"
+      @dismiss-order="dismissOrder"
       @toggle-row-done="toggleRowDone"
       @undo-row-done="undoRowDone"
     />
@@ -45,7 +44,6 @@ export default {
       dismissedIds: {},
       // Real-time
       echoConnected: false,
-      incomingOrder: null,
       kdsInitialized: false,  // guard against double-init on hard refresh
 
       // UI
@@ -128,11 +126,6 @@ export default {
     // ── Real-time ─────────────────────────────────────────────────────────
 
     setupRealtimeListeners() {
-      // Prevent duplicate subscriptions — cleanup any stale listeners first
-      if (this._realtimeCleanup) {
-        this._realtimeCleanup()
-      }
-
       const orgIds = this.$store.getters.permissions['pos-kds'] ?? []
 
       const channelConfigs = orgIds.map((orgId) => ({
@@ -146,7 +139,7 @@ export default {
         onConnected: () => { this.echoConnected = true },
         onDisconnected: () => { this.echoConnected = false },
         onError: () => { this.echoConnected = false },
-      })
+      }, this._realtimeCleanup)
     },
 
     handleIncomingSale(data) {
@@ -167,7 +160,6 @@ export default {
       })
 
       this.orders = [...this.orders, data]
-      this.incomingOrder = data
     },
 
     /**
@@ -282,6 +274,12 @@ export default {
         this.$set(map, key, true)
         this.$set(this.doneMap, saleId, map)
       }
+    },
+
+    dismissOrder(orderId) {
+      // Items were already individually completed via toggleRowDone.
+      // Just hide the order from the KDS board.
+      this.dismissedIds = { ...this.dismissedIds, [orderId]: true }
     },
 
     // ── Audio ─────────────────────────────────────────────────────────────

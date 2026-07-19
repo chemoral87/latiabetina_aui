@@ -29,20 +29,21 @@
         </div>
 
         <div class="pos-card-controls">
-          <v-btn v-if="cartQty(product.id) === 0" block depressed color="primary" class="pos-add-btn"
-            @click="$emit('add', product)">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
+          <div v-if="cartQty(product.id) === 0" class="pos-controls-single">
+            <v-btn fab small depressed color="primary" class="pos-add-fab" @click="$emit('add', product)">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </div>
           <div v-else class="pos-qty-row">
+            <v-btn fab x-small outlined color="error" class="pos-qty-btn-delete" @click="$emit('remove', product)">
+              <v-icon small>mdi-delete</v-icon>
+            </v-btn>
             <v-btn fab small depressed color="error" class="pos-qty-btn" @click="$emit('decrease', product)">
               <v-icon>mdi-minus</v-icon>
             </v-btn>
             <span class="pos-qty-number">{{ cartQty(product.id) }}</span>
-            <v-btn fab small depressed color="success" class="pos-qty-btn" @click="$emit('add', product)">
+            <v-btn fab small depressed color="success" class="pos-qty-btn pos-qty-plus" @click="$emit('add', product)">
               <v-icon>mdi-plus</v-icon>
-            </v-btn>
-            <v-btn fab x-small outlined color="error" class="ml-2 pos-qty-btn-delete" @click="$emit('remove', product)">
-              <v-icon small>mdi-delete</v-icon>
             </v-btn>
           </div>
         </div>
@@ -118,16 +119,19 @@ export default {
 .pos-card-controls {
   padding: 8px;
 }
-.pos-add-btn {
-  height: 44px !important;
-  font-size: 1.1rem;
-  border-radius: 8px !important;
+.pos-controls-single {
+  display: flex;
+  justify-content: flex-end;
+}
+.pos-add-fab {
+  width: 38px !important;
+  height: 38px !important;
 }
 .pos-qty-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-end;
+  gap: 6px;
 }
 .pos-qty-btn {
   width: 38px !important;
@@ -143,6 +147,5 @@ export default {
 .pos-qty-btn-delete {
   width: 26px !important;
   height: 26px !important;
-  margin-left: 2px;
 }
 </style>
