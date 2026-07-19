@@ -29,23 +29,12 @@
         </div>
 
         <div class="pos-card-controls">
-          <div v-if="cartQty(product.id) === 0" class="pos-controls-single">
-            <v-btn fab small depressed color="primary" class="pos-add-fab" @click="$emit('add', product)">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </div>
-          <div v-else class="pos-qty-row">
-            <v-btn fab x-small outlined color="error" class="pos-qty-btn-delete" @click="$emit('remove', product)">
-              <v-icon small>mdi-delete</v-icon>
-            </v-btn>
-            <v-btn fab small depressed color="error" class="pos-qty-btn" @click="$emit('decrease', product)">
-              <v-icon>mdi-minus</v-icon>
-            </v-btn>
-            <span class="pos-qty-number">{{ cartQty(product.id) }}</span>
-            <v-btn fab small depressed color="success" class="pos-qty-btn pos-qty-plus" @click="$emit('add', product)">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </div>
+          <PosProductControls
+            :quantity="cartQty(product.id)"
+            @add="$emit('add', product)"
+            @decrease="$emit('decrease', product)"
+            @remove="$emit('remove', product)"
+          />
         </div>
       </v-card>
     </v-col>
@@ -60,6 +49,11 @@
 <script>
 export default {
   name: 'PosProductGrid',
+
+  components: {
+    PosProductControls: () => import('@/components/Pos/PosProductControls.vue'),
+  },
+
   props: {
     products: { type: Array, required: true },
     cart: { type: Array, required: true },
@@ -118,34 +112,5 @@ export default {
 }
 .pos-card-controls {
   padding: 8px;
-}
-.pos-controls-single {
-  display: flex;
-  justify-content: flex-end;
-}
-.pos-add-fab {
-  width: 38px !important;
-  height: 38px !important;
-}
-.pos-qty-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-.pos-qty-btn {
-  width: 38px !important;
-  height: 38px !important;
-}
-.pos-qty-number {
-  font-size: 1.4rem;
-  font-weight: 900;
-  min-width: 28px;
-  text-align: center;
-  color: #212121;
-}
-.pos-qty-btn-delete {
-  width: 26px !important;
-  height: 26px !important;
 }
 </style>

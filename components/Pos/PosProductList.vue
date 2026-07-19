@@ -21,39 +21,33 @@
           </template>
         </v-img>
       </div>
-      <!-- Name -->
+      <!-- Name + price (combined on mobile) -->
       <div class="pos-list-col-name">
         <div class="pos-list-name text-body-2 font-weight-bold">{{ product.name }}<v-icon v-if="product.requires_preparation" small class="ml-1 orange--text">mdi-chef-hat</v-icon></div>
-        <div v-if="showStock" class="text-caption font-weight-medium" :class="stockColor(product.stock)">
-          {{ product.stock === 0 ? 'Sin stock' : `Stock: ${product.stock}` }}
-        </div>
-        <div v-else-if="product.stock === 0" class="text-caption font-weight-medium error--text">
-          Sin stock
+        <div class="pos-list-col-info">
+          <template v-if="showStock">
+            <span class="text-caption font-weight-medium" :class="stockColor(product.stock)">
+              {{ product.stock === 0 ? 'Sin stock' : `Stock: ${product.stock}` }}
+            </span>
+          </template>
+          <span v-else-if="product.stock === 0" class="text-caption font-weight-medium error--text">
+            Sin stock
+          </span>
+          <span class="pos-list-price-inline primary--text font-weight-black">${{ formatPrice(product.price) }}</span>
         </div>
       </div>
-      <!-- Price -->
+      <!-- Price (desktop only) -->
       <div class="pos-list-col-price">
         <span class="primary--text font-weight-black">${{ formatPrice(product.price) }}</span>
       </div>
       <!-- Actions -->
       <div class="pos-list-col-actions">
-        <div v-if="cartQty(product.id) === 0" class="pos-actions-single">
-          <v-btn fab small depressed color="primary" class="pos-list-add-fab" @click="$emit('add', product)">
-            <v-icon small>mdi-plus</v-icon>
-          </v-btn>
-        </div>
-        <div v-else class="pos-actions-group">
-          <v-btn fab x-small outlined color="error" class="pos-list-btn-delete" @click="$emit('remove', product)">
-            <v-icon small>mdi-delete</v-icon>
-          </v-btn>
-          <v-btn fab small depressed color="error" @click="$emit('decrease', product)">
-            <v-icon small>mdi-minus</v-icon>
-          </v-btn>
-          <span class="pos-list-qty font-weight-black">{{ cartQty(product.id) }}</span>
-          <v-btn fab small depressed color="success" class="pos-list-plus" @click="$emit('add', product)">
-            <v-icon small>mdi-plus</v-icon>
-          </v-btn>
-        </div>
+        <PosProductControls
+          :quantity="cartQty(product.id)"
+          @add="$emit('add', product)"
+          @decrease="$emit('decrease', product)"
+          @remove="$emit('remove', product)"
+        />
       </div>
     </div>
 
@@ -67,6 +61,11 @@
 <script>
 export default {
   name: 'PosProductList',
+
+  components: {
+    PosProductControls: () => import('@/components/Pos/PosProductControls.vue'),
+  },
+
   props: {
     products: { type: Array, required: true },
     cart: { type: Array, required: true },
@@ -129,31 +128,11 @@ export default {
   font-size: 0.9rem;
 }
 .pos-list-col-actions {
-  width: 140px;
-  min-width: 140px;
+  width: 180px;
+  min-width: 180px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-}
-.pos-actions-single {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-.pos-list-add-fab {
-  width: 38px !important;
-  height: 38px !important;
-}
-.pos-actions-group {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  width: 100%;
-}
-.pos-list-btn-delete {
-  width: 26px !important;
-  height: 26px !important;
 }
 .pos-list-thumb {
   border-radius: 8px;
@@ -165,10 +144,30 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.pos-list-qty {
-  font-size: 1rem;
-  min-width: 20px;
-  text-align: center;
-  color: #212121;
+
+.pos-list-col-info {
+  line-height: 1.6;
+}
+
+.pos-list-price-inline {
+  display: none;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive: small screens ── */
+@media (max-width: 600px) {
+  .pos-list-header .pos-list-col-price {
+    display: none;
+  }
+  .pos-list-col-price {
+    display: none;
+  }
+  .pos-list-price-inline {
+    display: block;
+  }
+  .pos-list-col-actions {
+    width: 160px;
+    min-width: 160px;
+  }
 }
 </style>

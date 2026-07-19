@@ -1,13 +1,13 @@
 ﻿<template>
   <v-container fluid>
     <v-row dense>
-      <!-- Filtro de bÃºsqueda -->
+      <!-- Filtro de busqueda -->
       <v-col cols="12" md="2">
         <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
           dense />
       </v-col>
 
-      <!-- Botones de acciÃ³n -->
+      <!-- Botones de accionn -->
       <v-col cols="12" md="auto">
         <v-btn color="primary" class="mr-2" @click="newRole">
           <v-icon>mdi-plus</v-icon>
