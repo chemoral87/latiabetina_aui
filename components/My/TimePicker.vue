@@ -1,13 +1,13 @@
 <template>
   <v-menu ref="timeMenu" v-model="timeMenu" :close-on-content-click="false" transition="scale-transition" offset-y
-    :nudge-width="200" :disabled="disabled">
+    :nudge-width="auto" :disabled="disabled">
     <template #activator="{ on, attrs }">
       <v-text-field :value="displayValue" :label="label" prepend-inner-icon="mdi-clock-outline" readonly
         :error-messages="errorMessages" :disabled="disabled" :dense="dense" :outlined="outlined"
         :hide-details="hideDetails" v-bind="attrs" v-on="on" @click:prepend-inner="on.click" />
     </template>
 
-    <v-card min-width="220">
+    <v-card min-width="auto">
       <v-row no-gutters>
         <!-- Hours column -->
         <v-col cols="4" class="tp-col">
@@ -36,8 +36,8 @@
 
       <v-card-actions class="pt-0 pb-2 px-2">
         <v-spacer />
-        <v-btn text small color="primary" @click="clearTime">Limpiar</v-btn>
-        <v-btn text small color="primary" @click="confirmTime">OK</v-btn>
+        <v-btn outlined small color="primary" @click="clearTime">Limpiar</v-btn>
+        <v-btn outlined small color="primary" @click="confirmTime">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>

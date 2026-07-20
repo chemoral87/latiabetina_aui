@@ -2,18 +2,18 @@
   <v-container fluid>
     <v-row dense>
       <!-- Filtro de búsqueda -->
-      <v-col cols="12" md="2">
-        <v-text-field v-model="filterSale" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar venta..."
-          dense />
+      <v-col cols="12" md="3">
+        <v-text-field v-model="filterSale" append-icon="mdi-magnify" clearable hide-details
+          placeholder="Buscar venta..." dense />
       </v-col>
 
       <!-- Botones de acción -->
-      <v-col cols="12" md="3">
+      <v-col cols="12" md="auto">
         <v-btn color="primary" :loading="loading" @click="refreshSales">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="secondary" class="ml-2" to="/pos">
+        <v-btn color="success" class="ml-2" to="/pos">
           <v-icon left>mdi-point-of-sale</v-icon>
           Ir al POS
         </v-btn>

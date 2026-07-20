@@ -1,13 +1,14 @@
 <template>
   <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
-    :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
+    :loading="loading" :must-sort="true" :hide-default-footer="optionsTable.itemsPerPage === -1" mobile-breakpoint="0"
+    class="elevation-1 xwidth800">
     <template #[`item.actions`]="{ item }">
       <div class="d-flex flex-nowrap justify-center">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
-            <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on"
+            <v-btn outlined color="primary" fab small class="mr-1 my-1" v-bind="attrs" v-on="on"
               @click="editProduct(item)">
-              <v-icon small>mdi-pencil</v-icon>
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </template>
           <span>Editar</span>
@@ -15,8 +16,8 @@
 
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
-            <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteProduct(item)">
-              <v-icon small>mdi-delete</v-icon>
+            <v-btn outlined color="error" fab small class=" my-1" v-bind="attrs" v-on="on" @click="deleteProduct(item)">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
           <span>Eliminar</span>

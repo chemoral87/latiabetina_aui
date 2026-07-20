@@ -15,16 +15,19 @@
           </v-date-picker>
         </v-menu>
       </v-col>
-      <v-col cols="12" md="auto">
-        <v-btn color="primary" class="mr-1" @click="newAuditoriumEvent()">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" :loading="loading" @click="getAuditoriumEvents()">
-          <v-icon>mdi-reload</v-icon>
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="getAuditoriumEvents()">
+          <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
+        <v-btn color="success" class="mr-1" @click="newAuditoriumEvent()">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo
+        </v-btn>
       </v-col>
+      <v-col cols="auto">
+        <organization-select v-model="filterOrgId" permission="auditorium-index" hide-one dense hide-details clearable
+          outlined /></v-col>
       <v-col cols="12">
         <AuditoriumEventTable :loading="loading" :response="response" :options="options" @sorting="getAuditoriumEvents"
           @download="downloadAuditoriumEvent" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent"
@@ -32,7 +35,7 @@
       </v-col>
     </v-row>
     <!-- Diálogos para crear/editar y eliminar eventos de auditorio -->
-    <AuditoriumEventDialog v-model="auditoriumEventDialog" :auditorium-event="auditoriumEvent" @close="closeDialog"
+    <AuditoriumEventDialog v-if="auditoriumEventDialog" v-model="auditoriumEventDialog" :auditorium-event="auditoriumEvent" @close="closeDialog"
       @save="saveAuditoriumEvent" />
     <DialogDelete v-if="auditoriumEventDialogDelete" :dialog="dialogDelete" @ok="deleteAuditoriumEvent"
       @close="auditoriumEventDialogDelete = false"></DialogDelete>
@@ -66,6 +69,7 @@ export default {
   data() {
     return {
       filterAuditoriumEvent: [],
+      filterOrgId: null,
       dateMenu: false,
       auditoriumEvents: [],
       auditoriumEvent: {},
@@ -103,6 +107,15 @@ export default {
         me.getAuditoriumEvents(op)
       }, 500),
     },
+    filterOrgId(value) {
+      const overrides = { page: 1 }
+      if (value) {
+        overrides.org_id = value
+      } else {
+        overrides.org_id = undefined
+      }
+      this.getAuditoriumEvents(overrides)
+    },
   },
 
   mounted() {
@@ -120,6 +133,10 @@ export default {
       }
 
       const op = Object.assign({ filter: this.filterAuditoriumEvent }, this.options)
+
+      if (this.filterOrgId) {
+        op.org_id = this.filterOrgId
+      }
 
       try {
         this.loading = true

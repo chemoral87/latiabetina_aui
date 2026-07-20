@@ -35,8 +35,24 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
               exact
               @click="closeDrawer"
             >
+              <v-list-item-icon class="mr-3">
+                <v-icon small>{{ child.icon || 'mdi-circle-small' }}</v-icon>
+              </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{ child.title }}</v-list-item-title>
+                <v-list-item-title class="d-flex align-center">
+                  <span>{{ child.title }}</span>
+                  <v-chip
+                    v-if="child.tab"
+                    small
+                    label
+                    class="ml-2 font-weight-bold"
+                    :color="child.tabColor || 'primary'"
+                    text-color="white"
+                    dark
+                  >
+                    {{ child.tab }}
+                  </v-chip>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-group>

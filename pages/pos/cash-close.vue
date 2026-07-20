@@ -244,7 +244,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit('setNavBar', {
       title: 'Cierre de Caja',
-      icon: 'mdi-cash-register',
+      icon: 'mdi-point-of-sale',
     })
     this.fetchSales()
   },

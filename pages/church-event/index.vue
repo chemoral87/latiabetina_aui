@@ -8,14 +8,14 @@
       </v-col>
 
       <!-- Botones de accion -->
-      <v-col cols="auto">
-        <v-btn color="primary" class="mr-2" @click="newChurchEvent">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" :loading="loading" class="mr-2" @click="refreshChurchEvents">
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshChurchEvents">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
+        </v-btn>
+        <v-btn color="success" class="mr-1" @click="newChurchEvent">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo
         </v-btn>
         <v-btn outlined color="primary" to="/church-event/calendar">
           <v-icon left>mdi-calendar-month</v-icon>

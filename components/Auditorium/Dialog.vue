@@ -1,76 +1,119 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog :value="true" persistent max-width="400px">
     <v-card>
-      <v-card-title>
-        <v-icon class="mr-2">{{ iconTitle }}</v-icon>
-        <span class="text-h5">{{ formTitle }}</span>
-        {{ item.org_id }}
-        <v-spacer></v-spacer>
-        <v-icon @click.native="close">$delete</v-icon>
-      </v-card-title>
-      <v-card-text>
-        <v-row dense>
-          <v-col cols="12">
-            <template v-if="item.id">
-              <v-text-field :value="getOrgName()" label="Organización" disabled></v-text-field>
-            </template>
-            <template v-else>
-              <organization-select v-model="item.org_id" :permission="'auditorium-index'" outlined :rules="[$vrules.required]" />
-            </template>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="item.name" label="Nombre" @keyup.enter="save"></v-text-field>
-          </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions>
+      <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
+        <v-icon left small color="primary">mdi-seat</v-icon>
+        {{ formTitle }}
         <v-spacer />
-        <v-btn color="primary" class="mr-1" outlined @click.native="close">Cancelar</v-btn>
-        <v-btn color="primary" @click.native="save">Guardar</v-btn>
+        <v-btn icon x-small @click="close">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+
+      <v-card-text>
+        <v-form ref="form" @submit.prevent="save">
+          <v-row dense>
+            <v-col cols="12">
+              <organization-select v-model="item.org_id" :permission="'auditorium-index'" hide-one outlined
+                :rules="[$vrules.required]" />
+            </v-col>
+            <v-col cols="12">
+              <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading"
+                required autofocus @keyup.enter="save" />
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+
+      <v-card-actions class="pa-4">
+        <v-spacer />
+        <v-btn color="primary" outlined class="mr-2" :disabled="loading" @click="close">
+          <v-icon left>mdi-close</v-icon>
+          Cancelar
+        </v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">
+          <v-icon left>mdi-content-save</v-icon>
+          Guardar
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
+
 <script>
 export default {
   name: "AuditoriumDialog",
-  props: ["value", "auditorium", "orgs"],
+
+  props: {
+    auditorium: {
+      type: Object,
+      default: () => ({}),
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
-      item: {},
+      item: {
+        name: "",
+        org_id: null,
+      },
     }
   },
+
   computed: {
-    iconTitle() {
-      return this.item.id ? "mdi-pencil" : "mdi-plus"
+    isEditMode() {
+      return !!this.item.id
     },
+
     formTitle() {
-      return this.item.id ? "Editar Auditorio" : "Nuevo Auditorio"
+      return this.isEditMode ? "Editar Auditorio" : "Nuevo Auditorio"
+    },
+
+    errors() {
+      const validationErrors = this.$store?.getters?.["validation/errors"]
+      return validationErrors || {}
+    },
+
+    isValid() {
+      return this.item.name && this.item.name.trim().length > 0 && this.item.org_id
     },
   },
+
+  watch: {
+    auditorium: {
+      handler(newValue) {
+        if (newValue && Object.keys(newValue).length > 0) {
+          this.item = Object.assign({}, newValue)
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
+
   mounted() {
-    if (this.auditorium) {
-      this.item = { ...this.auditorium }
-    }
-    if (!this.item.org_id && this.orgs && this.orgs.length > 0) {
-      this.item.org_id = this.orgs[0].id
-    }
+    this.initializeForm()
+    this.$store?.dispatch?.("validation/clearErrors")
   },
+
   methods: {
-    getOrgName() {
-      if (!this.item.org_id) return ""
-      if (typeof this.item.org_id === "object" && this.item.org_id.name) return this.item.org_id.name
-      if (this.orgs && Array.isArray(this.orgs)) {
-        const found = this.orgs.find((o) => o.id === this.item.org_id)
-        return found ? found.name : this.item.org_id
+    initializeForm() {
+      if (this.auditorium && Object.keys(this.auditorium).length > 0) {
+        this.item = Object.assign({}, this.auditorium)
       }
-      return this.item.org_id
     },
+
     close() {
       this.$emit("close")
     },
+
     save() {
-      this.$emit("save", this.item)
+      if (!this.isValid || this.loading) return
+      this.$emit("save", Object.assign({}, this.item))
     },
   },
 }

@@ -26,6 +26,19 @@ export class MenuService {
 
       if (this.hasPermission("auditorium-index")) menu.push({ icon: "mdi-theater", title: "Eventos de Auditorio", to: "/auditorium-event" })
 
+      if (this.hasPermission("life-group-index")) {
+        menu.push({
+          icon: "mdi-account-group",
+          title: "Redes de Vida",
+          to: "/life-group",
+          children: [
+            { title: "Redes", to: "/life-group", icon: "mdi-account-group"},
+            { title: "Dashboard", to: "/life-group/dashboard", icon: "mdi-view-dashboard" },
+            { title: "Reportes", to: "/life-group/reports", icon: "mdi-file-chart-outline" },
+          ],
+        })
+      }
+
       if (this.hasPermission("store-index")) {
         menu.push({ icon: "mdi-store", title: "Tiendas", to: "/store" })
       }
@@ -35,7 +48,7 @@ export class MenuService {
       }
 
       if (this.hasPermission("sale-index")) {
-        menu.push({ icon: "mdi-cart", title: "POS", to: "/pos" })
+        menu.push({ icon: "mdi-point-of-sale", title: "POS", to: "/pos" })
         menu.push({ icon: "mdi-receipt-text", title: "Ventas", to: "/pos/sales" })
         menu.push({ icon: "mdi-cash-register", title: "Cierre de Caja", to: "/pos/cash-close" })
       }

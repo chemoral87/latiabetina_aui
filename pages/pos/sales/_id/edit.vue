@@ -212,7 +212,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit('setNavBar', {
       title: 'Editar venta',
-      icon: 'mdi-pencil',
+      icon: 'mdi-point-of-sale',
       back: '/pos/sales',
     })
     // Load products into store only if empty (skip if already populated by another page)

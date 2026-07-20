@@ -1,10 +1,11 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="600px">
     <v-card>
-      <v-card-title class="d-flex align-center">
-        <span class="text-h5">{{ isEditing ? "Editar" : "Nuevo" }} Evento de Auditorio</span>
+      <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
+        <v-icon left small color="primary">mdi-theater</v-icon>
+        {{ isEditing ? "Editar" : "Nuevo" }} Evento de Auditorio
         <v-spacer />
-        <v-btn icon @click="closeDialog">
+        <v-btn icon x-small @click="closeDialog">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -14,32 +15,25 @@
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <organization-select v-model="localEvent.org_id" label="Organización *" hide-one
-                  :permission="'auditorium-index'" :rules="organizationRules" :prevent-auto-select="!isEditing"
+                <organization-select v-model="localEvent.org_id" label="Organización *" hide-one dense
+                  :permission="'auditorium-index'" :rules="organizationRules"
                   outlined />
               </v-col>
               <!-- Fecha del Evento -->
               <v-col cols="12" md="6">
-                <MyDatePicker v-model="localEvent.event_date" label="Fecha del Evento *" :rules="dateRules" required />
+                <MyDatePicker dense v-model="localEvent.event_date" label="Fecha del Evento *" :rules="dateRules"
+                  required />
               </v-col>
               <!-- Hora del Evento -->
               <v-col cols="12" md="6">
-                <v-select
-                  v-model="localEvent.time"
-                  :items="timeOptions"
-                  item-text="text"
-                  item-value="value"
-                  label="Hora del Evento *"
-                  :rules="timeRules"
-                  required
-                  outlined
-                ></v-select>
+                <v-select v-model="localEvent.time" :items="timeOptions" item-text="text" item-value="value"
+                  label="Hora del Evento *" :rules="timeRules" required outlined dense></v-select>
               </v-col>
 
               <!-- Auditorio -->
               <v-col cols="12" md="6">
                 <AuditoriumSelect v-model="localEvent.auditorium_id" :org-id="localEvent.org_id"
-                  :loading="loadingAuditoriums" label="Auditorio *" :rules="auditoriumRules" outlined />
+                  :loading="loadingAuditoriums" label="Auditorio *" :rules="auditoriumRules" outlined dense />
               </v-col>
 
               <!-- Organización -->
@@ -47,10 +41,14 @@
           </v-container>
         </v-form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="grey darken-1" text @click="closeDialog">Cancelar</v-btn>
+        <v-btn color="primary" outlined class="mr-2" :disabled="saving" @click="closeDialog">
+          <v-icon left>mdi-close</v-icon>
+          Cancelar
+        </v-btn>
         <v-btn color="primary" :loading="saving" :disabled="!isFormValid" @click="saveEvent">
+          <v-icon left>mdi-content-save</v-icon>
           {{ isEditing ? "Actualizar" : "Guardar" }}
         </v-btn>
       </v-card-actions>
@@ -117,7 +115,7 @@ export default {
       immediate: true,
       handler(newVal) {
         this.dialog = newVal
-        if(newVal) {
+        if (newVal) {
           // Reset and refresh localEvent when dialog opens
           this.localEvent = {
             event_date: null,
@@ -127,7 +125,7 @@ export default {
             config: "",
           }
           // Force organization select reset for new events
-          if(!this.isEditing) {
+          if (!this.isEditing) {
             this.$nextTick(() => {
               this.localEvent.org_id = null
             })
@@ -135,7 +133,7 @@ export default {
           this.initializeForm()
           // Reset form validation
           this.$nextTick(() => {
-            if(this.$refs.eventForm) {
+            if (this.$refs.eventForm) {
               this.$refs.eventForm.resetValidation()
             }
           })
@@ -144,7 +142,7 @@ export default {
     },
 
     dialog(newVal) {
-      if(!newVal) {
+      if (!newVal) {
         this.$emit("input", false)
       }
     },
@@ -160,7 +158,7 @@ export default {
 
   methods: {
     initializeForm() {
-      if(this.auditoriumEvent && Object.keys(this.auditoriumEvent).length > 0) {
+      if (this.auditoriumEvent && Object.keys(this.auditoriumEvent).length > 0) {
         this.localEvent = {
           ...this.auditoriumEvent,
           event_date: this.auditoriumEvent.event_date || null,
@@ -181,14 +179,14 @@ export default {
     async loadAuditoriums() {
       this.loadingAuditoriums = true
       try {
-        if(this.$repository?.Auditorium?.index) {
+        if (this.$repository?.Auditorium?.index) {
           const response = await this.$repository.Auditorium.index({})
           this.auditoriums = response?.data || []
         } else {
 
           this.auditoriums = []
         }
-      } catch(error) {
+      } catch (error) {
 
 
       } finally {
@@ -197,7 +195,7 @@ export default {
     },
 
     saveEvent() {
-      if(!this.isFormValid) return
+      if (!this.isFormValid) return
 
       this.saving = true
 
@@ -209,7 +207,7 @@ export default {
         }
 
         this.$emit("save", eventData)
-      } catch(error) {
+      } catch (error) {
 
       } finally {
         this.saving = false

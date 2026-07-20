@@ -152,7 +152,7 @@ export default {
       eventBus.$emit("setNavBar", {
         title: "Calendario de Eventos",
         icon: "mdi-calendar-month",
-        back: "/church-event",
+        // back: "/church-event",
       })
     },
 

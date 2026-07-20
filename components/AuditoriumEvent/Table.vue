@@ -1,18 +1,7 @@
 <template>
-  <v-data-table
-    fixed-header
-    :page.sync="page"
-    dense
-    mobile-breakpoint="0"
-    :must-sort="true"
-    :headers="headers"
-    :items="items"
-    :options.sync="optionsTable"
-    :server-items-length="total"
-    :loading="loading"
-    class="elevation-1 xwidth800"
-    @page-count="pageCount = $event"
-  >
+  <v-data-table fixed-header :page.sync="page" dense mobile-breakpoint="0" :must-sort="true" :headers="headers"
+    :items="items" :options.sync="optionsTable" :server-items-length="total" :loading="loading"
+    class="elevation-1 xwidth800" @page-count="pageCount = $event">
     <template #[`item.event_date`]="{ item }">
       {{ item.event_date | moment("DD MMM YYYY") }}
     </template>
@@ -22,13 +11,14 @@
     </template>
 
     <template #[`item.marks`]="{ item }">
-      <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('mark', item)">
+      <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab x-small @click="$emit('mark', item)">
         <v-icon>mdi-eye</v-icon>
       </v-btn>
     </template>
 
     <template #[`item.actions`]="{ item }">
-      <v-btn title="Descargar Excel" outlined class="mr-1 my-1" color="success" fab small @click="$emit('download', item)">
+      <v-btn title="Descargar Excel" outlined class="mr-1 my-1" color="success" fab small
+        @click="$emit('download', item)">
         <v-icon>mdi-file-excel</v-icon>
       </v-btn>
       <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('edit', item)">

@@ -5,8 +5,8 @@
     <template #[`item.edit`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab x-small v-bind="attrs" v-on="on" @click="editSale(item)">
-            <v-icon small>mdi-pencil</v-icon>
+          <v-btn outlined color="primary" fab small class="my-1" v-bind="attrs" v-on="on" @click="editSale(item)">
+            <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </template>
         <span>Editar</span>
@@ -41,8 +41,9 @@
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="viewDetail(item)">
-            <v-icon small>mdi-eye</v-icon>
+          <v-btn outlined color="primary" fab small class="my-1 mr-1" v-bind="attrs" v-on="on"
+            @click="viewDetail(item)">
+            <v-icon>mdi-eye</v-icon>
           </v-btn>
         </template>
         <span>Ver detalle</span>
@@ -52,8 +53,8 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="deleteSale(item)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn outlined color="error" fab small class="my-1" v-bind="attrs" v-on="on" @click="deleteSale(item)">
+            <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>
         <span>Eliminar</span>
@@ -98,7 +99,7 @@ export default {
           value: 'edit',
           sortable: false,
           align: 'center',
-          width: '40px',
+
 
         },
         {

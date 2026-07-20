@@ -7,22 +7,23 @@
           dense />
       </v-col>
 
-      <!-- Botones de accionn -->
-      <v-col cols="12" md="auto">
-        <v-btn color="primary" class="mr-2" @click="newRole">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" :loading="loading" @click="refreshRoles">
-          <v-icon>mdi-reload</v-icon>
+      <!-- Botones de accion -->
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshRoles">
+          <v-icon left>mdi-reload</v-icon>
           Refrescar
+        </v-btn>
+        <v-btn color="success" class="mr-1" @click="newRole">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo Rol
         </v-btn>
       </v-col>
 
       <!-- Tabla de roles -->
       <v-col cols="12">
         <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
-          @editPermissions="editRolePermissions" @distribution="distributeRole" @edit="editRole" @delete="beforeDeleteRole" />
+          @editPermissions="editRolePermissions" @distribution="distributeRole" @edit="editRole"
+          @delete="beforeDeleteRole" />
       </v-col>
     </v-row>
 
@@ -54,7 +55,7 @@ export default {
     try {
       const response = await app.$repository.Role.index(options)
       return { response, options }
-    } catch(e) {
+    } catch (e) {
 
       error({ statusCode: e.response?.status || 500, message: "Error al cargar roles" })
       return {
@@ -93,9 +94,9 @@ export default {
 
   watch: {
     filterRole: {
-      handler: debounce(function(value) {
+      handler: debounce(function (value) {
         // Si skipFilterWatch estÃ¡ activo, no ejecutar el watch
-        if(this.skipFilterWatch) {
+        if (this.skipFilterWatch) {
           this.skipFilterWatch = false
           return
         }
@@ -138,7 +139,7 @@ export default {
         }
 
         // Preserva el filtro actual si no se sobrescribe explÃ­citamente
-        if(this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
+        if (this.filterRole && !Object.prototype.hasOwnProperty.call(overrides, "filter")) {
           requestOptions.filter = this.filterRole
         }
 
@@ -146,7 +147,7 @@ export default {
 
         // Actualiza las opciones despuÃ©s de una carga exitosa
         this.options = requestOptions
-      } catch(error) {
+      } catch (error) {
         this.$handleError(error)
       } finally {
         this.loading = false
@@ -199,7 +200,7 @@ export default {
      */
     beforeDeleteRole(item) {
       this.dialogDelete = {
-        text: "Â¿Desea eliminar el Rol ",
+        text: "¿Desea eliminar el Rol ",
         strong: item.name,
         text2: "?",
         payload: item,
@@ -223,7 +224,7 @@ export default {
         await this.loadRoles({ page: 1, filter: "" })
 
         this.roleDialogDelete = false
-      } catch(error) {
+      } catch (error) {
 
         this.$notify({
           type: "error",
@@ -243,7 +244,7 @@ export default {
 
         const isUpdate = Boolean(item.id)
 
-        if(isUpdate) {
+        if (isUpdate) {
           await this.$repository.Role.update(item.id, item)
         } else {
           await this.$repository.Role.create(item)
@@ -257,7 +258,7 @@ export default {
         // Aplica el filtro con el nombre del rol guardado y recarga
         this.filterRole = item.name
         this.roleDialog = false
-      } catch(error) {
+      } catch (error) {
 
         this.$notify({
           type: "error",
@@ -282,6 +283,3 @@ export default {
 <style scoped>
 /* Estilos adicionales si son necesarios */
 </style>
-
-
-

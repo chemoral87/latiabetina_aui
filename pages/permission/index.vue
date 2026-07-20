@@ -6,14 +6,14 @@
 v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
-      <v-col cols="12" md="auto">
-        <v-btn class="mr-1" color="primary" @click="newPermission()">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" @click="getPermissions()">
-          <v-icon>mdi-reload</v-icon>
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" class="mr-1" @click="getPermissions()">
+          <v-icon left>mdi-reload</v-icon>
           Refrescar
+        </v-btn>
+        <v-btn color="success" class="mr-1" @click="newPermission()">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo
         </v-btn>
       </v-col>
       <v-col cols="12">

@@ -6,14 +6,14 @@
           dense />
       </v-col>
 
-      <v-col cols="12" md="4">
-        <v-btn color="primary" class="mr-1" @click="newUser()">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" :loading="loading" @click="getUsers()">
-          <v-icon>mdi-reload</v-icon>
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="getUsers()">
+          <v-icon left>mdi-reload</v-icon>
           Refrescar
+        </v-btn>
+        <v-btn color="success" class="mr-1" @click="newUser()">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo Usuario
         </v-btn>
       </v-col>
       <v-col cols="12">
@@ -58,7 +58,7 @@ export default {
   },
   watch: {
     filterUser: {
-      handler: debounce(function(value) {
+      handler: debounce(function (value) {
         const me = this
         const op = Object.assign(me.options, { filter: value, page: 1 })
         me.getUsers(op)
@@ -103,7 +103,7 @@ export default {
         .catch((e) => { })
     },
     async getUsers(options) {
-      if(options) {
+      if (options) {
         this.options = options
       }
       const op = Object.assign({ filter: this.filterUser }, this.options)
@@ -117,7 +117,7 @@ export default {
     },
     async saveUser(item) {
       const me = this
-      if(item.id) {
+      if (item.id) {
         await this.$repository.User.update(item.id, item)
           .then((res) => {
             me.getUsers()

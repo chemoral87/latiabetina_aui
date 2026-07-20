@@ -1,6 +1,6 @@
 {
   "name": "latiabetina_aui",
-  "version": "1.0.58",
+  "version": "1.0.59",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -17,6 +17,10 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/interaction": "^6.1.21",
+    "@fullcalendar/timegrid": "^6.1.21",
+    "@fullcalendar/vue": "^6.1.21",
     "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/dotenv": "^1.4.2",

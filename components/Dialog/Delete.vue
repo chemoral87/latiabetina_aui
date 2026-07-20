@@ -1,11 +1,11 @@
 <template>
   <v-dialog :value="true" persistent max-width="400px">
     <v-card>
-      <v-card-title>
-        <v-icon class="mr-2" color="error">mdi-alert</v-icon>
-        <span class="text-h5">{{ item.title }}</span>
+      <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
+        <v-icon left small color="error">mdi-alert</v-icon>
+        {{ item.title }}
         <v-spacer />
-        <v-btn icon @click="close">
+        <v-btn icon x-small @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -19,10 +19,16 @@
         <div class="text-caption grey--text mt-2">Esta acción no se puede deshacer</div>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="grey" outlined :disabled="loading" @click="close">NO</v-btn>
-        <v-btn color="primary" :loading="loading" @click="ok">SI</v-btn>
+        <v-btn color="error" outlined class="mr-2" :disabled="loading" @click="close">
+          <v-icon left>mdi-close</v-icon>
+          NO
+        </v-btn>
+        <v-btn color="primary" :loading="loading" @click="ok">
+          <v-icon left>mdi-check</v-icon>
+          SI
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

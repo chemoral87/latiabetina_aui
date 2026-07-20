@@ -7,11 +7,14 @@ v-model="filterOrganization" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
 
-      <v-spacer />
-      <v-col cols="auto">
-        <v-btn color="success" class="mb-1 mr-1" @click="newOrganization()">
-          <v-icon>mdi-account-plus</v-icon>
-          Nuevo Organization
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="indexOrganizations()">
+          <v-icon left>mdi-reload</v-icon>
+          Refrescar
+        </v-btn>
+        <v-btn color="success" class="mr-1" @click="newOrganization()">
+          <v-icon left>mdi-plus</v-icon>
+          Nueva Organización
         </v-btn>
       </v-col>
       <v-col cols="12">
@@ -48,6 +51,7 @@ export default {
       options: {},
       response: {},
       filterOrganization: "",
+      loading: false,
     }
   },
   watch: {
@@ -84,8 +88,13 @@ export default {
       if(options) {
         this.options = Object.assign(this.options, options)
       }
-      const op = Object.assign({ filter: this.filter }, this.options)
-      this.response = await this.$repository.Organization.index(op)
+      const op = Object.assign({ filter: this.filterOrganization }, this.options)
+      try {
+        this.loading = true
+        this.response = await this.$repository.Organization.index(op)
+      } finally {
+        this.loading = false
+      }
     },
     // editOrganization(item) {
     //   this.$router.push(`/organization/${item.id}`);

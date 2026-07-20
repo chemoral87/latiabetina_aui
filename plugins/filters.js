@@ -63,3 +63,16 @@ Vue.filter('uppercase', function (value) {
   if (!value) return ''
   return value.toString().toUpperCase()
 })
+
+Vue.filter('formatDate', function (value) {
+  if (!value) return ''
+  return moment(String(value)).format('D MMMM YYYY')
+})
+
+Vue.filter('formatTime', function (value) {
+  if (!value) return ''
+  // value is HH:mm (24h), convert to h:mm a (12h with AM/PM)
+  const m = moment(String(value), 'HH:mm')
+  if (!m.isValid()) return value
+  return m.format('h:mm a')
+})

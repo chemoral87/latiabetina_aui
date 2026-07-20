@@ -7,6 +7,7 @@ import ProductRepository from "../ProductRepository"
 import SaleRepository from "../SaleRepository"
 import RoleRepository from "../RoleRepository"
 import PermissionRepository from "../PermissionRepository"
+import LifeGroupRepository from "../LifeGroupRepository"
 
 import CommonRepository from "./CommonRepository"
 import ParentRepository from "./ParentRepository"
@@ -34,4 +35,5 @@ export default ($axios) => ({
   ConsoSheet: CommonRepository($axios)("/conso-sheet"),
   ChurchMember: CommonRepository($axios)("/church-member"),
   ParkingCarContact: ParentRepository($axios)("/parking-car-contact"),
+  LifeGroup: LifeGroupRepository($axios)("/life-groups"),
 })

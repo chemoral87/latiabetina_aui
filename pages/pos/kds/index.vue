@@ -71,7 +71,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit('setNavBar', {
       title: 'Pantalla de Cocina',
-      icon: 'mdi-chef-hat',
+      icon: 'mdi-point-of-sale',
 
     })
 

@@ -148,7 +148,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit('setNavBar', {
       title: 'Detalle de venta',
-      icon: 'mdi-receipt-text',
+      icon: 'mdi-point-of-sale',
       back: '/pos/sales',
     })
   },

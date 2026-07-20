@@ -1,17 +1,10 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="members"
-    :loading="loading"
-    dense
-    mobile-breakpoint="0"
-    class="elevation-1"
-  >
+  <v-data-table :headers="headers" :items="members" :loading="loading" dense mobile-breakpoint="0" class="elevation-1">
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab class="mr-1" x-small v-bind="attrs" v-on="on" @click="$emit('edit', item)">
-            <v-icon small>mdi-pencil</v-icon>
+          <v-btn outlined color="primary" fab class="mr-1" small v-bind="attrs" v-on="on" @click="$emit('edit', item)">
+            <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </template>
         <span>Editar</span>
@@ -19,8 +12,8 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn x-small outlined color="error" fab v-bind="attrs" v-on="on" @click="$emit('delete', item)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn small outlined color="error" fab v-bind="attrs" v-on="on" @click="$emit('delete', item)">
+            <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>
         <span>Eliminar</span>

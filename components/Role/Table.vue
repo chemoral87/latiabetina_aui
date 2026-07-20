@@ -14,10 +14,10 @@
     <!-- Columna de acciones -->
     <template #[`item.actions`]="{ item }">
 
-      <v-tooltip bottom >
+      <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab x-small class="my-1 mr-1"  v-bind="attrs" v-on="on" @click="editRole(item)">
-            <v-icon small>mdi-pencil</v-icon>
+          <v-btn outlined color="primary" fab small class="my-1 mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
+            <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </template>
         <span>Editar</span>
@@ -25,9 +25,9 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="success" fab x-small class="mr-1" v-bind="attrs" v-on="on"
+          <v-btn outlined color="success" fab small class="mr-1" v-bind="attrs" v-on="on"
             @click="editPermissions(item)">
-            <v-icon small>mdi-key</v-icon>
+            <v-icon>mdi-key</v-icon>
           </v-btn>
         </template>
         <span>Permisos</span>
@@ -35,9 +35,9 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="info" fab x-small class="my-1 mr-1" v-bind="attrs" v-on="on"
+          <v-btn outlined color="info" fab small class="my-1 mr-1" v-bind="attrs" v-on="on"
             @click="distributeRole(item)">
-            <v-icon small>mdi-share-variant</v-icon>
+            <v-icon>mdi-share-variant</v-icon>
           </v-btn>
         </template>
         <span>Distribuir</span>
@@ -45,8 +45,8 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="error" fab x-small v-bind="attrs" class="my-1" v-on="on" @click="deleteRole(item)">
-            <v-icon small>mdi-delete</v-icon>
+          <v-btn outlined color="error" fab small v-bind="attrs" class="my-1" v-on="on" @click="deleteRole(item)">
+            <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>
         <span>Eliminar</span>
@@ -102,7 +102,7 @@ export default {
           value: "actions",
           sortable: false,
           align: "center",
-          width: "240px",
+
         },
       ],
       isFirstWatch: true,
@@ -122,7 +122,7 @@ export default {
   watch: {
     options: {
       handler(newOptions) {
-        if(newOptions) {
+        if (newOptions) {
           this.optionsTable = Object.assign({}, newOptions)
         }
       },
@@ -133,13 +133,13 @@ export default {
     optionsTable: {
       handler(newValue, oldValue) {
         // Evitar el primer watch (cuando se inicializa)
-        if(this.isFirstWatch) {
+        if (this.isFirstWatch) {
           this.isFirstWatch = false
           return
         }
 
         // Solo emitir si realmente cambiÃ³ algo relevante
-        if(this.hasOptionsChanged(newValue, oldValue)) {
+        if (this.hasOptionsChanged(newValue, oldValue)) {
           this.$emit("sorting", newValue)
         }
       },
@@ -149,13 +149,13 @@ export default {
 
   methods: {
     hasOptionsChanged(newVal, oldVal) {
-      if(!oldVal) return true
+      if (!oldVal) return true
 
       // Comparar solo las propiedades relevantes
       const relevantProps = ["page", "itemsPerPage", "sortBy", "sortDesc"]
 
       return relevantProps.some((prop) => {
-        if(Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
+        if (Array.isArray(newVal[prop]) && Array.isArray(oldVal[prop])) {
           return JSON.stringify(newVal[prop]) !== JSON.stringify(oldVal[prop])
         }
         return newVal[prop] !== oldVal[prop]
@@ -190,6 +190,3 @@ export default {
   margin: 2px !important;
 }
 </style>
-
-
-

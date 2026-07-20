@@ -67,7 +67,7 @@ export default {
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit('setNavBar', {
       title: 'Nuevo artículo',
-      icon: 'mdi-package-variant',
+      icon: 'mdi-point-of-sale',
       back: '/pos',
     })
     this.initializeForm()

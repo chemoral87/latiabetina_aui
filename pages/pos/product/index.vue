@@ -6,14 +6,14 @@
           dense />
       </v-col>
 
-      <v-col cols="auto">
-        <v-btn v-if="hasInsertPermission" color="primary" class="mr-2" @click="newProduct">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn color="primary" :loading="loading" class="mr-2" @click="refreshProducts">
+      <v-col cols="auto" class="d-flex align-center">
+        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshProducts">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
+        </v-btn>
+        <v-btn v-if="hasInsertPermission" color="success" class="mr-1" @click="newProduct">
+          <v-icon left>mdi-plus</v-icon>
+          Nuevo
         </v-btn>
       </v-col>
 
@@ -30,24 +30,32 @@
         </v-btn-toggle>
       </v-col>
 
-      <v-col cols="auto" v-if="showOrgSelect">
+      <v-col v-if="showOrgSelect" cols="auto">
         <organization-select v-model="filterOrgId" permission="product-insert" hide-one dense hide-details clearable
           outlined />
       </v-col>
 
-      <v-col cols="12" v-if="viewMode === 'table'">
+      <!-- Cache indicator -->
+      <v-col v-if="usingCache && lastFetchTime" cols="auto" class="d-flex align-center">
+        <v-chip x-small color="grey" outlined class="px-2">
+          <v-icon x-small left>mdi-cached</v-icon>
+          En caché - {{ cacheLabel }}
+        </v-chip>
+      </v-col>
+
+      <v-col v-if="viewMode === 'table'" cols="12">
         <ProductTable :options="options" :response="response" :loading="loading" permission="product-index"
           @sorting="handleSorting" @edit="editProduct" @delete="beforeDeleteProduct" />
       </v-col>
 
-      <v-col cols="12" v-else>
+      <v-col v-else cols="12">
         <v-row dense>
           <v-col v-for="(product, index) in response.data" :key="product.id" cols="6" sm="4" md="4">
             <ProductCard :product="product" :is-first="index === 0" :is-last="index === response.data.length - 1"
               @toggle-preparation="toggleRequiresPreparation" @toggle-hidden="toggleHidden" @edit="editProduct"
               @delete="beforeDeleteProduct" @move-left="moveProduct(index, -1)" @move-right="moveProduct(index, 1)" />
           </v-col>
-          <v-col cols="12" v-if="response.data.length === 0" class="text-center pa-8">
+          <v-col v-if="response.data.length === 0" cols="12" class="text-center pa-8">
             <v-icon color="grey lighten-1" size="48">mdi-package-variant</v-icon>
             <div class="text-body-1 grey--text mt-2">No se encontraron artículos</div>
           </v-col>
@@ -75,7 +83,7 @@ export default {
       page: 1,
       sortBy: ['order'],
       sortDesc: [false],
-      itemsPerPage: 20,
+      itemsPerPage: -1,
     }
 
     const response = await app.$repository.Product.index(options)
@@ -94,6 +102,12 @@ export default {
       deleting: false,
       loading: false,
       skipFilterWatch: false,
+      viewCache: {
+        table: null,
+        cards: null,
+      },
+      usingCache: false,
+      lastFetchTime: null,
     }
   },
 
@@ -105,6 +119,11 @@ export default {
     showOrgSelect() {
       const orgIds = this.$store.getters.permissions['product-insert']
       return Array.isArray(orgIds) && orgIds.length > 1
+    },
+
+    cacheLabel() {
+      if (!this.lastFetchTime) return ''
+      return this.$moment(this.lastFetchTime).fromNow()
     },
   },
 
@@ -132,19 +151,40 @@ export default {
         this.options.page = 1
         this.options.sortBy = ['order']
         this.options.sortDesc = [false]
-        this.options.itemsPerPage = 100
+        this.options.itemsPerPage = -1
       } else {
         this.options.page = 1
         this.options.sortBy = ['name']
         this.options.sortDesc = [false]
         this.options.itemsPerPage = 10
       }
+
+      // Use cache if available for the target view mode
+      const cached = this.viewCache[newMode]
+      if (cached && cached.filter === this.filter && cached.filterOrgId === this.filterOrgId) {
+        this.response = cached.response
+        this.options = { ...cached.options }
+        this.usingCache = true
+        return
+      }
+
+      this.usingCache = false
       this.loadProducts()
     },
   },
 
   mounted() {
     this.setNavBar()
+
+    // Initialize cache with asyncData response
+    this.viewCache.table = {
+      response: this.response,
+      options: { ...this.options },
+      filter: this.filter,
+      filterOrgId: this.filterOrgId,
+    }
+    this.lastFetchTime = Date.now()
+
     // Populate store if empty so other pages (POS, edit sale) can use cached products
     if (this.$store.getters['products/allProducts'].length === 0) {
       this.$store.dispatch('products/fetchProducts')
@@ -193,6 +233,17 @@ export default {
 
         this.response = response
         this.options = requestOptions
+        this.usingCache = false
+        this.lastFetchTime = Date.now()
+
+        // Cache the response for the current view mode
+        this.viewCache[this.viewMode] = {
+          response,
+          options: { ...requestOptions },
+          filter: this.filter,
+          filterOrgId: this.filterOrgId,
+        }
+
         // Keep store in sync with latest product data
         if (response?.data) {
           this.$store.commit('products/SET_PRODUCTS', response.data)
@@ -207,6 +258,8 @@ export default {
     },
 
     async refreshProducts() {
+      // Clear all cache so both views refetch
+      this.viewCache = { table: null, cards: null }
       await this.loadProducts()
     },
 
@@ -241,6 +294,8 @@ export default {
 
         this.skipFilterWatch = true
         this.filter = ''
+        // Clear cache so both views reflect the deletion
+        this.viewCache = { table: null, cards: null }
         await this.loadProducts({ filter: '', page: 1 })
 
         this.productDialogDelete = false
@@ -302,6 +357,10 @@ export default {
           this.$handleError(error)
         }
       }
+
+      // Clear cache after reorder so views refresh with new order
+      this.viewCache = { table: null, cards: null }
+      this.usingCache = false
     },
   },
 }
