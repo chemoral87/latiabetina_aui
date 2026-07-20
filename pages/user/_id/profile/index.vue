@@ -49,19 +49,17 @@
           </v-card-text> -->
         </v-card>
       </v-col>
-      <!--
-      <v-col cols="12" md="6">
-        <RoleCombobox :roles="mUser.roles" @modelChange="setRoles"></RoleCombobox>
-      </v-col>
-      <v-col cols="12" md="6">
-        <PermissionCombobox :permissionsx="mUser.direct_permissions" label="Permisos Directos" @modelChange="setDirectPermissions"></PermissionCombobox>
-      </v-col>
 
-      <v-col cols="12" class="d-flex justify-end">
-        <v-btn color="primary" outlined class="mr-1" @click="$router.push('/user')">Cancelar</v-btn>
-        <v-btn color="primary" @click="saveUserRolesPermissions()">Guardar</v-btn>
+      <v-col cols="12">
+        <v-card outlined>
+          <v-card-text class="d-flex justify-end pa-4">
+            <v-btn color="primary" outlined @click="$router.push('/user')">
+              <v-icon left>mdi-arrow-left</v-icon>
+              Volver
+            </v-btn>
+          </v-card-text>
+        </v-card>
       </v-col>
-    -->
     </v-row>
 
     <ProfileDialog v-if="profileDialog" :user-id="user_id" @close="closeProfileDialog" @save="saveProfile" />

@@ -2,12 +2,32 @@
 
     <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1">
       <template #[`item.actions`]="{ item }">
-        <v-btn color="primary" fab x-small outlined class="mr-1 my-1" @click="editItem(item)">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn color="error" fab x-small outlined class="my-1" @click="deleteItem(item)">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn color="primary" fab x-small outlined class="mr-1 my-1" v-bind="attrs" v-on="on" @click="editItem(item)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+          <span>Editar</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn color="info" fab x-small outlined class="mr-1 my-1" v-bind="attrs" v-on="on" @click="distributePermission(item)">
+              <v-icon>mdi-share-variant</v-icon>
+            </v-btn>
+          </template>
+          <span>Distribuir</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn color="error" fab x-small outlined class="my-1" v-bind="attrs" v-on="on" @click="deleteItem(item)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Eliminar</span>
+        </v-tooltip>
       </template>
     </v-data-table>
  
@@ -56,6 +76,10 @@ export default {
     },
     deleteItem(item) {
       this.$emit("delete", item)
+    },
+
+    distributePermission(item) {
+      this.$emit("distribution", item)
     },
   },
 }

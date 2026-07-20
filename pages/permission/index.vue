@@ -20,7 +20,7 @@ v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
         <client-only>
           <PermissionTable
 :options="options" :response="response" @sorting="getPermissions" @edit="editPermission"
-            @delete="beforeDeletePermission"></PermissionTable>
+            @distribution="distributePermission" @delete="beforeDeletePermission"></PermissionTable>
         </client-only>
       </v-col>
     </v-row>
@@ -125,6 +125,10 @@ export default {
     closeDialog() {
       this.permissionDialog = false
       this.clearErrors()
+    },
+
+    distributePermission(item) {
+      this.$router.push(`/permission/${item.id}/distribution`)
     },
   },
 }

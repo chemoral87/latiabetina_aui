@@ -6,6 +6,7 @@ import ChurchEventRepository from "../ChurchEventRepository"
 import ProductRepository from "../ProductRepository"
 import SaleRepository from "../SaleRepository"
 import RoleRepository from "../RoleRepository"
+import PermissionRepository from "../PermissionRepository"
 
 import CommonRepository from "./CommonRepository"
 import ParentRepository from "./ParentRepository"
@@ -14,7 +15,7 @@ import ParentRepository from "./ParentRepository"
 
 export default ($axios) => ({
   Role: RoleRepository($axios)("/role"),
-  Permission: CommonRepository($axios)("/permission"),
+  Permission: PermissionRepository($axios)("/permission"),
   User: UserRepository($axios)("/user"),
   Profile: ProfileRepository($axios)("/profile"),
   Whatsapp: WhatsappRepository($axios)("/whatsapp"),
