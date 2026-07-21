@@ -1,18 +1,31 @@
 <template>
-  <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y
-    min-width="auto">
+  <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
     <template #activator="{ on, attrs }">
-      <v-text-field :value="dateRangeText" :label="label" :placeholder="placeholder"
-        :prepend-inner-icon="prependIcon" readonly :clearable="clearable" :hide-details="hideDetails"
-        :dense="dense" :outlined="outlined" :disabled="disabled" :error-messages="errorMessages"
-        v-bind="attrs" v-on="on" @click:prepend-inner="on.click" @click:clear="clearRange" />
+      <v-text-field
+        ref="inputField"
+        :value="dateRangeText"
+        :label="label"
+        :placeholder="placeholder"
+        :prepend-inner-icon="prependIcon"
+        readonly
+        clearable
+        :hide-details="hideDetails"
+        :dense="dense"
+        :outlined="outlined"
+        :disabled="disabled"
+        :error-messages="errorMessages"
+        v-bind="attrs"
+        v-on="on"
+        @click:prepend-inner="on.click"
+        @click:clear="clearRange"
+      />
     </template>
 
     <v-date-picker v-model="pendingValue" range :no-title="noTitle" :scrollable="scrollable" :locale="locale">
       <v-spacer />
-      <v-btn color="primary" outlined class="mr-2" @click="cancel">
+      <v-btn color="primary" outlined class="mr-2" @click="clearRange">
         <v-icon left>mdi-close</v-icon>
-        Cancelar
+        Limpiar
       </v-btn>
       <v-btn color="primary" @click="confirm">
         <v-icon left>mdi-check</v-icon>
@@ -47,6 +60,7 @@ export default {
     return {
       dateMenu: false,
       pendingValue: [],
+      pendingSyncDone: false,
     }
   },
 
@@ -61,6 +75,13 @@ export default {
     dateMenu(open) {
       if (open) {
         this.pendingValue = Array.isArray(this.value) ? [...this.value] : []
+        this.pendingSyncDone = false
+        this.$nextTick(() => { this.pendingSyncDone = true })
+      }
+    },
+    pendingValue(val) {
+      if (this.pendingSyncDone && Array.isArray(val) && val.length === 2) {
+        this.confirm()
       }
     },
   },
@@ -70,16 +91,22 @@ export default {
       const sorted = Array.isArray(this.pendingValue) ? [...this.pendingValue].sort() : []
       this.$emit("input", sorted)
       this.dateMenu = false
-    },
-
-    cancel() {
-      this.pendingValue = Array.isArray(this.value) ? [...this.value] : []
-      this.dateMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
 
     clearRange() {
       this.pendingValue = []
       this.$emit("input", [])
+      this.dateMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
   },
 }

@@ -1,114 +1,187 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" width="500">
-      <template #activator="{ on, attrs }">
-        <v-btn small color="primary" v-bind="attrs" v-on="on">
-          <v-icon class="mr-1">mdi-camera</v-icon>
-          {{ $attrs.label }}
-        </v-btn>
-      </template>
+    <input type="file" ref="fileInput" accept="image/png, image/jpeg, image/bmp"
+      style="display:none" @change="onFileSelected" />
+
+    <v-btn small color="primary" @click="triggerFilePicker">
+      <v-icon left>mdi-camera</v-icon>
+      {{ label || 'Subir foto' }}
+    </v-btn>
+
+    <v-dialog :value="dialog" persistent max-width="520px">
       <v-card>
-        <v-card-title class="px-2 py-0 text-subtitle-1 text--primary">
-          {{ $attrs.label }}
+        <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
+          <v-icon left small color="primary">mdi-crop</v-icon>
+          {{ label || 'Recortar foto' }}
+          <v-spacer />
+          <v-btn icon x-small @click="cancel()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
         </v-card-title>
+
         <v-card-text>
           <v-row dense>
-            <v-col cols="12">
-              <v-file-input v-model="image" :placeholder="$attrs.placeholder" accept="image/png, image/jpeg, image/bmp" prepend-icon="mdi-camera" @change="fileInputChange" />
+            <v-col cols="6">
+              <cropper v-if="uri" stencil-component="circle-stencil" :src="uri" @change="changeCropper" />
+              <div v-else class="d-flex align-center justify-center grey lighten-3 rounded" style="height: 160px">
+                <v-icon large color="grey lighten-1">mdi-image-plus</v-icon>
+              </div>
             </v-col>
             <v-col cols="6">
-              <cropper stencil-component="circle-stencil" :src="uri" @change="changeCropper" />
-            </v-col>
-            <v-col cols="6">
-              <img class="image-cropper" style="max-width: 100%; min-height: 120px" :src="image_to_upload" />
+              <div v-if="image_to_upload" class="d-flex align-center justify-center grey lighten-4 rounded-circle"
+                style="width: 160px; height: 160px; overflow: hidden;">
+                <img style="max-width: 100%; min-height: 120px; border-radius: 50%;" :src="image_to_upload" />
+              </div>
+              <div v-else class="d-flex align-center justify-center grey lighten-3 rounded-circle"
+                style="width: 160px; height: 160px;">
+                <v-icon large color="grey lighten-1">mdi-image-off-outline</v-icon>
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions>
+
+        <v-card-actions class="pa-4">
           <v-spacer />
-          <v-btn color="error" outlined @click="cancelUpload()">Limpiar</v-btn>
-          <v-btn color="primary" outlined @click="close()">Cancelar</v-btn>
-          <v-btn color="primary" @click="dialog = false">Guardar</v-btn>
+          <v-btn color="primary" outlined class="mr-2" @click="cancel()">
+            <v-icon left>mdi-close</v-icon>
+            Cancelar
+          </v-btn>
+          <v-btn color="primary" @click="save()">
+            <v-icon left>mdi-content-save</v-icon>
+            Guardar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <img class="image-cropper" :style="{ maxHeight: computedMaxHeight }" :src="displayedImage" />
+    <template v-if="displayPreview">
+      <img v-if="displayedImage" class="image-cropper" :style="{ height: previewSize, width: previewSize, objectFit: 'cover' }" :src="displayedImage" />
+      <div v-else @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="onDrop"
+        class="d-flex flex-column align-center justify-center mt-2 rounded drop-zone"
+        :class="{ 'drop-zone--active': dragOver }" style="min-height: 120px; cursor: pointer; border: 2px dashed #bdbdbd;"
+        @click="triggerFilePicker">
+        <v-icon large :color="dragOver ? 'primary' : 'grey lighten-1'">mdi-cloud-upload-outline</v-icon>
+        <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
+      </div>
+    </template>
   </div>
 </template>
 <script>
+import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
+
 const loadImage = require("blueimp-load-image")
 export default {
-  props: ["value", "size", "photo", "maxHeight"],
+  components: {
+    Cropper,
+  },
+  props: ["value", "size", "photo", "maxHeight", "label"],
   data() {
     return {
-      // blob: null,
       blob_cropped: null,
       dialog: false,
       uri: null,
-      image: null,
       image_to_upload: "",
+      savedBlob: null,
+      savedImageToUpload: "",
+      maxSize: 750,
+      dragOver: false,
     }
   },
   computed: {
-    computedMaxHeight() {
-      return this.maxHeight || "200px"
+    previewSize() {
+      if (this.maxHeight === 0) return "0px"
+      return (this.maxHeight || 200) + "px"
+    },
+    displayPreview() {
+      return this.previewSize !== "0px"
     },
     displayedImage() {
       return this.image_to_upload || this.photo
     },
   },
   watch: {
+    dialog(val) {
+      if (val) {
+        this.savedBlob = this.blob_cropped
+        this.savedImageToUpload = this.image_to_upload
+      }
+    },
     value: {
       handler(val) {
         if (val == null) this.cancelUpload()
       },
     },
   },
-  mounted() {},
+  mounted() {
+    if (this.size) {
+      this.maxSize = this.size
+    }
+  },
   methods: {
-    close() {
+    save() {
+      this.$emit("input", this.blob_cropped)
+      this.dialog = false
+    },
+    triggerFilePicker() {
+      this.$refs.fileInput.click()
+    },
+    onFileSelected(e) {
+      const file = e.target.files[0]
+      if (!file) {
+        this.uri = null
+        this.image_to_upload = null
+        this.blob_cropped = null
+        return
+      }
+      this.fileInputChange(file)
+      // Reset input so selecting the same file triggers change
+      e.target.value = null
+    },
+    onDragOver() {
+      this.dragOver = true
+    },
+    onDragLeave() {
+      this.dragOver = false
+    },
+    onDrop(e) {
+      this.dragOver = false
+      const file = e.dataTransfer.files[0]
+      if (!file) return
+      if (!file.type.match(/^image\/(png|jpeg|bmp)$/)) return
+      this.fileInputChange(file)
+    },
+    cancel() {
+      this.uri = null
+      this.image_to_upload = this.savedImageToUpload
+      this.blob_cropped = this.savedBlob
       this.dialog = false
     },
     cancelUpload() {
-      this.image = this.uri = this.image_to_upload = this.blob_cropped = null
-      // this.dialog = false;
-      this.$emit("input", this.blob_cropped)
+      this.uri = this.image_to_upload = this.blob_cropped = null
+      this.$emit("input", null)
     },
-    changeCropper({ canvas }) {
-      // const date = new Date()
-      // const timestamp = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
-
-      this.image_to_upload = canvas.toDataURL()
-      canvas.toBlob((blob) => {
-        this.blob_cropped = blob
-        this.$emit("input", this.blob_cropped)
-      })
-    },
-
     dataURItoBlob(dataURI) {
-      // convert base64 to raw binary data held in a string
-      // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
       const byteString = atob(dataURI.split(",")[1])
-      // separate out the mime component
       const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0]
-      // write the bytes of the string to an ArrayBuffer
       const ab = new ArrayBuffer(byteString.length)
-      // create a view into the buffer
       const ia = new Uint8Array(ab)
-      // set the bytes of the buffer to the correct values
       for (let i = 0; i < byteString.length; i++) {
         ia[i] = byteString.charCodeAt(i)
       }
-      // write the ArrayBuffer to a blob, and you're done
-      const blob = new Blob([ab], { type: mimeString })
-      return blob
+      return new Blob([ab], { type: mimeString })
     },
-    fileInputChange(e) {
+    changeCropper({ canvas }) {
+      this.image_to_upload = canvas.toDataURL()
+      this.blob_cropped = this.dataURItoBlob(this.image_to_upload)
+    },
+    fileInputChange(file) {
       const me = this
 
-      if (this.image == null) {
-        this.cancelUpload()
+      if (!file) {
+        this.uri = null
+        this.image_to_upload = null
+        this.blob_cropped = null
       } else {
         const _URL = window.URL || window.webkitURL
         const imgLoader = new Image()
@@ -118,27 +191,20 @@ export default {
           _maxSize = Math.round(_maxSize)
 
           loadImage(
-            me.image,
-            function (img, data) {
-              // if (me.encoded == null || me.encoded == "blob") {
-              //   me.blob = me.dataURItoBlob(img.toDataURL());
-              // }
-              // if (me.encoded == "base_64") {
-              //   me.blob = img.toDataURL();
-              // }
-
+            file,
+            function (img) {
               me.uri = img.toDataURL()
-              // me.$emit("update:url", me.uri);
+              me.dialog = true
             },
             {
               maxWidth: _maxSize,
               maxHeight: _maxSize,
               orientation: true,
               canvas: true,
-            } // Options
+            }
           )
         }
-        const objectUrl = _URL.createObjectURL(this.image)
+        const objectUrl = _URL.createObjectURL(file)
         imgLoader.src = objectUrl
       }
     },
@@ -148,5 +214,17 @@ export default {
 <style scoped>
 .image-cropper {
   border-radius: 50%;
+}
+.drop-zone {
+  transition: background-color 0.2s, border-color 0.2s;
+  background-color: #f5f5f5;
+}
+.drop-zone:hover {
+  background-color: #eeeeee;
+  border-color: #1976d2 !important;
+}
+.drop-zone--active {
+  background-color: #e3f2fd !important;
+  border-color: #1976d2 !important;
 }
 </style>

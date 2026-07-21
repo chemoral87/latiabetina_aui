@@ -2,12 +2,12 @@
   <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y
     min-width="auto">
     <template #activator="{ on, attrs }">
-      <v-text-field v-model="formattedDate" :label="label" :prepend-inner-icon="prependIcon" readonly
+      <v-text-field ref="inputField" v-model="formattedDate" :label="label" :prepend-inner-icon="prependIcon" readonly
         :required="required" :rules="rules" :error-messages="errorMessages" v-bind="attrs" v-on="on"
         @click:prepend-inner="on.click" :dense="dense" :outlined="outlined" :hide-details="hideDetails"
         :disabled="disabled" :clearable="clearable" />
     </template>
-    <v-date-picker v-model="internalValue" @input="dateMenu = false" :no-title="noTitle" :scrollable="scrollable"
+    <v-date-picker v-model="internalValue" @input="onDateSelected" :no-title="noTitle" :scrollable="scrollable"
       :locale="locale">
       <v-spacer></v-spacer>
       <v-btn color="primary" outlined class="mr-2" @click="clearDate">
@@ -74,16 +74,34 @@ export default {
     },
   },
   methods: {
+    onDateSelected() {
+      this.dateMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
+    },
     clearDate() {
-      this.internalValue = null;
-      this.dateMenu = false;
+      this.internalValue = null
+      this.dateMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
     setToday() {
-      const now = new Date();
-      const offset = now.getTimezoneOffset();
-      const localDate = new Date(now.getTime() - (offset * 60 * 1000));
-      this.internalValue = localDate.toISOString().substr(0, 10);
-      this.dateMenu = false;
+      const now = new Date()
+      const offset = now.getTimezoneOffset()
+      const localDate = new Date(now.getTime() - (offset * 60 * 1000))
+      this.internalValue = localDate.toISOString().substr(0, 10)
+      this.dateMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
   },
 }

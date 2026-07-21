@@ -1,43 +1,58 @@
 <template>
-  <v-menu ref="timeMenu" v-model="timeMenu" :close-on-content-click="false" transition="scale-transition" offset-y
-    :nudge-width="auto" :disabled="disabled">
+  <v-menu ref="timeMenu" v-model="timeMenu" :close-on-content-click="false" transition="scale-transition" offset-y :disabled="disabled">
     <template #activator="{ on, attrs }">
-      <v-text-field :value="displayValue" :label="label" prepend-inner-icon="mdi-clock-outline" readonly
-        :error-messages="errorMessages" :disabled="disabled" :dense="dense" :outlined="outlined"
-        :hide-details="hideDetails" v-bind="attrs" v-on="on" @click:prepend-inner="on.click" />
+      <v-text-field
+        ref="inputField"
+        :value="displayValue"
+        :label="label"
+        prepend-inner-icon="mdi-clock-outline"
+        readonly
+        :error-messages="errorMessages"
+        :disabled="disabled"
+        :dense="dense"
+        :outlined="outlined"
+        :hide-details="hideDetails"
+        v-bind="attrs"
+        v-on="on"
+        @click:prepend-inner="on.click"
+        clearable
+      />
     </template>
 
     <v-card min-width="auto">
       <v-row no-gutters>
         <!-- Hours column -->
         <v-col cols="4" class="tp-col">
-          <div v-for="h in hours" :key="h" class="tp-item" :class="{ 'tp-item--selected': selectedHour === h }"
-            @click="selectedHour = h">
+          <div v-for="h in hours" :key="h" class="tp-item" :class="{ 'tp-item--selected': selectedHour === h }" @click="selectedHour = h">
             {{ h }}
           </div>
         </v-col>
 
         <!-- Minutes column -->
         <v-col cols="4" class="tp-col">
-          <div v-for="m in minutes" :key="m" class="tp-item" :class="{ 'tp-item--selected': selectedMinute === m }"
-            @click="selectedMinute = m">
+          <div v-for="m in minutes" :key="m" class="tp-item" :class="{ 'tp-item--selected': selectedMinute === m }" @click="selectedMinute = m">
             {{ m }}
           </div>
         </v-col>
 
         <!-- AM/PM column -->
         <v-col cols="4" class="tp-col">
-          <div v-for="p in periods" :key="p" class="tp-item" :class="{ 'tp-item--selected': selectedPeriod === p }"
-            @click="selectedPeriod = p">
+          <div v-for="p in periods" :key="p" class="tp-item" :class="{ 'tp-item--selected': selectedPeriod === p }" @click="selectedPeriod = p">
             {{ p }}
           </div>
         </v-col>
       </v-row>
 
-      <v-card-actions class="pt-0 pb-2 px-2">
+      <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn outlined small color="primary" @click="clearTime">Limpiar</v-btn>
-        <v-btn outlined small color="primary" @click="confirmTime">OK</v-btn>
+        <v-btn color="primary" outlined class="mr-2" @click="clearTime">
+          <v-icon left>mdi-close</v-icon>
+          Limpiar
+        </v-btn>
+        <v-btn color="primary" @click="confirmTime">
+          <v-icon left>mdi-check</v-icon>
+          OK
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -126,11 +141,21 @@ export default {
       const time24 = `${String(h24).padStart(2, "0")}:${this.selectedMinute}`
       this.$emit("input", time24)
       this.timeMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
 
     clearTime() {
       this.$emit("input", null)
       this.timeMenu = false
+      this.$nextTick(() => {
+        if (this.$refs.inputField) {
+          this.$refs.inputField.focus()
+        }
+      })
     },
   },
 }
