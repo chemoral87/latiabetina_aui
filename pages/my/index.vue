@@ -193,7 +193,7 @@
             <p class="text-caption grey--text mb-1">Sube y recorta en círculo</p>
             <MyUploadimageCrop v-model="cropBlob" :url.sync="cropUrl" label="Seleccionar foto" />
             <div v-if="cropUrl" class="mt-2">
-              <v-img :src="cropUrl" max-height="80" contain class="rounded mb-2" />
+              <v-img :src="cropUrl" height="80" width="80" class="rounded-circle mb-2" />
             </div>
             <div v-if="cropBlob && !cropUrl" class="mt-2 text-caption grey--text">
               <v-progress-circular indeterminate size="16" width="2" class="mr-2" />
@@ -393,7 +393,7 @@ export default {
     eventBus.$emit("setNavBar", {
       title: "My Components Test",
       icon: "mdi-flask-outline",
-      show_drawer: true,
+      showDrawer: true,
     })
   },
 

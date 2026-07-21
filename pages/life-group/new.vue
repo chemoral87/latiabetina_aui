@@ -196,7 +196,7 @@ export default {
       title: "Nueva Red de Vida",
       icon: "mdi-plus-circle-outline",
       back: "/life-group",
-      show_drawer: false
+      showDrawer: false
     })
   },
 

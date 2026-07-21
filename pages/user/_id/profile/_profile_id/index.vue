@@ -42,7 +42,7 @@ export default {
       title: `Perfilx: ${this.mUser.name} ${this.mUser.last_name}`,
       icon: "mdi-account",
       back: this.back,
-      show_drawer: false,
+      showDrawer: false,
     })
   },
   methods: {

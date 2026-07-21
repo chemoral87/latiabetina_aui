@@ -132,7 +132,7 @@
         :mobile-breakpoint="0"
       >
         <!-- Sender -->
-        <template #item.sender="{ item }">
+        <template v-slot:[`item.sender`]="{ item }">
           <div class="d-flex align-center">
             <v-avatar size="28" color="teal lighten-5" class="mr-2">
               <v-icon small color="teal darken-2">mdi-account-arrow-right</v-icon>
@@ -142,7 +142,7 @@
         </template>
 
         <!-- Receiver -->
-        <template #item.receiver="{ item }">
+        <template v-slot:[`item.receiver`]="{ item }">
           <div class="d-flex align-center">
             <v-avatar size="28" color="blue lighten-5" class="mr-2">
               <v-icon small color="blue darken-2">mdi-account-arrow-left</v-icon>
@@ -152,7 +152,7 @@
         </template>
 
         <!-- Body -->
-        <template #item.body="{ item }">
+        <template v-slot:[`item.body`]="{ item }">
           <v-tooltip bottom max-width="320">
             <template #activator="{ on, attrs }">
               <span
@@ -166,7 +166,7 @@
         </template>
 
         <!-- Media URL -->
-        <template #item.media_url="{ item }">
+        <template v-slot:[`item.media_url`]="{ item }">
           <v-tooltip v-if="item.media_url" bottom>
             <template #activator="{ on, attrs }">
               <v-btn
@@ -187,7 +187,7 @@
         </template>
 
         <!-- Success -->
-        <template #item.success="{ item }">
+        <template v-slot:[`item.success`]="{ item }">
           <v-chip
             x-small
             label
@@ -201,7 +201,7 @@
         </template>
 
         <!-- Error Message -->
-        <template #item.error_message="{ item }">
+        <template v-slot:[`item.error_message`]="{ item }">
           <v-tooltip v-if="item.error_message" bottom max-width="320">
             <template #activator="{ on, attrs }">
               <v-icon small color="error" v-bind="attrs" v-on="on">mdi-alert-circle-outline</v-icon>
@@ -212,17 +212,17 @@
         </template>
 
         <!-- Sent At -->
-        <template #item.sent_at="{ item }">
+        <template v-slot:[`item.sent_at`]="{ item }">
           <span class="caption">{{ formatDate(item.sent_at) }}</span>
         </template>
 
         <!-- Created At -->
-        <template #item.created_at="{ item }">
+        <template v-slot:[`item.created_at`]="{ item }">
           <span class="caption">{{ formatDate(item.created_at) }}</span>
         </template>
 
         <!-- Created By -->
-        <template #item.creator="{ item }">
+        <template v-slot:[`item.creator`]="{ item }">
           <span v-if="item.creator" class="caption">{{ item.creator.name }}</span>
           <span v-else class="grey--text text--lighten-1 caption">system</span>
         </template>

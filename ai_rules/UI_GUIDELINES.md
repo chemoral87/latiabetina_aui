@@ -186,7 +186,7 @@ eventBus.$emit("setNavBar", {
   title: "Rol Administrador",
   icon: "mdi-redhat",
   back: "/role",
-  show_drawer: false,
+  showDrawer: false,
 })
 ```
 
@@ -500,3 +500,105 @@ Cada campo de formulario (`v-text-field`, `v-textarea`, `v-select`, `organizatio
 - Preferir variantes `mdi-*-outline` cuando existan.
 - No omitir el icono en campos de diálogos o formularios de creación/edición.
 - `organization-select` acepta `prepend-inner-icon` vía `$attrs`; pasarlo explícitamente.
+
+---
+
+## 10. Subida de imágenes con preview
+
+Cuando se usa `MyUploadimage` o `MyUploadimageCrop`, la imagen se sube/recorta mediante el componente respectivo y la **vista previa** se muestra externamente con `MyPreviewImage`.
+
+### Patrón general
+
+El componente de subida:
+- Recibe el archivo y emite `update:url` (la URL temporal) para que el padre la sincronice a una variable.
+- Emite `@loading="true"` al iniciar el procesamiento y `@change="false"` al terminar.
+- El padre usa `MyPreviewImage` para mostrar la imagen con sus estados (loading, error, placeholder).
+
+### MyUploadimage (imagen redimensionada)
+
+```html
+<v-col cols="12">
+  <v-card outlined>
+    <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
+      <v-icon left small color="primary">mdi-camera</v-icon>
+      Imagen del evento
+    </v-card-title>
+    <v-card-text>
+      <MyUploadimage
+        v-model="item.image_file"
+        :url.sync="item.image"
+        label="Seleccionar imagen"
+        :disabled="loading"
+        @loading="imageLoading = true"
+        @change="imageLoading = false"
+      />
+
+      <div v-if="item.image || imageLoading" class="mt-2">
+        <MyPreviewImage
+          :src="item.image"
+          :loading="imageLoading"
+          loading-text="Procesando imagen..."
+        />
+      </div>
+    </v-card-text>
+  </v-card>
+</v-col>
+```
+
+```js
+data() {
+  return {
+    item: {
+      image_file: null,  // Blob — se envía al backend
+      image: null,       // URL temporal — para el preview
+    },
+    imageLoading: false,
+  }
+}
+```
+
+### MyUploadimageCrop (imagen recortada en círculo)
+
+```html
+<v-col cols="12">
+  <v-card outlined>
+    <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
+      <v-icon left small color="primary">mdi-crop</v-icon>
+      Foto de perfil
+    </v-card-title>
+    <v-card-text>
+      <MyUploadimageCrop
+        v-model="cropBlob"
+        :url.sync="cropUrl"
+        label="Seleccionar foto"
+      />
+
+      <div v-if="cropUrl || cropLoading" class="mt-2">
+        <MyPreviewImage
+          :src="cropUrl"
+          :loading="cropLoading"
+          loading-text="Recortando imagen..."
+        />
+      </div>
+    </v-card-text>
+  </v-card>
+</v-col>
+```
+
+```js
+data() {
+  return {
+    cropBlob: null,   // Blob recortado — se envía al backend
+    cropUrl: null,    // URL temporal — para el preview
+    cropLoading: false,
+  }
+}
+```
+
+### Reglas
+
+- La preview **nunca** debe ir dentro del componente `MyUploadimage` / `MyUploadimageCrop`. El componente solo se encarga de la subida/recorte; el padre es responsable de mostrar la imagen usando `MyPreviewImage`.
+- Sincronizar siempre `:url.sync="variable"` para recibir la URL temporal que genera el componente.
+- Usar `@loading="flag = true"` y `@change="flag = false"` para controlar el estado de carga.
+- Mostrar la preview condicionalmente con `v-if="url || loading"` así se ve el placeholder de carga incluso antes de que la URL esté disponible.
+- No mostrar directamente `v-img` para el preview; usar siempre `MyPreviewImage` que ya maneja loading, error, placeholder y fade-in.

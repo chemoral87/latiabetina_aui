@@ -78,7 +78,7 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
     </v-navigation-drawer>
 
     <v-app-bar :clipped-left="clipped" class="elevation-2" fixed app :color="authenticated ? '' : 'banner'">
-      <v-app-bar-nav-icon v-if="show_drawer" @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon v-if="showDrawer" @click.stop="drawer = !drawer" />
       <v-toolbar-title class="pl-0">
         <v-btn v-if="backHandler" class="mr-1" outlined fab small elevation="0" @click="backHandler">
           <v-icon>mdi-arrow-left</v-icon>
@@ -87,7 +87,7 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
         {{ title }}
       </v-toolbar-title>
       <v-spacer />
-      <v-btn v-if="!authenticated && show_login" color="banner_item elevation-2" class="mr-2" @click="gotoLogin()">
+      <v-btn v-if="!authenticated && showLogin" color="banner_item elevation-2" class="mr-2" @click="gotoLogin()">
         <v-icon>mdi-lock</v-icon>
       </v-btn>
 
@@ -163,8 +163,8 @@ export default {
       icon: null,
       back: null,
       backHandler: null,
-      show_drawer: true,
-      show_login: true,
+      showDrawer: true,
+      showLogin: true,
     }
   },
 
@@ -209,8 +209,8 @@ export default {
         this.backHandler = null
       }
 
-      this.show_drawer = navbar.show_drawer ?? true
-      this.show_login = navbar.show_login ?? true
+      this.showDrawer = navbar.showDrawer ?? true
+      this.showLogin = navbar.showLogin ?? true
     },
 
     closeDrawer() {

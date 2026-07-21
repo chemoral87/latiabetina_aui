@@ -118,7 +118,7 @@ export default {
       title: `Distribución: ${this.role.name || "Rol"}`,
       icon: "mdi-share-variant",
       back: "/role",
-      show_drawer: false,
+      showDrawer: false,
     })
   },
 

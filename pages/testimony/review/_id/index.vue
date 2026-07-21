@@ -144,7 +144,7 @@ export default {
       title: "Testimonio " + roleName,
       icon: "mdi-comment-text",
       back: "/testimony",
-      show_drawer: false,
+      showDrawer: false,
     })
   },
   methods: {

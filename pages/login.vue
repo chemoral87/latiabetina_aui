@@ -69,7 +69,7 @@ export default {
     eventBus.$emit("setNavBar", {
       title: `Inicio Sesión`,
       icon: "mdi-lock",
-      show_login: false,
+      showLogin: false,
     })
     this.name_secret = process.env.BASE_URL
     // this.name_secret = process.env.NAME_SECRET;

@@ -86,7 +86,7 @@ export default {
       title: "Rol " + roleName,
       icon: "mdi-redhat",
       back: "/role",
-      show_drawer: false,
+      showDrawer: false,
     })
   },
 

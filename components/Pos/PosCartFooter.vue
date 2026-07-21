@@ -32,7 +32,10 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in cart" :key="item.product.id">
-            <td class="pos-ct-name">{{ item.product.name }}</td>
+            <td class="pos-ct-name">
+              {{ item.product.name }}
+              <v-icon v-if="item.product.requires_preparation" small class="ml-1 orange--text">mdi-chef-hat</v-icon>
+            </td>
             <td class="pos-ct-qty">
               <div class="d-flex align-center justify-center" style="gap:4px">
                 <v-btn fab x-small depressed color="error" dark @click="$emit('change-qty', { index, delta: -1 })">

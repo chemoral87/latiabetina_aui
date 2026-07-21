@@ -6,8 +6,8 @@ export default {
      * @param {string} config.title - Título a mostrar
      * @param {string} config.icon - Icono a mostrar (sin prefijo mdi-)
      * @param {string|Function} config.back - Ruta o función para el botón back
-     * @param {boolean} config.show_drawer - Mostrar el drawer (default: true)
-     * @param {boolean} config.show_login - Mostrar botón login (default: true)
+     * @param {boolean} config.showDrawer - Mostrar el drawer (default: true)
+     * @param {boolean} config.showLogin - Mostrar botón login (default: true)
      */
     setNavBar(config = {}) {
       const eventBus = this.$eventBus || this.$nuxt
@@ -23,8 +23,8 @@ export default {
         title: "",
         icon: null,
         back: null,
-        show_drawer: true,
-        show_login: true,
+        showDrawer: true,
+        showLogin: true,
       })
     },
   },

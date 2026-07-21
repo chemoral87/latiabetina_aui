@@ -110,7 +110,7 @@ export default {
       title: `Distribución: ${this.permission.name || "Permiso"}`,
       icon: "mdi-share-variant",
       back: "/permission",
-      show_drawer: false,
+      showDrawer: false,
     })
   },
 }

@@ -81,7 +81,7 @@
                 <MyUploadimage v-model="item.image_file" label="Seleccionar imagen" :url.sync="item.image" :disabled="loading" @loading="imageLoading = true" @change="imageLoading = false" />
 
                 <div v-if="previewImage || imageLoading" class="mt-2">
-                  <MyPreviewImage :src="previewImage" :loading="imageLoading" loading-text="Procesando imagen..." />
+                  <MyPreviewImage max-height="180" :src="previewImage" :loading="imageLoading" loading-text="Procesando imagen..." />
                 </div>
               </v-col>
             </v-row>
