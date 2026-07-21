@@ -11,45 +11,19 @@
           <v-card-text>
             <v-row dense>
               <v-col v-if="showOrgSelect" cols="12">
-                <organization-select
-                  v-model="item.org_id"
-                  :permission="permission"
-                  outlined
-                  dense
-                  :disabled="loading"
-                />
+                <organization-select v-model="item.org_id" :permission="permission" outlined dense :disabled="loading" />
               </v-col>
 
               <v-col cols="12">
-                <v-text-field
-                  v-model="item.name"
-                  label="Nombre"
-                  outlined
-                  dense
-                  :error-messages="errors.name"
-                  required
-                />
+                <v-text-field v-model="item.name" label="Nombre" outlined dense :error-messages="errors.name" required />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="item.sku"
-                  label="SKU"
-                  outlined
-                  dense
-                  :error-messages="errors.sku"
-                />
+                <v-text-field v-model="item.sku" label="SKU" outlined dense :error-messages="errors.sku" />
               </v-col>
 
               <v-col cols="12">
-                <v-textarea
-                  v-model="item.description"
-                  label="Descripción"
-                  outlined
-                  dense
-                  rows="3"
-                  :error-messages="errors.description"
-                />
+                <v-textarea v-model="item.description" label="Descripción" outlined dense rows="3" :error-messages="errors.description" />
               </v-col>
             </v-row>
           </v-card-text>
@@ -71,44 +45,15 @@
               <v-col cols="12" md="6">
                 <v-row dense>
                   <v-col cols="12" sm="6">
-                    <v-text-field
-                      v-model="item.price"
-                      label="Precio"
-                      type="number"
-                      placeholder="0"
-                      outlined
-                      dense
-                      :error-messages="errors.price"
-                      required
-                      class="no-spinners"
-                    />
+                    <v-text-field v-model="item.price" label="Precio" type="number" placeholder="0" outlined dense :error-messages="errors.price" required class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
-                    <v-text-field
-                      v-model="item.stock"
-                      label="Stock"
-                      type="number"
-                      placeholder="0"
-                      outlined
-                      dense
-                      :error-messages="errors.stock"
-                      required
-                      class="no-spinners"
-                    />
+                    <v-text-field v-model="item.stock" label="Stock" type="number" placeholder="0" outlined dense :error-messages="errors.stock" required class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
-                    <v-text-field
-                      v-model="item.order"
-                      label="Orden"
-                      type="number"
-                      placeholder="0"
-                      outlined
-                      dense
-                      :error-messages="errors.order"
-                      class="no-spinners"
-                    />
+                    <v-text-field v-model="item.order" label="Orden" type="number" placeholder="0" outlined dense :error-messages="errors.order" class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
@@ -133,20 +78,10 @@
                   <v-icon small class="mr-1">mdi-image-outline</v-icon>
                   Imagen del producto
                 </div>
-                <MyUploadimage
-                  v-model="item.image_file"
-                  label="Seleccionar imagen"
-                  :url.sync="item.image"
-                  :disabled="loading"
-                  @loading="imageLoading = true"
-                  @change="imageLoading = false"
-                />
+                <MyUploadimage v-model="item.image_file" label="Seleccionar imagen" :url.sync="item.image" :disabled="loading" @loading="imageLoading = true" @change="imageLoading = false" />
+
                 <div v-if="previewImage || imageLoading" class="mt-2">
-                  <MyPreviewImage
-                    :src="previewImage"
-                    :loading="imageLoading"
-                    loading-text="Procesando imagen..."
-                  />
+                  <MyPreviewImage :src="previewImage" :loading="imageLoading" loading-text="Procesando imagen..." />
                 </div>
               </v-col>
             </v-row>
@@ -160,22 +95,11 @@
       <v-col cols="12">
         <v-card outlined>
           <v-card-text class="d-flex justify-end pa-4 flex-wrap">
-            <v-btn
-              color="primary"
-              outlined
-              class="mr-2 mb-2 mb-sm-0"
-              :disabled="loading || imageLoading"
-              @click="close"
-            >
+            <v-btn color="primary" outlined class="mr-2 mb-2 mb-sm-0" :disabled="loading || imageLoading" @click="close">
               <v-icon left>mdi-close</v-icon>
               Cancelar
             </v-btn>
-            <v-btn
-              color="primary"
-              :loading="loading"
-              :disabled="!isValid || imageLoading"
-              @click="save"
-            >
+            <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" @click="save">
               <v-icon left>mdi-content-save</v-icon>
               Guardar
             </v-btn>
@@ -188,7 +112,7 @@
 
 <script>
 export default {
-  name: 'ProductForm',
+  name: "ProductForm",
 
   props: {
     product: {
@@ -201,7 +125,7 @@ export default {
     },
     permission: {
       type: String,
-      default: 'product-insert',
+      default: "product-insert",
     },
     title: {
       type: String,
@@ -209,7 +133,7 @@ export default {
     },
     icon: {
       type: String,
-      default: 'mdi-package-variant',
+      default: "mdi-package-variant",
     },
   },
 
@@ -219,15 +143,15 @@ export default {
       imageLoading: false,
       item: {
         org_id: null,
-        name: '',
-        sku: '',
-        description: '',
+        name: "",
+        sku: "",
+        description: "",
         hidden: false,
         requires_preparation: false,
         price: 0,
         stock: 0,
         order: 0,
-        image: '',
+        image: "",
         image_file: null,
       },
     }
@@ -235,10 +159,10 @@ export default {
 
   computed: {
     previewImage() {
-      if (this.item.image && typeof this.item.image === 'string' && this.item.image.startsWith('data:')) {
+      if (this.item.image && typeof this.item.image === "string" && this.item.image.startsWith("data:")) {
         return this.item.image
       }
-      return this.item.image_s3 || this.item.image || ''
+      return this.item.image_s3 || this.item.image || ""
     },
 
     isEditMode() {
@@ -249,11 +173,11 @@ export default {
       if (this.title) {
         return this.title
       }
-      return this.isEditMode ? 'Editar producto' : 'Nuevo producto'
+      return this.isEditMode ? "Editar producto" : "Nuevo producto"
     },
 
     errors() {
-      const validationErrors = this.$store.getters['validation/errors']
+      const validationErrors = this.$store.getters["validation/errors"]
       return validationErrors ? { ...validationErrors } : {}
     },
 
@@ -263,12 +187,7 @@ export default {
     },
 
     isValid() {
-      return (
-        !!this.item.org_id &&
-        this.item.name &&
-        this.item.name.trim().length > 0 &&
-        !this.loading
-      )
+      return !!this.item.org_id && this.item.name && this.item.name.trim().length > 0 && !this.loading
     },
   },
 
@@ -301,11 +220,11 @@ export default {
         }
       }
 
-      this.$store.dispatch('validation/clearErrors')
+      this.$store.dispatch("validation/clearErrors")
     },
 
     close() {
-      this.$emit('close')
+      this.$emit("close")
     },
 
     save() {
@@ -318,7 +237,7 @@ export default {
         order: Number(this.item.order || 0),
       }
 
-      this.$emit('save', payload)
+      this.$emit("save", payload)
     },
   },
 }
@@ -326,12 +245,12 @@ export default {
 
 <style scoped>
 /* Remove number input spinners */
-.no-spinners ::v-deep input[type='number']::-webkit-outer-spin-button,
-.no-spinners ::v-deep input[type='number']::-webkit-inner-spin-button {
+.no-spinners ::v-deep input[type="number"]::-webkit-outer-spin-button,
+.no-spinners ::v-deep input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.no-spinners ::v-deep input[type='number'] {
+.no-spinners ::v-deep input[type="number"] {
   -moz-appearance: textfield;
 }
 </style>

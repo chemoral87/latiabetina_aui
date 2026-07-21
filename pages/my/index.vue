@@ -168,10 +168,10 @@
             <p class="text-caption grey--text mb-1">Sube una imagen (se redimensiona automáticamente)</p>
             <MyUploadimage v-model="uploadBlob" :url.sync="uploadUrl" :filename.sync="uploadFilename" :file.sync="uploadFile" :size="750" @loading="uploadLoading = true" />
             <div v-if="uploadUrl" class="mt-2">
-              <v-img :src="uploadUrl" max-height="120" contain class="rounded mb-2" />
-              <v-chip small label color="primary" outlined>
+              <v-img :src="uploadUrl" max-height="80" contain class="rounded mb-2" />
+              <!--     <v-chip small label color="primary" outlined>
                 {{ uploadFilename || "imagen" }}
-              </v-chip>
+              </v-chip>  -->
             </div>
             <div v-if="uploadBlob && !uploadUrl" class="mt-2 text-caption grey--text">
               <v-progress-circular indeterminate size="16" width="2" class="mr-2" />
@@ -191,7 +191,7 @@
           <v-divider />
           <v-card-text class="pt-4">
             <p class="text-caption grey--text mb-1">Sube y recorta en círculo</p>
-            <MyUploadimageCrop v-model="cropBlob" label="Seleccionar foto" placeholder="Elige una imagen..." :photo="cropPhoto" max-height="160" />
+            <MyUploadimageCrop v-model="cropBlob" label="Seleccionar foto" placeholder="Elige una imagen..." :photo="cropPhoto" max-height="80" />
             <div v-if="cropBlob" class="mt-2">
               <span class="text-caption grey--text">Blob listo ({{ cropBlob.size }} bytes)</span>
             </div>

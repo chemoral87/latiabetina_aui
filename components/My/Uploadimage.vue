@@ -8,30 +8,25 @@
       {{ label || 'Seleccionar foto' }}
     </v-btn>
 
-    <div v-if="previewMaxHeight !== 0">
-      <div v-if="loading" class="d-flex align-center justify-center mt-2 grey lighten-3 rounded" style="min-height: 120px">
-        <v-progress-circular indeterminate color="primary" size="32" />
-      </div>
-      <div v-else-if="uri" class="mt-2">
-        <v-img :src="uri" :max-height="previewMaxHeight" contain class="rounded" />
-        <div v-if="filename" class="d-flex align-center mt-1">
-          <v-chip x-small label color="primary" outlined>
-            <v-icon x-small left>mdi-file-image</v-icon>
-            {{ filename }}
-          </v-chip>
-        </div>
-        <v-btn small outlined color="error" class="mt-2" @click="clearImage">
-          <v-icon left x-small>mdi-close</v-icon>
-          Limpiar
-        </v-btn>
-      </div>
-      <div v-else @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="onDrop"
-        class="d-flex flex-column align-center justify-center mt-2 rounded drop-zone"
-        :class="{ 'drop-zone--active': dragOver }" style="min-height: 120px; cursor: pointer; border: 2px dashed #bdbdbd;"
-        @click="triggerFilePicker">
-        <v-icon large :color="dragOver ? 'primary' : 'grey lighten-1'">mdi-cloud-upload-outline</v-icon>
-        <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
-      </div>
+    <div v-if="loading" class="d-flex align-center justify-center mt-2 grey lighten-3 rounded" style="min-height: 80px">
+      <v-progress-circular indeterminate color="primary" size="24" />
+    </div>
+    <div v-else-if="filename" class="d-flex align-center mt-2">
+      <v-chip small label color="primary" outlined class="mr-2">
+        <v-icon x-small left>mdi-file-image</v-icon>
+        {{ filename }}
+      </v-chip>
+      <v-btn small outlined color="error" @click="clearImage">
+        <v-icon left x-small>mdi-close</v-icon>
+        Limpiar
+      </v-btn>
+    </div>
+    <div v-else @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="onDrop"
+      class="d-flex flex-column align-center justify-center mt-2 rounded drop-zone"
+      :class="{ 'drop-zone--active': dragOver }" style="min-height: 80px; cursor: pointer; border: 2px dashed #bdbdbd;"
+      @click="triggerFilePicker">
+      <v-icon :color="dragOver ? 'primary' : 'grey lighten-1'">mdi-cloud-upload-outline</v-icon>
+      <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
     </div>
   </div>
 </template>
@@ -39,12 +34,7 @@
 const loadImage = require("blueimp-load-image")
 export default {
   name: "UploadImage",
-  props: ["value", "img", "url", "encoded", "size", "label", "placeholder", "maxHeight"],
-  computed: {
-    previewMaxHeight() {
-      return this.maxHeight !== undefined ? this.maxHeight : 200
-    },
-  },
+  props: ["value", "img", "url", "encoded", "size", "label", "placeholder"],
   data() {
     return {
       uri: null,
