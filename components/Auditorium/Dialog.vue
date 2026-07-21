@@ -13,7 +13,7 @@
       <v-card-text>
         <v-form ref="form" @submit.prevent="save">
           <v-row dense>
-            <v-col cols="12">
+            <v-col v-if="!isEditMode" cols="12">
               <organization-select v-model="item.org_id" :permission="'auditorium-index'" hide-one outlined
                 :rules="[$vrules.required]" />
             </v-col>
@@ -79,7 +79,8 @@ export default {
     },
 
     isValid() {
-      return this.item.name && this.item.name.trim().length > 0 && this.item.org_id
+      if (!(this.item.name && this.item.name.trim().length > 0)) return false
+      return this.isEditMode || !!this.item.org_id
     },
   },
 
@@ -113,7 +114,11 @@ export default {
 
     save() {
       if (!this.isValid || this.loading) return
-      this.$emit("save", Object.assign({}, this.item))
+      const payload = Object.assign({}, this.item)
+      if (this.isEditMode) {
+        delete payload.org_id
+      }
+      this.$emit("save", payload)
     },
   },
 }

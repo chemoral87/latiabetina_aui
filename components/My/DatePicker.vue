@@ -10,8 +10,14 @@
     <v-date-picker v-model="internalValue" @input="dateMenu = false" :no-title="noTitle" :scrollable="scrollable"
       :locale="locale">
       <v-spacer></v-spacer>
-      <v-btn text color="primary" @click="clearDate">Limpiar</v-btn>
-      <v-btn text color="primary" @click="setToday">Hoy</v-btn>
+      <v-btn color="primary" outlined class="mr-2" @click="clearDate">
+        <v-icon left>mdi-close</v-icon>
+        Limpiar
+      </v-btn>
+      <v-btn color="primary" @click="setToday">
+        <v-icon left>mdi-calendar-today</v-icon>
+        Hoy
+      </v-btn>
     </v-date-picker>
   </v-menu>
 </template>

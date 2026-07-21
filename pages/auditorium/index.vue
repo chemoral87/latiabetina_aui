@@ -3,7 +3,7 @@
     <v-row dense>
       <v-col cols="12" md="2">
         <v-text-field v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Filtro"></v-text-field>
+          placeholder="Filtro" dense></v-text-field>
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
         <v-btn color="primary" :loading="loading" class="mr-1" @click="getAuditoriums()">
@@ -15,9 +15,10 @@
           Nuevo
         </v-btn>
       </v-col>
-      <v-col cols="auto">
-        <organization-select v-model="filterOrgId" permission="auditorium-index" hide-one dense hide-details clearable
-          outlined /></v-col>
+      <v-col v-if="!orgFilterHidden" cols="auto">
+        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
+          outlined />
+      </v-col>
       <v-col cols="12">
         <AuditoriumTable :loading="loading" :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium"
           @delete="beforeDeleteAuditorium" @layout="goToLayout" />
@@ -56,6 +57,7 @@ export default {
     return {
       filterAuditorium: "",
       filterOrgId: null,
+      orgFilterHidden: false,
       auditorium: {},
       response: { data: [] },
       options: {},
@@ -154,7 +156,12 @@ export default {
     async saveAuditorium(item) {
       const payload = {
         ...item,
-        org_id: item.org_id?.id ?? item.org_id,
+      }
+
+      if (item.id) {
+        delete payload.org_id
+      } else {
+        payload.org_id = item.org_id?.id ?? item.org_id
       }
 
       try {

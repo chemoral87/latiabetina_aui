@@ -23,15 +23,11 @@ export default () => {
     "touchend",
     function (event) {
       const now = Date.now()
-      if (now - lastTouchEnd <= 150) {
+      if (now - lastTouchEnd <= 100) {
         // Solo prevenir si el objetivo NO es un elemento interactivo,
         // para no bloquear clics rápidos en la UI
         const target = event.target
-        if (target && !target.closest(
-          'button, a, input, select, textarea, label, ' +
-          '[role="button"], [role="link"], [tabindex], ' +
-          '.v-btn, .v-list-item, .v-input, .v-select'
-        )) {
+        if (target && !target.closest("button, a, input, select, textarea, label, " + '[role="button"], [role="link"], [tabindex], ' + ".v-btn, .v-list-item, .v-input, .v-select")) {
           event.preventDefault()
         }
       }

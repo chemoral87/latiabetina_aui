@@ -2,18 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="3">
-        <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false"
-          :return-value.sync="filterAuditoriumEvent" transition="scale-transition" offset-y min-width="auto">
-          <template #activator="{ on, attrs }">
-            <v-text-field v-model="dateRangeText" placeholder="Rango de fechas" append-icon="mdi-calendar" readonly
-              clearable hide-details v-bind="attrs" v-on="on" @click:clear="filterAuditoriumEvent = []"></v-text-field>
-          </template>
-          <v-date-picker v-model="filterAuditoriumEvent" range no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="dateMenu = false">Cancelar</v-btn>
-            <v-btn text color="primary" @click="$refs.dateMenu.save(filterAuditoriumEvent)">OK</v-btn>
-          </v-date-picker>
-        </v-menu>
+        <MyDateRange v-model="filterAuditoriumEvent" />
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
         <v-btn color="primary" :loading="loading" class="mr-1" @click="getAuditoriumEvents()">
@@ -25,9 +14,10 @@
           Nuevo
         </v-btn>
       </v-col>
-      <v-col cols="auto">
-        <organization-select v-model="filterOrgId" permission="auditorium-index" hide-one dense hide-details clearable
-          outlined /></v-col>
+      <v-col v-if="!orgFilterHidden" cols="auto">
+        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
+          outlined />
+      </v-col>
       <v-col cols="12">
         <AuditoriumEventTable :loading="loading" :response="response" :options="options" @sorting="getAuditoriumEvents"
           @download="downloadAuditoriumEvent" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent"
@@ -70,7 +60,7 @@ export default {
     return {
       filterAuditoriumEvent: [],
       filterOrgId: null,
-      dateMenu: false,
+      orgFilterHidden: false,
       auditoriumEvents: [],
       auditoriumEvent: {},
       response: { data: [], total: 0 },
@@ -79,14 +69,11 @@ export default {
       auditoriumEventDialog: false,
       auditoriumEventDialogDelete: false,
       dialogDelete: {},
+      skipOrgFilterWatch: true, // Evita doble request al montar
     }
   },
 
   computed: {
-    dateRangeText() {
-      if(!this.filterAuditoriumEvent || this.filterAuditoriumEvent.length === 0) return ""
-      return [...this.filterAuditoriumEvent].sort().join(" ~ ")
-    },
     currentUser() {
       return this.$auth.user || {}
     },
@@ -98,16 +85,19 @@ export default {
         if(value && value.length > 0) {
           value = [...value].sort()
         }
-        const me = this
-        const op = Object.assign(me.options, {
+        const op = {
           filter: value,
           page: 1,
           itemsPerPage: 10,
-        })
-        me.getAuditoriumEvents(op)
+        }
+        this.getAuditoriumEvents(op)
       }, 500),
     },
     filterOrgId(value) {
+      if (this.skipOrgFilterWatch) {
+        this.skipOrgFilterWatch = false
+        return
+      }
       const overrides = { page: 1 }
       if (value) {
         overrides.org_id = value
@@ -127,20 +117,24 @@ export default {
   },
 
   methods: {
-    async getAuditoriumEvents(options) {
-      if(options) {
-        this.options = options
+    async getAuditoriumEvents(overrides = {}) {
+      const requestOptions = {
+        ...this.options,
+        ...overrides,
       }
 
-      const op = Object.assign({ filter: this.filterAuditoriumEvent }, this.options)
+      requestOptions.filter = this.filterAuditoriumEvent
 
       if (this.filterOrgId) {
-        op.org_id = this.filterOrgId
+        requestOptions.org_id = this.filterOrgId
       }
 
       try {
         this.loading = true
-        this.response = await this.$repository.AuditoriumEvent.index(op)
+        this.response = await this.$repository.AuditoriumEvent.index(requestOptions)
+
+        // Actualizar opciones solo despuÃ©s de una carga exitosa
+        this.options = requestOptions
       } finally {
         this.loading = false
       }

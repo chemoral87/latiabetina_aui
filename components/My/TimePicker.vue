@@ -136,7 +136,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .tp-col {
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   max-height: 220px;
@@ -159,7 +159,7 @@ export default {
 }
 
 .tp-item:hover {
-  background-color: rgba(25, 118, 210, 0.12);
+  background-color: rgba(25, 118, 210, 0.25);
 }
 
 .tp-item--selected {

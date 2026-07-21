@@ -3,7 +3,7 @@
     <v-row dense>
       <v-col cols="12" md="2">
         <v-text-field
-v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details
+v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense
           placeholder="Filtro"></v-text-field>
       </v-col>
       <v-col cols="auto" class="d-flex align-center">

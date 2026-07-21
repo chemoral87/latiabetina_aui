@@ -59,6 +59,9 @@ export default {
         this.selected = val
       },
     },
+    showSelect(val) {
+      this.$emit('update:hidden', !val)
+    },
   },
   mounted() {
     const me = this

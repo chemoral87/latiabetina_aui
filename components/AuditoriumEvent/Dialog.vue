@@ -14,9 +14,9 @@
         <v-form ref="eventForm">
           <v-container>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col v-if="!orgSelectHidden" cols="12" md="6">
                 <organization-select v-model="localEvent.org_id" label="Organización *" hide-one dense
-                  :permission="'auditorium-index'" :rules="organizationRules"
+                  :permission="'auditorium-index'" :hidden.sync="orgSelectHidden" :rules="organizationRules"
                   outlined />
               </v-col>
               <!-- Fecha del Evento -->
@@ -35,8 +35,6 @@
                 <AuditoriumSelect v-model="localEvent.auditorium_id" :org-id="localEvent.org_id"
                   :loading="loadingAuditoriums" label="Auditorio *" :rules="auditoriumRules" outlined dense />
               </v-col>
-
-              <!-- Organización -->
             </v-row>
           </v-container>
         </v-form>
@@ -77,6 +75,7 @@ export default {
       saving: false,
       loadingAuditoriums: false,
       loadingOrganizations: false,
+      orgSelectHidden: false,
       auditoriums: [],
       organizations: [],
       timeOptions: [
@@ -117,6 +116,7 @@ export default {
         this.dialog = newVal
         if (newVal) {
           // Reset and refresh localEvent when dialog opens
+          this.orgSelectHidden = false
           this.localEvent = {
             event_date: null,
             time: null,

@@ -44,9 +44,9 @@
       <!-- Estado formatted -->
       <template #[`item.status`]="{ item }">
         <div class="d-flex align-center">
-          <v-chip v-if="item.status === 'approved'" small color="green" text-color="white">APROBADO</v-chip>
-          <v-chip v-else-if="item.status === 'rejected'" small color="red" text-color="white">RECHAZADO</v-chip>
-          <v-chip v-else small color="grey">Pendiente</v-chip>
+          <v-chip v-if="item.status === 'approved'" small color="success" text-color="white">APROBADO</v-chip>
+          <v-chip v-else-if="item.status === 'rejected'" small color="error" text-color="white">RECHAZADO</v-chip>
+          <v-chip v-else small color="primary" outlined>Pendiente</v-chip>
         </div>
       </template>
 

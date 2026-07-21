@@ -19,8 +19,8 @@
           Dashboard
         </v-btn>
       </v-col>
-      <v-col cols="auto">
-        <organization-select v-model="filterOrgId" permission="life-group-index" hide-one dense hide-details clearable
+      <v-col v-if="!orgFilterHidden" cols="auto">
+        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="life-group-index" hide-one dense hide-details clearable
           outlined />
       </v-col>
 
@@ -78,6 +78,7 @@ export default {
     return {
       filterText: "",
       filterOrgId: null,
+      orgFilterHidden: false,
       editingItem: {},
       response: { data: [] },
       options: {},

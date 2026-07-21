@@ -22,9 +22,10 @@
           Calendario
         </v-btn>
       </v-col>
-      <v-col cols="auto">
-        <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
-          outlined /></v-col>
+      <v-col v-if="!orgFilterHidden" cols="auto">
+        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="church-event-index" hide-one dense hide-details clearable
+          outlined />
+      </v-col>
 
       <!-- Tabla de eventos -->
       <v-col cols="12">
@@ -67,6 +68,7 @@ export default {
     return {
       filterChurchEvent: "",
       filterOrgId: null,
+      orgFilterHidden: false,
       response: { data: [], total: 0 },
       options: {
 
