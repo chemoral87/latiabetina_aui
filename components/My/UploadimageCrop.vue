@@ -3,10 +3,31 @@
     <input type="file" ref="fileInput" accept="image/png, image/jpeg, image/bmp"
       style="display:none" @change="onFileSelected" />
 
-    <v-btn small color="primary" @click="triggerFilePicker">
+    <v-btn small color="primary" :loading="loading" @click="triggerFilePicker">
       <v-icon left>mdi-camera</v-icon>
       {{ label || 'Subir foto' }}
     </v-btn>
+
+    <div v-if="loading" class="d-flex align-center justify-center mt-2 grey lighten-3 rounded" style="min-height: 80px">
+      <v-progress-circular indeterminate color="primary" size="24" />
+    </div>
+    <div v-else-if="filename" class="d-flex align-center mt-2">
+      <v-chip small label color="primary" outlined class="mr-2">
+        <v-icon x-small left>mdi-file-image</v-icon>
+        {{ filename }}
+      </v-chip>
+      <v-btn small outlined color="error" @click="clearImage">
+        <v-icon left x-small>mdi-close</v-icon>
+        Limpiar
+      </v-btn>
+    </div>
+    <div v-else @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="onDrop"
+      class="d-flex flex-column align-center justify-center mt-2 rounded drop-zone"
+      :class="{ 'drop-zone--active': dragOver }" style="min-height: 80px; cursor: pointer; border: 2px dashed #bdbdbd;"
+      @click="triggerFilePicker">
+      <v-icon :color="dragOver ? 'primary' : 'grey lighten-1'">mdi-cloud-upload-outline</v-icon>
+      <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
+    </div>
 
     <v-dialog :value="dialog" persistent max-width="520px">
       <v-card>
@@ -53,17 +74,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <template v-if="displayPreview">
-      <img v-if="displayedImage" class="image-cropper" :style="{ height: previewSize, width: previewSize, objectFit: 'cover' }" :src="displayedImage" />
-      <div v-else @dragover.prevent="onDragOver" @dragleave="onDragLeave" @drop.prevent="onDrop"
-        class="d-flex flex-column align-center justify-center mt-2 rounded drop-zone"
-        :class="{ 'drop-zone--active': dragOver }" style="min-height: 120px; cursor: pointer; border: 2px dashed #bdbdbd;"
-        @click="triggerFilePicker">
-        <v-icon large :color="dragOver ? 'primary' : 'grey lighten-1'">mdi-cloud-upload-outline</v-icon>
-        <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
-      </div>
-    </template>
   </div>
 </template>
 <script>
@@ -75,7 +85,7 @@ export default {
   components: {
     Cropper,
   },
-  props: ["value", "size", "photo", "maxHeight", "label"],
+  props: ["value", "url", "size", "label"],
   data() {
     return {
       blob_cropped: null,
@@ -84,21 +94,11 @@ export default {
       image_to_upload: "",
       savedBlob: null,
       savedImageToUpload: "",
+      filename: "",
+      loading: false,
       maxSize: 750,
       dragOver: false,
     }
-  },
-  computed: {
-    previewSize() {
-      if (this.maxHeight === 0) return "0px"
-      return (this.maxHeight || 200) + "px"
-    },
-    displayPreview() {
-      return this.previewSize !== "0px"
-    },
-    displayedImage() {
-      return this.image_to_upload || this.photo
-    },
   },
   watch: {
     dialog(val) {
@@ -109,7 +109,7 @@ export default {
     },
     value: {
       handler(val) {
-        if (val == null) this.cancelUpload()
+        if (val == null) this.clearImage()
       },
     },
   },
@@ -121,6 +121,7 @@ export default {
   methods: {
     save() {
       this.$emit("input", this.blob_cropped)
+      this.$emit("update:url", this.image_to_upload)
       this.dialog = false
     },
     triggerFilePicker() {
@@ -128,12 +129,7 @@ export default {
     },
     onFileSelected(e) {
       const file = e.target.files[0]
-      if (!file) {
-        this.uri = null
-        this.image_to_upload = null
-        this.blob_cropped = null
-        return
-      }
+      if (!file) return
       this.fileInputChange(file)
       // Reset input so selecting the same file triggers change
       e.target.value = null
@@ -157,8 +153,12 @@ export default {
       this.blob_cropped = this.savedBlob
       this.dialog = false
     },
-    cancelUpload() {
-      this.uri = this.image_to_upload = this.blob_cropped = null
+    clearImage() {
+      this.uri = null
+      this.image_to_upload = null
+      this.blob_cropped = null
+      this.filename = ""
+      this.$refs.fileInput.value = null
       this.$emit("input", null)
     },
     dataURItoBlob(dataURI) {
@@ -182,7 +182,11 @@ export default {
         this.uri = null
         this.image_to_upload = null
         this.blob_cropped = null
+        this.filename = ""
       } else {
+        me.loading = true
+        me.filename = file.name
+
         const _URL = window.URL || window.webkitURL
         const imgLoader = new Image()
         imgLoader.onload = function () {
@@ -195,6 +199,7 @@ export default {
             function (img) {
               me.uri = img.toDataURL()
               me.dialog = true
+              me.loading = false
             },
             {
               maxWidth: _maxSize,

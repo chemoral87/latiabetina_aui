@@ -191,13 +191,13 @@
           <v-divider />
           <v-card-text class="pt-4">
             <p class="text-caption grey--text mb-1">Sube y recorta en círculo</p>
-            <MyUploadimageCrop v-model="cropBlob" label="Seleccionar foto" placeholder="Elige una imagen..." :photo="cropPhoto" max-height="80" />
-            <div v-if="cropBlob" class="mt-2">
-              <span class="text-caption grey--text">Blob listo ({{ cropBlob.size }} bytes)</span>
+            <MyUploadimageCrop v-model="cropBlob" :url.sync="cropUrl" label="Seleccionar foto" />
+            <div v-if="cropUrl" class="mt-2">
+              <v-img :src="cropUrl" max-height="80" contain class="rounded mb-2" />
             </div>
-            <div v-if="!cropBlob && !cropPhoto" class="mt-2 text-caption grey--text">
-              <v-icon x-small class="mr-1">mdi-information-outline</v-icon>
-              Usa el botón para abrir el diálogo de recorte
+            <div v-if="cropBlob && !cropUrl" class="mt-2 text-caption grey--text">
+              <v-progress-circular indeterminate size="16" width="2" class="mr-2" />
+              Procesando...
             </div>
           </v-card-text>
         </v-card>
@@ -349,7 +349,7 @@ export default {
       uploadFile: null,
       uploadLoading: false,
       cropBlob: null,
-      cropPhoto: null,
+      cropUrl: null,
 
       // ── Panels & Overlays ──
       dragPanelVisible: false,
@@ -418,7 +418,7 @@ export default {
       this.uploadFile = null
       this.uploadLoading = false
       this.cropBlob = null
-      this.cropPhoto = null
+      this.cropUrl = null
       this.dragPanelVisible = false
       this.loadingVisible = false
       if (this.loadingTimer) {
