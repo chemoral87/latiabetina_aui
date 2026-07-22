@@ -109,6 +109,9 @@ export default {
   },
 
   mounted() {
+    // Allow org filter watcher to fire after mount
+    this.skipOrgFilterWatch = false
+
     const eventBus = this.$eventBus || this.$nuxt
     eventBus.$emit("setNavBar", {
       title: "Eventos de Auditorio",

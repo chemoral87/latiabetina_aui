@@ -13,24 +13,19 @@
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-text-field v-model="item.name" label="Nombre" :error-messages="errors?.name"
-              @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.name" label="Nombre" :error-messages="errors?.name" @keyup.enter="save"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="item.last_name" label="Ap. Paterno" :error-messages="errors?.last_name"
-              @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.last_name" label="Ap. Paterno" :error-messages="errors?.last_name" @keyup.enter="save"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="item.second_last_name" label="Ap. materno" :error-messages="errors?.second_last_name"
-              @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.second_last_name" label="Ap. materno" :error-messages="errors?.second_last_name" @keyup.enter="save"></v-text-field>
           </v-col>
           <v-col v-if="!item.id" cols="12">
-            <v-text-field v-model="item.email" label="E-mail" :error-messages="errors?.email"
-              @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.email" label="E-mail" :error-messages="errors?.email" @keyup.enter="save" />
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="item.cellphone" label="Celular" :error-messages="errors?.cellphone"
-              @keyup.enter="save"></v-text-field>
+            <v-text-field v-model="item.cellphone" label="Celular" :error-messages="errors?.cellphone" @keyup.enter="save" />
           </v-col>
         </v-row>
       </v-card-text>

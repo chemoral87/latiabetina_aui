@@ -176,7 +176,7 @@
               <v-list dense>
                 <v-list-item v-for="p in searchResults" :key="p.id" @click="addAttendee(p)">
                   <v-list-item-content>
-                    <v-list-item-title>{{ p.name }}</v-list-item-title>
+                    <v-list-item-title>{{ fullName(p) }}</v-list-item-title>
                     <v-list-item-subtitle v-if="p.phone">{{ p.phone }}</v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
@@ -195,7 +195,7 @@
               <v-list dense>
                 <v-list-item v-for="a in attendees" :key="a.id">
                   <v-list-item-content>
-                    <v-list-item-title>{{ a.name }}</v-list-item-title>
+                    <v-list-item-title>{{ fullName(a) }}</v-list-item-title>
                     <v-list-item-subtitle>
                       <v-chip x-small :color="typeColor(a.pivot?.type)" class="mr-1">
                         {{ typeLabel(a.pivot?.type) }}
@@ -227,14 +227,17 @@
             </v-col>
 
             <template v-if="showNewPerson">
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="newPerson.name" label="Nombre" dense outlined hide-details="auto" />
+              <v-col cols="12" sm="4">
+                <v-text-field v-model="newPerson.name" label="Nombre" prepend-inner-icon="mdi-account-outline" dense outlined hide-details="auto" />
               </v-col>
-              <v-col cols="12" sm="3">
+              <v-col cols="12" sm="4">
+                <v-text-field v-model="newPerson.last_name" label="Apellido" prepend-inner-icon="mdi-account-outline" dense outlined hide-details="auto" />
+              </v-col>
+              <v-col cols="12" sm="2">
                 <v-text-field v-model="newPerson.age" label="Edad" type="number" dense outlined hide-details="auto" />
               </v-col>
-              <v-col cols="12" sm="3">
-                <v-text-field v-model="newPerson.phone" label="Teléfono" dense outlined hide-details="auto" />
+              <v-col cols="12" sm="2">
+                <v-text-field v-model="newPerson.phone" label="Teléfono" prepend-inner-icon="mdi-phone" dense outlined hide-details="auto" />
               </v-col>
               <v-col cols="12">
                 <v-select v-model="newPersonType" label="Tipo" outlined dense :items="attendeeTypes" item-text="label"
@@ -293,7 +296,7 @@ export default {
       searchPerson: "",
       searchResults: [],
       showNewPerson: false,
-      newPerson: { name: "", age: null, phone: "" },
+      newPerson: { name: "", last_name: "", age: null, phone: "" },
       newPersonType: "member",
       attendeeTypes: [
         { label: "Miembro", value: "member" },
@@ -339,6 +342,10 @@ export default {
     typeLabel(t) {
       return { member: "Miembro", new_guest: "Invitado", convert: "Converso" }[t] || t
     },
+    fullName(p) {
+      return [p.name, p.last_name].filter(Boolean).join(' ') || 'Sin nombre'
+    },
+
     capitalize(s) {
       if (!s) return ""
       return s.charAt(0).toUpperCase() + s.slice(1)
@@ -448,14 +455,14 @@ export default {
         const person = res.data || res
         this.attendees.push({ ...person, pivot: { type: this.newPersonType, observations: null } })
         this.showNewPerson = false
-        this.newPerson = { name: "", age: null, phone: "" }
+        this.newPerson = { name: "", last_name: "", age: null, phone: "" }
       } catch (error) {
         // If duplicate, check response for existing person
         if (error?.response?.status === 409 && error?.response?.data?.data) {
           const existing = error.response.data.data
           this.attendees.push({ ...existing, pivot: { type: this.newPersonType, observations: null } })
           this.showNewPerson = false
-          this.newPerson = { name: "", age: null, phone: "" }
+          this.newPerson = { name: "", last_name: "", age: null, phone: "" }
         } else {
           this.$handleError(error)
         }

@@ -1,6 +1,5 @@
 <template>
-  <v-select v-show="showSelect" v-model="selected" :disabled="isDisabled" :items="items" :label="label" item-text="name"
-    item-value="id" v-bind="$attrs"></v-select>
+  <v-select v-show="showSelect" v-model="selected" :disabled="isDisabled" :items="items" :label="label" item-text="name" item-value="id" v-bind="$attrs"></v-select>
 </template>
 <script>
 export default {
@@ -60,7 +59,7 @@ export default {
       },
     },
     showSelect(val) {
-      this.$emit('update:hidden', !val)
+      this.$emit("update:hidden", !val)
     },
   },
   mounted() {

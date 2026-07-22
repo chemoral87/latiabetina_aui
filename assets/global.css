@@ -14,3 +14,12 @@
   padding-left: 7px !important;
   padding-right: 7px !important;
 }
+
+/* Red asterisk for required fields.
+   Vuetify sets aria-required="true" on .v-input when the "required" prop is used.
+   This covers v-text-field, v-select, v-textarea, v-autocomplete, and custom components
+   that pass through the required prop (e.g. organization-select via $attrs). */
+.v-input[aria-required="true"] .v-label:after {
+  content: " *";
+  color: #e53935;
+}

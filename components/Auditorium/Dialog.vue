@@ -14,12 +14,10 @@
         <v-form ref="form" @submit.prevent="save">
           <v-row dense>
             <v-col v-if="!isEditMode" cols="12">
-              <organization-select v-model="item.org_id" :permission="'auditorium-index'" hide-one outlined
-                :rules="[$vrules.required]" />
+              <organization-select v-model="item.org_id" class="mb-2" hide-details :permission="'auditorium-index'" hide-one outlined :rules="[$vrules.required]" dense />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading"
-                required autofocus @keyup.enter="save" />
+              <v-text-field v-model="item.name" dense label="Nombre" :error-messages="errors.name" :disabled="loading" required autofocus @keyup.enter="save" />
             </v-col>
           </v-row>
         </v-form>

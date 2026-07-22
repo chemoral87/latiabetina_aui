@@ -40,6 +40,11 @@ export const getters = {
     return roles && typeof roles === "object" && !Array.isArray(roles) ? roles : {}
   },
 
+  rolesPermissions(state) {
+    const rp = state.auth?.user?.roles_permissions
+    return rp && typeof rp === "object" && !Array.isArray(rp) ? rp : {}
+  },
+
   orgCodeById: (state) => (orgId) => {
     const orgs = state.auth?.user?.orgs ?? []
     // eslint-disable-next-line eqeqeq

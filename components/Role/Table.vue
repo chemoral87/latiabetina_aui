@@ -1,6 +1,5 @@
 ﻿<template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
-    :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
+  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total" :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth800">
     <!-- Columna de permisos -->
     <template #[`item.permissions`]="{ item }">
       <div v-if="hasPermissions(item)" class="d-flex flex-wrap">
@@ -13,7 +12,6 @@
 
     <!-- Columna de acciones -->
     <template #[`item.actions`]="{ item }">
-
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn outlined color="primary" fab small class="my-1 mr-1" v-bind="attrs" v-on="on" @click="editRole(item)">
@@ -25,9 +23,8 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="success" fab small class="mr-1" v-bind="attrs" v-on="on"
-            @click="editPermissions(item)">
-            <v-icon>mdi-key</v-icon>
+          <v-btn outlined color="success" fab small class="mr-1" v-bind="attrs" v-on="on" @click="editPermissions(item)">
+            <v-icon>mdi-key-variant</v-icon>
           </v-btn>
         </template>
         <span>Permisos</span>
@@ -35,8 +32,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="info" fab small class="my-1 mr-1" v-bind="attrs" v-on="on"
-            @click="distributeRole(item)">
+          <v-btn outlined color="info" fab small class="my-1 mr-1" v-bind="attrs" v-on="on" @click="distributeRole(item)">
             <v-icon>mdi-share-variant</v-icon>
           </v-btn>
         </template>
@@ -51,7 +47,6 @@
         </template>
         <span>Eliminar</span>
       </v-tooltip>
-
     </template>
 
     <!-- Estado vacÃ­o -->
@@ -102,7 +97,6 @@ export default {
           value: "actions",
           sortable: false,
           align: "center",
-
         },
       ],
       isFirstWatch: true,

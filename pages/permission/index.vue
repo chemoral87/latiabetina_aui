@@ -2,9 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field
-v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense
-          placeholder="Filtro"></v-text-field>
+        <v-text-field v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense placeholder="Filtro" />
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
         <v-btn color="primary" class="mr-1" @click="getPermissions()">
@@ -18,16 +16,12 @@ v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dens
       </v-col>
       <v-col cols="12">
         <client-only>
-          <PermissionTable
-:options="options" :response="response" @sorting="getPermissions" @edit="editPermission"
-            @distribution="distributePermission" @delete="beforeDeletePermission"></PermissionTable>
+          <PermissionTable :options="options" :response="response" @sorting="getPermissions" @edit="editPermission" @distribution="distributePermission" @delete="beforeDeletePermission"></PermissionTable>
         </client-only>
       </v-col>
     </v-row>
     <PermissionDialog v-if="permissionDialog" :permission="permission" @close="closeDialog" @save="savePermission" />
-    <DialogDelete
-v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission"
-      @close="permissionDialogDelete = false"></DialogDelete>
+    <DialogDelete v-if="permissionDialogDelete" :dialog="dialogDelete" @ok="deletePermission" @close="permissionDialogDelete = false"></DialogDelete>
 
     <!-- <PermissionDialogDelete :permission="permission" v-if="permissionDialogDelete" @close="permissionDialogDelete = false" @ok="deletePermission" /> -->
   </v-container>
@@ -70,7 +64,7 @@ export default {
 
   mounted() {
     const eventBus = this.$eventBus || this.$nuxt
-    eventBus.$emit("setNavBar", { title: "Permisos", icon: "mdi-key" })
+    eventBus.$emit("setNavBar", { title: "Permisos", icon: "mdi-key-variant" })
   },
   methods: {
     newPermission() {
@@ -95,10 +89,10 @@ export default {
           this.getPermissions()
           this.permissionDialogDelete = false
         })
-        .catch((e) => { })
+        .catch((e) => {})
     },
     async getPermissions(options) {
-      if(options) {
+      if (options) {
         this.options = options
       }
       const op = Object.assign({ filter: this.filterPermission }, this.options)
@@ -106,20 +100,20 @@ export default {
     },
     async savePermission(item) {
       const me = this
-      if(item.id) {
+      if (item.id) {
         await this.$repository.Permission.update(item.id, item)
           .then((res) => {
             me.getPermissions()
             me.permissionDialog = false
           })
-          .catch((e) => { })
+          .catch((e) => {})
       } else {
         await this.$repository.Permission.create(item)
           .then((res) => {
             me.getPermissions()
             me.permissionDialog = false
           })
-          .catch((e) => { })
+          .catch((e) => {})
       }
     },
     closeDialog() {

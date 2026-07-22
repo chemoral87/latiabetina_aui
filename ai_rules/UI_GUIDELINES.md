@@ -140,8 +140,8 @@ Cada `v-card-title` debe incluir un icono a la izquierda para identificar la sec
 
 | Propósito | Icono sugerido | Color |
 | --- | --- | --- |
-| Permisos / Roles (nuevo) | `mdi-shield-key-outline` | `primary` |
-| Permisos / Roles (editar) | `mdi-redhat` | `primary` |
+| Permisos (nuevo / editar) | `mdi-key-variant` | `primary` |
+| Roles (nuevo / editar) | `mdi-redhat` | `primary` |
 | Usuario (nuevo / editar) | `mdi-account-outline` | `primary` |
 | Organización (nuevo / editar) | `mdi-domain` | `primary` |
 | Crear nuevo elemento (botón tabla) | `mdi-plus-circle-outline` | `success` |
@@ -201,7 +201,7 @@ eventBus.$emit("setNavBar", {
 - `mdi-close` / `mdi-arrow-left` para cancelar o volver (icono al inicio).
 - Preferir `small` en títulos y `x-small` en acciones compactas.
 - Siempre incluir `v-icon left` en los botones Cancelar (`mdi-close`) y Guardar (`mdi-content-save`).
-- En campos de filtro/búsqueda: `prepend-inner-icon="mdi-magnify"` (categoría) + `clearable` (acción al final).
+- En campos de filtro/búsqueda (toolbar de índices): `append-icon="mdi-magnify"` + `clearable` (acción al final).
 - En formularios y diálogos: **cada input** debe incluir un icono leading (`prepend-inner-icon`) que identifique el tipo de campo. Ver sección 9.
 
 ---
@@ -341,7 +341,7 @@ Los diálogos de confirmación para eliminar deben seguir esta estructura:
 
 En las páginas de listado (index), la barra de herramientas debe seguir este orden:
 
-1. **Filtro / búsqueda** — `v-text-field` con `prepend-inner-icon="mdi-magnify"`, `clearable`, `hide-details` y `dense` a la izquierda.
+1. **Filtro / búsqueda** — `v-text-field` con `append-icon="mdi-magnify"`, `clearable`, `hide-details` y `dense` a la izquierda.
 2. **Botón Refrescar** — `color="primary"`, con icono `mdi-reload`.
 3. **Botón Nuevo / Agregar** — `color="success"`, con icono `mdi-plus`. El texto puede ser "Nuevo", "Agregar", "Nueva Red", etc.
 4. **Botones adicionales** (ej: Dashboard, Reportes) — van al final, con `color="info"` u otro según corresponda.
@@ -352,7 +352,7 @@ En las páginas de listado (index), la barra de herramientas debe seguir este or
 <v-container fluid>
   <v-row dense>
     <v-col cols="12" md="4" sm="6">
-      <v-text-field v-model="filterText" prepend-inner-icon="mdi-magnify" clearable hide-details dense
+      <v-text-field v-model="filterText" append-icon="mdi-magnify" clearable hide-details dense
         placeholder="Filtro" />
     </v-col>
     <v-col cols="auto" class="d-flex align-center">
@@ -380,7 +380,7 @@ En las páginas de listado (index), la barra de herramientas debe seguir este or
 ### Reglas
 
 - El filtro debe ser el primer elemento, ocupando un ancho controlado (`md="4" sm="6"`).
-- El filtro debe usar `prepend-inner-icon="mdi-magnify"` (categoría al inicio), `clearable` (acción al final), `hide-details` y `dense`.
+- El filtro debe usar `append-icon="mdi-magnify"` (icono al final), `clearable` (acción al final), `hide-details` y `dense`.
 - Refrescar es `color="primary"` y va antes que Nuevo / Agregar.
 - Nuevo / Agregar / Crear es siempre `color="success"` (verde), nunca `primary`.
 - Los botones adicionales (Dashboard, Reportes, etc.) van al final.
@@ -403,12 +403,17 @@ En `data()`:
 ```js
 filterOrgId: null,
 orgFilterHidden: false,
+skipOrgFilterWatch: true, // Evita doble request al montar
 ```
 
 En `watch`:
 
 ```js
 filterOrgId(value) {
+  if (this.skipOrgFilterWatch) {
+    this.skipOrgFilterWatch = false
+    return
+  }
   const overrides = { page: 1 }
   if (value) {
     overrides.org_id = value
@@ -418,6 +423,20 @@ filterOrgId(value) {
   this.loadItems(overrides)
 },
 ```
+
+En `mounted()`:
+
+```js
+mounted() {
+  // Siempre resetear el flag despuÃ©s del montaje
+  this.skipOrgFilterWatch = false
+
+  const eventBus = this.$eventBus || this.$nuxt
+  eventBus.$emit("setNavBar", { ... })
+},
+```
+
+> ⚠️ **Importante**: El flag `skipOrgFilterWatch` debe resetearse en `mounted()` (no solo dentro del `watch`). Si solo se resetea dentro del `watch`, cuando hay **múltiples organizaciones** el `organization-select` con `hide-one` nunca auto-selecciona un valor, el `watch` nunca se dispara durante el montaje, y el flag queda `true` permanentemente — lo que causa que el primer cambio de organización por parte del usuario se ignore sin efecto.
 
 ### Reglas
 
@@ -602,3 +621,40 @@ data() {
 - Usar `@loading="flag = true"` y `@change="flag = false"` para controlar el estado de carga.
 - Mostrar la preview condicionalmente con `v-if="url || loading"` así se ve el placeholder de carga incluso antes de que la URL esté disponible.
 - No mostrar directamente `v-img` para el preview; usar siempre `MyPreviewImage` que ya maneja loading, error, placeholder y fade-in.
+
+---
+
+## 11. Campos requeridos
+
+Los campos obligatorios deben indicarse visualmente con un **asterisco** (`*`) al final de la etiqueta. La marca se agrega **manualmente** en el texto del `label` — no usar la prop `required` de Vuetify para este propósito.
+
+### Reglas
+
+- Agregar manualmente `" *"` al final del texto del `label` en los campos obligatorios.
+- **No** incluir la prop `required` en el componente. La validación se maneja exclusivamente con `:rules`.
+- El asterisco se renderiza en el color por defecto del label (gris oscuro / `--primary`). No necesita estilizado adicional.
+
+### Ejemplo
+
+```html
+<!-- Correcto: asterisco manual en el label, sin required prop -->
+<v-text-field v-model="item.name" label="Nombre *" prepend-inner-icon="mdi-account-outline"
+  :rules="[$vrules.requiredField('name')]" />
+
+<!-- Correcto: también funciona en selects -->
+<organization-select v-model="item.org_id" label="Organización *" prepend-inner-icon="mdi-domain"
+  hide-one outlined :rules="[$vrules.required]" />
+
+<!-- Incorrecto: no usar la prop required para el asterisco visual -->
+<v-text-field v-model="item.name" label="Nombre" required :rules="[$vrules.required]" />
+
+<!-- Incorrecto: omitir el asterisco en campos requeridos -->
+<v-text-field v-model="item.name" label="Nombre" :rules="[$vrules.required]" />
+```
+
+### Notas
+
+- El asterisco se coloca **dentro del string del `label`** (ej: `label="Nombre *"`), no se agrega vía CSS.
+- La prop `required` solo debe usarse cuando se necesite validación nativa del navegador (HTML5), no para propósitos visuales.
+- La validación del lado del cliente se maneja con `:rules` (ej: `[$vrules.requiredField('name')]` o `[$vrules.required]`).
+- Si un campo es requerido pero se oculta condicionalmente con `v-if`, el asterisco se oculta y muestra junto con el campo sin intervención adicional.
