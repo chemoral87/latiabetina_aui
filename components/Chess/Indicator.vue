@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="pa-3 indicator-container">
+  <v-card id="card-chess-indic-indicator-container-1" outlined class="pa-3 indicator-container">
     <div class="text-caption font-weight-medium mb-2 text-center">
       Turno Actual
     </div>

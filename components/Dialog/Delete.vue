@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="400px">
+  <v-dialog id="dlg-dialo-delet-1" :value="true" persistent max-width="400px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="error">mdi-alert</v-icon>
         {{ item.title }}
         <v-spacer />
-        <v-btn icon x-small @click="close">
+        <v-btn icon x-small id="btn-dialog-delete-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -21,11 +21,11 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="error" outlined class="mr-2" :disabled="loading" @click="close">
+        <v-btn color="error" outlined class="mr-2" :disabled="loading" id="btn-dialog-delete-no" @click="close">
           <v-icon left>mdi-close</v-icon>
           NO
         </v-btn>
-        <v-btn color="primary" :loading="loading" @click="ok">
+        <v-btn color="primary" :loading="loading" id="btn-dialog-delete-yes" @click="ok">
           <v-icon left>mdi-check</v-icon>
           SI
         </v-btn>

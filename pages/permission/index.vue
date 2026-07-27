@@ -2,14 +2,14 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense placeholder="Filtro" />
+        <v-text-field id="tf-permi-index-filterpermission-1" v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense placeholder="Filtro" />
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" class="mr-1" @click="getPermissions()">
+        <v-btn id="btn-perm-refresh" color="primary" class="mr-1" @click="getPermissions()">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newPermission()">
+        <v-btn id="btn-perm-new" color="success" class="mr-1" @click="newPermission()">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>

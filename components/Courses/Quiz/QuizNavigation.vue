@@ -5,6 +5,7 @@
         :disabled="currentIndex === 0"
         color="primary"
         outlined
+        id="btn-crsqi-prev"
         @click="$emit('previous')"
       >
         <v-icon left>mdi-chevron-left</v-icon>
@@ -21,6 +22,7 @@
         <v-btn
           v-if="currentIndex < total - 1"
           color="primary"
+          id="btn-crsqi-next"
           @click="$emit('next')"
         >
           {{ t('next') }}
@@ -30,6 +32,7 @@
         <v-btn
           v-if="allAnswered"
           color="success"
+          id="btn-crsqi-finish"
           @click="$emit('finish')"
         >
           <v-icon left>mdi-check-all</v-icon>

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog id="dlg-user-dialo-1" :value="true" persistent width="400px">
     <v-card>
       <v-card-title>
         <v-icon class="mr-2">mdi-alert</v-icon>
@@ -16,10 +16,10 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="grey" class="mr-2" outlined @click.native="close">
+        <v-btn color="grey" class="mr-2" outlined id="btn-user-delete-no" @click.native="close">
           NO
         </v-btn>
-        <v-btn color="primary" @click.native="ok">
+        <v-btn color="primary" id="btn-user-delete-yes" @click.native="ok">
           SI
         </v-btn>
       </v-card-actions>

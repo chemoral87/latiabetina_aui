@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-role-distr-index-1" outlined>
           <v-card-title class="subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-shield-key-outline</v-icon>
             Perfiles con el rol {{ role.name }}
@@ -26,7 +26,7 @@
           </v-card-title>
 
           <v-card-text class="pt-0">
-            <v-data-table
+            <v-data-table id="dt-role-distr-index-filteredprofiles-1"
               :headers="headers"
               :items="filteredProfiles"
               :items-per-page="10"
@@ -48,9 +48,9 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-role-distr-index-2" outlined>
           <v-card-text class="d-flex justify-end pa-4">
-            <v-btn color="primary" outlined @click="$router.push('/role')">
+            <v-btn id="btn-roldst-back" color="primary" outlined @click="$router.push('/role')">
               <v-icon left>mdi-arrow-left</v-icon>
               Volver
             </v-btn>

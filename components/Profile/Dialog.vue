@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog id="dlg-profi-dialo-1" :value="true" persistent width="400px">
     <v-card>
       <v-card-title>
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
@@ -11,7 +11,7 @@
         <v-card-text>
           <v-row dense>
             <v-col cols="12">
-              <v-text-field
+              <v-text-field id="tf-profi-dialo-filterprofile-1"
 v-model="filterProfile" append-icon="mdi-magnify" clearable hide-details
                 placeholder="Filtro" />
             </v-col>
@@ -25,8 +25,8 @@ v-model="item.org_id" :items="organizations" item-value="id" item-text="name"
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" class="mr-1" outlined @click.native="close">Cancelar</v-btn>
-          <v-btn color="primary" type="submit">Guardar</v-btn>
+          <v-btn color="primary" class="mr-1" outlined id="btn-profile-dialog-cancel" @click.native="close">Cancelar</v-btn>
+          <v-btn color="primary" type="submit" id="btn-profile-dialog-save">Guardar</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

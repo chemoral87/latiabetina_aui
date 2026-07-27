@@ -38,11 +38,11 @@
             </td>
             <td class="pos-ct-qty">
               <div class="d-flex align-center justify-center" style="gap:4px">
-                <v-btn fab x-small depressed color="error" dark @click="$emit('change-qty', { index, delta: -1 })">
+                <v-btn fab x-small depressed color="error" dark id="btn-pos-cart-qty-minus" @click="$emit('change-qty', { index, delta: -1 })">
                   <v-icon x-small>mdi-minus</v-icon>
                 </v-btn>
                 <span class="font-weight-bold">{{ item.quantity }}</span>
-                <v-btn fab x-small depressed color="success" dark @click="$emit('change-qty', { index, delta: 1 })">
+                <v-btn fab x-small depressed color="success" dark id="btn-pos-cart-qty-plus" @click="$emit('change-qty', { index, delta: 1 })">
                   <v-icon x-small>mdi-plus</v-icon>
                 </v-btn>
               </div>
@@ -51,7 +51,7 @@
               ${{ formatPrice((item.product.price * item.quantity).toFixed(2)) }}
             </td>
             <td class="pos-ct-del">
-              <v-btn fab x-small outlined color="error" @click="$emit('remove-cart-item', index)">
+              <v-btn fab x-small outlined color="error" id="btn-pos-cart-remove" @click="$emit('remove-cart-item', index)">
                 <v-icon small color="error" class="font-weight-black">mdi-close</v-icon>
               </v-btn>
             </td>
@@ -63,7 +63,7 @@
     <!-- Fields + cobrar -->
     <div id="pos-footer-bottom" class="pos-footer-bottom">
       <div id="pos-footer-fields-row" class="pos-footer-fields-row">
-        <v-text-field :value="customerName" label="Cliente" outlined dense hide-details class="pos-field"
+        <v-text-field id="tf-pos-posca-cliente-1" :value="customerName" label="Cliente" outlined dense hide-details class="pos-field"
           @input="$emit('update:customerName', $event)" />
         <v-select :value="paymentMethod" :items="paymentMethods" label="Método de pago" outlined dense hide-details
           class="pos-field" @input="$emit('update:paymentMethod', $event)" />

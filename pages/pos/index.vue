@@ -10,8 +10,8 @@
     <div v-else>
       <div id="pos-view-toggle" class="pos-view-toggle mb-2">
         <v-btn-toggle v-model="viewMode" mandatory dense color="primary" background-color="grey lighten-3">
-          <v-btn small value="grid" icon><v-icon>mdi-view-grid</v-icon></v-btn>
-          <v-btn small value="list" icon><v-icon>mdi-view-list</v-icon></v-btn>
+          <v-btn small value="grid" icon id="btn-pos-toggle-grid"><v-icon>mdi-view-grid</v-icon></v-btn>
+          <v-btn small value="list" icon id="btn-pos-toggle-list"><v-icon>mdi-view-list</v-icon></v-btn>
         </v-btn-toggle>
         <v-tooltip top>
           <template #activator="{ on }">

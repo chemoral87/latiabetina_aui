@@ -16,7 +16,7 @@
 
       <v-card-actions>
         <template v-if="isAuthReady && !isRedirecting">
-          <v-btn color="primary" @click="handleRedirect">
+          <v-btn color="primary" id="btn-layout-error-redirect" @click="handleRedirect">
             {{ redirectButtonText }}
           </v-btn>
         </template>

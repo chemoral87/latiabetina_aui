@@ -3,46 +3,46 @@
     <v-form ref="form" @submit.prevent="saveStore">
       <v-row dense>
         <v-col cols="6" md="3">
-          <!-- <v-text-field v-model="store.org_id" outlined label="org_id" :rules="[(v) => !!v || 'Campo requerido']" /> -->
+          <!-- <v-text-field id="tf-store-new-index-store-org_id-1" v-model="store.org_id" outlined label="org_id" :rules="[(v) => !!v || 'Campo requerido']" /> -->
           <organization-select v-model="store.org_id" :permission="'store-create'" outlined :rules="[$vrules.required]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.name" outlined label="name" :rules="[(v) => !!v || 'Campo requerido']" />
+          <v-text-field id="tf-store-new-index-store-name-2" v-model="store.name" outlined label="name" :rules="[(v) => !!v || 'Campo requerido']" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.address" outlined label="address" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-address-3" v-model="store.address" outlined label="address" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.city" outlined label="city" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-city-4" v-model="store.city" outlined label="city" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.state" outlined label="state" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-state-5" v-model="store.state" outlined label="state" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.zip" outlined label="zip" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-zip-6" v-model="store.zip" outlined label="zip" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.country" outlined label="country" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-country-7" v-model="store.country" outlined label="country" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.phone" outlined label="phone" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-phone-8" v-model="store.phone" outlined label="phone" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.latitude" outlined label="latitude" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-latitude-9" v-model="store.latitude" outlined label="latitude" :rules="[]" />
         </v-col>
         <v-col cols="6" md="3">
-          <v-text-field v-model="store.longitude" outlined label="longitude" :rules="[]" />
+          <v-text-field id="tf-store-new-index-store-longitude-10" v-model="store.longitude" outlined label="longitude" :rules="[]" />
         </v-col>
       </v-row>
       <v-row>
         <v-spacer />
         <v-col cols="auto">
-          <v-btn color="primary" outlined class="mr-1" @click.native="cancel">
+          <v-btn color="primary" outlined class="mr-1" id="btn-strnw-cancel" @click.native="cancel">
             <span>Cancelar</span>
             <v-icon>mdi-cancel</v-icon>
           </v-btn>
 
-          <v-btn type="submit" color="primary" class="mr-4">
+          <v-btn type="submit" color="primary" class="mr-4" id="btn-strnw-save">
             <span>Guardar</span>
             <v-icon>mdi-check</v-icon>
           </v-btn>

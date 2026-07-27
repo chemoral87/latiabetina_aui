@@ -1,9 +1,9 @@
 <template>
-  <v-data-table :headers="headers" :items="members" :loading="loading" dense mobile-breakpoint="0" class="elevation-1">
+  <v-data-table id="dt-conso-membe-members-1" :headers="headers" :items="members" :loading="loading" dense mobile-breakpoint="0" class="elevation-1">
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab class="mr-1" small v-bind="attrs" v-on="on" @click="$emit('edit', item)">
+          <v-btn outlined color="primary" fab class="mr-1" small v-bind="attrs" v-on="on" id="btn-consolidation-membertable-edit" @click="$emit('edit', item)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -12,7 +12,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn small outlined color="error" fab v-bind="attrs" v-on="on" @click="$emit('delete', item)">
+          <v-btn small outlined color="error" fab v-bind="attrs" v-on="on" id="btn-consolidation-membertable-delete" @click="$emit('delete', item)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>

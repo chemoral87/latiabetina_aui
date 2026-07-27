@@ -1,5 +1,5 @@
 <template>
-  <v-data-table fixed-header :page.sync="page" dense mobile-breakpoint="0" :must-sort="true" :headers="headers"
+  <v-data-table id="dt-audit-table-items-1" fixed-header :page.sync="page" dense mobile-breakpoint="0" :must-sort="true" :headers="headers"
     :items="items" :options.sync="optionsTable" :server-items-length="total" :loading="loading"
     class="elevation-1 xwidth800" @page-count="pageCount = $event">
     <template #[`item.event_date`]="{ item }">
@@ -11,20 +11,20 @@
     </template>
 
     <template #[`item.marks`]="{ item }">
-      <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab x-small @click="$emit('mark', item)">
+      <v-btn title="Marcar" outlined class="mr-1 my-1" color="primary" fab x-small id="btn-auditoriumevent-table-mark" @click="$emit('mark', item)">
         <v-icon>mdi-eye</v-icon>
       </v-btn>
     </template>
 
     <template #[`item.actions`]="{ item }">
       <v-btn title="Descargar Excel" outlined class="mr-1 my-1" color="success" fab small
-        @click="$emit('download', item)">
+        id="btn-auditoriumevent-table-download" @click="$emit('download', item)">
         <v-icon>mdi-file-excel</v-icon>
       </v-btn>
-      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('edit', item)">
+      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small id="btn-auditoriumevent-table-edit" @click="$emit('edit', item)">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small @click="$emit('delete', item)">
+      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small id="btn-auditoriumevent-table-delete" @click="$emit('delete', item)">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </template>

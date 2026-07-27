@@ -6,7 +6,7 @@
           <!-- Section 1: Información general -->
           <v-row dense>
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-1" outlined>
                 <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
                   <v-icon left small color="primary">mdi-information-outline</v-icon>
                   Información general
@@ -14,7 +14,7 @@
                 <v-card-text>
                   <v-row dense>
                     <v-col cols="12">
-                      <v-text-field v-model="item.name" label="Nombre de la Red" outlined dense
+                      <v-text-field id="tf-life--new-item-name-1" v-model="item.name" label="Nombre de la Red" outlined dense
                         :rules="[$vrules.required]" hide-details="auto" />
                     </v-col>
 
@@ -45,7 +45,7 @@
           <!-- Section 2: Dirección -->
           <v-row dense class="mt-4">
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-2" outlined>
                 <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
                   <v-icon left small color="primary">mdi-map-marker-outline</v-icon>
                   Dirección
@@ -53,15 +53,15 @@
                 <v-card-text>
                   <v-row dense>
                     <v-col cols="12">
-                      <v-text-field v-model="item.address" label="Dirección" outlined dense hide-details="auto"
+                      <v-text-field id="tf-life--new-item-address-2" v-model="item.address" label="Dirección" outlined dense hide-details="auto"
                         placeholder="Calle y número" />
                     </v-col>
                     <v-col cols="12" sm="6">
-                      <v-text-field v-model="item.neighborhood" label="Colonia / Zona" outlined dense
+                      <v-text-field id="tf-life--new-item-neighborhood-3" v-model="item.neighborhood" label="Colonia / Zona" outlined dense
                         hide-details="auto" />
                     </v-col>
                     <v-col cols="12" sm="6">
-                      <v-text-field v-model="item.reference" label="Referencia" outlined dense hide-details="auto"
+                      <v-text-field id="tf-life--new-item-reference-4" v-model="item.reference" label="Referencia" outlined dense hide-details="auto"
                         placeholder="Cerca de..." />
                     </v-col>
                   </v-row>
@@ -73,7 +73,7 @@
           <!-- Section 3: Ubicación GPS -->
           <v-row dense class="mt-4">
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-3" outlined>
                 <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
                   <v-icon left small color="primary">mdi-crosshairs-gps</v-icon>
                   Ubicación GPS
@@ -92,7 +92,7 @@
           <!-- Section 4: Líderes adicionales -->
           <v-row dense class="mt-4">
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-4" outlined>
                 <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
                   <v-icon left small color="primary">mdi-account-multiple</v-icon>
                   Líderes adicionales
@@ -107,7 +107,7 @@
           <!-- Section 5: Observaciones -->
           <v-row dense class="mt-4">
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-5" outlined>
                 <v-card-title clasds="text-subtitle-1 font-weight-medium pb-2">
                   <v-icon left small color="primary">mdi-text-box-outline</v-icon>
                   Observaciones
@@ -123,13 +123,13 @@
           <!-- Section 6: Acciones -->
           <v-row dense class="mt-4">
             <v-col cols="12">
-              <v-card outlined>
+              <v-card id="card-life--new-6" outlined>
                 <v-card-text class="d-flex justify-end pa-4 flex-wrap">
-                  <v-btn color="primary" outlined class="mr-2 mb-2 mb-sm-0" :disabled="saving" @click="cancel">
+                  <v-btn color="primary" outlined class="mr-2 mb-2 mb-sm-0" :disabled="saving" id="btn-lifegroup-new-cancel" @click="cancel">
                     <v-icon left>mdi-close</v-icon>
                     Cancelar
                   </v-btn>
-                  <v-btn color="primary" :loading="saving" :disabled="!valid" @click="save">
+                  <v-btn color="primary" :loading="saving" :disabled="!valid" id="btn-lifegroup-new-save" @click="save">
                     <v-icon left>mdi-content-save</v-icon>
                     Guardar
                   </v-btn>

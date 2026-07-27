@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="560px">
+  <v-dialog id="dlg-churc-copyd-1" :value="true" persistent max-width="560px">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">mdi-content-copy</v-icon>
         <span class="text-h5">Copiar Evento</span>
         <v-spacer />
-        <v-btn icon :disabled="loading" @click="close">
+        <v-btn icon :disabled="loading" id="btn-churchevent-copydialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -16,8 +16,8 @@
         </p>
 
         <v-btn-toggle v-model="mode" mandatory dense class="mb-4">
-          <v-btn value="dates" small>Por calendario</v-btn>
-          <v-btn value="recurrence" small>Por rango y días</v-btn>
+          <v-btn value="dates" small id="btn-churchevent-copydialog-mode-dates">Por calendario</v-btn>
+          <v-btn value="recurrence" small id="btn-churchevent-copydialog-mode-recurrence">Por rango y días</v-btn>
         </v-btn-toggle>
 
         <template v-if="mode === 'dates'">
@@ -39,7 +39,7 @@
               <v-menu v-model="startDateMenu" :close-on-content-click="false" transition="scale-transition" offset-y
                 min-width="auto">
                 <template #activator="{ on, attrs }">
-                  <v-text-field v-model="recurrence.start_date" label="Fecha inicial" prepend-icon="mdi-calendar"
+                  <v-text-field id="tf-churc-copyd-recurrence-start_date-1" v-model="recurrence.start_date" label="Fecha inicial" prepend-icon="mdi-calendar"
                     readonly v-bind="attrs" v-on="on" />
                 </template>
                 <v-date-picker v-model="recurrence.start_date" locale="es" @input="startDateMenu = false" />
@@ -49,7 +49,7 @@
               <v-menu v-model="endDateMenu" :close-on-content-click="false" transition="scale-transition" offset-y
                 min-width="auto">
                 <template #activator="{ on, attrs }">
-                  <v-text-field v-model="recurrence.end_date" label="Fecha final" prepend-icon="mdi-calendar" readonly
+                  <v-text-field id="tf-churc-copyd-recurrence-end_date-2" v-model="recurrence.end_date" label="Fecha final" prepend-icon="mdi-calendar" readonly
                     v-bind="attrs" v-on="on" />
                 </template>
                 <v-date-picker v-model="recurrence.end_date" locale="es" @input="endDateMenu = false" />
@@ -68,8 +68,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" text :disabled="loading" @click="close">Cancelar</v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!canCopy" @click="copy">
+        <v-btn color="primary" text :disabled="loading" id="btn-churchevent-copydialog-cancel" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!canCopy" id="btn-churchevent-copydialog-copy" @click="copy">
           <v-icon left small>mdi-content-copy</v-icon>
           Copiar
         </v-btn>

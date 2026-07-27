@@ -1,32 +1,32 @@
 <template>
-  <v-card outlined class="history-panel pa-3">
+  <v-card id="card-chess-histo-history-panel-1" outlined class="history-panel pa-3">
     <div class="history-header text-subtitle-2 font-weight-medium mb-2">
       Historial de Movimientos
     </div>
 
     <!-- Navegación -->
     <div class="history-navigation d-flex justify-center ga-2 mb-2">
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex === -1"
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex === -1" id="btn-chess-history-start"
         @click="handleMoveClick(-1)">
         <v-icon size="small">mdi-skip-backward</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex <= -1"
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex <= -1" id="btn-chess-history-back"
         @click="handleMoveClick(currentMoveIndex - 1)">
         <v-icon size="small">mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1"
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" id="btn-chess-history-forward"
         @click="handleMoveClick(currentMoveIndex + 1)">
         <v-icon size="small">mdi-chevron-right</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1"
+      <v-btn icon small density="compact" variant="text" :disabled="currentMoveIndex >= moves.length - 1" id="btn-chess-history-end"
         @click="handleMoveClick(moves.length - 1)">
         <v-icon size="small">mdi-skip-forward</v-icon>
       </v-btn>
       <v-divider vertical class="mx-1"></v-divider>
-      <v-btn icon small density="compact" variant="text" title="Exportar JSON" @click="$emit('export-history')">
+      <v-btn icon small density="compact" variant="text" title="Exportar JSON" id="btn-chess-history-export" @click="$emit('export-history')">
         <v-icon size="small">mdi-download</v-icon>
       </v-btn>
-      <v-btn icon small density="compact" variant="text" title="Importar JSON" @click="triggerFileInput">
+      <v-btn icon small density="compact" variant="text" title="Importar JSON" id="btn-chess-history-import" @click="triggerFileInput">
         <v-icon size="small">mdi-upload</v-icon>
       </v-btn>
       <input ref="fileInput" type="file" hidden accept=".json" @change="handleFileImport">

@@ -12,7 +12,7 @@
 
           <v-row dense>
             <v-col cols="12" md="4" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day1-lighten-5-1" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -27,7 +27,7 @@
             </v-col>
 
             <v-col cols="12" md="4" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day1-lighten-5-2" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -42,7 +42,7 @@
             </v-col>
 
             <v-col cols="12" md="4" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day1-lighten-5-3" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>

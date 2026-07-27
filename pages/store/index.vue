@@ -2,14 +2,14 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="6" md="2">
-        <v-text-field
+        <v-text-field id="tf-store-index-filterstore-1"
 v-model="filterStore" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
 
       <v-spacer />
       <v-col cols="auto">
-        <v-btn color="success" class="mb-1 mr-1" @click="$router.push('store/new')">
+        <v-btn color="success" class="mb-1 mr-1" id="btn-store-new" @click="$router.push('store/new')">
           <v-icon>mdi-account-plus</v-icon>
           Nuevo Store
         </v-btn>

@@ -1,5 +1,5 @@
 <template>
-  <v-card
+  <v-card id="card-chess-board-board-card-1"
     flat
     class="board-card mx-auto"
     :class="{ 'rotated': isRotated }"

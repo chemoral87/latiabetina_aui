@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y max-width="400" :close-on-content-click="false">
     <template #activator="{ on, attrs }">
-      <v-btn icon v-bind="attrs" v-on="on">
+      <v-btn icon v-bind="attrs" v-on="on" id="btn-notification-bell">
         <v-badge :content="notificationCount" :value="notificationCount > 0" color="error" overlap>
           <v-icon>mdi-bell</v-icon>
         </v-badge>
@@ -12,7 +12,7 @@
       <v-card-title class="d-flex align-center">
         <span>Notificaciones en Tiempo Real</span>
         <v-spacer></v-spacer>
-        <v-btn icon small @click="clearNotifications">
+        <v-btn icon small id="btn-notification-clear" @click="clearNotifications">
           <v-icon small>mdi-delete</v-icon>
         </v-btn>
       </v-card-title>

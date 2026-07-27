@@ -2,15 +2,15 @@
   <div>
     <v-row dense>
       <v-col cols="12" sm="6">
-        <v-text-field v-model="localLat" label="Latitud" type="number" step="0.0000001" outlined dense
+        <v-text-field id="tf-lifeg-mappi-locallat-1" v-model="localLat" label="Latitud" type="number" step="0.0000001" outlined dense
           hide-details="auto" @input="onCoordChange" />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-text-field v-model="localLng" label="Longitud" type="number" step="0.0000001" outlined dense
+        <v-text-field id="tf-lifeg-mappi-locallng-2" v-model="localLng" label="Longitud" type="number" step="0.0000001" outlined dense
           hide-details="auto" @input="onCoordChange" />
       </v-col>
       <v-col cols="12">
-        <v-text-field v-model="addressQuery" label="Buscar dirección" outlined dense hide-details="auto"
+        <v-text-field id="tf-lifeg-mappi-addressquery-3" v-model="addressQuery" label="Buscar dirección" outlined dense hide-details="auto"
           append-icon="mdi-magnify" placeholder="Ej: Calle Principal #123, Colonia Centro" @click:append="searchAddress"
           @keyup.enter="searchAddress" />
       </v-col>

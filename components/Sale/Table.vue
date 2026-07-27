@@ -1,11 +1,11 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
+  <v-data-table id="dt-sale-table-items-1" :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
     :loading="loading" :must-sort="true" mobile-breakpoint="0" class="elevation-1 xwidth1000">
     <!-- Columna de edición (antes de Número) -->
     <template #[`item.edit`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab small class="my-1" v-bind="attrs" v-on="on" @click="editSale(item)">
+          <v-btn outlined color="primary" fab small class="my-1" v-bind="attrs" v-on="on" id="btn-sale-table-edit" @click="editSale(item)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -41,7 +41,7 @@
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab small class="my-1 mr-1" v-bind="attrs" v-on="on"
+          <v-btn outlined color="primary" fab small class="my-1 mr-1" v-bind="attrs" v-on="on" id="btn-sale-table-view"
             @click="viewDetail(item)">
             <v-icon>mdi-eye</v-icon>
           </v-btn>
@@ -53,7 +53,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="error" fab small class="my-1" v-bind="attrs" v-on="on" @click="deleteSale(item)">
+          <v-btn outlined color="error" fab small class="my-1" v-bind="attrs" v-on="on" id="btn-sale-table-delete" @click="deleteSale(item)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>

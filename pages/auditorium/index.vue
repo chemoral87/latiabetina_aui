@@ -2,15 +2,15 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field id="tf-audit-index-filterauditorium-1" v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro" dense></v-text-field>
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="getAuditoriums()">
+        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-auditorium-refresh" @click="getAuditoriums()">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newAuditorium()">
+        <v-btn color="success" class="mr-1" id="btn-auditorium-new" @click="newAuditorium()">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>

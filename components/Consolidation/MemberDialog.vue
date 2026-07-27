@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="600px">
+  <v-dialog id="dlg-conso-membe-1" :value="true" persistent max-width="600px">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
         <v-spacer />
-        <v-btn icon @click="close">
+        <v-btn icon id="btn-consolidation-memberdialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -14,30 +14,30 @@
         <v-form ref="form" @submit.prevent="save">
           <v-row dense>
             <v-col cols="12" md="4">
-              <v-text-field v-model="item.name" label="Nombre" :disabled="loading" required autofocus />
+              <v-text-field id="tf-conso-membe-item-name-1" v-model="item.name" label="Nombre" :disabled="loading" required autofocus />
             </v-col>
             <v-col cols="12" md="4">
-              <v-text-field v-model="item.last_name" label="Apellido Paterno" :disabled="loading" required />
+              <v-text-field id="tf-conso-membe-item-last_name-2" v-model="item.last_name" label="Apellido Paterno" :disabled="loading" required />
             </v-col>
             <v-col cols="12" md="4">
-              <v-text-field v-model="item.second_last_name" label="Apellido Materno" :disabled="loading" />
+              <v-text-field id="tf-conso-membe-item-second_last_name-3" v-model="item.second_last_name" label="Apellido Materno" :disabled="loading" />
             </v-col>
             <v-col cols="12" md="3" lg="2">
-              <v-text-field v-model="item.years_old" label="Edad" type="number" min="0" :disabled="loading" />
+              <v-text-field id="tf-conso-membe-item-years_old-4" v-model="item.years_old" label="Edad" type="number" min="0" :disabled="loading" />
             </v-col>
             <v-col cols="12" md="3">
-              <v-text-field v-model="item.number_of_children" label="Núm. Hijos" type="number" min="0"
+              <v-text-field id="tf-conso-membe-item-number_of_children-5" v-model="item.number_of_children" label="Núm. Hijos" type="number" min="0"
                 :disabled="loading" />
             </v-col>
             <v-col cols="12" md="4">
-              <v-text-field v-model="item.cellphone" label="Celular" :disabled="loading" />
+              <v-text-field id="tf-conso-membe-item-cellphone-6" v-model="item.cellphone" label="Celular" :disabled="loading" />
             </v-col>
             <v-col cols="12" md="5">
               <v-select v-model="item.marriage_status" :items="marriageStatuses" label="Estado Civil"
                 :disabled="loading" />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.address" label="Dirección" :disabled="loading" @keyup.enter="save" />
+              <v-text-field id="tf-conso-membe-item-address-7" v-model="item.address" label="Dirección" :disabled="loading" @keyup.enter="save" />
             </v-col>
           </v-row>
         </v-form>
@@ -45,8 +45,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" text :disabled="loading" @click="close">Cancelar</v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">Guardar</v-btn>
+        <v-btn color="primary" text :disabled="loading" id="btn-consolidation-memberdialog-cancel" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" id="btn-consolidation-memberdialog-save" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

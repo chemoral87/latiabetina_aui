@@ -70,6 +70,7 @@
         color="primary"
         :disabled="selectedLevels.length === 0 || maxQuestions === 0"
         :loading="starting"
+        id="btn-crsqi-start"
         @click="$emit('start')"
         class="px-10 rounded-lg"
         elevation="4"

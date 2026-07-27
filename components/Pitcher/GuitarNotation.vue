@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-0">
+  <v-card id="card-pitch-guita-1" class="pa-0">
     <v-card-title class="text-h6 mb-2">
       Diapasón de Guitarra
       <v-chip v-if="currentNote" color="primary" class="ml-2" small>Nota: {{ currentNote }}</v-chip>

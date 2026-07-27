@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+  <v-data-table id="dt-audit-table-items-1"
     fixed-header
     :page.sync="page"
     dense
@@ -14,13 +14,13 @@
     @page-count="pageCount = $event"
   >
     <template #[`item.actions`]="{ item }">
-      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('edit', item)">
+      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small id="btn-auditorium-table-edit" @click="$emit('edit', item)">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn title="Editar Auditorio" outlined class="mr-1 my-1" color="success" fab small @click="$emit('layout', item)">
+      <v-btn title="Editar Auditorio" outlined class="mr-1 my-1" color="success" fab small id="btn-auditorium-table-layout" @click="$emit('layout', item)">
         <v-icon>mdi-seat</v-icon>
       </v-btn>
-      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small @click="$emit('delete', item)">
+      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small id="btn-auditorium-table-delete" @click="$emit('delete', item)">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </template>

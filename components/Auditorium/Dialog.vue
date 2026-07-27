@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="400px">
+  <v-dialog id="dlg-audit-dialo-1" :value="true" persistent max-width="400px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="primary">mdi-seat</v-icon>
         {{ formTitle }}
         <v-spacer />
-        <v-btn icon x-small @click="close">
+        <v-btn icon x-small id="btn-auditorium-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -17,7 +17,7 @@
               <organization-select v-model="item.org_id" class="mb-2" hide-details :permission="'auditorium-index'" hide-one outlined :rules="[$vrules.required]" dense />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.name" dense label="Nombre" :error-messages="errors.name" :disabled="loading" required autofocus @keyup.enter="save" />
+              <v-text-field id="tf-audit-dialo-item-name-1" v-model="item.name" dense label="Nombre" :error-messages="errors.name" :disabled="loading" required autofocus @keyup.enter="save" />
             </v-col>
           </v-row>
         </v-form>
@@ -25,11 +25,11 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" :disabled="loading" @click="close">
+        <v-btn color="primary" outlined class="mr-2" :disabled="loading" id="btn-auditorium-dialog-cancel" @click="close">
           <v-icon left>mdi-close</v-icon>
           Cancelar
         </v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" id="btn-auditorium-dialog-save" @click="save">
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>

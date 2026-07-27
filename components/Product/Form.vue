@@ -3,7 +3,7 @@
     <!-- Section 1: Información básica -->
     <v-row dense>
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-produ-form-1" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-information-outline</v-icon>
             Información del producto
@@ -15,11 +15,11 @@
               </v-col>
 
               <v-col cols="12">
-                <v-text-field v-model="item.name" label="Nombre" outlined dense :error-messages="errors.name" required />
+                <v-text-field id="tf-produ-form-item-name-1" v-model="item.name" label="Nombre" outlined dense :error-messages="errors.name" required />
               </v-col>
 
               <v-col cols="12" md="6">
-                <v-text-field v-model="item.sku" label="SKU" outlined dense :error-messages="errors.sku" />
+                <v-text-field id="tf-produ-form-item-sku-2" v-model="item.sku" label="SKU" outlined dense :error-messages="errors.sku" />
               </v-col>
 
               <v-col cols="12">
@@ -34,7 +34,7 @@
     <!-- Section 2: Precio, existencias e imagen -->
     <v-row dense class="mt-4">
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-produ-form-2" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-currency-usd</v-icon>
             Precio y existencias
@@ -45,15 +45,15 @@
               <v-col cols="12" md="6">
                 <v-row dense>
                   <v-col cols="12" sm="6">
-                    <v-text-field v-model="item.price" label="Precio" type="number" placeholder="0" outlined dense :error-messages="errors.price" required class="no-spinners" />
+                    <v-text-field id="tf-produ-form-item-price-3" v-model="item.price" label="Precio" type="number" placeholder="0" outlined dense :error-messages="errors.price" required class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
-                    <v-text-field v-model="item.stock" label="Stock" type="number" placeholder="0" outlined dense :error-messages="errors.stock" required class="no-spinners" />
+                    <v-text-field id="tf-produ-form-item-stock-4" v-model="item.stock" label="Stock" type="number" placeholder="0" outlined dense :error-messages="errors.stock" required class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
-                    <v-text-field v-model="item.order" label="Orden" type="number" placeholder="0" outlined dense :error-messages="errors.order" class="no-spinners" />
+                    <v-text-field id="tf-produ-form-item-order-5" v-model="item.order" label="Orden" type="number" placeholder="0" outlined dense :error-messages="errors.order" class="no-spinners" />
                   </v-col>
 
                   <v-col cols="12" sm="6">
@@ -93,13 +93,13 @@
     <!-- Section 4: Acciones -->
     <v-row dense class="mt-4">
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-produ-form-3" outlined>
           <v-card-text class="d-flex justify-end pa-4 flex-wrap">
-            <v-btn color="primary" outlined class="mr-2 mb-2 mb-sm-0" :disabled="loading || imageLoading" @click="close">
+            <v-btn color="primary" outlined class="mr-2 mb-2 mb-sm-0" :disabled="loading || imageLoading" id="btn-product-form-cancel" @click="close">
               <v-icon left>mdi-close</v-icon>
               Cancelar
             </v-btn>
-            <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" @click="save">
+            <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" id="btn-product-form-save" @click="save">
               <v-icon left>mdi-content-save</v-icon>
               Guardar
             </v-btn>

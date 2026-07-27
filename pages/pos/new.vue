@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <v-card outlined class="pa-4">
+        <v-card id="card-pos-new-1" outlined class="pa-4">
           <div class="text-subtitle-1 font-weight-bold mb-4">Nuevo artículo</div>
           <v-form ref="form" v-model="valid">
             <v-row dense>
@@ -10,16 +10,16 @@
                 <organization-select v-model="product.org_id" permission="product-insert" hide-one outlined dense required />
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field v-model="product.name" label="Nombre" outlined dense required />
+                <v-text-field id="tf-pos-new-product-name-1" v-model="product.name" label="Nombre" outlined dense required />
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field v-model="product.sku" label="SKU" outlined dense />
+                <v-text-field id="tf-pos-new-product-sku-2" v-model="product.sku" label="SKU" outlined dense />
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field v-model="product.price" label="Precio" type="number" outlined dense required />
+                <v-text-field id="tf-pos-new-product-price-3" v-model="product.price" label="Precio" type="number" outlined dense required />
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field v-model="product.stock" label="Stock" type="number" outlined dense required />
+                <v-text-field id="tf-pos-new-product-stock-4" v-model="product.stock" label="Stock" type="number" outlined dense required />
               </v-col>
               <v-col cols="12">
                 <v-textarea v-model="product.description" label="Descripción" outlined dense rows="3" />
@@ -28,8 +28,8 @@
           </v-form>
 
           <div class="d-flex justify-end">
-            <v-btn text @click="goBack">Cancelar</v-btn>
-            <v-btn color="primary" class="ml-2" :loading="saving" @click="saveProduct">Guardar</v-btn>
+            <v-btn text id="btn-pos-new-cancel" @click="goBack">Cancelar</v-btn>
+            <v-btn color="primary" class="ml-2" :loading="saving" id="btn-pos-new-save" @click="saveProduct">Guardar</v-btn>
           </div>
         </v-card>
       </v-col>

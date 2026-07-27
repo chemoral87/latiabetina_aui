@@ -1,11 +1,11 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total"
+  <v-data-table id="dt-conso-table-items-1" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total"
     :loading="loading" dense mobile-breakpoint="0" :must-sort="true" class="elevation-1">
 
     <template #[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="success" fab class="mr-1" v-bind="attrs" x-small v-on="on" @click="viewSheet(item)">
+          <v-btn outlined color="success" fab class="mr-1" v-bind="attrs" x-small v-on="on" id="btn-consolidation-table-view" @click="viewSheet(item)">
             <v-icon small>mdi-clipboard-list</v-icon>
           </v-btn>
         </template>
@@ -14,7 +14,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn outlined color="primary" fab class="mr-1" x-small v-bind="attrs" v-on="on" @click="editSheet(item)">
+          <v-btn outlined color="primary" fab class="mr-1" x-small v-bind="attrs" v-on="on" id="btn-consolidation-table-edit" @click="editSheet(item)">
             <v-icon small>mdi-pencil</v-icon>
           </v-btn>
         </template>
@@ -23,7 +23,7 @@
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn x-small outlined color="error" fab v-bind="attrs" v-on="on" @click="deleteSheet(item)">
+          <v-btn x-small outlined color="error" fab v-bind="attrs" v-on="on" id="btn-consolidation-table-delete" @click="deleteSheet(item)">
             <v-icon small>mdi-delete</v-icon>
           </v-btn>
         </template>

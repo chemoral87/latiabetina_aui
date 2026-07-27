@@ -25,7 +25,7 @@
 
       <!-- DatePicker -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-1" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="blue">mdi-calendar</v-icon>
             MyDatePicker
@@ -47,11 +47,11 @@
             </div>
           </v-card-text>
           <v-card-actions class="pt-0 px-4 pb-3">
-            <v-btn small outlined color="error" @click="date = null">
+            <v-btn id="btn-my-date-clear" small outlined color="error" @click="date = null">
               <v-icon x-small left>mdi-close</v-icon>
               Limpiar
             </v-btn>
-            <v-btn small outlined color="primary" @click="date = '2026-07-21'">
+            <v-btn id="btn-my-date-today" small outlined color="primary" @click="date = '2026-07-21'">
               <v-icon x-small left>mdi-calendar-today</v-icon>
               Hoy
             </v-btn>
@@ -61,7 +61,7 @@
 
       <!-- DateRange -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-2" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="blue">mdi-calendar-range</v-icon>
             MyDateRange
@@ -77,7 +77,7 @@
             </div>
           </v-card-text>
           <v-card-actions class="pt-0 px-4 pb-3">
-            <v-btn small outlined color="error" @click="dateRange = []">
+            <v-btn id="btn-my-daterange-clear" small outlined color="error" @click="dateRange = []">
               <v-icon x-small left>mdi-close</v-icon>
               Limpiar
             </v-btn>
@@ -87,7 +87,7 @@
 
       <!-- TimePicker -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-3" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="blue">mdi-clock-outline</v-icon>
             MyTimePicker
@@ -103,11 +103,11 @@
             </div>
           </v-card-text>
           <v-card-actions class="pt-0 px-4 pb-3">
-            <v-btn small outlined color="error" @click="time = null">
+            <v-btn id="btn-my-time-clear" small outlined color="error" @click="time = null">
               <v-icon x-small left>mdi-close</v-icon>
               Limpiar
             </v-btn>
-            <v-btn small outlined color="primary" @click="time = '14:30'">
+            <v-btn id="btn-my-time-set" small outlined color="primary" @click="time = '14:30'">
               <v-icon x-small left>mdi-clock</v-icon>
               14:30
             </v-btn>
@@ -127,7 +127,7 @@
 
       <!-- PreviewImage -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-4" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="green">mdi-image-eye</v-icon>
             MyPreviewImage
@@ -136,19 +136,19 @@
           <v-card-text class="pt-4">
             <MyPreviewImage :src="previewSrc" :loading="previewLoading" :delay-seconds="previewDelay" max-height="160" />
             <div class="mt-3">
-              <v-text-field v-model="previewSrc" label="URL de imagen" dense outlined hide-details placeholder="https://..." />
+              <v-text-field id="tf-my-index-previewsrc-1" v-model="previewSrc" label="URL de imagen" dense outlined hide-details placeholder="https://..." />
             </div>
             <div class="mt-2 d-flex align-center">
               <v-switch v-model="previewLoading" dense hide-details label="Forzar loading" class="mt-0 pt-0 mr-3" />
-              <v-text-field v-model.number="previewDelay" label="Delay (s)" dense outlined hide-details style="max-width: 100px" type="number" min="0" max="10" />
+              <v-text-field id="tf-my-index-delay-s-2" v-model.number="previewDelay" label="Delay (s)" dense outlined hide-details style="max-width: 100px" type="number" min="0" max="10" />
             </div>
           </v-card-text>
           <v-card-actions class="pt-0 px-4 pb-3">
-            <v-btn small outlined color="primary" @click="previewSrc = 'https://picsum.photos/seed/test/400/300'">
+            <v-btn id="btn-my-preview-load" small outlined color="primary" @click="previewSrc = 'https://picsum.photos/seed/test/400/300'">
               <v-icon x-small left>mdi-image</v-icon>
               Cargar ejemplo
             </v-btn>
-            <v-btn small outlined color="error" @click="previewSrc = ''">
+            <v-btn id="btn-my-preview-clear" small outlined color="error" @click="previewSrc = ''">
               <v-icon x-small left>mdi-close</v-icon>
               Limpiar
             </v-btn>
@@ -158,7 +158,7 @@
 
       <!-- Uploadimage -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-5" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="info">mdi-camera</v-icon>
             MyUploadimage
@@ -183,7 +183,7 @@
 
       <!-- UploadimageCrop -->
       <v-col cols="12" md="4">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-6" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="green">mdi-image-crop</v-icon>
             MyUploadimageCrop
@@ -215,7 +215,7 @@
 
       <!-- DragPanel -->
       <v-col cols="12" md="6">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-7" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="orange">mdi-drag</v-icon>
             MyDragPanel
@@ -225,13 +225,13 @@
             <p class="text-caption grey--text mb-3">Panel flotante que se puede arrastrar. Aparece animado desde abajo.</p>
             <v-row dense>
               <v-col cols="auto">
-                <v-btn color="primary" @click="dragPanelVisible = true">
+                <v-btn id="btn-my-drag-open" color="primary" @click="dragPanelVisible = true">
                   <v-icon left>mdi-window-maximize</v-icon>
                   Abrir panel
                 </v-btn>
               </v-col>
               <v-col cols="auto">
-                <v-btn color="error" outlined @click="dragPanelVisible = false">
+                <v-btn id="btn-my-drag-close" color="error" outlined @click="dragPanelVisible = false">
                   <v-icon left>mdi-close</v-icon>
                   Cerrar
                 </v-btn>
@@ -249,7 +249,7 @@
 
       <!-- Loading -->
       <v-col cols="12" md="6">
-        <v-card elevation="4" hover class="rounded-lg h-100">
+        <v-card id="card-my-index-8" elevation="4" hover class="rounded-lg h-100">
           <v-card-title class="py-3 text-subtitle-1 font-weight-bold">
             <v-icon left color="orange">mdi-loading</v-icon>
             MyLoading
@@ -259,19 +259,19 @@
             <p class="text-caption grey--text mb-3">Overlay de carga con spinner y mensaje personalizable.</p>
             <v-row dense>
               <v-col cols="auto">
-                <v-btn color="primary" @click="triggerLoading">
+                <v-btn id="btn-my-loading-show" color="primary" @click="triggerLoading">
                   <v-icon left>mdi-play</v-icon>
                   Mostrar 3s
                 </v-btn>
               </v-col>
               <v-col cols="auto">
-                <v-btn color="error" outlined @click="loadingVisible = false">
+                <v-btn id="btn-my-loading-close" color="error" outlined @click="loadingVisible = false">
                   <v-icon left>mdi-stop</v-icon>
                   Cerrar
                 </v-btn>
               </v-col>
             </v-row>
-            <v-text-field v-model="loadingMessage" label="Mensaje" dense outlined hide-details class="mt-2" />
+            <v-text-field id="tf-my-index-loadingmessage-3" v-model="loadingMessage" label="Mensaje" dense outlined hide-details class="mt-2" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -295,7 +295,7 @@
           <v-icon small class="mr-2">mdi-clock</v-icon>
           <span class="text-caption">Hora: {{ time || "—" }}</span>
         </div>
-        <v-btn block small outlined color="error" @click="dragPanelVisible = false" class="mt-2">
+        <v-btn id="btn-my-dragpanel-close" block small outlined color="error" @click="dragPanelVisible = false" class="mt-2">
           <v-icon x-small left>mdi-close</v-icon>
           Cerrar panel
         </v-btn>
@@ -308,12 +308,12 @@
     <!-- ─── State Observer (debug panel) ──────────────────────── -->
     <v-row class="mt-4">
       <v-col cols="12">
-        <v-card elevation="2" class="rounded-lg">
+        <v-card id="card-my-index-9" elevation="2" class="rounded-lg">
           <v-card-title class="py-2 text-subtitle-2 font-weight-bold grey lighten-3">
             <v-icon left small>mdi-code-json</v-icon>
             Estado global de los componentes
             <v-spacer />
-            <v-btn x-small outlined @click="resetAll">
+            <v-btn id="btn-my-reset-all" x-small outlined @click="resetAll">
               <v-icon x-small left>mdi-restore</v-icon>
               Resetear todo
             </v-btn>

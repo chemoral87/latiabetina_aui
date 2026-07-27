@@ -3,7 +3,7 @@
     <v-row dense>
       <!-- Filters -->
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-life--repor-1" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-file-chart</v-icon>
             Reportes - Redes de Vida
@@ -20,15 +20,15 @@
                   :items="lifeGroups" item-text="name" item-value="id" clearable hide-details="auto" />
               </v-col>
               <v-col cols="12" sm="2">
-                <v-text-field v-model="filterFrom" label="Desde" type="date" outlined dense
+                <v-text-field id="tf-life--repor-filterfrom-1" v-model="filterFrom" label="Desde" type="date" outlined dense
                   hide-details="auto" />
               </v-col>
               <v-col cols="12" sm="2">
-                <v-text-field v-model="filterTo" label="Hasta" type="date" outlined dense
+                <v-text-field id="tf-life--repor-filterto-2" v-model="filterTo" label="Hasta" type="date" outlined dense
                   hide-details="auto" />
               </v-col>
               <v-col cols="12" sm="1" class="d-flex align-center">
-                <v-btn color="primary" small @click="loadReport">
+                <v-btn color="primary" small id="btn-lifegroup-report-load" @click="loadReport">
                   <v-icon left small>mdi-magnify</v-icon>
                   Cargar
                 </v-btn>
@@ -37,15 +37,15 @@
 
             <v-row dense class="mt-4">
               <v-col cols="12" class="d-flex">
-                <v-btn color="success" class="mr-2" :disabled="!reportData" @click="downloadReport('csv')">
+                <v-btn color="success" class="mr-2" :disabled="!reportData" id="btn-lifegroup-report-csv" @click="downloadReport('csv')">
                   <v-icon left>mdi-file-delimited</v-icon>
                   CSV
                 </v-btn>
-                <v-btn color="primary" class="mr-2" :disabled="!reportData" @click="downloadReport('xls')">
+                <v-btn color="primary" class="mr-2" :disabled="!reportData" id="btn-lifegroup-report-xls" @click="downloadReport('xls')">
                   <v-icon left>mdi-file-excel</v-icon>
                   Excel
                 </v-btn>
-                <v-btn color="error" :disabled="!reportData" @click="downloadReport('pdf')">
+                <v-btn color="error" :disabled="!reportData" id="btn-lifegroup-report-pdf" @click="downloadReport('pdf')">
                   <v-icon left>mdi-file-pdf</v-icon>
                   PDF
                 </v-btn>
@@ -57,7 +57,7 @@
 
       <!-- Preview Table -->
       <v-col cols="12" v-if="reportData">
-        <v-card outlined>
+        <v-card id="card-life--repor-2" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-table</v-icon>
             Vista Previa
@@ -65,7 +65,7 @@
             <v-chip small>{{ reportData.rows?.length || 0 }} registros</v-chip>
           </v-card-title>
           <v-card-text>
-            <v-data-table
+            <v-data-table id="dt-life--repor-tableitems-1"
               dense
               mobile-breakpoint="0"
               :headers="tableHeaders"
@@ -84,7 +84,7 @@
 
       <!-- Empty state -->
       <v-col cols="12" v-else>
-        <v-card outlined>
+        <v-card id="card-life--repor-3" outlined>
           <v-card-text class="text-center py-8">
             <v-icon size="64" color="grey lighten-1">mdi-file-chart</v-icon>
             <div class="text-h6 grey--text mt-2">Seleccione un tipo de reporte</div>

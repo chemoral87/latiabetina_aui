@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-data-table dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1 xwidth1200" @update:sort-by="sortTable">
+    <v-data-table id="dt-organ-table-items-1" dense mobile-breakpoint="0" :must-sort="true" :headers="headers" :items="items" :options.sync="optionsTable" :server-items-length="total" class="elevation-1 xwidth1200" @update:sort-by="sortTable">
       <template #[`item.actions`]="{ item }">
-        <v-btn title="Editar" class="ma-1" color="primary" outlined fab small @click="emitAction('edit', item)">
+        <v-btn title="Editar" class="ma-1" color="primary" outlined fab small id="btn-organization-table-edit" @click="emitAction('edit', item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn title="Config" class="ma-1" color="info" outlined fab small @click="emitAction('config', item)">
+        <v-btn title="Config" class="ma-1" color="info" outlined fab small id="btn-organization-table-config" @click="emitAction('config', item)">
           <v-icon>mdi-cog</v-icon>
         </v-btn>
-        <v-btn title="Delete" class="ma-1" color="error" outlined fab small @click="confirmDelete(item)">
+        <v-btn title="Delete" class="ma-1" color="error" outlined fab small id="btn-organization-table-delete" @click="confirmDelete(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>

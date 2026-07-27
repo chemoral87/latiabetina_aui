@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog id="dlg-organ-formd-1" :value="true" persistent width="400px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="primary">{{ iconTitle }}</v-icon>
         {{ formTitle }}
         <v-spacer />
-        <v-btn icon x-small @click="close">
+        <v-btn icon x-small id="btn-organization-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -13,7 +13,7 @@
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-text-field
+            <v-text-field id="tf-organ-formd-item-name-1"
               v-model="item.name"
               label="Nombre"
               :error-messages="errors?.name"
@@ -22,7 +22,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field
+            <v-text-field id="tf-organ-formd-item-short_code-2"
               v-model="item.short_code"
               label="Código"
               :error-messages="errors?.short_code"
@@ -32,7 +32,7 @@
           </v-col>
 
           <v-col cols="12">
-            <v-text-field
+            <v-text-field id="tf-organ-formd-item-description-3"
               v-model="item.description"
               label="Descripción"
               :error-messages="errors?.description"
@@ -44,11 +44,11 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" @click="close">
+        <v-btn color="primary" outlined class="mr-2" id="btn-organization-dialog-cancel" @click="close">
           <v-icon left>mdi-close</v-icon>
           Cancelar
         </v-btn>
-        <v-btn color="primary" @click="save">
+        <v-btn color="primary" id="btn-organization-dialog-save" @click="save">
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>

@@ -3,17 +3,17 @@
     <v-row dense>
       <!-- Filtro de búsqueda -->
       <v-col cols="12" md="3">
-        <v-text-field v-model="filterSale" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field id="tf-pos-sales-index-filtersale-1" v-model="filterSale" append-icon="mdi-magnify" clearable hide-details
           placeholder="Buscar venta..." dense />
       </v-col>
 
       <!-- Botones de acción -->
       <v-col cols="12" md="auto">
-        <v-btn color="primary" :loading="loading" @click="refreshSales">
+        <v-btn id="btn-pos-sales-refresh" color="primary" :loading="loading" @click="refreshSales">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="ml-2" to="/pos">
+        <v-btn id="btn-pos-sales-goto-pos" color="success" class="ml-2" to="/pos">
           <v-icon left>mdi-point-of-sale</v-icon>
           Ir al POS
         </v-btn>

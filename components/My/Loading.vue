@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog :value.sync="value" persistent content content-class="centered-dialog">
+    <v-dialog id="dlg-my-loadi-1" :value.sync="value" persistent content content-class="centered-dialog">
       <v-container fill-height>
         <v-layout column justify-center align-center>
           <v-progress-circular indeterminate :size="70" :width="7" :color="progressColor"></v-progress-circular>

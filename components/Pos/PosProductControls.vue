@@ -1,18 +1,18 @@
 <template>
   <div v-if="quantity === 0" class="pos-ctrl-empty">
-    <v-btn fab small depressed color="primary" class="pos-ctrl-fab" @click="$emit('add')">
+    <v-btn fab small depressed color="primary" class="pos-ctrl-fab" id="btn-pos-controls-add" @click="$emit('add')">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </div>
   <div v-else class="pos-ctrl-filled">
-    <v-btn fab x-small outlined color="error" class="pos-ctrl-delete mr-2" @click="$emit('remove')">
+    <v-btn fab x-small outlined color="error" class="pos-ctrl-delete mr-2" id="btn-pos-controls-remove" @click="$emit('remove')">
       <v-icon small>mdi-delete</v-icon>
     </v-btn>
-    <v-btn fab small depressed color="error" class="pos-ctrl-btn" @click="$emit('decrease')">
+    <v-btn fab small depressed color="error" class="pos-ctrl-btn" id="btn-pos-controls-decrease" @click="$emit('decrease')">
       <v-icon>mdi-minus</v-icon>
     </v-btn>
     <span class="pos-ctrl-qty">{{ quantity }}</span>
-    <v-btn fab small depressed color="success" class="pos-ctrl-btn" @click="$emit('add')">
+    <v-btn fab small depressed color="success" class="pos-ctrl-btn" id="btn-pos-controls-increase" @click="$emit('add')">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </div>

@@ -25,10 +25,10 @@
               </v-col>
 
               <v-col class="text-right">
-                <v-btn color="primary" outlined @click="goBack()">
+                <v-btn id="btn-orgcfg-cancel" color="primary" outlined @click="goBack()">
                   <span>Cancelar</span>
                 </v-btn>
-                <v-btn color="primary" @click="saveOrganizationConfig()">
+                <v-btn id="btn-orgcfg-save" color="primary" @click="saveOrganizationConfig()">
                   <span>Guardar</span>
                 </v-btn>
               </v-col>

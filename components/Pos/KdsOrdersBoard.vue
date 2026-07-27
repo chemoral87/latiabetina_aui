@@ -16,7 +16,7 @@
       <div class="text-h6 mt-4 grey--text">Sin órdenes pendientes</div>
       <div class="text-body-2 grey--text mt-1">Todas las órdenes han sido completadas</div>
       <div class="mt-6">
-        <v-btn outlined color="grey" @click="$emit('reload')">
+        <v-btn outlined color="grey" id="btn-kds-reload" @click="$emit('reload')">
           <v-icon left small>mdi-refresh</v-icon>
           Recargar
         </v-btn>
@@ -47,6 +47,7 @@
                 v-bind="attrs"
                 v-on="on"
                 :color="soundEnabled ? 'orange darken-2' : 'grey'"
+                id="btn-kds-sound"
                 @click="$emit('update:sound-enabled', !soundEnabled)"
               >
                 <v-icon>{{ soundEnabled ? 'mdi-volume-high' : 'mdi-volume-off' }}</v-icon>

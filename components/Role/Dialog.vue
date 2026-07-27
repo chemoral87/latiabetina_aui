@@ -1,29 +1,29 @@
 <template>
-  <v-dialog :value="true" persistent max-width="400px">
+  <v-dialog id="dlg-role-dialo-1" :value="true" persistent max-width="400px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="primary">{{ iconTitle }}</v-icon>
         {{ formTitle }}
         <v-spacer />
-        <v-btn icon x-small @click="close">
+        <v-btn icon x-small id="btn-role-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
       <v-card-text>
         <v-form ref="form" @submit.prevent="save">
-          <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required
+          <v-text-field id="tf-role-dialo-item-name-1" v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required
             autofocus @keyup.enter="save" />
         </v-form>
       </v-card-text>
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" :disabled="loading" @click="close">
+        <v-btn color="primary" outlined class="mr-2" :disabled="loading" id="btn-role-dialog-cancel" @click="close">
           <v-icon left>mdi-close</v-icon>
           Cancelar
         </v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" id="btn-role-dialog-save" @click="save">
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>

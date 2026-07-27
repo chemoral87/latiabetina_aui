@@ -2,7 +2,7 @@
   <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y
     min-width="auto">
     <template #activator="{ on, attrs }">
-      <v-text-field ref="inputField" v-model="formattedDate" :label="label" :prepend-inner-icon="prependIcon" readonly
+      <v-text-field id="tf-my-datep-formatteddate-1" ref="inputField" v-model="formattedDate" :label="label" :prepend-inner-icon="prependIcon" readonly
         :required="required" :rules="rules" :error-messages="errorMessages" v-bind="attrs" v-on="on"
         @click:prepend-inner="on.click" :dense="dense" :outlined="outlined" :hide-details="hideDetails"
         :disabled="disabled" :clearable="clearable" />
@@ -10,11 +10,11 @@
     <v-date-picker v-model="internalValue" @input="onDateSelected" :no-title="noTitle" :scrollable="scrollable"
       :locale="locale">
       <v-spacer></v-spacer>
-      <v-btn color="primary" outlined class="mr-2" @click="clearDate">
+      <v-btn color="primary" outlined class="mr-2" id="btn-my-datepicker-clear" @click="clearDate">
         <v-icon left>mdi-close</v-icon>
         Limpiar
       </v-btn>
-      <v-btn color="primary" @click="setToday">
+      <v-btn color="primary" id="btn-my-datepicker-today" @click="setToday">
         <v-icon left>mdi-calendar-today</v-icon>
         Hoy
       </v-btn>

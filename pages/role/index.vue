@@ -3,17 +3,17 @@
     <v-row dense>
       <!-- Filtro de busqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
+        <v-text-field id="tf-role-index-filterrole-1" v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
           dense />
       </v-col>
 
       <!-- Botones de accion -->
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshRoles">
+        <v-btn id="btn-role-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshRoles">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newRole">
+        <v-btn id="btn-role-new" color="success" class="mr-1" @click="newRole">
           <v-icon left>mdi-plus</v-icon>
           Nuevo Rol
         </v-btn>

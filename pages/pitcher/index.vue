@@ -14,20 +14,20 @@
 
     <v-row dense class="mb-1">
       <v-col cols="6">
-        <v-btn color="primary" block small @click="resetHistory">
+        <v-btn color="primary" block small id="btn-pitcher-reset" @click="resetHistory">
           <v-icon left>mdi-restart</v-icon>
           <span>Reiniciar</span>
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn color="warning" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small
+        <v-btn color="warning" :disabled="!isMicActive || noiseCalibrating" :loading="noiseCalibrating" block small id="btn-pitcher-calibrate"
           @click="calibrateNoise">
           <v-icon left>mdi-tune</v-icon>
           <span>Calibrar Ruido</span>
         </v-btn>
       </v-col>
       <v-col cols="6">
-        <v-btn :color="isMicActive ? 'error' : 'success'" block small @click="toggleMic">
+        <v-btn :color="isMicActive ? 'error' : 'success'" block small id="btn-pitcher-toggle-mic" @click="toggleMic">
           <v-icon left>{{ isMicActive ? "mdi-microphone-off" : "mdi-microphone" }}</v-icon>
           <span>
             {{ isMicActive ? "Silenciar" : "Activar mic" }}

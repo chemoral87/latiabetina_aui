@@ -1,10 +1,10 @@
 <template>
-  <v-card outlined class="d-flex flex-column fill-height" style="position: relative;">
+  <v-card id="card-produ-produ-1" outlined class="d-flex flex-column fill-height" style="position: relative;">
     <div class="product-card__order-btns">
-      <v-btn icon x-small class="order-btn" :disabled="isFirst" @click="$emit('move-left', product)">
+      <v-btn icon x-small class="order-btn" :disabled="isFirst" id="btn-product-card-moveleft" @click="$emit('move-left', product)">
         <v-icon x-small>mdi-chevron-left</v-icon>
       </v-btn>
-      <v-btn icon x-small class="order-btn" :disabled="isLast" @click="$emit('move-right', product)">
+      <v-btn icon x-small class="order-btn" :disabled="isLast" id="btn-product-card-moveright" @click="$emit('move-right', product)">
         <v-icon x-small>mdi-chevron-right</v-icon>
       </v-btn>
     </div>
@@ -69,15 +69,15 @@
     <v-divider></v-divider>
 
     <v-card-actions class="justify-end">
-      <v-btn icon small class="mr-1" @click="$emit('toggle-hidden', product)">
+      <v-btn icon small class="mr-1" id="btn-product-card-toggle" @click="$emit('toggle-hidden', product)">
         <v-icon small :color="product.hidden ? 'warning' : 'grey'">
           {{ product.hidden ? 'mdi-eye-off' : 'mdi-eye' }}
         </v-icon>
       </v-btn>
-      <v-btn icon small color="primary" @click="$emit('edit', product)">
+      <v-btn icon small color="primary" id="btn-product-card-edit" @click="$emit('edit', product)">
         <v-icon small>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn icon small color="error" @click="$emit('delete', product)">
+      <v-btn icon small color="error" id="btn-product-card-delete" @click="$emit('delete', product)">
         <v-icon small>mdi-delete</v-icon>
       </v-btn>
     </v-card-actions>

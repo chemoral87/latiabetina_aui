@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+  <v-data-table id="dt-lifeg-table-items-1"
     fixed-header
     :page.sync="page"
     dense
@@ -28,13 +28,13 @@
     </template>
 
     <template #[`item.actions`]="{ item }">
-      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small @click="$emit('edit', item)">
+      <v-btn title="Editar" outlined class="mr-1 my-1" color="primary" fab small id="btn-lifegroup-table-edit" @click="$emit('edit', item)">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
-      <v-btn title="Sesiones" outlined class="mr-1 my-1" color="success" fab small @click="$emit('sessions', item)">
+      <v-btn title="Sesiones" outlined class="mr-1 my-1" color="success" fab small id="btn-lifegroup-table-sessions" @click="$emit('sessions', item)">
         <v-icon>mdi-calendar</v-icon>
       </v-btn>
-      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small @click="$emit('delete', item)">
+      <v-btn title="Eliminar" outlined color="error" class="my-1" fab small id="btn-lifegroup-table-delete" @click="$emit('delete', item)">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </template>

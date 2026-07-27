@@ -7,26 +7,26 @@
         <!-- Subsection navigation - only show when subsection is selected -->
         <template v-if="selectedSubsection">
           <!-- <span class="text-body">{{ selectedSubsection.name }}</span> -->
-          <v-btn color="primary" small prepend-icon="mdi-arrow-left" @click="goBackToFullView">Main</v-btn>
-          <v-btn color="primary" x-small fab class="ml-1" @click="previousSubsection">
+          <v-btn color="primary" small prepend-icon="mdi-arrow-left" id="btn-auditorium-stageop-main" @click="goBackToFullView">Main</v-btn>
+          <v-btn color="primary" x-small fab class="ml-1" id="btn-auditorium-stageop-prev-sub" @click="previousSubsection">
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>
-          <v-btn color="primary" x-small fab class="ml-1" @click="nextSubsection">
+          <v-btn color="primary" x-small fab class="ml-1" id="btn-auditorium-stageop-next-sub" @click="nextSubsection">
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </template>
 
 
-        <v-btn title="Fit Width" color="secondary" small class="ml-0" @click="fitToWidth">
+        <v-btn title="Fit Width" color="secondary" small class="ml-0" id="btn-auditorium-stageop-fit-width" @click="fitToWidth">
           <v-icon>mdi-arrow-expand-horizontal</v-icon>
           Fit
         </v-btn>
-        <v-btn title="Fit Height" color="secondary" small class="ml-0" @click="fitToHeight">
+        <v-btn title="Fit Height" color="secondary" small class="ml-0" id="btn-auditorium-stageop-fit-height" @click="fitToHeight">
           <v-icon>mdi-arrow-expand-vertical</v-icon>
           Fit
         </v-btn>
         <v-btn v-if="selectedSubsection" title="Historial de asientos" color="success" small class="ml-1"
-          @click="openHistory">
+          id="btn-auditorium-stageop-history" @click="openHistory">
           <v-icon left>mdi-history</v-icon>
           Hist
         </v-btn>

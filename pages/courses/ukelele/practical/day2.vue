@@ -40,7 +40,7 @@
             <p class="text-body-1 grey--text text--darken-2 mt-2">
               Dominas perfectamente la equivalencia entre notación con sostenidos y bemoles. ¡Excelente!
             </p>
-            <v-btn color="primary" class="mt-4" @click="resetMatchGame">
+            <v-btn id="btn-uked2-match-retry" color="primary" class="mt-4" @click="resetMatchGame">
               <v-icon left>mdi-refresh</v-icon>
               Jugar de nuevo
             </v-btn>
@@ -58,7 +58,7 @@
                 </div>
                 <transition-group name="match-list" tag="div">
                   <div v-for="note in unmatchedLatin" :key="note.latin" class="mb-2">
-                    <v-btn block depressed :color="getLatinBtnColor(note.latin)"
+                    <v-btn id="btn-uked2-latin-note" block depressed :color="getLatinBtnColor(note.latin)"
                       :dark="selectedLatinName === note.latin || wrongLatinName === note.latin" class="match-note-btn"
                       :class="{
                         'match-selected-left': selectedLatinName === note.latin && wrongLatinName === null,
@@ -86,7 +86,7 @@
                 </div>
                 <transition-group name="match-list" tag="div">
                   <div v-for="note in unmatchedEnglish" :key="note.english" class="mb-2">
-                    <v-btn block depressed :color="getEnglishBtnColor(note.english)"
+                    <v-btn id="btn-uked2-english-note" block depressed :color="getEnglishBtnColor(note.english)"
                       :dark="selectedEnglishName === note.english || wrongEnglishName === note.english"
                       class="match-note-btn" :class="{
                         'match-selected-right': selectedEnglishName === note.english && wrongEnglishName === null,
@@ -132,7 +132,7 @@
               <!-- Scale Step Visualizer (Horizontal Buttons) -->
               <div class="d-flex align-center justify-center flex-wrap mb-6 py-2 px-1 rounded grey lighten-4" style="gap: 8px;">
                 <template v-for="(note, index) in chromaticScaleNotes">
-                  <v-btn fab small :color="selectedChromaticNoteIndex === index ? 'primary' : 'grey lighten-2'"
+                  <v-btn id="btn-uked2-chromatic-note" fab small :color="selectedChromaticNoteIndex === index ? 'primary' : 'grey lighten-2'"
                     class="elevation-2 font-weight-black text-subtitle-1"
                     :class="selectedChromaticNoteIndex === index ? 'white--text scale-up-pulse' : 'grey--text text--darken-3'"
                     style="width: 44px; height: 44px; position: relative; flex-shrink: 0;" @click="selectChromaticNote(index)"
@@ -267,13 +267,13 @@
               </v-card>
 
               <div class="d-flex flex-wrap gap-2">
-                <v-btn :color="isPlayingChromaticScale ? 'red darken-2' : 'primary'" class="mr-2 mb-2 white--text"
+                <v-btn id="btn-uked2-chromatic-play" :color="isPlayingChromaticScale ? 'red darken-2' : 'primary'" class="mr-2 mb-2 white--text"
                   @click="playChromaticScaleSequence">
                   <v-icon left>{{ isPlayingChromaticScale ? 'mdi-stop' : 'mdi-play-circle' }}</v-icon>
                   {{ isPlayingChromaticScale ? 'Detener escala' : 'Reproducir Escala' }}
                 </v-btn>
 
-                <v-btn outlined color="grey darken-2" class="mb-2" @click="playTone(selectedChromaticNote.frequency, 1.2)">
+                <v-btn id="btn-uked2-chromatic-sound" outlined color="grey darken-2" class="mb-2" @click="playTone(selectedChromaticNote.frequency, 1.2)">
                   <v-icon left>mdi-music-note</v-icon>
                   Sonar Nota Actual
                 </v-btn>
@@ -402,7 +402,7 @@
 
           <!-- Scale selector buttons -->
           <div class="d-flex flex-wrap justify-center mb-6" style="gap: 10px;">
-            <v-btn v-for="(scale, index) in worldScales" :key="scale.key"
+            <v-btn id="btn-uked2-world-scale" v-for="(scale, index) in worldScales" :key="scale.key"
               :color="selectedWorldScaleIndex === index ? scale.color : 'grey lighten-3'"
               :dark="selectedWorldScaleIndex === index" :outlined="selectedWorldScaleIndex !== index"
               class="font-weight-bold" rounded large @click="selectWorldScale(index)">
@@ -430,7 +430,7 @@
               <!-- Scale Step Visualizer (Colored Buttons) -->
               <div class="d-flex align-center justify-center flex-wrap mb-6 py-3 px-2 rounded grey lighten-4" style="gap: 10px;">
                 <template v-for="(note, index) in currentWorldScale.notes">
-                  <v-btn fab small :color="selectedWorldNoteIndex === index ? currentWorldScale.color : `${currentWorldScale.color} lighten-4`"
+                  <v-btn id="btn-uked2-world-note" fab small :color="selectedWorldNoteIndex === index ? currentWorldScale.color : `${currentWorldScale.color} lighten-4`"
                     :dark="selectedWorldNoteIndex === index"
                     class="elevation-2 font-weight-black text-subtitle-1"
                     :class="selectedWorldNoteIndex === index ? 'scale-up-pulse' : ''"
@@ -478,13 +478,13 @@
               </v-card>
 
               <div class="d-flex flex-wrap gap-2">
-                <v-btn :color="isPlayingWorldScale ? 'red darken-2' : currentWorldScale.color" class="mr-2 mb-2 white--text"
+                <v-btn id="btn-uked2-world-play" :color="isPlayingWorldScale ? 'red darken-2' : currentWorldScale.color" class="mr-2 mb-2 white--text"
                   @click="playWorldScaleSequence">
                   <v-icon left>{{ isPlayingWorldScale ? 'mdi-stop' : 'mdi-play-circle' }}</v-icon>
                   {{ isPlayingWorldScale ? 'Detener escala' : `Reproducir Escala ${currentWorldScale.name}` }}
                 </v-btn>
 
-                <v-btn outlined color="grey darken-2" class="mb-2" @click="playTone(currentWorldNote.frequency, 1.2)">
+                <v-btn id="btn-uked2-world-sound" outlined color="grey darken-2" class="mb-2" @click="playTone(currentWorldNote.frequency, 1.2)">
                   <v-icon left>mdi-music-note</v-icon>
                   Sonar Nota Actual
                 </v-btn>

@@ -3,21 +3,21 @@
     <v-row dense>
       <!-- Filtro de busqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field id="tf-churc-index-filterchurchevent-1" v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
           placeholder="Buscar evento..." dense />
       </v-col>
 
       <!-- Botones de accion -->
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshChurchEvents">
+        <v-btn id="btn-chrcev-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshChurchEvents">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newChurchEvent">
+        <v-btn id="btn-chrcev-new" color="success" class="mr-1" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn outlined color="primary" to="/church-event/calendar">
+        <v-btn id="btn-chrcev-calendar" outlined color="primary" to="/church-event/calendar">
           <v-icon left>mdi-calendar-month</v-icon>
           Calendario
         </v-btn>

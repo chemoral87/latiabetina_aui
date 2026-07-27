@@ -42,7 +42,7 @@
     <!-- Botón de reset global -->
     <v-row dense justify="center" class="mt-2">
       <v-col cols="12">
-        <v-btn color="secondary" block small rounded elevation="2" @click="resetAllTimers">
+        <v-btn color="secondary" block small rounded elevation="2" id="btn-timer-reset-all" @click="resetAllTimers">
           <v-icon left small>mdi-refresh</v-icon>
           Resetear Todos
         </v-btn>

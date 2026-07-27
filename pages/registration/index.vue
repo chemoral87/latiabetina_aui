@@ -3,25 +3,25 @@
     <v-form ref="formRegistration" @submit.prevent="save">
       <v-row dense>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.name" label="Nombre" :rules="[rules.required]" :error-messages="errors?.name" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-name-1" v-model="item.name" label="Nombre" :rules="[rules.required]" :error-messages="errors?.name" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.last_name" label="Ap. Paterno" :rules="[rules.required]" :error-messages="errors?.last_name" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-last_name-2" v-model="item.last_name" label="Ap. Paterno" :rules="[rules.required]" :error-messages="errors?.last_name" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.second_last_name" label="Ap. materno" :error-messages="errors?.second_last_name" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-second_last_name-3" v-model="item.second_last_name" label="Ap. materno" :error-messages="errors?.second_last_name" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.email" :rules="[rules.required]" label="E-mail" :error-messages="errors?.email" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-email-4" v-model="item.email" :rules="[rules.required]" label="E-mail" :error-messages="errors?.email" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.cellphone" label="Celular" :error-messages="errors?.cellphone" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-cellphone-5" v-model="item.cellphone" label="Celular" :error-messages="errors?.cellphone" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.password" :rules="[rules.required]" label="Contraseña" type="password" :error-messages="errors?.password" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-password-6" v-model="item.password" :rules="[rules.required]" label="Contraseña" type="password" :error-messages="errors?.password" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
-          <v-text-field v-model="item.password_confirmation" :rules="[rules.required]" label="Confirma Contraseña" type="password" @keyup.enter="save"></v-text-field>
+          <v-text-field id="tf-regis-index-item-password_confirmation-7" v-model="item.password_confirmation" :rules="[rules.required]" label="Confirma Contraseña" type="password" @keyup.enter="save"></v-text-field>
         </v-col>
         <v-col cols="auto"></v-col>
       </v-row>
@@ -31,8 +31,8 @@
           <span class="red--text">
             {{ errors?.status }}
           </span>
-          <v-btn color="primary" class="mr-1" outlined @click="gotoMain">Cancelar</v-btn>
-          <v-btn color="primary" type="submit">Guardar</v-btn>
+          <v-btn id="btn-reg-cancel" color="primary" class="mr-1" outlined @click="gotoMain">Cancelar</v-btn>
+          <v-btn id="btn-reg-save" color="primary" type="submit">Guardar</v-btn>
         </v-col>
       </v-row>
     </v-form>

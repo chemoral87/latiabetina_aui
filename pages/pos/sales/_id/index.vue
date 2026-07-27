@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="8" offset-md="2">
-        <v-card outlined class="pa-4">
+        <v-card id="card-pos-sales-index-1" outlined class="pa-4">
           <div class="d-flex align-center mb-4">
             <v-icon left color="primary" large>mdi-receipt-text</v-icon>
             <div>
@@ -82,7 +82,7 @@
           <v-divider class="my-4" />
 
           <div class="d-flex justify-end">
-            <v-btn outlined color="grey" @click="goBack">
+            <v-btn outlined color="grey" id="btn-possid-back" @click="goBack">
               <v-icon left small>mdi-arrow-left</v-icon>
               Regresar
             </v-btn>

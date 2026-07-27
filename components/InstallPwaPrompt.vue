@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Modal para Android (Chrome) -->
-    <v-dialog v-model="showAndroidPrompt" max-width="400" persistent>
+    <v-dialog id="dlg-installpwaprompt-showandroidprompt-1" v-model="showAndroidPrompt" max-width="400" persistent>
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon color="primary" class="mr-2">mdi-cellphone-arrow-down</v-icon>
@@ -13,14 +13,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="grey" @click="dismissAndroid">Quizás más tarde</v-btn>
-          <v-btn text color="primary" font-weight-bold @click="installAndroid">Instalar</v-btn>
+          <v-btn text color="grey" id="btn-installpwa-android-later" @click="dismissAndroid">Quizás más tarde</v-btn>
+          <v-btn text color="primary" font-weight-bold id="btn-installpwa-android-install" @click="installAndroid">Instalar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Modal para iOS (Safari) -->
-    <v-dialog v-model="showIosPrompt" max-width="400" persistent>
+    <v-dialog id="dlg-installpwaprompt-showiosprompt-2" v-model="showIosPrompt" max-width="400" persistent>
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon color="primary" class="mr-2">mdi-apple</v-icon>
@@ -37,14 +37,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="dismissIos">Entendido</v-btn>
+          <v-btn text color="primary" id="btn-installpwa-ios-gotit" @click="dismissIos">Entendido</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Floating button to trigger install if dismissed before -->
     <v-btn v-if="(deferredPrompt || isIosEligible) && !isStandalone && showFloatingButton" color="primary" fab small
-      fixed bottom right style="bottom: 80px; z-index: 99;" @click="triggerPrompt">
+      fixed bottom right id="btn-installpwa-floating" style="bottom: 80px; z-index: 99;" @click="triggerPrompt">
       <v-icon>mdi-download</v-icon>
     </v-btn>
   </div>

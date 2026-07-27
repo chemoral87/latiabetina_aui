@@ -3,7 +3,7 @@
     <v-row>
       <!-- Permisos existentes -->
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-role-index-1" outlined>
           <v-card-title class="subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-shield-key-outline</v-icon>
             Permisos del rol
@@ -17,7 +17,7 @@
 
       <!-- Crear permiso al vuelo -->
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-role-index-2" outlined>
           <v-card-title class="subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="success">mdi-plus-circle-outline</v-icon>
             Crear nuevo permiso
@@ -25,12 +25,12 @@
           <v-card-text class="pb-2">
             <v-row dense align="center">
               <v-col col="12">
-                <v-text-field v-model="newPermissionName" label="Nombre del permiso" placeholder="ej. product-create"
+                <v-text-field id="tf-role-index-newpermissionname-1" v-model="newPermissionName" label="Nombre del permiso" placeholder="ej. product-create"
                   outlined dense clearable hide-details :loading="creatingPermission" :disabled="creatingPermission"
                   @keyup.enter="createAndAddPermission" />
               </v-col>
               <v-col cols="auto">
-                <v-btn color="success" :disabled="!newPermissionName || creatingPermission"
+                <v-btn id="btn-roldtl-create-perm" color="success" :disabled="!newPermissionName || creatingPermission"
                   :loading="creatingPermission" @click="createAndAddPermission">
                   <v-icon left>mdi-plus</v-icon>
                   Crear y agregar
@@ -43,10 +43,10 @@
 
       <!-- Acciones -->
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-role-index-3" outlined>
           <v-card-text class="d-flex justify-end pa-4">
-            <v-btn color="primary" outlined class="mr-2" @click="$router.push('/role')">Cancelar</v-btn>
-            <v-btn color="primary" @click="saveRolePermissions()">Guardar</v-btn>
+            <v-btn id="btn-roldtl-cancel" color="primary" outlined class="mr-2" @click="$router.push('/role')">Cancelar</v-btn>
+            <v-btn id="btn-roldtl-save" color="primary" @click="saveRolePermissions()">Guardar</v-btn>
           </v-card-text>
         </v-card>
       </v-col>

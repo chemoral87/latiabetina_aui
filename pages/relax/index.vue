@@ -11,11 +11,11 @@
     <!-- Área de animación y controles -->
     <v-row dense justify="center" class="mb-3">
       <v-col cols="12">
-        <v-card elevation="3" class="pa-3" rounded="lg" color="grey lighten-5">
+        <v-card id="card-relax-index-1" elevation="3" class="pa-3" rounded="lg" color="grey lighten-5">
           <v-row dense align="center">
             <!-- Botón de control -->
             <v-col cols="5">
-              <v-btn :color="isPlaying ? 'error' : 'primary'" rounded elevation="2" small @click="toggleAnimation">
+              <v-btn :color="isPlaying ? 'error' : 'primary'" rounded elevation="2" small id="btn-relax-toggle" @click="toggleAnimation">
                 <v-icon left small>
                   {{ isPlaying ? "mdi-stop" : "mdi-play" }}
                 </v-icon>
@@ -103,7 +103,7 @@
     <!-- Controles de configuración -->
     <v-row dense justify="center">
       <v-col cols="12">
-        <v-card elevation="2" rounded="lg" class="pa-1">
+        <v-card id="card-relax-index-2" elevation="2" rounded="lg" class="pa-1">
           <v-card-title class="text-subtitle-1 py-0 my-0">
             <v-icon left small color="primary">mdi-cog-outline</v-icon>
             Configuración
@@ -111,7 +111,7 @@
 
           <v-row dense>
             <v-col cols="auto">
-              <v-text-field v-model.number="initialContract" label="Contracción inicial" outlined dense hide-details type="number" step="0.1" suffix="s" color="orange darken-2" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-contraccin-inicial-1" v-model.number="initialContract" label="Contracción inicial" outlined dense hide-details type="number" step="0.1" suffix="s" color="orange darken-2" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="orange darken-2">mdi-arrow-collapse-all</v-icon>
                 </template>
@@ -119,7 +119,7 @@
             </v-col>
 
             <v-col cols="auto">
-              <v-text-field v-model.number="expansion" label="Expansión" outlined dense hide-details type="number" step="0.1" suffix="s" color="blue" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-expansin-2" v-model.number="expansion" label="Expansión" outlined dense hide-details type="number" step="0.1" suffix="s" color="blue" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="blue">mdi-arrow-expand-all</v-icon>
                 </template>
@@ -127,7 +127,7 @@
             </v-col>
 
             <v-col cols="auto">
-              <v-text-field v-model.number="immobile1" label="Inmóvil 1" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-inmvil-1-3" v-model.number="immobile1" label="Inmóvil 1" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="green">mdi-timer-sand</v-icon>
                 </template>
@@ -135,7 +135,7 @@
             </v-col>
 
             <v-col cols="auto">
-              <v-text-field v-model.number="contraction" label="Contracción" outlined dense hide-details type="number" step="0.1" suffix="s" color="red" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-contraccin-4" v-model.number="contraction" label="Contracción" outlined dense hide-details type="number" step="0.1" suffix="s" color="red" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="red">mdi-arrow-collapse-all</v-icon>
                 </template>
@@ -143,14 +143,14 @@
             </v-col>
 
             <v-col cols="auto">
-              <v-text-field v-model.number="immobile2" label="Inmóvil 2" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-inmvil-2-5" v-model.number="immobile2" label="Inmóvil 2" outlined dense hide-details type="number" step="0.1" suffix="s" color="green" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="green">mdi-timer-sand</v-icon>
                 </template>
               </v-text-field>
             </v-col>
                <v-col cols="auto">
-              <v-text-field v-model.number="goalTime" label="Tiempo objetivo" outlined dense hide-details type="number" step="1" suffix="min" color="purple darken-2" :disabled="isPlaying">
+              <v-text-field id="tf-relax-index-tiempo-objetivo-6" v-model.number="goalTime" label="Tiempo objetivo" outlined dense hide-details type="number" step="1" suffix="min" color="purple darken-2" :disabled="isPlaying">
                 <template #prepend-inner>
                   <v-icon small color="purple darken-2">mdi-flag-checkered</v-icon>
                 </template>
@@ -165,8 +165,8 @@
 
 
     <!-- Diálogo de felicitación -->
-    <v-dialog v-model="showCompletionDialog" max-width="340" persistent>
-      <v-card rounded="xl" class="text-center pa-4">
+    <v-dialog id="dlg-relax-index-showcompletiondialog-1" v-model="showCompletionDialog" max-width="340" persistent>
+      <v-card id="card-relax-index-3" rounded="xl" class="text-center pa-4">
         <div class="celebration-icon mb-2">🎉</div>
         <v-card-title class="text-h6 justify-center pb-1">¡Felicidades!</v-card-title>
         <v-card-text class="text-body-1 pb-2">
@@ -174,7 +174,7 @@
           ¡Excelente trabajo!
         </v-card-text>
         <v-card-actions class="justify-center">
-          <v-btn color="purple darken-2" dark rounded elevation="2" @click="closeCompletion">
+          <v-btn id="btn-relax-close" color="purple darken-2" dark rounded elevation="2" @click="closeCompletion">
             <v-icon left small>mdi-refresh</v-icon>
             Volver a empezar
           </v-btn>

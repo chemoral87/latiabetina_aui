@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-data-table
+    <v-data-table id="dt-testi-table-localitems-1"
       dense
       :headers="headers"
       :items="localItems"
@@ -13,7 +13,7 @@
       class="elevation-1 xwidth800"
     >
       <template #[`item.review`]="{ item }">
-        <v-btn outlined color="primary" fab x-small class="my-1" @click="show(item)">
+        <v-btn outlined color="primary" fab x-small class="my-1" id="btn-testimony-table-show" @click="show(item)">
           <v-icon small>mdi-eye</v-icon>
         </v-btn>
       </template>
@@ -21,7 +21,7 @@
         <div class="d-flex flex-nowrap justify-center">
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
-              <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" @click="edit(item)">
+              <v-btn outlined color="primary" fab x-small class="mr-1" v-bind="attrs" v-on="on" id="btn-testimony-table-edit" @click="edit(item)">
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
@@ -30,7 +30,7 @@
 
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
-              <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" @click="remove(item)">
+              <v-btn outlined color="error" fab x-small v-bind="attrs" v-on="on" id="btn-testimony-table-delete" @click="remove(item)">
                 <v-icon small>mdi-delete</v-icon>
               </v-btn>
             </template>

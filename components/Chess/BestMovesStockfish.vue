@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="mt-4 pa-3">
+  <v-card id="card-chess-bestm-1" outlined class="mt-4 pa-3">
     <div class="text-subtitle-2 font-weight-medium mb-2 d-flex align-center">
       <v-icon small left color="red">mdi-robot</v-icon>
       {{ title }}

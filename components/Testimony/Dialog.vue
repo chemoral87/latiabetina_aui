@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="600px">
+  <v-dialog id="dlg-testi-dialo-1" :value="true" persistent max-width="600px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="primary">mdi-comment-text-outline</v-icon>
         {{ formTitle }}
         <v-spacer />
-        <v-btn icon x-small @click="close">
+        <v-btn icon x-small id="btn-testimony-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -18,19 +18,19 @@
                 prepend-inner-icon="mdi-domain" :disabled="loading || isEditMode" :rules="[$vrules.required]" />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.name" label="Nombre" prepend-inner-icon="mdi-account-outline"
+              <v-text-field id="tf-testi-dialo-item-name-1" v-model="item.name" label="Nombre" prepend-inner-icon="mdi-account-outline"
                 :error-messages="errors.name" :disabled="loading" required autofocus @keyup.enter="save" />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.phone_number" label="Teléfono" prepend-inner-icon="mdi-phone"
+              <v-text-field id="tf-testi-dialo-item-phone_number-2" v-model="item.phone_number" label="Teléfono" prepend-inner-icon="mdi-phone"
                 :error-messages="errors.phone_number" :disabled="loading" />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="categoriesString" label="Categorías (coma separadas)"
+              <v-text-field id="tf-testi-dialo-categoriesstring-3" v-model="categoriesString" label="Categorías (coma separadas)"
                 prepend-inner-icon="mdi-tag-multiple-outline" :disabled="loading" />
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="item.link" label="Enlace" prepend-inner-icon="mdi-link"
+              <v-text-field id="tf-testi-dialo-item-link-4" v-model="item.link" label="Enlace" prepend-inner-icon="mdi-link"
                 :disabled="loading" />
             </v-col>
             <v-col cols="12">
@@ -44,11 +44,11 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" :disabled="loading" @click="close">
+        <v-btn color="primary" outlined class="mr-2" :disabled="loading" id="btn-testimony-dialog-cancel" @click="close">
           <v-icon left>mdi-close</v-icon>
           Cancelar
         </v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" id="btn-testimony-dialog-save" @click="save">
           <v-icon left>mdi-content-save</v-icon>
           Guardar
         </v-btn>

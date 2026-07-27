@@ -1,11 +1,11 @@
 <template>
-  <v-dialog v-model="localVisible" max-width="700" scrollable>
+  <v-dialog id="dlg-audit-seats-index-localvisible-1" v-model="localVisible" max-width="700" scrollable>
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon left color="info">mdi-history</v-icon>
         Historial de asientos
         <v-spacer />
-        <v-btn icon @click="localVisible = false">
+        <v-btn icon id="btn-aushi-close" @click="localVisible = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -90,7 +90,7 @@ class="d-flex align-center" :style="{
       <v-divider />
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="localVisible = false">Cerrar</v-btn>
+        <v-btn text id="btn-aushi-close-btn" @click="localVisible = false">Cerrar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

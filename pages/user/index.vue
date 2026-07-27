@@ -2,16 +2,16 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="3">
-        <v-text-field v-model="filterUser" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"
+        <v-text-field id="tf-user-index-filteruser-1" v-model="filterUser" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro"
           dense />
       </v-col>
 
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="getUsers()">
+        <v-btn id="btn-user-refresh" color="primary" :loading="loading" class="mr-1" @click="getUsers()">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newUser()">
+        <v-btn id="btn-user-new" color="success" class="mr-1" @click="newUser()">
           <v-icon left>mdi-plus</v-icon>
           Nuevo Usuario
         </v-btn>

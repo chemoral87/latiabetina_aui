@@ -84,11 +84,11 @@
 
           <v-card-actions>
             <v-spacer />
-            <v-btn text color="primary" @click="$router.push('/testimony')">Volver</v-btn>
+            <v-btn id="btn-tesrev-back" text color="primary" @click="$router.push('/testimony')">Volver</v-btn>
 
-            <v-btn class="mr-5" outlined :loading="saving" color="error"
+            <v-btn id="btn-tesrev-reject" class="mr-5" outlined :loading="saving" color="error"
               @click="updateStatus('rejected')">Rechazar</v-btn>
-            <v-btn :loading="saving" large color="success" class="mr-2"
+            <v-btn id="btn-tesrev-approve" :loading="saving" large color="success" class="mr-2"
               @click="updateStatus('approved')">Aprobar</v-btn>
           </v-card-actions>
         </v-card>

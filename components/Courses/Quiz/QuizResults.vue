@@ -1,6 +1,6 @@
 <template>
   <v-dialog id="quiz-results" :value="show" max-width="600" persistent @input="$emit('update:show', $event)">
-    <v-card class="rounded-xl text-center pa-6">
+    <v-card id="card-cours-quiz-quizr-1" class="rounded-xl text-center pa-6">
       <v-card-text>
         <v-icon :color="resultColor" size="80" class="mb-4">
           {{ resultIcon }}
@@ -40,11 +40,11 @@
       </v-card-text>
 
       <v-card-actions class="justify-center pb-4">
-        <v-btn color="primary" large class="px-8 rounded-lg" @click="$emit('reset')">
+        <v-btn color="primary" large class="px-8 rounded-lg" id="btn-crsqi-newquiz" @click="$emit('reset')">
           <v-icon left>mdi-refresh</v-icon>
           {{ t('newQuiz') }}
         </v-btn>
-        <v-btn color="grey" large outlined class="px-8 rounded-lg" @click="$emit('close')">
+        <v-btn color="grey" large outlined class="px-8 rounded-lg" id="btn-crsqi-review" @click="$emit('close')">
           {{ t('review') }}
         </v-btn>
       </v-card-actions>

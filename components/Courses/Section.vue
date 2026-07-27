@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-8" :outlined="outlined" :elevation="outlined ? undefined : elevation">
+  <v-card id="card-cours-secti-1" class="mb-8" :outlined="outlined" :elevation="outlined ? undefined : elevation">
     <v-card-title class="text-h6 font-weight-bold primary white--text py-3 px-4">
       <v-icon v-if="icon" left color="white">{{ icon }}</v-icon>
       {{ title }}

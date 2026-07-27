@@ -17,7 +17,7 @@
         </div>
       </v-col>
       <v-col cols="auto">
-        <v-btn
+        <v-btn id="btn-whatsapp-logs-refresh"
           color="white"
           outlined
           rounded
@@ -33,12 +33,12 @@
     </v-row>
 
     <!-- Filters Card -->
-    <v-card class="filter-card mb-6 rounded-xl elevation-4">
+    <v-card id="card-whats-logs--filter-card-1" class="filter-card mb-6 rounded-xl elevation-4">
       <v-card-title class="filter-title py-3 px-5">
         <v-icon color="primary" left>mdi-filter-variant</v-icon>
         <span class="font-weight-bold">Filters</span>
         <v-spacer />
-        <v-btn text small color="primary" @click="resetFilters">
+        <v-btn id="btn-whatsapp-logs-clear" text small color="primary" @click="resetFilters">
           <v-icon left x-small>mdi-close-circle-outline</v-icon>
           Clear
         </v-btn>
@@ -47,7 +47,7 @@
       <v-card-text class="pa-5">
         <v-row>
           <v-col cols="12" sm="4">
-            <v-text-field
+            <v-text-field id="tf-whats-logs--filters-sender-1"
               v-model="filters.sender"
               label="Sender"
               placeholder="e.g. +5215512345678"
@@ -62,7 +62,7 @@
             />
           </v-col>
           <v-col cols="12" sm="4">
-            <v-text-field
+            <v-text-field id="tf-whats-logs--filters-receiver-2"
               v-model="filters.receiver"
               label="Receiver"
               placeholder="e.g. +5215598765432"
@@ -93,7 +93,7 @@
         </v-row>
         <v-row class="mt-2">
           <v-col class="d-flex justify-end">
-            <v-btn
+            <v-btn id="btn-whatsapp-logs-search"
               color="primary"
               rounded
               small
@@ -110,7 +110,7 @@
     </v-card>
 
     <!-- Logs Table -->
-    <v-card class="table-card rounded-xl elevation-4">
+    <v-card id="card-whats-logs--table-card-2" class="table-card rounded-xl elevation-4">
       <v-card-title class="table-title py-3 px-5">
         <v-icon color="teal darken-2" left>mdi-table</v-icon>
         <span class="font-weight-bold">Message History</span>
@@ -121,7 +121,7 @@
       </v-card-title>
       <v-divider />
 
-      <v-data-table
+      <v-data-table id="dt-whats-logs--logs-1"
         :headers="headers"
         :items="logs"
         :loading="loading"
@@ -248,7 +248,7 @@
         <span class="caption grey--text mr-3">
           {{ paginationLabel }}
         </span>
-        <v-btn
+        <v-btn id="btn-whatsapp-logs-prev"
           icon
           small
           :disabled="pagination.current_page <= 1 || loading"
@@ -256,7 +256,7 @@
         >
           <v-icon small>mdi-chevron-left</v-icon>
         </v-btn>
-        <v-btn
+        <v-btn id="btn-whatsapp-logs-next"
           icon
           small
           :disabled="pagination.current_page >= pagination.last_page || loading"

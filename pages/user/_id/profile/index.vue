@@ -2,7 +2,7 @@
   <v-container>
     <v-row dense>
       <v-col cols="12">
-        <v-btn color="primary" @click="newProfile()">Nuevo Perfil</v-btn>
+        <v-btn id="btn-user-profile-new" color="primary" @click="newProfile()">Nuevo Perfil</v-btn>
       </v-col>
 
       <v-col v-for="profile in profiles" :key="profile.id" cols="12">
@@ -12,13 +12,13 @@
               }})</span>
             <v-spacer />
 
-            <v-btn icon :color="getColorFavorite(profile.favorite)" @click="setFavProfile(profile)">
+            <v-btn id="btn-user-profile-fav" icon :color="getColorFavorite(profile.favorite)" @click="setFavProfile(profile)">
               <v-icon>mdi-star</v-icon>
             </v-btn>
-            <v-btn icon color="primary" @click="editProfile(profile)">
+            <v-btn id="btn-user-profile-edit" icon color="primary" @click="editProfile(profile)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
-            <v-btn icon color="error" @click="confirmDeleteProfile(profile)">
+            <v-btn id="btn-user-profile-delete" icon color="error" @click="confirmDeleteProfile(profile)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-card-title>
@@ -53,7 +53,7 @@
       <v-col cols="12">
         <v-card outlined>
           <v-card-text class="d-flex justify-end pa-4">
-            <v-btn color="primary" outlined @click="$router.push('/user')">
+            <v-btn id="btn-user-profile-back" color="primary" outlined @click="$router.push('/user')">
               <v-icon left>mdi-arrow-left</v-icon>
               Volver
             </v-btn>

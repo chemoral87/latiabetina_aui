@@ -1,12 +1,12 @@
 <template>
-  <v-data-table :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
+  <v-data-table id="dt-produ-produ-items-1" :headers="headers" :items="items" :options.sync="optionsTable" dense :server-items-length="total"
     :loading="loading" :must-sort="true" :hide-default-footer="optionsTable.itemsPerPage === -1" mobile-breakpoint="0"
     class="elevation-1 xwidth800">
     <template #[`item.actions`]="{ item }">
       <div class="d-flex flex-nowrap justify-center">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
-            <v-btn outlined color="primary" fab small class="mr-1 my-1" v-bind="attrs" v-on="on"
+            <v-btn outlined color="primary" fab small class="mr-1 my-1" v-bind="attrs" v-on="on" id="btn-product-table-edit"
               @click="editProduct(item)">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -16,7 +16,7 @@
 
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
-            <v-btn outlined color="error" fab small class=" my-1" v-bind="attrs" v-on="on" @click="deleteProduct(item)">
+            <v-btn outlined color="error" fab small class=" my-1" v-bind="attrs" v-on="on" id="btn-product-table-delete" @click="deleteProduct(item)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>

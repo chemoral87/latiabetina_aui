@@ -5,7 +5,7 @@
       <v-col cols="12">
         <div class="d-flex align-center justify-space-between">
           <span v-if="auditorium && auditorium.name" class="text-h6 text-md-h5">{{ auditorium.name }}</span>
-          <v-btn color="primary" :small="$vuetify.breakpoint.mobile" @click="saveAuditorium">
+          <v-btn color="primary" :small="$vuetify.breakpoint.mobile" id="btn-audid-save" @click="saveAuditorium">
             <v-icon :left="!$vuetify.breakpoint.mobile">mdi-content-save</v-icon>
             <span v-if="!$vuetify.breakpoint.mobile">Guardar</span>
           </v-btn>
@@ -25,20 +25,20 @@
         <!-- Botones de Acción -->
         <v-row dense class="mb-3">
           <v-col cols="6" md="12">
-            <v-btn color="primary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" @click="addSection(false)">
+            <v-btn color="primary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" id="btn-audid-add-section" @click="addSection(false)">
               <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-plus</v-icon>
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar sección</span>
             </v-btn>
           </v-col>
           <v-col cols="6" md="12">
-            <v-btn color="secondary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2"
+            <v-btn color="secondary" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" id="btn-audid-add-label"
               @click="addSection(true)">
               <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-label</v-icon>
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Agregar etiqueta sección</span>
             </v-btn>
           </v-col>
           <v-col cols="6" md="12">
-            <v-btn color="warning" block :small="$vuetify.breakpoint.mobile" class="mb-md-2"
+            <v-btn color="warning" block :small="$vuetify.breakpoint.mobile" class="mb-md-2" id="btn-audid-clear-cats"
               @click="clearAllSeatStates">
               <v-icon :left="$vuetify.breakpoint.mdAndUp" :small="$vuetify.breakpoint.mobile">mdi-broom</v-icon>
               <span :class="{ 'd-none d-sm-inline': $vuetify.breakpoint.mobile }">Limpiar categorías</span>
@@ -47,17 +47,17 @@
         </v-row>
 
         <!-- Configuración -->
-        <v-card outlined class="mb-3 pa-2">
+        <v-card id="card-audit-edito-1" outlined class="mb-3 pa-2">
           <div class="text-subtitle-2 mb-2">Configuración</div>
 
           <!-- Save Format Toggle -->
           <div class="d-flex align-center mb-2">
             <span class="text-caption mr-2">Formato:</span>
             <v-btn-toggle v-model="saveFormat" mandatory dense borderless>
-              <v-btn x-small value="csv" color="primary">
+              <v-btn id="btn-audid-fmt-csv" x-small value="csv" color="primary">
                 <v-icon x-small left>mdi-file-delimited</v-icon>CSV
               </v-btn>
-              <v-btn x-small value="json" color="primary">
+              <v-btn id="btn-audid-fmt-json" x-small value="json" color="primary">
                 <v-icon x-small left>mdi-code-json</v-icon>JSON
               </v-btn>
             </v-btn-toggle>

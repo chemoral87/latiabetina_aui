@@ -10,8 +10,8 @@
       </v-col>
 
       <v-col cols="12" class="d-flex justify-end">
-        <v-btn color="primary" outlined class="mr-1" @click="back()">Cancelar</v-btn>
-        <v-btn color="primary" @click="saveProfileRolesPermissions()">Guardar</v-btn>
+        <v-btn id="btn-useprf-cancel" color="primary" outlined class="mr-1" @click="back()">Cancelar</v-btn>
+        <v-btn id="btn-useprf-save" color="primary" @click="saveProfileRolesPermissions()">Guardar</v-btn>
       </v-col>
     </v-row>
     <!-- {{ profile }} -->

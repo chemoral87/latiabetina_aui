@@ -1,28 +1,28 @@
 <template>
-  <v-dialog :value="true" persistent width="400px">
+  <v-dialog id="dlg-user-dialo-1" :value="true" persistent width="400px">
     <v-card>
       <v-card-title>
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
         <v-spacer></v-spacer>
-        <v-btn icon @click.native="close()"><v-icon>$delete</v-icon></v-btn>
+        <v-btn icon id="btn-user-password-close" @click.native="close()"><v-icon>$delete</v-icon></v-btn>
       </v-card-title>
 
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-text-field v-model="item.password" label="Contraseña" :type="showPassword ? 'text' : 'password'" hide-details @keyup.enter="save" :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showPassword = !showPassword" autocomplete="new-password" class="password-field"></v-text-field>
+            <v-text-field id="tf-user-dialo-item-password-1" v-model="item.password" label="Contraseña" :type="showPassword ? 'text' : 'password'" hide-details @keyup.enter="save" :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showPassword = !showPassword" autocomplete="new-password" class="password-field"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field v-model="item.confirm_password" label="Confirme Contraseña" :error-messages="error.confirm_password" :type="showConfirmPassword ? 'text' : 'password'" @keyup.enter="save" :append-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showConfirmPassword = !showConfirmPassword" autocomplete="new-password" class="password-field"></v-text-field>
+            <v-text-field id="tf-user-dialo-item-confirm_password-2" v-model="item.confirm_password" label="Confirme Contraseña" :error-messages="error.confirm_password" :type="showConfirmPassword ? 'text' : 'password'" @keyup.enter="save" :append-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'" @click:append="showConfirmPassword = !showConfirmPassword" autocomplete="new-password" class="password-field"></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" class="mr-1" outlined @click.native="close">Cancelar</v-btn>
-        <v-btn color="primary" @click.native="save">Guardar</v-btn>
+        <v-btn color="primary" class="mr-1" outlined id="btn-user-password-cancel" @click.native="close">Cancelar</v-btn>
+        <v-btn color="primary" id="btn-user-password-save" @click.native="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

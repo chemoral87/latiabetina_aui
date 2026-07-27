@@ -11,7 +11,7 @@
       <v-col cols="12" sm="6" md="4">
         <v-menu v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y>
           <template #activator="{ on, attrs }">
-            <v-text-field
+            <v-text-field id="tf-pos-cash--datelabel-1"
               v-model="dateLabel"
               label="Fecha"
               prepend-icon="mdi-calendar"
@@ -33,7 +33,7 @@
       <!-- Summary Cards -->
       <v-row dense class="mb-4">
         <v-col cols="12" sm="4">
-          <v-card outlined class="cash-close-card cash-close-card--cash">
+          <v-card id="card-pos-cash--cash-close-card-1" outlined class="cash-close-card cash-close-card--cash">
             <div class="d-flex align-center mb-2">
               <v-icon color="green darken-1" class="mr-2">mdi-cash</v-icon>
               <span class="text-subtitle-2 font-weight-bold">Efectivo</span>
@@ -45,7 +45,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" sm="4">
-          <v-card outlined class="cash-close-card cash-close-card--card">
+          <v-card id="card-pos-cash--cash-close-card-2" outlined class="cash-close-card cash-close-card--card">
             <div class="d-flex align-center mb-2">
               <v-icon color="blue darken-1" class="mr-2">mdi-credit-card</v-icon>
               <span class="text-subtitle-2 font-weight-bold">Tarjeta</span>
@@ -57,7 +57,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" sm="4">
-          <v-card outlined class="cash-close-card cash-close-card--transfer">
+          <v-card id="card-pos-cash--cash-close-card-3" outlined class="cash-close-card cash-close-card--transfer">
             <div class="d-flex align-center mb-2">
               <v-icon color="purple darken-1" class="mr-2">mdi-bank-transfer</v-icon>
               <span class="text-subtitle-2 font-weight-bold">Transferencia</span>
@@ -71,7 +71,7 @@
       </v-row>
 
       <!-- Total row -->
-      <v-card outlined class="cash-close-total-card mb-6">
+      <v-card id="card-pos-cash--cash-close-total-card-4" outlined class="cash-close-total-card mb-6">
         <div class="d-flex align-center justify-space-between">
           <div>
             <div class="text-caption grey--text">Total del día</div>
@@ -89,7 +89,7 @@
         <span class="text-subtitle-1 font-weight-bold">Totales por producto</span>
       </div>
 
-      <v-card outlined class="mb-6">
+      <v-card id="card-pos-cash--5" outlined class="mb-6">
         <v-simple-table dense>
           <thead>
             <tr>

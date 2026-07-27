@@ -3,7 +3,7 @@
     <input type="file" ref="fileInput" accept="image/png, image/jpeg, image/bmp"
       style="display:none" @change="onFileSelected" />
 
-    <v-btn small color="primary" :loading="loading" @click="triggerFilePicker">
+    <v-btn small color="primary" :loading="loading" id="btn-my-uploadimagecrop-pick" @click="triggerFilePicker">
       <v-icon left>mdi-camera</v-icon>
       {{ label || 'Subir foto' }}
     </v-btn>
@@ -16,7 +16,7 @@
         <v-icon x-small left>mdi-file-image</v-icon>
         {{ filename }}
       </v-chip>
-      <v-btn small outlined color="error" @click="clearImage">
+      <v-btn small outlined color="error" id="btn-my-uploadimagecrop-clear" @click="clearImage">
         <v-icon left x-small>mdi-close</v-icon>
         Limpiar
       </v-btn>
@@ -29,13 +29,13 @@
       <span class="text-caption mt-1" :class="dragOver ? 'primary--text' : 'grey--text'">Arrastra el archivo aquí</span>
     </div>
 
-    <v-dialog :value="dialog" persistent max-width="520px">
+    <v-dialog id="dlg-my-uploa-1" :value="dialog" persistent max-width="520px">
       <v-card>
         <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
           <v-icon left small color="primary">mdi-crop</v-icon>
           {{ label || 'Recortar foto' }}
           <v-spacer />
-          <v-btn icon x-small @click="cancel()">
+          <v-btn icon x-small id="btn-my-uploadimagecrop-close" @click="cancel()">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -63,11 +63,11 @@
 
         <v-card-actions class="pa-4">
           <v-spacer />
-          <v-btn color="primary" outlined class="mr-2" @click="cancel()">
+          <v-btn color="primary" outlined class="mr-2" id="btn-my-uploadimagecrop-cancel" @click="cancel()">
             <v-icon left>mdi-close</v-icon>
             Cancelar
           </v-btn>
-          <v-btn color="primary" @click="save()">
+          <v-btn color="primary" id="btn-my-uploadimagecrop-save" @click="save()">
             <v-icon left>mdi-content-save</v-icon>
             Guardar
           </v-btn>

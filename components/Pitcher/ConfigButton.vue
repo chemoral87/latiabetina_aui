@@ -1,15 +1,15 @@
 <template>
   <div>
-    <v-btn class="mr-1 settings-btn-glow" @click="settingsDialog = true">
+    <v-btn class="mr-1 settings-btn-glow" id="btn-pitcher-config-open" @click="settingsDialog = true">
       <v-icon left>mdi-cog</v-icon>
       Config
     </v-btn>
-    <v-dialog v-model="settingsDialog" max-width="500px">
+    <v-dialog id="dlg-pitch-confi-settingsdialog-1" v-model="settingsDialog" max-width="500px">
       <v-card>
         <v-card-title>
           Configuración v2.023
           <v-spacer></v-spacer>
-          <v-btn icon @click="settingsDialog = false">
+          <v-btn icon id="btn-pitcher-config-close" @click="settingsDialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -70,7 +70,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="settingsDialog = false">Cerrar</v-btn>
+          <v-btn color="primary" text id="btn-pitcher-config-close-btn" @click="settingsDialog = false">Cerrar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

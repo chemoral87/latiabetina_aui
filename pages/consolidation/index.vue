@@ -2,14 +2,14 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="3">
-        <v-text-field v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
+        <v-text-field id="tf-conso-index-filterterm-1" v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
       </v-col>
       <v-col cols="12" md="4">
-        <v-btn color="primary" class="mr-1" @click="newSheet()">
+        <v-btn id="btn-cnsld-new" color="primary" class="mr-1" @click="newSheet()">
           <v-icon>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" :loading="loading" @click="fetchData()">
+        <v-btn id="btn-cnsld-refresh" color="primary" :loading="loading" @click="fetchData()">
           <v-icon>mdi-reload</v-icon>
           Refrescar
         </v-btn>

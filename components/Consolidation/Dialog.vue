@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="500px">
+  <v-dialog id="dlg-conso-dialo-1" :value="true" persistent max-width="500px">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
         <v-spacer />
-        <v-btn icon @click="close">
+        <v-btn icon id="btn-consolidation-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -14,7 +14,7 @@
         <v-form ref="form" @submit.prevent="save">
           <organization-select v-model="item.org_id" label="Organización *" hide-one :permission="'conso-sheet-index'"
             :error-messages="errors.org_id" outlined dense class="mb-2" />
-          <v-text-field v-model="item.folio_number" label="Número de Folio" :error-messages="errors.folio_number"
+          <v-text-field id="tf-conso-dialo-item-folio_number-1" v-model="item.folio_number" label="Número de Folio" :error-messages="errors.folio_number"
             :disabled="loading" required autofocus />
           <MyDatePicker v-model="item.date" label="Fecha" :error-messages="errors.date" :disabled="loading" required />
         </v-form>
@@ -22,8 +22,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" text :disabled="loading" @click="close">Cancelar</v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid" @click="save">Guardar</v-btn>
+        <v-btn color="primary" text :disabled="loading" id="btn-consolidation-dialog-cancel" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!isValid" id="btn-consolidation-dialog-save" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

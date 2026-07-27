@@ -2,7 +2,7 @@
   <v-container>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md6 lg4>
-        <v-card flat class="pa-6">
+        <v-card id="card-login-1" flat class="pa-6">
           <v-form @submit.prevent="submitLogin">
             <v-row dense>
               <v-col cols="12" class="text-center mb-4">
@@ -11,7 +11,7 @@
 
               <!-- Botón de Google primero -->
               <v-col cols="12">
-                <v-btn outlined block large class="text-none mb-4"
+                <v-btn outlined block large class="text-none mb-4" id="btn-login-google"
                   style="border-color: #dadce0; color: #3c4043; background-color: white" @click="loginWithGoogle">
                   <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
                     style="width: 18px; height: 18px; margin-right: 12px" />
@@ -28,12 +28,12 @@
 
               <!-- Campos de login -->
               <v-col cols="12">
-                <v-text-field v-model="email" outlined dense autocomplete="username"
+                <v-text-field id="tf-login-email-1" v-model="email" outlined dense autocomplete="username"
                   label="Dirección de correo electrónico" :error-messages="errors ? errors?.email : []"></v-text-field>
               </v-col>
 
               <v-col cols="12">
-                <v-text-field v-model="password" outlined dense autocomplete="current-password" label="Contraseña"
+                <v-text-field id="tf-login-password-2" v-model="password" outlined dense autocomplete="current-password" label="Contraseña"
                   :error-messages="errors ? errors?.password : []" :append-icon="showned ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showned ? 'text' : 'password'" @click:append="showned = !showned"></v-text-field>
               </v-col>
@@ -44,7 +44,7 @@
               </v-col>
 
               <v-col cols="12" class="">
-                <v-btn type="submit" color="primary" block large class="text-none">Ingresar</v-btn>
+                <v-btn type="submit" color="primary" block large class="text-none" id="btn-login-submit">Ingresar</v-btn>
               </v-col>
             </v-row>
           </v-form>

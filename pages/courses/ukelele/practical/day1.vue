@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="mt-3">
-                      <v-btn icon :color="activeStringIndex === index ? 'primary' : 'grey'" class="elevation-1">
+                      <v-btn id="btn-uked1-play-string" icon :color="activeStringIndex === index ? 'primary' : 'grey'" class="elevation-1">
                         <v-icon>{{ activeStringIndex === index ? 'mdi-volume-high' : 'mdi-play-circle-outline'
                         }}</v-icon>
                       </v-btn>
@@ -60,7 +60,7 @@
             </v-col>
 
             <v-col cols="12" md="4" class="text-center py-4">
-              <v-btn :color="isPlayingAll ? 'red darken-2' : 'primary'" class="mb-3 w-100" dark large
+              <v-btn id="btn-uked1-tune-all" :color="isPlayingAll ? 'red darken-2' : 'primary'" class="mb-3 w-100" dark large
                 @click="playAllStrings">
                 <v-icon left>{{ isPlayingAll ? 'mdi-stop' : 'mdi-play' }}</v-icon>
                 {{ isPlayingAll ? 'Detener Afinador' : 'Afinar en Secuencia' }}
@@ -100,7 +100,7 @@
 
             <v-row dense class="mb-4">
               <v-col v-for="(option, idx) in currentQuestion.options" :key="idx" cols="12" sm="6">
-                <v-btn block outlined :disabled="isAnswered" :color="getOptionColor(idx)"
+                <v-btn id="btn-uked1-quiz-option" block outlined :disabled="isAnswered" :color="getOptionColor(idx)"
                   class="quiz-option-btn py-6 text-left justify-start" @click="checkAnswer(idx)">
                   <v-icon left class="mr-2" :color="getOptionIconColor(idx)">
                     {{ getOptionIcon(idx) }}
@@ -122,7 +122,7 @@
                 </v-alert>
 
                 <div class="d-flex justify-end">
-                  <v-btn color="primary" @click="nextQuestion">
+                  <v-btn id="btn-uked1-quiz-next" color="primary" @click="nextQuestion">
                     {{ currentQuestionIndex + 1 === quizQuestions.length ? 'Finalizar' : 'Siguiente' }}
                     <v-icon right>mdi-arrow-right</v-icon>
                   </v-btn>
@@ -148,7 +148,7 @@
               </p>
             </v-card>
 
-            <v-btn color="primary" large class="mt-2" @click="resetQuiz">
+            <v-btn id="btn-uked1-quiz-retry" color="primary" large class="mt-2" @click="resetQuiz">
               <v-icon left>mdi-refresh</v-icon>
               Intentar de nuevo
             </v-btn>
@@ -190,7 +190,7 @@
             <p class="text-body-1 grey--text text--darken-2 mt-2">
               Dominas perfectamente la equivalencia entre notación latina e inglesa. ¡Excelente!
             </p>
-            <v-btn color="primary" class="mt-4" @click="resetMatchGame">
+            <v-btn id="btn-uked1-match-retry" color="primary" class="mt-4" @click="resetMatchGame">
               <v-icon left>mdi-refresh</v-icon>
               Jugar de nuevo
             </v-btn>
@@ -208,7 +208,7 @@
                 </div>
                 <transition-group name="match-list" tag="div">
                   <div v-for="note in unmatchedLatin" :key="note.latin" class="mb-2">
-                    <v-btn block depressed :color="getLatinBtnColor(note.latin)"
+                    <v-btn id="btn-uked1-latin-note" block depressed :color="getLatinBtnColor(note.latin)"
                       :dark="selectedLatinName === note.latin || wrongLatinName === note.latin" class="match-note-btn"
                       :class="{
                         'match-selected-left': selectedLatinName === note.latin && wrongLatinName === null,
@@ -236,7 +236,7 @@
                 </div>
                 <transition-group name="match-list" tag="div">
                   <div v-for="note in unmatchedEnglish" :key="note.english" class="mb-2">
-                    <v-btn block depressed :color="getEnglishBtnColor(note.english)"
+                    <v-btn id="btn-uked1-english-note" block depressed :color="getEnglishBtnColor(note.english)"
                       :dark="selectedEnglishName === note.english || wrongEnglishName === note.english"
                       class="match-note-btn" :class="{
                         'match-selected-right': selectedEnglishName === note.english && wrongEnglishName === null,
@@ -284,7 +284,7 @@
               <div class="d-flex align-center justify-space-between flex-wrap mb-6 py-2 px-1 rounded grey lighten-4">
                 <template v-for="(note, index) in scaleNotes">
                   <div :key="`note-${index}`" class="d-flex align-center justify-center flex-grow-1 my-1">
-                    <v-btn fab small :color="selectedNoteIndex === index ? 'primary' : 'grey lighten-2'"
+                    <v-btn id="btn-uked1-scale-note" fab small :color="selectedNoteIndex === index ? 'primary' : 'grey lighten-2'"
                       class="elevation-2 font-weight-black text-subtitle-1"
                       :class="selectedNoteIndex === index ? 'white--text scale-up-pulse' : 'grey--text text--darken-3'"
                       style="width: 38px; height: 38px;" @click="selectNote(index)">
@@ -428,13 +428,13 @@
               </v-card>
 
               <div class="d-flex flex-wrap gap-2">
-                <v-btn :color="isPlayingScale ? 'red darken-2' : 'primary'" class="mr-2 mb-2 white--text"
+                <v-btn id="btn-uked1-scale-play" :color="isPlayingScale ? 'red darken-2' : 'primary'" class="mr-2 mb-2 white--text"
                   @click="playScaleSequence">
                   <v-icon left>{{ isPlayingScale ? 'mdi-stop' : 'mdi-play-circle' }}</v-icon>
                   {{ isPlayingScale ? 'Detener escala' : 'Reproducir Escala' }}
                 </v-btn>
 
-                <v-btn outlined color="grey darken-2" class="mb-2" @click="playTone(selectedNote.frequency, 1.2)">
+                <v-btn id="btn-uked1-scale-sound" outlined color="grey darken-2" class="mb-2" @click="playTone(selectedNote.frequency, 1.2)">
                   <v-icon left>mdi-music-note</v-icon>
                   Sonar Nota Actual
                 </v-btn>

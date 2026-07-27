@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined class="controls-panel pa-3">
+  <v-card id="card-chess-contr-controls-panel-1" outlined class="controls-panel pa-3">
     <div class="controls-header text-subtitle-2 font-weight-medium mb-3">
       Controles
     </div>
@@ -10,6 +10,7 @@
         outlined
         color="grey darken-2"
         :disabled="isRotated === false"
+        id="btn-chess-controls-white"
         @click="$emit('rotate-to-white')"
       >
         <v-icon left small>mdi-chess-king</v-icon>
@@ -21,6 +22,7 @@
         outlined
         color="grey darken-2"
         :disabled="isRotated === true"
+        id="btn-chess-controls-black"
         @click="$emit('rotate-to-black')"
       >
         <v-icon left small>mdi-chess-king</v-icon>
@@ -32,6 +34,7 @@
       <v-btn
         block
         color="success"
+        id="btn-chess-controls-newgame"
         @click="$emit('reset-board')"
       >
         <v-icon left small>mdi-refresh</v-icon>

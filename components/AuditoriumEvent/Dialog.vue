@@ -1,11 +1,11 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog id="dlg-audit-dialo-dialog-1" v-model="dialog" persistent max-width="600px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2 d-flex align-center">
         <v-icon left small color="primary">mdi-theater</v-icon>
         {{ isEditing ? "Editar" : "Nuevo" }} Evento de Auditorio
         <v-spacer />
-        <v-btn icon x-small @click="closeDialog">
+        <v-btn icon x-small id="btn-auditoriumevent-dialog-close" @click="closeDialog">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -41,11 +41,11 @@
       </v-card-text>
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" :disabled="saving" @click="closeDialog">
+        <v-btn color="primary" outlined class="mr-2" :disabled="saving" id="btn-auditoriumevent-dialog-cancel" @click="closeDialog">
           <v-icon left>mdi-close</v-icon>
           Cancelar
         </v-btn>
-        <v-btn color="primary" :loading="saving" :disabled="!isFormValid" @click="saveEvent">
+        <v-btn color="primary" :loading="saving" :disabled="!isFormValid" id="btn-auditoriumevent-dialog-save" @click="saveEvent">
           <v-icon left>mdi-content-save</v-icon>
           {{ isEditing ? "Actualizar" : "Guardar" }}
         </v-btn>

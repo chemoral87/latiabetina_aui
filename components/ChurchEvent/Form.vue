@@ -18,7 +18,7 @@
               :disabled="isEditMode" />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
+            <v-text-field id="tf-churc-form-item-name-1" v-model="item.name" label="Nombre Evento" :error-messages="errors.name" :disabled="loading"
               required autofocus @keyup.enter="save" />
           </v-col>
           <v-col cols="12" md="6">
@@ -39,7 +39,7 @@
               :disabled="loading" />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field v-model="item.location" label="Lugar" :error-messages="errors.location" :disabled="loading" />
+            <v-text-field id="tf-churc-form-item-location-2" v-model="item.location" label="Lugar" :error-messages="errors.location" :disabled="loading" />
           </v-col>
           <v-col cols="12" md="3">
             <v-select v-model="item.classification" :items="classificationOptions" item-text="label" item-value="value"
@@ -71,8 +71,8 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" text :disabled="loading || imageLoading" @click="close">Cancelar</v-btn>
-      <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" @click="save">Guardar</v-btn>
+      <v-btn color="primary" text :disabled="loading || imageLoading" id="btn-churchevent-form-cancel" @click="close">Cancelar</v-btn>
+      <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" id="btn-churchevent-form-save" @click="save">Guardar</v-btn>
     </v-card-actions>
   </v-card>
 </template>

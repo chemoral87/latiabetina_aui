@@ -1,6 +1,6 @@
 <template>
-  <v-dialog :value="true" persistent max-width="400px">
-    <v-card v-if="session">
+  <v-dialog id="dlg-lifeg-sessi-1" :value="true" persistent max-width="400px">
+    <v-card id="card-lifeg-sessi-1" v-if="session">
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
         <v-icon left small color="primary">mdi-calendar-edit</v-icon>
         Semana {{ session.week_number }}
@@ -8,7 +8,7 @@
       <v-card-text>
         <v-row dense>
           <v-col cols="12">
-            <v-text-field v-model="localSession.date" label="Fecha" type="date" outlined dense
+            <v-text-field id="tf-lifeg-sessi-localsession-date-1" v-model="localSession.date" label="Fecha" type="date" outlined dense
               hide-details="auto" />
           </v-col>
           <v-col cols="12">
@@ -23,8 +23,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" @click="cancel">Cancelar</v-btn>
-        <v-btn color="primary" @click="save">Guardar</v-btn>
+        <v-btn color="primary" outlined class="mr-2" id="btn-lifegroup-session-cancel" @click="cancel">Cancelar</v-btn>
+        <v-btn color="primary" id="btn-lifegroup-session-save" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

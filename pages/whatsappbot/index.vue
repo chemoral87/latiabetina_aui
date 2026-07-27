@@ -2,7 +2,7 @@
   <v-container class="whatsapp-bot-container py-12" fluid>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6" lg="5">
-        <v-card class="bot-card elevation-24 rounded-xl overflow-hidden">
+        <v-card id="card-whats-index-bot-card-1" class="bot-card elevation-24 rounded-xl overflow-hidden">
           <div class="header-gradient pa-6 text-center">
             <v-avatar size="64" class="mb-4 glass-avatar">
               <v-icon size="40" color="white">mdi-whatsapp</v-icon>
@@ -18,7 +18,7 @@
             <v-form ref="form" v-model="valid" lazy-validation>
               <div class="input-group mb-6">
                 <label class="d-block mb-2 font-weight-bold grey--text text--darken-2">Recipient Phone</label>
-                <v-text-field v-model="phone" placeholder="e.g. 5215512345678" outlined rounded dense
+                <v-text-field id="tf-whats-index-phone-1" v-model="phone" placeholder="e.g. 5215512345678" outlined rounded dense
                   hide-details="auto" prepend-inner-icon="mdi-phone" :rules="[v => !!v || 'Phone is required']"
                   class="custom-field"></v-text-field>
                 <small class="grey--text pl-4 mt-1 d-block">Include country code (e.g., 521 for MX)</small>
@@ -33,12 +33,12 @@
 
               <div class="input-group mb-8">
                 <label class="d-block mb-2 font-weight-bold grey--text text--darken-2">Media URL (Optional)</label>
-                <v-text-field v-model="mediaUrl" placeholder="https://example.com/image.jpg" outlined rounded dense
+                <v-text-field id="tf-whats-index-mediaurl-2" v-model="mediaUrl" placeholder="https://example.com/image.jpg" outlined rounded dense
                   hide-details="auto" prepend-inner-icon="mdi-image" class="custom-field"></v-text-field>
               </div>
 
               <v-btn block x-large color="success" class="send-btn rounded-pill font-weight-bold elevation-8"
-                :loading="sending" @click="sendWhatsAppMessage">
+                :loading="sending" id="btn-whatsapp-send" @click="sendWhatsAppMessage">
                 <v-icon left>mdi-send</v-icon>
                 Send Message
               </v-btn>
@@ -66,7 +66,7 @@
             <v-icon small color="grey darken-1" class="ml-2">mdi-api</v-icon>
             <span class="caption grey--text text--darken-1 ml-2">WhatsApp Bot API</span>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" small @click="checkStatus" :loading="checking">
+            <v-btn text color="primary" small id="btn-whatsapp-refresh" @click="checkStatus" :loading="checking">
               <v-icon left small>mdi-refresh</v-icon>
               Refresh Status
             </v-btn>

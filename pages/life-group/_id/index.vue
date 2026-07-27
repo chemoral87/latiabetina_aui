@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12">
-        <v-card outlined v-if="group">
+        <v-card id="card-life--index-1" outlined v-if="group">
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-information-outline</v-icon>
             {{ group.name }}
@@ -10,7 +10,7 @@
               {{ statusLabel(group.status) }}
             </v-chip>
             <v-spacer />
-            <v-btn outlined small color="primary" @click="editGroup">
+            <v-btn id="btn-lfgrp-edit-group" outlined small color="primary" @click="editGroup">
               <v-icon left small>mdi-pencil</v-icon> Editar
             </v-btn>
           </v-card-title>
@@ -44,7 +44,7 @@
 
       <!-- Sessions: Tabs for Table / Calendar -->
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-life--index-2" outlined>
           <v-tabs v-model="sessionTab">
             <v-tab>
               <v-icon left small>mdi-table</v-icon>
@@ -84,14 +84,14 @@
                         </td>
                         <td>{{ item.notes || "-" }}</td>
                         <td class="pa-1">
-                          <v-btn icon x-small color="primary" title="Registrar asistencia"
+                          <v-btn id="btn-lfgrp-attendance" icon x-small color="primary" title="Registrar asistencia"
                             @click="openAttendance(item)">
                             <v-icon small>mdi-account-check</v-icon>
                           </v-btn>
-                          <v-btn icon x-small color="warning" title="Reprogramar" @click="editSession(item)">
+                          <v-btn id="btn-lfgrp-reschedule" icon x-small color="warning" title="Reprogramar" @click="editSession(item)">
                             <v-icon small>mdi-calendar-edit</v-icon>
                           </v-btn>
-                          <v-btn icon x-small color="error" title="Cancelar" v-if="item.status === 'scheduled'"
+                          <v-btn id="btn-lfgrp-cancel" icon x-small color="error" title="Cancelar" v-if="item.status === 'scheduled'"
                             @click="cancelSession(item)">
                             <v-icon small>mdi-close-circle</v-icon>
                           </v-btn>
@@ -152,8 +152,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" outlined class="mr-2" @click="sessionDialog = false">Cancelar</v-btn>
-          <v-btn color="primary" @click="saveSession">Guardar</v-btn>
+          <v-btn id="btn-lfgrp-session-cancel" color="primary" outlined class="mr-2" @click="sessionDialog = false">Cancelar</v-btn>
+          <v-btn id="btn-lfgrp-session-save" color="primary" @click="saveSession">Guardar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -204,7 +204,7 @@
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-btn icon small color="error" @click="removeAttendee(a)">
+                    <v-btn id="btn-lfgrp-remove-attendee" icon small color="error" @click="removeAttendee(a)">
                       <v-icon>mdi-close</v-icon>
                     </v-btn>
                   </v-list-item-action>
@@ -220,7 +220,7 @@
             <!-- New person form -->
             <v-col cols="12">
               <v-divider class="my-2" />
-              <v-btn color="success" small @click="showNewPerson = !showNewPerson">
+              <v-btn id="btn-lfgrp-add-person" color="success" small @click="showNewPerson = !showNewPerson">
                 <v-icon left small>mdi-account-plus</v-icon>
                 Agregar nueva persona
               </v-btn>
@@ -244,7 +244,7 @@
                   item-value="value" hide-details="auto" />
               </v-col>
               <v-col cols="12">
-                <v-btn color="primary" small @click="createAndAddPerson">
+                <v-btn id="btn-lfgrp-create-person" color="primary" small @click="createAndAddPerson">
                   <v-icon left small>mdi-check</v-icon>
                   Agregar y registrar
                 </v-btn>
@@ -254,8 +254,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="primary" outlined class="mr-2" @click="closeAttendance">Cerrar</v-btn>
-          <v-btn color="primary" @click="saveAttendance">Guardar Asistencia</v-btn>
+          <v-btn id="btn-lfgrp-att-close" color="primary" outlined class="mr-2" @click="closeAttendance">Cerrar</v-btn>
+          <v-btn id="btn-lfgrp-att-save" color="primary" @click="saveAttendance">Guardar Asistencia</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

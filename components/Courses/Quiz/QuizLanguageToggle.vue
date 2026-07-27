@@ -1,10 +1,10 @@
 <template>
   <div id="quiz-language-toggle" class="d-flex justify-end">
     <v-btn-toggle v-model="internalLang" mandatory dense rounded>
-      <v-btn small value="es" :class="{ 'font-weight-bold': value === 'es' }">
+      <v-btn small value="es" :class="{ 'font-weight-bold': value === 'es' }" id="btn-crsqi-lang-es">
         <v-icon small class="mr-1">mdi-flag</v-icon> ES
       </v-btn>
-      <v-btn small value="en" :class="{ 'font-weight-bold': value === 'en' }">
+      <v-btn small value="en" :class="{ 'font-weight-bold': value === 'en' }" id="btn-crsqi-lang-en">
         <v-icon small class="mr-1">mdi-flag-outline</v-icon> EN
       </v-btn>
     </v-btn-toggle>

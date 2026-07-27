@@ -4,7 +4,7 @@
       <!-- LEFT COLUMN: User info + Roles -->
       <v-col cols="12" md="5">
         <!-- User card -->
-        <v-card flat outlined class="mb-3 pa-4">
+        <v-card id="card-accou-index-1" flat outlined class="mb-3 pa-4">
           <div class="d-flex align-center mb-3">
             <v-avatar color="primary" size="52" class="mr-3">
               <span class="white--text text-h6">{{ initials }}</span>
@@ -15,7 +15,7 @@
               <div class="overline grey--text">v{{ appVersion() }}</div>
             </div>
           </div>
-          <v-btn color="success" small @click="dialogPassword = true">
+          <v-btn color="success" small id="btn-account-changepw" @click="dialogPassword = true">
             <v-icon left small>mdi-lock-reset</v-icon>
             Cambiar contraseña
           </v-btn>
@@ -28,7 +28,7 @@
         </div>
 
         <!-- Roles card (hidden in combined view) -->
-        <v-card v-if="!combinedView" flat outlined>
+        <v-card id="card-accou-index-2" v-if="!combinedView" flat outlined>
           <v-card-title class="text-subtitle-1 font-weight-bold pb-1">
             <v-icon left small color="primary">{{ rolesIcon }}</v-icon>
             Roles

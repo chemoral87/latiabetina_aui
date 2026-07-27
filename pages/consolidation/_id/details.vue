@@ -2,12 +2,12 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" v-if="sheet.id">
-        <v-card outlined class="mb-3">
+        <v-card id="card-conso-detai-1" outlined class="mb-3">
           <v-card-title class="subtitle-1 font-weight-bold">
             <v-icon left>mdi-clipboard-list</v-icon>
             Consolidado #{{ sheet.folio_number }}
             <v-spacer />
-            <v-btn color="primary" small :loading="savingSheet" :disabled="!isDirty || savingSheet" @click="saveSheet">
+            <v-btn id="btn-cnsld-save-sheet" color="primary" small :loading="savingSheet" :disabled="!isDirty || savingSheet" @click="saveSheet">
               <v-icon left small>mdi-content-save</v-icon>
               Guardar
             </v-btn>
@@ -39,7 +39,7 @@
                 </div>
               </v-col>
               <v-col cols="12" md="2">
-                <v-text-field v-model="sheet.how_did_you_hear" label="¿Cómo se enteró?" dense hide-details
+                <v-text-field id="tf-conso-detai-sheet-how_did_you_hear-1" v-model="sheet.how_did_you_hear" label="¿Cómo se enteró?" dense hide-details
                   outlined prepend-inner-icon="mdi-bullhorn" :disabled="savingSheet" />
               </v-col>
               <v-col cols="12" md="2">
@@ -72,14 +72,14 @@
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-text-field v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
+        <v-text-field id="tf-conso-detai-filterterm-2" v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
       </v-col>
       <v-col cols="12" md="4">
-        <v-btn color="primary" class="mr-1" @click="newMember()">
+        <v-btn id="btn-cnsld-new-member" color="primary" class="mr-1" @click="newMember()">
           <v-icon>mdi-plus</v-icon>
           Nuevo Miembro
         </v-btn>
-        <v-btn color="primary" :loading="loading" @click="fetchMembers()">
+        <v-btn id="btn-cnsld-refresh" color="primary" :loading="loading" @click="fetchMembers()">
           <v-icon>mdi-reload</v-icon>
           Refrescar
         </v-btn>

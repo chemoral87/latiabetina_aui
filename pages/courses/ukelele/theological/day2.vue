@@ -15,7 +15,7 @@
 
           <v-row dense class="mb-4">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-1" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -30,7 +30,7 @@
             </v-col>
 
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-2" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
 
-          <v-card outlined class="pa-4 mb-0 blue lighten-5">
+          <v-card id="card-cours-ukele-theol-day2-blue-3" outlined class="pa-4 mb-0 blue lighten-5">
             <p class="text-subtitle-2 font-weight-bold blue--text text--darken-3 mb-3">
               <v-icon color="blue darken-3" class="mr-2">mdi-lightbulb-on</v-icon>
               Omnipresencia y manifestación
@@ -89,7 +89,7 @@
 
           <v-row dense class="mb-4">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-4" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -104,7 +104,7 @@
             </v-col>
 
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-5" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -122,7 +122,7 @@
 
           <v-row dense class="mb-4">
             <v-col cols="12" md="6">
-              <v-card outlined class="pa-4 h-100" style="border-color: #d32f2f; background-color: rgba(211, 47, 47, 0.05);">
+              <v-card id="card-cours-ukele-theol-day2-6" outlined class="pa-4 h-100" style="border-color: #d32f2f; background-color: rgba(211, 47, 47, 0.05);">
                 <div class="d-flex align-center mb-2">
                   <v-icon color="red darken-2" class="mr-2">mdi-cloud-alert</v-icon>
                   <h3 class="text-subtitle-2 font-weight-bold red--text text--darken-2 mb-0">
@@ -137,7 +137,7 @@
             </v-col>
 
             <v-col cols="12" md="6">
-              <v-card outlined class="pa-4 h-100" style="border-color: #388e3c; background-color: rgba(56, 142, 60, 0.05);">
+              <v-card id="card-cours-ukele-theol-day2-7" outlined class="pa-4 h-100" style="border-color: #388e3c; background-color: rgba(56, 142, 60, 0.05);">
                 <div class="d-flex align-center mb-2">
                   <v-icon color="green darken-2" class="mr-2">mdi-music-box-multiple</v-icon>
                   <h3 class="text-subtitle-2 font-weight-bold green--text text--darken-2 mb-0">
@@ -154,7 +154,7 @@
 
           <v-row dense class="mb-4">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-8" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -169,7 +169,7 @@
             </v-col>
 
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day2-lighten-5-9" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>

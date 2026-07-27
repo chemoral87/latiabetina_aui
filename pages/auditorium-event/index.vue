@@ -5,11 +5,11 @@
         <MyDateRange v-model="filterAuditoriumEvent" />
       </v-col>
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="getAuditoriumEvents()">
+        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-auditoriumevent-refresh" @click="getAuditoriumEvents()">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newAuditoriumEvent()">
+        <v-btn color="success" class="mr-1" id="btn-auditoriumevent-new" @click="newAuditoriumEvent()">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>

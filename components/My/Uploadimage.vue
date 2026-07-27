@@ -3,7 +3,7 @@
     <input type="file" ref="fileInput" accept="image/png, image/jpeg, image/bmp"
       style="display:none" @change="onFileSelected" />
 
-    <v-btn small color="primary" :loading="loading" @click="triggerFilePicker">
+    <v-btn small color="primary" :loading="loading" id="btn-my-uploadimage-pick" @click="triggerFilePicker">
       <v-icon left>mdi-camera</v-icon>
       {{ label || 'Seleccionar foto' }}
     </v-btn>
@@ -16,7 +16,7 @@
         <v-icon x-small left>mdi-file-image</v-icon>
         {{ filename }}
       </v-chip>
-      <v-btn small outlined color="error" @click="clearImage">
+      <v-btn small outlined color="error" id="btn-my-uploadimage-clear" @click="clearImage">
         <v-icon left x-small>mdi-close</v-icon>
         Limpiar
       </v-btn>

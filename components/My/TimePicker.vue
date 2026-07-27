@@ -1,7 +1,7 @@
 <template>
   <v-menu ref="timeMenu" v-model="timeMenu" :close-on-content-click="false" transition="scale-transition" offset-y :disabled="disabled">
     <template #activator="{ on, attrs }">
-      <v-text-field
+      <v-text-field id="tf-my-timep-label-1"
         ref="inputField"
         :value="displayValue"
         :label="label"
@@ -19,7 +19,7 @@
       />
     </template>
 
-    <v-card min-width="auto">
+    <v-card id="card-my-timep-1" min-width="auto">
       <v-row no-gutters>
         <!-- Hours column -->
         <v-col cols="4" class="tp-col">
@@ -45,11 +45,11 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" @click="clearTime">
+        <v-btn color="primary" outlined class="mr-2" id="btn-my-timepicker-clear" @click="clearTime">
           <v-icon left>mdi-close</v-icon>
           Limpiar
         </v-btn>
-        <v-btn color="primary" @click="confirmTime">
+        <v-btn color="primary" id="btn-my-timepicker-confirm" @click="confirmTime">
           <v-icon left>mdi-check</v-icon>
           OK
         </v-btn>

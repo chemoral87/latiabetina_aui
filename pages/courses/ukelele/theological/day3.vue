@@ -16,7 +16,7 @@
 
           <v-row dense class="mb-3">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day3-lighten-5-1" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -31,7 +31,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day3-lighten-5-2" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -49,7 +49,7 @@
 
           <v-row dense>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day3-3" outlined class="pa-3 fill-height" style="border-radius:10px;">
                 <div class="d-flex align-center mb-2">
                   <v-icon color="primary" class="mr-2">mdi-guitar-acoustic</v-icon>
                   <span class="text-subtitle-2 font-weight-bold primary--text">Los instrumentos</span>
@@ -61,7 +61,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day3-4" outlined class="pa-3 fill-height" style="border-radius:10px;">
                 <div class="d-flex align-center mb-2">
                   <v-icon color="primary" class="mr-2">mdi-account-voice</v-icon>
                   <span class="text-subtitle-2 font-weight-bold primary--text">Las voces graves</span>
@@ -73,7 +73,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day3-5" outlined class="pa-3 fill-height" style="border-radius:10px;">
                 <div class="d-flex align-center mb-2">
                   <v-icon color="primary" class="mr-2">mdi-account-music</v-icon>
                   <span class="text-subtitle-2 font-weight-bold primary--text">Las voces agudas</span>
@@ -95,7 +95,7 @@
             riquezas para sus discípulos, sino que fueran uno, tal como Él y el Padre son uno.
           </p>
 
-          <v-card outlined class="pa-4 grey lighten-5 mb-3">
+          <v-card id="card-cours-ukele-theol-day3-lighten-5-6" outlined class="pa-4 grey lighten-5 mb-3">
             <div class="d-flex align-center mb-2">
               <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
               <span class="font-weight-bold grey--text text--darken-4">Juan 17:21</span>

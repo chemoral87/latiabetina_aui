@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row dense align="center">
       <v-col cols="12" md="4" sm="6">
-        <v-text-field v-model="filterTestimony" prepend-inner-icon="mdi-magnify" clearable hide-details dense
+        <v-text-field id="tf-testi-index-filtertestimony-1" v-model="filterTestimony" prepend-inner-icon="mdi-magnify" clearable hide-details dense
           placeholder="Filtro" />
       </v-col>
 
@@ -15,11 +15,11 @@
       </v-col>
 
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshTestimonies">
+        <v-btn id="btn-testimony-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshTestimonies">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newTestimony">
+        <v-btn id="btn-testimony-new" color="success" class="mr-1" @click="newTestimony">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>

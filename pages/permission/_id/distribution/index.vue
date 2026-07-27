@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-permi-distr-index-1" outlined>
           <v-card-title class="subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-shield-key-outline</v-icon>
             Roles con el permiso {{ permission.name }}
@@ -26,7 +26,7 @@
           </v-card-title>
 
           <v-card-text class="pt-0">
-            <v-data-table
+            <v-data-table id="dt-permi-distr-index-filteredroles-1"
               :headers="headers"
               :items="filteredRoles"
               :items-per-page="10"
@@ -42,9 +42,9 @@
       </v-col>
 
       <v-col cols="12">
-        <v-card outlined>
+        <v-card id="card-permi-distr-index-2" outlined>
           <v-card-text class="d-flex justify-end pa-4">
-            <v-btn color="primary" outlined @click="$router.push('/permission')">
+            <v-btn id="btn-prmdst-back" color="primary" outlined @click="$router.push('/permission')">
               <v-icon left>mdi-arrow-left</v-icon>
               Volver
             </v-btn>

@@ -2,17 +2,17 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="6" md="2">
-        <v-text-field
+        <v-text-field id="tf-organ-index-filterorganization-1"
 v-model="filterOrganization" append-icon="mdi-magnify" clearable hide-details
           placeholder="Filtro"></v-text-field>
       </v-col>
 
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="indexOrganizations()">
+        <v-btn id="btn-org-refresh" color="primary" :loading="loading" class="mr-1" @click="indexOrganizations()">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn color="success" class="mr-1" @click="newOrganization()">
+        <v-btn id="btn-org-new" color="success" class="mr-1" @click="newOrganization()">
           <v-icon left>mdi-plus</v-icon>
           Nueva Organización
         </v-btn>

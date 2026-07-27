@@ -2,16 +2,16 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="2">
-        <v-text-field v-model="filter" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar artículo"
+        <v-text-field id="tf-pos-produ-index-filter-1" v-model="filter" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar artículo"
           dense />
       </v-col>
 
       <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" @click="refreshProducts">
+        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-pospr-refresh" @click="refreshProducts">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn v-if="hasInsertPermission" color="success" class="mr-1" @click="newProduct">
+        <v-btn v-if="hasInsertPermission" color="success" class="mr-1" id="btn-pospr-new" @click="newProduct">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
@@ -19,11 +19,11 @@
 
       <v-col cols="auto">
         <v-btn-toggle v-model="viewMode" mandatory dense color="primary">
-          <v-btn value="table">
+          <v-btn value="table" id="btn-pospr-view-table">
             <v-icon left>mdi-table</v-icon>
             Tabla
           </v-btn>
-          <v-btn value="cards">
+          <v-btn value="cards" id="btn-pospr-view-cards">
             <v-icon left>mdi-view-grid</v-icon>
             Tarjetas
           </v-btn>

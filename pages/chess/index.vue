@@ -47,13 +47,13 @@
     </v-row>
 
     <!-- Diálogo de Promoción -->
-    <v-dialog v-model="showPromotionDialog" max-width="400" persistent>
+    <v-dialog id="dlg-chess-index-showpromotiondialog-1" v-model="showPromotionDialog" max-width="400" persistent>
       <v-card>
         <v-card-title class="text-h6 justify-center">
           Elige una pieza
         </v-card-title>
         <v-card-text class="d-flex justify-space-around pa-4">
-          <v-btn v-for="piece in ['q', 'r', 'b', 'n']" :key="piece" icon="mdi-chess-queen" x-large class="piece-btn"
+          <v-btn id="btn-chess-promote" v-for="piece in ['q', 'r', 'b', 'n']" :key="piece" icon="mdi-chess-queen" x-large class="piece-btn"
             :title="getPieceName(piece)" @click="promotePawn(piece)">
             <span class="text-h3">{{ getPieceSymbol(pendingMove?.color === 'white' ? piece.toUpperCase() : piece)
             }}</span>

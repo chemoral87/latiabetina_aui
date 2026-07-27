@@ -80,20 +80,20 @@ v-model="drawer" :color="authenticated ? '' : 'banner'" :mini-variant="miniVaria
     <v-app-bar :clipped-left="clipped" class="elevation-2" fixed app :color="authenticated ? '' : 'banner'">
       <v-app-bar-nav-icon v-if="showDrawer" @click.stop="drawer = !drawer" />
       <v-toolbar-title class="pl-0">
-        <v-btn v-if="backHandler" class="mr-1" outlined fab small elevation="0" @click="backHandler">
+        <v-btn v-if="backHandler" class="mr-1" outlined fab small elevation="0" id="btn-layout-back" @click="backHandler">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
         <v-icon v-if="icon">{{ icon }}</v-icon>
         {{ title }}
       </v-toolbar-title>
       <v-spacer />
-      <v-btn v-if="!authenticated && showLogin" color="banner_item elevation-2" class="mr-2" @click="gotoLogin()">
+      <v-btn v-if="!authenticated && showLogin" color="banner_item elevation-2" class="mr-2" id="btn-layout-login" @click="gotoLogin()">
         <v-icon>mdi-lock</v-icon>
       </v-btn>
 
       <v-menu v-if="authenticated" v-model="menu" offset-y :close-on-content-click="true">
         <template #activator="{ on, attrs }">
-          <v-btn class="ml-3" small fab color="blue white--text" v-bind="attrs" v-on="on">
+          <v-btn class="ml-3" small fab color="blue white--text" v-bind="attrs" v-on="on" id="btn-layout-account">
             <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
@@ -131,7 +131,7 @@ v-for="(snack, i) in snacks.filter((s) => s.display == true)" :key="i + 'snackba
           absolute :timeout="snack.timeout" :style="`bottom: ${i * 69 + 0}px`">
           <span class="text-subtitle-1 font-weight-bold">{{ snack.text }}</span>
           <template #action="{ attrs }">
-            <v-btn color="grey" v-bind="attrs" fab small @click="snack.display = false">
+            <v-btn color="grey" v-bind="attrs" fab small id="btn-layout-snack-close" @click="snack.display = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </template>

@@ -24,6 +24,7 @@
           color="white"
           title="Cerrar"
           class="ml-2"
+          id="btn-mydrag-close"
           @click.stop="close"
         >
           <v-icon small>mdi-close</v-icon>

@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" class="mb-2" dense>
     <v-col cols="12">
-      <v-card elevation="1">
+      <v-card id="card-churc-calen-1" elevation="1">
         <div class="d-flex align-center justify-space-between px-4 py-1 calendar-toolbar">
           <button class="month-nav-btn" aria-label="Mes anterior" @click="$emit('prev-month')">
             <v-icon size="22" color="white">mdi-chevron-left</v-icon>
@@ -52,7 +52,7 @@
                 <div class="event-actions">
                   <v-tooltip bottom>
                     <template #activator="{ on, attrs }">
-                      <v-btn icon x-small color="primary" v-bind="attrs" v-on="on" @click.stop="$emit('edit', event)">
+                      <v-btn icon x-small color="primary" v-bind="attrs" v-on="on" id="btn-churchevent-calendar-edit" @click.stop="$emit('edit', event)">
                         <v-icon size="18">mdi-pencil</v-icon>
                       </v-btn>
                     </template>
@@ -60,7 +60,7 @@
                   </v-tooltip>
                   <v-tooltip bottom>
                     <template #activator="{ on, attrs }">
-                      <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" @click.stop="$emit('copy', event)">
+                      <v-btn icon x-small color="orange" v-bind="attrs" v-on="on" id="btn-churchevent-calendar-copy" @click.stop="$emit('copy', event)">
                         <v-icon size="18">mdi-content-copy</v-icon>
                       </v-btn>
                     </template>
@@ -68,7 +68,7 @@
                   </v-tooltip>
                   <v-tooltip bottom>
                     <template #activator="{ on, attrs }">
-                      <v-btn icon x-small color="error" v-bind="attrs" v-on="on" @click.stop="$emit('delete', event)">
+                      <v-btn icon x-small color="error" v-bind="attrs" v-on="on" id="btn-churchevent-calendar-delete" @click.stop="$emit('delete', event)">
                         <v-icon size="18">mdi-delete</v-icon>
                       </v-btn>
                     </template>
@@ -101,13 +101,13 @@
                 </div>
               </div>
               <div class="d-flex flex-nowrap ml-2">
-                <v-btn icon x-small color="primary" aria-label="Editar" @click.stop="$emit('edit', event)">
+                <v-btn icon x-small color="primary" aria-label="Editar" id="btn-churchevent-calendar-mobile-edit" @click.stop="$emit('edit', event)">
                   <v-icon size="16">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn icon x-small color="orange" aria-label="Copiar" @click.stop="$emit('copy', event)">
+                <v-btn icon x-small color="orange" aria-label="Copiar" id="btn-churchevent-calendar-mobile-copy" @click.stop="$emit('copy', event)">
                   <v-icon size="16">mdi-content-copy</v-icon>
                 </v-btn>
-                <v-btn icon x-small color="error" aria-label="Eliminar" @click.stop="$emit('delete', event)">
+                <v-btn icon x-small color="error" aria-label="Eliminar" id="btn-churchevent-calendar-mobile-delete" @click.stop="$emit('delete', event)">
                   <v-icon size="16">mdi-delete</v-icon>
                 </v-btn>
               </div>

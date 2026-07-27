@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <div v-if="!events || events.length === 0" class="text-caption grey--text">No hay eventos disponibles</div> -->
-    <v-card v-for="event in events" :key="event.id" class="mb-3 text-center" hover outlined
+    <v-card id="card-dashb-conso-1" v-for="event in events" :key="event.id" class="mb-3 text-center" hover outlined
       :style="{ cursor: 'pointer', border: '6px solid ' + getEventColor(event.time) }" @click="goToEvent(event.id)">
       <v-card-text v-if="event.auditorium_name" class="d-flex flex-column align-center">
         <v-icon large class="mb-2">mdi-theater</v-icon>

@@ -3,21 +3,21 @@
     <v-row dense>
       <!-- Filtro de busqueda -->
       <v-col cols="12" md="2">
-        <v-text-field v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
+        <v-text-field id="tf-churc-calen-filterchurchevent-1" v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
           placeholder="Buscar evento..." dense />
       </v-col>
 
       <!-- Botones de accion -->
       <v-col cols="auto">
-        <v-btn color="primary" class="mr-2" @click="newChurchEvent">
+        <v-btn id="btn-chrcev-new" color="primary" class="mr-2" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn color="primary" :loading="loading" class="mr-2" @click="refreshChurchEvents">
+        <v-btn id="btn-chrcev-refresh" color="primary" :loading="loading" class="mr-2" @click="refreshChurchEvents">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
-        <v-btn outlined color="primary" to="/church-event">
+        <v-btn id="btn-chrcev-table" outlined color="primary" to="/church-event">
           <v-icon left>mdi-table</v-icon>
           Tabla
         </v-btn>
@@ -28,8 +28,8 @@
 
       <v-col cols="auto">
         <v-btn-toggle v-model="weekStartsOnMonday" mandatory dense @change="changeWeekStart">
-          <v-btn :value="false">Dom</v-btn>
-          <v-btn :value="true">Lun</v-btn>
+          <v-btn id="btn-chrcev-sun" :value="false">Dom</v-btn>
+          <v-btn id="btn-chrcev-mon" :value="true">Lun</v-btn>
         </v-btn-toggle>
       </v-col>
 

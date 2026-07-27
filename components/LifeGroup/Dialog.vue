@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="true" persistent max-width="600px">
+  <v-dialog id="dlg-lifeg-dialo-1" :value="true" persistent max-width="600px">
     <v-card>
       <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
         <v-icon left small color="primary">{{ iconTitle }}</v-icon>
@@ -10,7 +10,7 @@
         <v-row dense>
           <!-- Nombre -->
           <v-col cols="12">
-            <v-text-field v-model="item.name" label="Nombre de la Red" outlined dense
+            <v-text-field id="tf-lifeg-dialo-item-name-1" v-model="item.name" label="Nombre de la Red" outlined dense
               :rules="[$vrules.required]" hide-details="auto"
               @keyup.enter="save" />
           </v-col>
@@ -21,13 +21,13 @@
               :items="days" :rules="[$vrules.required]" hide-details="auto" />
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field v-model="item.time" label="Hora" type="time" outlined dense
+            <v-text-field id="tf-lifeg-dialo-item-time-2" v-model="item.time" label="Hora" type="time" outlined dense
               :rules="[$vrules.required]" hide-details="auto" />
           </v-col>
 
           <!-- Fecha Inicio -->
           <v-col cols="12" sm="6">
-            <v-text-field v-model="item.start_date" label="Fecha de inicio" type="date" outlined dense
+            <v-text-field id="tf-lifeg-dialo-item-start_date-3" v-model="item.start_date" label="Fecha de inicio" type="date" outlined dense
               :rules="[$vrules.required]" hide-details="auto" />
           </v-col>
 
@@ -39,22 +39,22 @@
 
           <!-- Dirección -->
           <v-col cols="12">
-            <v-text-field v-model="item.address" label="Dirección" outlined dense hide-details="auto" />
+            <v-text-field id="tf-lifeg-dialo-item-address-4" v-model="item.address" label="Dirección" outlined dense hide-details="auto" />
           </v-col>
 
           <!-- Referencia -->
           <v-col cols="12">
-            <v-text-field v-model="item.reference" label="Referencia" outlined dense hide-details="auto" />
+            <v-text-field id="tf-lifeg-dialo-item-reference-5" v-model="item.reference" label="Referencia" outlined dense hide-details="auto" />
           </v-col>
 
           <!-- Colonia/Zona -->
           <v-col cols="12">
-            <v-text-field v-model="item.neighborhood" label="Colonia / Zona" outlined dense hide-details="auto" />
+            <v-text-field id="tf-lifeg-dialo-item-neighborhood-6" v-model="item.neighborhood" label="Colonia / Zona" outlined dense hide-details="auto" />
           </v-col>
 
           <!-- GPS (Mapa) -->
           <v-col cols="12">
-            <v-card outlined class="pa-2">
+            <v-card id="card-lifeg-dialo-1" outlined class="pa-2">
               <v-card-title class="text-subtitle-2 font-weight-medium pa-0 pb-2">
                 <v-icon left small color="primary">mdi-map-marker</v-icon>
                 Ubicación GPS
@@ -68,7 +68,7 @@
 
           <!-- Líderes adicionales -->
           <v-col cols="12">
-            <v-card outlined class="pa-2">
+            <v-card id="card-lifeg-dialo-2" outlined class="pa-2">
               <v-card-title class="text-subtitle-2 font-weight-medium pa-0 pb-2">
                 <v-icon left small color="primary">mdi-account-multiple</v-icon>
                 Líderes adicionales
@@ -89,8 +89,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" outlined class="mr-2" @click="close">Cancelar</v-btn>
-        <v-btn color="primary" @click="save">Guardar</v-btn>
+        <v-btn color="primary" outlined class="mr-2" id="btn-lifegroup-dialog-cancel" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" id="btn-lifegroup-dialog-save" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

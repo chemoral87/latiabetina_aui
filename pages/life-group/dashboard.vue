@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-row dense>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined color="primary" dark>
+            <v-card id="card-life--dashb-1" outlined color="primary" dark>
               <v-card-text class="text-center">
                 <v-icon large>mdi-account-group</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.activeGroups || 0 }}</div>
@@ -13,7 +13,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined color="grey" dark>
+            <v-card id="card-life--dashb-2" outlined color="grey" dark>
               <v-card-text class="text-center">
                 <v-icon large>mdi-account-group-outline</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.finishedGroups || 0 }}</div>
@@ -22,7 +22,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined color="success" dark>
+            <v-card id="card-life--dashb-3" outlined color="success" dark>
               <v-card-text class="text-center">
                 <v-icon large>mdi-account-multiple</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.totalPeople || 0 }}</div>
@@ -31,7 +31,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined color="info" dark>
+            <v-card id="card-life--dashb-4" outlined color="info" dark>
               <v-card-text class="text-center">
                 <v-icon large>mdi-chart-line</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.avgAttendance || 0 }}</div>
@@ -45,7 +45,7 @@
       <v-col cols="12">
         <v-row dense>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined>
+            <v-card id="card-life--dashb-5" outlined>
               <v-card-text class="text-center">
                 <v-icon large color="primary">mdi-calendar</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.completedSessions || 0 }}</div>
@@ -54,7 +54,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined>
+            <v-card id="card-life--dashb-6" outlined>
               <v-card-text class="text-center">
                 <v-icon large color="warning">mdi-calendar-clock</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.pendingSessions || 0 }}</div>
@@ -63,7 +63,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined>
+            <v-card id="card-life--dashb-7" outlined>
               <v-card-text class="text-center">
                 <v-icon large color="success">mdi-account-plus</v-icon>
                 <div class="text-h4 font-weight-bold">{{ stats.newGuests || 0 }}</div>
@@ -72,7 +72,7 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="6" md="3">
-            <v-card outlined>
+            <v-card id="card-life--dashb-8" outlined>
               <v-card-text class="text-center">
                 <v-icon large color="info">mdi-calendar-text</v-icon>
                 <div class="text-h4 font-weight-bold">{{ totalUpcoming || 0 }}</div>
@@ -85,7 +85,7 @@
 
       <!-- Próximas reuniones -->
       <v-col cols="12" md="4">
-        <v-card outlined>
+        <v-card id="card-life--dashb-9" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-calendar-week</v-icon>
             Próximas Reuniones
@@ -106,7 +106,7 @@
 
       <!-- Asistencia por Líder -->
       <v-col cols="12" md="4">
-        <v-card outlined>
+        <v-card id="card-life--dashb-10" outlined>
           <v-card-title class="text-subtitle-1 font-weight-medium pb-2">
             <v-icon left small color="primary">mdi-chart-bar</v-icon>
             Asistencia por Líder

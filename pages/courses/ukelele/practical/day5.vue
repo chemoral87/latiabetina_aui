@@ -27,7 +27,7 @@
           <v-row dense class="align-start">
             <!-- Column 1: Chord diagram -->
             <v-col cols="12" md="5" class="d-flex justify-center">
-              <v-card outlined class="pa-4 w-100" max-width="320">
+              <v-card id="card-cours-ukele-pract-day5-1" outlined class="pa-4 w-100" max-width="320">
                 <div class="text-center mb-1">
                   <span class="text-h4 font-weight-black deep-purple--text text--darken-2">{{ selectedBarre.chordName
                   }}</span>
@@ -143,7 +143,7 @@
                 </div>
 
                 <div class="d-flex justify-center mt-4">
-                  <v-btn color="deep-purple" dark @click="playChord">
+                  <v-btn id="btn-uked5-play-chord" color="deep-purple" dark @click="playChord">
                     <v-icon left>mdi-play-circle</v-icon>
                     Reproducir Acorde
                   </v-btn>
@@ -230,7 +230,7 @@
 
             <v-row dense class="mb-4">
               <v-col v-for="(option, idx) in currentQuestion.options" :key="idx" cols="12" sm="6">
-                <v-btn block outlined :disabled="isAnswered" :color="getOptionColor(idx)"
+                <v-btn id="btn-uked5-quiz-option" block outlined :disabled="isAnswered" :color="getOptionColor(idx)"
                   class="quiz-option-btn py-6 text-left justify-start" @click="checkAnswer(idx)">
                   <v-icon left class="mr-2" :color="getOptionIconColor(idx)">
                     {{ getOptionIcon(idx) }}
@@ -252,7 +252,7 @@
                 </v-alert>
 
                 <div class="d-flex justify-end">
-                  <v-btn color="deep-purple" dark @click="nextQuestion">
+                  <v-btn id="btn-uked5-quiz-next" color="deep-purple" dark @click="nextQuestion">
                     {{ currentQuestionIndex + 1 === quizQuestions.length ? 'Finalizar' : 'Siguiente' }}
                     <v-icon right>mdi-arrow-right</v-icon>
                   </v-btn>
@@ -278,7 +278,7 @@
               </p>
             </v-card>
 
-            <v-btn color="deep-purple" dark large class="mt-2" @click="resetQuiz">
+            <v-btn id="btn-uked5-quiz-retry" color="deep-purple" dark large class="mt-2" @click="resetQuiz">
               <v-icon left>mdi-refresh</v-icon>
               Intentar de nuevo
             </v-btn>

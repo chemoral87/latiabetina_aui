@@ -1,11 +1,11 @@
 <template>
-  <v-dialog :value="true" persistent max-width="600px">
+  <v-dialog id="dlg-churc-dialo-1" :value="true" persistent max-width="600px">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">{{ iconTitle }}</v-icon>
         <span class="text-h5">{{ formTitle }}</span>
         <v-spacer />
-        <v-btn icon @click="close">
+        <v-btn icon id="btn-churchevent-dialog-close" @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -14,7 +14,7 @@
         <v-form ref="form" @submit.prevent="save">
           <organization-select v-model="item.org_id" hide-one :permission="'church-event-index'" outlined
             :rules="[$vrules.required]" />
-          <v-text-field v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required
+          <v-text-field id="tf-churc-dialo-item-name-1" v-model="item.name" label="Nombre" :error-messages="errors.name" :disabled="loading" required
             autofocus @keyup.enter="save" />
 
           <v-textarea v-model="item.description" label="Descripción" :error-messages="errors.description"
@@ -31,10 +31,10 @@
             </v-col>
           </v-row>
 
-          <v-text-field v-model="item.time_start" label="Hora" type="time" :error-messages="errors.time_start"
+          <v-text-field id="tf-churc-dialo-item-time_start-2" v-model="item.time_start" label="Hora" type="time" :error-messages="errors.time_start"
             :disabled="loading" />
 
-          <v-text-field v-model="item.location" label="Ubicación" :error-messages="errors.location"
+          <v-text-field id="tf-churc-dialo-item-location-3" v-model="item.location" label="Ubicación" :error-messages="errors.location"
             :disabled="loading" />
 
           <v-row>
@@ -60,8 +60,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="primary" text :disabled="loading || imageLoading" @click="close">Cancelar</v-btn>
-        <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" @click="save">Guardar</v-btn>
+        <v-btn color="primary" text :disabled="loading || imageLoading" id="btn-churchevent-dialog-cancel" @click="close">Cancelar</v-btn>
+        <v-btn color="primary" :loading="loading" :disabled="!isValid || imageLoading" id="btn-churchevent-dialog-save" @click="save">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

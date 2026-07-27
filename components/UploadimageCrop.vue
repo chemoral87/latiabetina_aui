@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog id="dlg-uploadimagecrop-dialog-1" v-model="dialog" width="500">
       <template #activator="{ on, attrs }">
-        <v-btn small color="primary" v-bind="attrs" v-on="on">
+        <v-btn small color="primary" v-bind="attrs" v-on="on" id="btn-uploadimagecrop-activator">
           <v-icon class="mr-1">mdi-camera</v-icon>
           {{ $attrs.label }}
         </v-btn>
@@ -26,9 +26,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="error" outlined @click="cancelUpload()">Limpiar</v-btn>
-          <v-btn color="primary" outlined @click="close()">Cancelar</v-btn>
-          <v-btn color="primary" @click="dialog = false">Guardar</v-btn>
+          <v-btn color="error" outlined id="btn-uploadimagecrop-clear" @click="cancelUpload()">Limpiar</v-btn>
+          <v-btn color="primary" outlined id="btn-uploadimagecrop-cancel" @click="close()">Cancelar</v-btn>
+          <v-btn color="primary" id="btn-uploadimagecrop-save" @click="dialog = false">Guardar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

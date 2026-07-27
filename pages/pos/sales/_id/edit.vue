@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row dense>
       <v-col cols="12" md="8" offset-md="2">
-        <v-card outlined class="pa-4">
+        <v-card id="card-pos-sales-edit-1" outlined class="pa-4">
           <div class="d-flex align-center mb-4">
             <v-icon left color="warning" large>mdi-pencil</v-icon>
             <div>
@@ -16,11 +16,11 @@
           <!-- Customer info -->
           <v-row dense>
             <v-col cols="12" sm="6">
-              <v-text-field v-model="form.customer_name" label="Cliente" prepend-icon="mdi-account" dense outlined
+              <v-text-field id="tf-pos-sales-edit-form-customer_name-1" v-model="form.customer_name" label="Cliente" prepend-icon="mdi-account" dense outlined
                 hide-details />
             </v-col>
             <v-col cols="12" sm="6">
-              <v-text-field v-model="form.customer_phone" label="Teléfono" prepend-icon="mdi-phone" dense outlined
+              <v-text-field id="tf-pos-sales-edit-form-customer_phone-2" v-model="form.customer_phone" label="Teléfono" prepend-icon="mdi-phone" dense outlined
                 hide-details />
             </v-col>
           </v-row>
@@ -56,7 +56,7 @@
                 <td class="text-right">${{ Number(item.unit_price).toLocaleString() }}</td>
                 <td class="text-right font-weight-medium">${{ Number(item.total_price).toLocaleString() }}</td>
                 <td class="text-center pa-1">
-                  <v-btn icon color="error" x-small @click="removeItem(index)">
+                  <v-btn icon color="error" x-small id="btn-possid-remove-item" @click="removeItem(index)">
                     <v-icon small>mdi-delete</v-icon>
                   </v-btn>
                 </td>
@@ -135,11 +135,11 @@
 
           <!-- Actions -->
           <div class="d-flex justify-end gap-2">
-            <v-btn outlined color="grey" class="mr-2" @click="goBack" :disabled="saving">
+            <v-btn outlined color="grey" class="mr-2" @click="goBack" :disabled="saving" id="btn-possid-cancel">
               <v-icon left small>mdi-arrow-left</v-icon>
               Cancelar
             </v-btn>
-            <v-btn color="warning" :loading="saving" @click="saveSale">
+            <v-btn color="warning" :loading="saving" id="btn-possid-save" @click="saveSale">
               <v-icon left small>mdi-content-save</v-icon>
               Guardar cambios
             </v-btn>

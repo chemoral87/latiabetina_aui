@@ -16,7 +16,7 @@
 
           <v-row dense class="mb-3">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day4-lighten-5-1" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -32,7 +32,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day4-lighten-5-2" outlined class="pa-4 grey lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="primary" class="mr-2">mdi-book-open-variant</v-icon>
@@ -50,7 +50,7 @@
 
           <v-row dense>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-3" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="primary" class="mb-1">mdi-text-box-outline</v-icon>
                 <div class="text-subtitle-2 font-weight-bold primary--text mb-1">Una misma letra</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
@@ -60,7 +60,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-4" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="primary" class="mb-1">mdi-tune</v-icon>
                 <div class="text-subtitle-2 font-weight-bold primary--text mb-1">Una misma melodía</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
@@ -70,7 +70,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-5" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="primary" class="mb-1">mdi-heart-outline</v-icon>
                 <div class="text-subtitle-2 font-weight-bold primary--text mb-1">Un mismo sentir</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
@@ -97,7 +97,7 @@
 
           <v-row dense class="mb-3">
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 orange lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day4-orange-6" outlined class="pa-4 orange lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="orange darken-3" class="mr-2">mdi-book-open-variant</v-icon>
@@ -112,7 +112,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="6" class="d-flex">
-              <v-card outlined class="pa-4 amber lighten-5 w-100 d-flex flex-column justify-space-between">
+              <v-card id="card-cours-ukele-theol-day4-amber-7" outlined class="pa-4 amber lighten-5 w-100 d-flex flex-column justify-space-between">
                 <div>
                   <div class="d-flex align-center mb-2">
                     <v-icon color="amber darken-3" class="mr-2">mdi-book-open-variant</v-icon>
@@ -130,7 +130,7 @@
 
           <v-row dense>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-8" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="deep-orange" class="mb-1">mdi-account-group</v-icon>
                 <div class="text-subtitle-2 font-weight-bold deep-orange--text mb-1">Estaban todos</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
@@ -141,7 +141,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-9" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="deep-orange" class="mb-1">mdi-handshake-outline</v-icon>
                 <div class="text-subtitle-2 font-weight-bold deep-orange--text mb-1">Unánimes</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">
@@ -151,7 +151,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="4">
-              <v-card outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
+              <v-card id="card-cours-ukele-theol-day4-10" outlined class="pa-3 text-center fill-height" style="border-radius:10px;">
                 <v-icon color="deep-orange" class="mb-1">mdi-map-marker-outline</v-icon>
                 <div class="text-subtitle-2 font-weight-bold deep-orange--text mb-1">En un mismo lugar</div>
                 <p class="text-body-2 grey--text text--darken-3 mb-0">

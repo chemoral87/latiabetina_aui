@@ -1,7 +1,7 @@
 <template>
   <v-menu ref="dateMenu" v-model="dateMenu" :close-on-content-click="false" transition="scale-transition" offset-y min-width="auto">
     <template #activator="{ on, attrs }">
-      <v-text-field
+      <v-text-field id="tf-my-dater-label-1"
         ref="inputField"
         :value="dateRangeText"
         :label="label"
@@ -23,11 +23,11 @@
 
     <v-date-picker v-model="pendingValue" range :no-title="noTitle" :scrollable="scrollable" :locale="locale">
       <v-spacer />
-      <v-btn color="primary" outlined class="mr-2" @click="clearRange">
+      <v-btn color="primary" outlined class="mr-2" id="btn-my-daterange-clear" @click="clearRange">
         <v-icon left>mdi-close</v-icon>
         Limpiar
       </v-btn>
-      <v-btn color="primary" @click="confirm">
+      <v-btn color="primary" id="btn-my-daterange-confirm" @click="confirm">
         <v-icon left>mdi-check</v-icon>
         OK
       </v-btn>
