@@ -75,6 +75,12 @@
                 {{ dateRange.length ? dateRange.join(" ~ ") : "[]" }}
               </v-chip>
             </div>
+            <div class="mt-2 d-flex align-center">
+              <span class="text-caption grey--text mr-2">Mostrar:</span>
+              <v-chip small color="primary" outlined label>
+                {{ formattedDateRange || "—" }}
+              </v-chip>
+            </div>
           </v-card-text>
           <v-card-actions class="pt-0 px-4 pb-3">
             <v-btn id="btn-my-daterange-clear" small outlined color="error" @click="dateRange = []">
@@ -365,10 +371,22 @@ export default {
       try {
         const [year, month, day] = this.date.split("-")
         if (!year || !month || !day) return this.date
-        return `${day}/${month}/${year}`
+        const monthNames = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+        return `${day}/${monthNames[parseInt(month, 10) - 1]}/${year}`
       } catch {
         return this.date
       }
+    },
+
+    formattedDateRange() {
+      if (!this.dateRange || this.dateRange.length === 0) return null
+      const monthNames = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+      const format = (d) => {
+        const [year, month, day] = d.split("-")
+        if (!year || !month || !day) return d
+        return `${day}/${monthNames[parseInt(month, 10) - 1]}/${year}`
+      }
+      return [...this.dateRange].sort().map(format).join(" ~ ")
     },
 
     stateDump() {

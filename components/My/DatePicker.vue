@@ -8,7 +8,7 @@
         :disabled="disabled" :clearable="clearable" />
     </template>
     <v-date-picker v-model="internalValue" @input="onDateSelected" :no-title="noTitle" :scrollable="scrollable"
-      :locale="locale">
+      :locale="locale" :weekday-format="weekdayFormat" first-day-of-week="1">
       <v-spacer></v-spacer>
       <v-btn color="primary" outlined class="mr-2" id="btn-my-datepicker-clear" @click="clearDate">
         <v-icon left>mdi-close</v-icon>
@@ -58,22 +58,21 @@ export default {
     formattedDate() {
       if(!this.value) return "";
 
-      // Use project's global filters if available ($moment usually registered in filters)
-      if(this.$moment) {
-        return this.$moment(this.value).format("DD/MM/YYYY");
-      }
-
-      // Fallback native formatting
       try {
         const [year, month, day] = this.value.split("-");
         if(!year || !month || !day) return this.value;
-        return `${day}/${month}/${year}`;
+        const monthNames = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        return `${day}/${monthNames[parseInt(month, 10) - 1]}/${year}`;
       } catch(e) {
         return this.value;
       }
     },
   },
   methods: {
+    weekdayFormat(date) {
+      const weekdays = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"]
+      return weekdays[new Date(date + "T00:00:00").getDay()]
+    },
     onDateSelected() {
       this.dateMenu = false
       this.$nextTick(() => {

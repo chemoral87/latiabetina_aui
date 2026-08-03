@@ -21,15 +21,12 @@
       />
     </template>
 
-    <v-date-picker v-model="pendingValue" range :no-title="noTitle" :scrollable="scrollable" :locale="locale">
+    <v-date-picker v-model="pendingValue" range :no-title="noTitle" :scrollable="scrollable" :locale="locale"
+      :weekday-format="weekdayFormat" first-day-of-week="1">
       <v-spacer />
       <v-btn color="primary" outlined class="mr-2" id="btn-my-daterange-clear" @click="clearRange">
         <v-icon left>mdi-close</v-icon>
         Limpiar
-      </v-btn>
-      <v-btn color="primary" id="btn-my-daterange-confirm" @click="confirm">
-        <v-icon left>mdi-check</v-icon>
-        OK
       </v-btn>
     </v-date-picker>
   </v-menu>
@@ -67,7 +64,13 @@ export default {
   computed: {
     dateRangeText() {
       if (!this.value || this.value.length === 0) return ""
-      return [...this.value].sort().join(this.separator)
+      const monthNames = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+      const format = (d) => {
+        const [year, month, day] = d.split("-")
+        if (!year || !month || !day) return d
+        return `${day}/${monthNames[parseInt(month, 10) - 1]}/${year}`
+      }
+      return [...this.value].sort().map(format).join(this.separator)
     },
   },
 
@@ -87,6 +90,10 @@ export default {
   },
 
   methods: {
+    weekdayFormat(date) {
+      const weekdays = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"]
+      return weekdays[new Date(date + "T00:00:00").getDay()]
+    },
     confirm() {
       const sorted = Array.isArray(this.pendingValue) ? [...this.pendingValue].sort() : []
       this.$emit("input", sorted)
