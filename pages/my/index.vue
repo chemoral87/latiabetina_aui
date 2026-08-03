@@ -35,13 +35,13 @@
             <MyDatePicker v-model="date" label="Selecciona una fecha" dense outlined />
             <div class="mt-3 d-flex align-center">
               <span class="text-caption grey--text mr-2">Valor:</span>
-              <v-chip small :color="date ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
+              <v-chip id="chip-my-date-value" small :color="date ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
                 {{ date || "null" }}
               </v-chip>
             </div>
             <div class="mt-2 d-flex align-center">
               <span class="text-caption grey--text mr-2">Mostrar:</span>
-              <v-chip small color="primary" outlined label>
+              <v-chip id="chip-my-date-formatted" small color="primary" outlined label>
                 {{ formattedDate || "—" }}
               </v-chip>
             </div>
@@ -71,13 +71,13 @@
             <MyDateRange v-model="dateRange" label="Rango de fechas" dense outlined />
             <div class="mt-3 d-flex align-center">
               <span class="text-caption grey--text mr-2">Valor:</span>
-              <v-chip small :color="dateRange.length ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
+              <v-chip id="chip-my-daterange-value" small :color="dateRange.length ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
                 {{ dateRange.length ? dateRange.join(" ~ ") : "[]" }}
               </v-chip>
             </div>
             <div class="mt-2 d-flex align-center">
               <span class="text-caption grey--text mr-2">Mostrar:</span>
-              <v-chip small color="primary" outlined label>
+              <v-chip id="chip-my-daterange-formatted" small color="primary" outlined label>
                 {{ formattedDateRange || "—" }}
               </v-chip>
             </div>
@@ -103,7 +103,7 @@
             <MyTimePicker v-model="time" label="Selecciona hora" dense outlined />
             <div class="mt-3 d-flex align-center">
               <span class="text-caption grey--text mr-2">Valor (24h):</span>
-              <v-chip small :color="time ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
+              <v-chip id="chip-my-time-value" small :color="time ? 'success' : 'grey lighten-3'" dark label class="font-weight-mono">
                 {{ time || "null" }}
               </v-chip>
             </div>
@@ -145,7 +145,7 @@
               <v-text-field id="tf-my-index-previewsrc-1" v-model="previewSrc" label="URL de imagen" dense outlined hide-details placeholder="https://..." />
             </div>
             <div class="mt-2 d-flex align-center">
-              <v-switch v-model="previewLoading" dense hide-details label="Forzar loading" class="mt-0 pt-0 mr-3" />
+              <v-switch id="sw-my-index-forceloading" v-model="previewLoading" dense hide-details label="Forzar loading" class="mt-0 pt-0 mr-3" />
               <v-text-field id="tf-my-index-delay-s-2" v-model.number="previewDelay" label="Delay (s)" dense outlined hide-details style="max-width: 100px" type="number" min="0" max="10" />
             </div>
           </v-card-text>
@@ -245,7 +245,7 @@
             </v-row>
             <div class="mt-2 text-caption">
               Estado:
-              <v-chip x-small :color="dragPanelVisible ? 'success' : 'grey'" text-color="white" label>
+              <v-chip id="chip-my-drag-state" x-small :color="dragPanelVisible ? 'success' : 'grey'" text-color="white" label>
                 {{ dragPanelVisible ? "Visible" : "Oculto" }}
               </v-chip>
             </div>
