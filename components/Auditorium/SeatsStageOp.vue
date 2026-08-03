@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="cmp-auditorium-seats-stage-op">
     <!-- Navigation and Zoom Controls -->
     <v-row ref="controlRow" dense>
       <!-- {{ eventArrays }} -->
@@ -80,14 +80,14 @@
     </div>
 
     <!-- Floating mark panel - only shown when seats are selected -->
-    <MyDragPanel v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed"
+    <MyDragPanel id="cmp-my-drag-panel-mark" v-model="showMarkPanel" :title="'Asientos: ' + selectedSeatsArray.length" mode="fixed"
       :top="panelVerticalPos.top" :bottom="panelVerticalPos.bottom" left="calc(50% - 95px)">
       <div class="mark-grid">
         <!-- Loop through active status configs -->
         <template v-for="(config, key) in activeStatusConfig">
           <div v-if="key === '_'" :key="key" class="mark-item mark-spacer"></div>
           <div v-else :key="key" class="mark-item">
-            <v-btn class="mb-1" icon :title="config.label"
+            <v-btn class="mb-1" icon :title="config.label" :id="'btn-auditorium-stageop-mark-' + key"
               :style="`background-color: ${config.color} !important; color: white`"
               @click="setEventSeat(key == 'e' ? null : key)">
               <v-icon>{{ getIconName(key) }}</v-icon>
@@ -99,7 +99,7 @@
     </MyDragPanel>
 
     <!-- History Dialog -->
-    <AuditoriumSeatsHistory v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
+    <AuditoriumSeatsHistory id="cmp-auditorium-seats-history" v-model="historyDialog" :history-loading="historyLoading" :history-log="historyLog"
       :history-users="historyUsers" />
   </div>
 </template>

@@ -17,7 +17,7 @@
         </v-btn>
 
         <!-- Floating stats panel -->
-        <MyDragPanel v-model="statsPanel" title="Desglose de asientos">
+        <MyDragPanel id="cmp-my-drag-panel" v-model="statsPanel" title="Desglose de asientos">
           <div class="stats-panel-body">
             <!-- One row per active status -->
             <div v-for="(cfg, key) in activeStatusCfg" :key="key" class="stats-row">
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <v-alert v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
+    <v-alert id="alert-auevent-notfound" v-else type="error" outlined class="ma-2">Evento no encontrado.</v-alert>
   </v-container>
 </template>
 
