@@ -71,20 +71,22 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="4">
-        <v-text-field id="tf-conso-detai-filterterm-2" v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-btn id="btn-cnsld-new-member" color="primary" class="mr-1" @click="newMember()">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo Miembro
-        </v-btn>
-        <v-btn id="btn-cnsld-refresh" color="primary" :loading="loading" @click="fetchMembers()">
-          <v-icon>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-      </v-col>
+    </v-row>
 
+    <filter-row
+      v-model="filterTerm"
+      :loading="loading"
+      search-id="tf-conso-detai-filterterm-2"
+      refresh-id="btn-cnsld-refresh"
+      new-id="btn-cnsld-new-member"
+      new-label="Nuevo Miembro"
+      cols="12"
+      md="4"
+      @refresh="fetchMembers"
+      @create="newMember"
+    />
+
+    <v-row dense>
       <v-col cols="12">
         <ConsolidationMemberTable :members="filteredMembers" :loading="loading" @edit="editMember"
           @delete="deleteMemberPrompt" />

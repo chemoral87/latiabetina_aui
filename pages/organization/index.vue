@@ -1,22 +1,20 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col cols="12" sm="6" md="2">
-        <v-text-field id="tf-organ-index-filterorganization-1"
-v-model="filterOrganization" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Filtro"></v-text-field>
-      </v-col>
+    <filter-row
+      v-model="filterOrganization"
+      :loading="loading"
+      search-id="tf-organ-index-filterorganization-1"
+      refresh-id="btn-org-refresh"
+      new-id="btn-org-new"
+      new-label="Nueva Organización"
+      cols="12"
+      sm="6"
+      md="2"
+      @refresh="indexOrganizations"
+      @create="newOrganization"
+    />
 
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-org-refresh" color="primary" :loading="loading" class="mr-1" @click="indexOrganizations()">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-org-new" color="success" class="mr-1" @click="newOrganization()">
-          <v-icon left>mdi-plus</v-icon>
-          Nueva Organización
-        </v-btn>
-      </v-col>
+    <v-row>
       <v-col cols="12">
         <OrganizationTable
 :options="options" :response="response" :dialog-delete.sync="dialogDeleteOrganization"

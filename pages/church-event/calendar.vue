@@ -1,19 +1,22 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <!-- Filtro de busqueda -->
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-churc-calen-filterchurchevent-1" v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Buscar evento..." dense />
-      </v-col>
-
-      <!-- Botones de accion -->
-      <v-col cols="auto">
+    <filter-row
+      v-model="filterChurchEvent"
+      :loading="loading"
+      :show-refresh="false"
+      :show-new="false"
+      search-id="tf-churc-calen-filterchurchevent-1"
+      search-placeholder="Buscar evento..."
+      cols="12"
+      md="2"
+    >
+      <template #actions>
+        <!-- Botones de accion -->
         <v-btn id="btn-chrcev-new" color="primary" class="mr-2" @click="newChurchEvent">
           <v-icon left>mdi-plus</v-icon>
           Nuevo
         </v-btn>
-        <v-btn id="btn-chrcev-refresh" color="primary" :loading="loading" class="mr-2" @click="refreshChurchEvents">
+        <v-btn id="btn-chrcev-refresh" color="primary" class="mr-2" :loading="loading" @click="refreshChurchEvents">
           <v-icon left>mdi-reload</v-icon>
           Refrescar
         </v-btn>
@@ -21,18 +24,24 @@
           <v-icon left>mdi-table</v-icon>
           Tabla
         </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
-          outlined /></v-col>
+      </template>
 
-      <v-col cols="auto">
-        <v-btn-toggle v-model="weekStartsOnMonday" mandatory dense @change="changeWeekStart">
-          <v-btn id="btn-chrcev-sun" :value="false">Dom</v-btn>
-          <v-btn id="btn-chrcev-mon" :value="true">Lun</v-btn>
-        </v-btn-toggle>
-      </v-col>
+      <template #append>
+        <v-col cols="auto">
+          <organization-select v-model="filterOrgId" permission="church-event-index" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
 
+        <v-col cols="auto">
+          <v-btn-toggle v-model="weekStartsOnMonday" mandatory dense @change="changeWeekStart">
+            <v-btn id="btn-chrcev-sun" :value="false">Dom</v-btn>
+            <v-btn id="btn-chrcev-mon" :value="true">Lun</v-btn>
+          </v-btn-toggle>
+        </v-col>
+      </template>
+    </filter-row>
+
+    <v-row dense>
       <!-- Calendario de eventos -->
       <v-col cols="12">
         <ChurchEventCalendarView :cal-year="calYear" :cal-month="calMonth" :events="churchEvents"

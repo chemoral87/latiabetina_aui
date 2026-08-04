@@ -1,48 +1,48 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-pos-produ-index-filter-1" v-model="filter" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar artículo"
-          dense />
-      </v-col>
-
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-pospr-refresh" @click="refreshProducts">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn v-if="hasInsertPermission" color="success" class="mr-1" id="btn-pospr-new" @click="newProduct">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-      </v-col>
-
-      <v-col cols="auto">
+    <filter-row
+      v-model="filter"
+      :loading="loading"
+      :show-new="hasInsertPermission"
+      search-id="tf-pos-produ-index-filter-1"
+      refresh-id="btn-pospr-refresh"
+      new-id="btn-pospr-new"
+      search-placeholder="Buscar artículo"
+      cols="12"
+      md="2"
+      @refresh="refreshProducts"
+      @create="newProduct"
+    >
+      <template #actions>
         <v-btn-toggle v-model="viewMode" mandatory dense color="primary">
-          <v-btn value="table" id="btn-pospr-view-table">
+          <v-btn id="btn-pospr-view-table" value="table">
             <v-icon left>mdi-table</v-icon>
             Tabla
           </v-btn>
-          <v-btn value="cards" id="btn-pospr-view-cards">
+          <v-btn id="btn-pospr-view-cards" value="cards">
             <v-icon left>mdi-view-grid</v-icon>
             Tarjetas
           </v-btn>
         </v-btn-toggle>
-      </v-col>
+      </template>
 
-      <v-col v-if="showOrgSelect" cols="auto">
-        <organization-select v-model="filterOrgId" permission="product-insert" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
+      <template #append>
+        <v-col v-if="showOrgSelect" cols="auto">
+          <organization-select v-model="filterOrgId" permission="product-insert" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
 
-      <!-- Cache indicator -->
-      <v-col v-if="usingCache && lastFetchTime" cols="auto" class="d-flex align-center">
-        <v-chip x-small color="grey" outlined class="px-2">
-          <v-icon x-small left>mdi-cached</v-icon>
-          En caché - {{ cacheLabel }}
-        </v-chip>
-      </v-col>
+        <!-- Cache indicator -->
+        <v-col v-if="usingCache && lastFetchTime" cols="auto" class="d-flex align-center">
+          <v-chip x-small color="grey" outlined class="px-2">
+            <v-icon x-small left>mdi-cached</v-icon>
+            En caché - {{ cacheLabel }}
+          </v-chip>
+        </v-col>
+      </template>
+    </filter-row>
 
+    <v-row dense>
       <v-col v-if="viewMode === 'table'" cols="12">
         <ProductTable :options="options" :response="response" :loading="loading" permission="product-index"
           @sorting="handleSorting" @edit="editProduct" @delete="beforeDeleteProduct" />

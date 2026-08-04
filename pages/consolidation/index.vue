@@ -1,19 +1,18 @@
 <template>
   <v-container fluid>
+    <filter-row
+      v-model="filterTerm"
+      :loading="loading"
+      search-id="tf-conso-index-filterterm-1"
+      refresh-id="btn-cnsld-refresh"
+      new-id="btn-cnsld-new"
+      cols="12"
+      md="3"
+      @refresh="fetchData"
+      @create="newSheet"
+    />
+
     <v-row dense>
-      <v-col cols="12" md="3">
-        <v-text-field id="tf-conso-index-filterterm-1" v-model="filterTerm" append-icon="mdi-magnify" clearable hide-details placeholder="Filtro" />
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-btn id="btn-cnsld-new" color="primary" class="mr-1" @click="newSheet()">
-          <v-icon>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-        <v-btn id="btn-cnsld-refresh" color="primary" :loading="loading" @click="fetchData()">
-          <v-icon>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-      </v-col>
       <v-col cols="12">
         <ConsolidationTable
           :response="response"

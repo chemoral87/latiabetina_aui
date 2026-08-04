@@ -90,7 +90,10 @@
             <v-btn class="mb-1" icon :title="config.label" :id="'btn-auditorium-stageop-mark-' + key"
               :style="`background-color: ${config.color} !important; color: white`"
               @click="setEventSeat(key == 'e' ? null : key)">
-              <v-icon>{{ getIconName(key) }}</v-icon>
+              <svg v-if="config && config.icon" viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor">
+                <path :d="config.icon" />
+              </svg>
+              <v-icon v-else>{{ getIconName(key) }}</v-icon>
             </v-btn>
             <span class="mark-label">{{ config.label }}</span>
           </div>

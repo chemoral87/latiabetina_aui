@@ -1,35 +1,53 @@
 <template>
   <v-container fluid>
-    <v-row dense align="center">
-      <v-col cols="12" md="4" sm="6">
-        <v-text-field id="tf-testi-index-filtertestimony-1" v-model="filterTestimony" prepend-inner-icon="mdi-magnify" clearable hide-details dense
-          placeholder="Filtro" />
-      </v-col>
+    <filter-row
+      v-model="filterTestimony"
+      :loading="loading"
+      search-id="tf-testi-index-filtertestimony-1"
+      refresh-id="btn-testimony-refresh"
+      new-id="btn-testimony-new"
+      cols="12"
+      sm="6"
+      md="4"
+      @refresh="refreshTestimonies"
+      @create="newTestimony"
+    >
+      <template #filters>
+        <v-col cols="12" md="2" sm="4">
+          <v-select
+            v-model="statusFilter"
+            :items="[
+              { text: 'Pendientes', value: '' },
+              { text: 'Aprobados', value: 'approved' },
+              { text: 'Rechazados', value: 'rejected' },
+            ]"
+            placeholder="Estado"
+            clearable
+            dense
+            hide-details
+            outlined
+            @change="onStatusChange"
+          />
+        </v-col>
+      </template>
 
-      <v-col cols="12" md="2" sm="4">
-        <v-select v-model="statusFilter" :items="[
-          { text: 'Pendientes', value: '' },
-          { text: 'Aprobados', value: 'approved' },
-          { text: 'Rechazados', value: 'rejected' },
-        ]" placeholder="Estado" clearable dense hide-details @change="onStatusChange" />
-      </v-col>
+      <template #append>
+        <v-col v-if="!orgFilterHidden" cols="auto" class="d-flex align-center">
+          <organization-select
+            v-model="filterOrgId"
+            :hidden.sync="orgFilterHidden"
+            permission="testimony-index"
+            hide-one
+            dense
+            hide-details
+            clearable
+            outlined
+          />
+        </v-col>
+      </template>
+    </filter-row>
 
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-testimony-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshTestimonies">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-testimony-new" color="success" class="mr-1" @click="newTestimony">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-      </v-col>
-
-      <v-col v-if="!orgFilterHidden" cols="auto" class="d-flex align-center">
-        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="testimony-index" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
-
+    <v-row dense>
       <v-col cols="12">
         <TestimonyTable ref="testimonyTable" :options="options" :response="response" :loading="loading"
           @sorting="handleSorting" @edit="editTestimony" @show="showTestimony" @delete="beforeDeleteTestimony" />

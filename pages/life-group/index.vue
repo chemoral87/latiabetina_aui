@@ -1,29 +1,35 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <v-col cols="12" md="4" sm="6">
-        <v-text-field id="tf-life--index-filtertext-1" v-model="filterText" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Buscar red..." />
-      </v-col>
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-lfgrp-refresh" color="primary" :loading="loading" class="mr-1" @click="getItems()">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-lfgrp-new" color="success" class="mr-1" @click="$router.push('/life-group/new')">
-          <v-icon left>mdi-plus</v-icon>
-          Nueva Red
-        </v-btn>
+    <filter-row
+      v-model="filterText"
+      :loading="loading"
+      search-id="tf-life--index-filtertext-1"
+      refresh-id="btn-lfgrp-refresh"
+      new-id="btn-lfgrp-new"
+      search-placeholder="Buscar red..."
+      new-label="Nueva Red"
+      cols="12"
+      sm="6"
+      md="4"
+      @refresh="getItems"
+      @create="$router.push('/life-group/new')"
+    >
+      <template #actions>
         <v-btn id="btn-lfgrp-dashboard" color="info" @click="$router.push('/life-group/dashboard')">
           <v-icon left>mdi-chart-box</v-icon>
           Dashboard
         </v-btn>
-      </v-col>
-      <v-col v-if="!orgFilterHidden" cols="auto">
-        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="life-group-index" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
+      </template>
 
+      <template #append>
+        <v-col v-if="!orgFilterHidden" cols="auto">
+          <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="life-group-index" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
+      </template>
+    </filter-row>
+
+    <v-row dense>
       <v-col cols="12">
         <LifeGroupTable
           :loading="loading"

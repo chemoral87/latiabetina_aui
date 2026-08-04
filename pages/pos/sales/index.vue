@@ -1,24 +1,25 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <!-- Filtro de búsqueda -->
-      <v-col cols="12" md="3">
-        <v-text-field id="tf-pos-sales-index-filtersale-1" v-model="filterSale" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Buscar venta..." dense />
-      </v-col>
-
-      <!-- Botones de acción -->
-      <v-col cols="12" md="auto">
-        <v-btn id="btn-pos-sales-refresh" color="primary" :loading="loading" @click="refreshSales">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
+    <filter-row
+      v-model="filterSale"
+      :loading="loading"
+      :show-new="false"
+      search-id="tf-pos-sales-index-filtersale-1"
+      refresh-id="btn-pos-sales-refresh"
+      search-placeholder="Buscar venta..."
+      cols="12"
+      md="3"
+      @refresh="refreshSales"
+    >
+      <template #actions>
         <v-btn id="btn-pos-sales-goto-pos" color="success" class="ml-2" to="/pos">
           <v-icon left>mdi-point-of-sale</v-icon>
           Ir al POS
         </v-btn>
-      </v-col>
+      </template>
+    </filter-row>
 
+    <v-row dense>
       <!-- Tabla de ventas -->
       <v-col cols="12">
         <SaleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"

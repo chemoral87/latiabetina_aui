@@ -1,24 +1,25 @@
 <template>
   <v-container fluid>
+    <filter-row
+      v-model="filterAuditorium"
+      :loading="loading"
+      search-id="tf-audit-index-filterauditorium-1"
+      refresh-id="btn-auditorium-refresh"
+      new-id="btn-auditorium-new"
+      cols="12"
+      md="2"
+      @refresh="getAuditoriums"
+      @create="newAuditorium"
+    >
+      <template #append>
+        <v-col v-if="!orgFilterHidden" cols="auto">
+          <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
+      </template>
+    </filter-row>
+
     <v-row dense>
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-audit-index-filterauditorium-1" v-model="filterAuditorium" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Filtro" dense></v-text-field>
-      </v-col>
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-auditorium-refresh" @click="getAuditoriums()">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn color="success" class="mr-1" id="btn-auditorium-new" @click="newAuditorium()">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-      </v-col>
-      <v-col v-if="!orgFilterHidden" cols="auto">
-        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
       <v-col cols="12">
         <AuditoriumTable :loading="loading" :options="options" :response="response" @sorting="getAuditoriums" @edit="editAuditorium"
           @delete="beforeDeleteAuditorium" @layout="goToLayout" />

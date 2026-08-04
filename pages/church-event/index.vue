@@ -1,32 +1,33 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <!-- Filtro de busqueda -->
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-churc-index-filterchurchevent-1" v-model="filterChurchEvent" append-icon="mdi-magnify" clearable hide-details
-          placeholder="Buscar evento..." dense />
-      </v-col>
-
-      <!-- Botones de accion -->
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-chrcev-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshChurchEvents">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-chrcev-new" color="success" class="mr-1" @click="newChurchEvent">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
+    <filter-row
+      v-model="filterChurchEvent"
+      :loading="loading"
+      search-id="tf-churc-index-filterchurchevent-1"
+      refresh-id="btn-chrcev-refresh"
+      new-id="btn-chrcev-new"
+      search-placeholder="Buscar evento..."
+      cols="12"
+      md="2"
+      @refresh="refreshChurchEvents"
+      @create="newChurchEvent"
+    >
+      <template #actions>
         <v-btn id="btn-chrcev-calendar" outlined color="primary" to="/church-event/calendar">
           <v-icon left>mdi-calendar-month</v-icon>
           Calendario
         </v-btn>
-      </v-col>
-      <v-col v-if="!orgFilterHidden" cols="auto">
-        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="church-event-index" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
+      </template>
 
+      <template #append>
+        <v-col v-if="!orgFilterHidden" cols="auto">
+          <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="church-event-index" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
+      </template>
+    </filter-row>
+
+    <v-row dense>
       <!-- Tabla de eventos -->
       <v-col cols="12">
         <ChurchEventTable :options="options" :response="response" :loading="loading" permission="church-event-index"

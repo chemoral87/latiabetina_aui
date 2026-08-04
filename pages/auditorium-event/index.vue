@@ -1,23 +1,28 @@
 <template>
   <v-container fluid>
+    <filter-row
+      :show-search="false"
+      :loading="loading"
+      refresh-id="btn-auditoriumevent-refresh"
+      new-id="btn-auditoriumevent-new"
+      @refresh="getAuditoriumEvents"
+      @create="newAuditoriumEvent"
+    >
+      <template #filters>
+        <v-col cols="12" md="3">
+          <MyDateRange v-model="filterAuditoriumEvent" outlined />
+        </v-col>
+      </template>
+
+      <template #append>
+        <v-col v-if="!orgFilterHidden" cols="auto">
+          <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
+            outlined />
+        </v-col>
+      </template>
+    </filter-row>
+
     <v-row dense>
-      <v-col cols="12" md="3">
-        <MyDateRange v-model="filterAuditoriumEvent" />
-      </v-col>
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn color="primary" :loading="loading" class="mr-1" id="btn-auditoriumevent-refresh" @click="getAuditoriumEvents()">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn color="success" class="mr-1" id="btn-auditoriumevent-new" @click="newAuditoriumEvent()">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-      </v-col>
-      <v-col v-if="!orgFilterHidden" cols="auto">
-        <organization-select v-model="filterOrgId" :hidden.sync="orgFilterHidden" permission="auditorium-index" hide-one dense hide-details clearable
-          outlined />
-      </v-col>
       <v-col cols="12">
         <AuditoriumEventTable :loading="loading" :response="response" :options="options" @sorting="getAuditoriumEvents"
           @download="downloadAuditoriumEvent" @edit="editAuditoriumEvent" @mark="markAuditoriumEvent"

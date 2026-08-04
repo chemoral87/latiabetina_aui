@@ -1,19 +1,17 @@
 <template>
   <v-container fluid>
+    <filter-row
+      v-model="filterPermission"
+      search-id="tf-permi-index-filterpermission-1"
+      refresh-id="btn-perm-refresh"
+      new-id="btn-perm-new"
+      cols="12"
+      md="2"
+      @refresh="getPermissions"
+      @create="newPermission"
+    />
+
     <v-row dense>
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-permi-index-filterpermission-1" v-model="filterPermission" append-icon="mdi-magnify" clearable hide-details dense placeholder="Filtro" />
-      </v-col>
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-perm-refresh" color="primary" class="mr-1" @click="getPermissions()">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-perm-new" color="success" class="mr-1" @click="newPermission()">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo
-        </v-btn>
-      </v-col>
       <v-col cols="12">
         <client-only>
           <PermissionTable :options="options" :response="response" @sorting="getPermissions" @edit="editPermission" @distribution="distributePermission" @delete="beforeDeletePermission"></PermissionTable>

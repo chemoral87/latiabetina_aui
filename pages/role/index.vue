@@ -1,24 +1,20 @@
 ﻿<template>
   <v-container fluid>
+    <filter-row
+      v-model="filterRole"
+      :loading="loading"
+      search-id="tf-role-index-filterrole-1"
+      refresh-id="btn-role-refresh"
+      new-id="btn-role-new"
+      search-placeholder="Buscar rol..."
+      new-label="Nuevo Rol"
+      cols="12"
+      md="2"
+      @refresh="refreshRoles"
+      @create="newRole"
+    />
+
     <v-row dense>
-      <!-- Filtro de busqueda -->
-      <v-col cols="12" md="2">
-        <v-text-field id="tf-role-index-filterrole-1" v-model="filterRole" append-icon="mdi-magnify" clearable hide-details placeholder="Buscar rol..."
-          dense />
-      </v-col>
-
-      <!-- Botones de accion -->
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn id="btn-role-refresh" color="primary" :loading="loading" class="mr-1" @click="refreshRoles">
-          <v-icon left>mdi-reload</v-icon>
-          Refrescar
-        </v-btn>
-        <v-btn id="btn-role-new" color="success" class="mr-1" @click="newRole">
-          <v-icon left>mdi-plus</v-icon>
-          Nuevo Rol
-        </v-btn>
-      </v-col>
-
       <!-- Tabla de roles -->
       <v-col cols="12">
         <RoleTable :options="options" :response="response" :loading="loading" @sorting="handleSorting"
