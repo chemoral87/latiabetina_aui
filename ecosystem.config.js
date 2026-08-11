@@ -1,15 +1,15 @@
 module.exports = {
   apps: [
     {
-      name: 'Admin',
+      name: "Admin",
       cwd: __dirname,
-      exec_mode: 'cluster',
-      instances: 'max', // Or a number of instances
-      script: './node_modules/nuxt/bin/nuxt.js',
-      args: 'start',
+      exec_mode: "cluster",
+      instances: "max", // Or a number of instances
+      script: "./node_modules/nuxt/bin/nuxt.js",
+      args: "start",
       env: {
-        PORT: 3001, // Set the desired port
-        NODE_ENV: 'production',
+        PORT: 3003, // Set the desired port
+        NODE_ENV: "production",
       },
     },
   ],
