@@ -7,7 +7,7 @@
         <v-list-item v-else>Buscando...</v-list-item>
       </template>
       <template #selection="{ attrs, item, parent, selected }">
-        <v-chip v-if="item === Object(item)" v-bind="attrs" color="info" :input-value="selected" label>
+        <v-chip v-if="item === Object(item)" size="small" v-bind="attrs" color="info" :input-value="selected" label>
           <span class="pr-2">
             {{ item.name }}
           </span>
@@ -55,10 +55,10 @@ export default {
       this.debouncedSearch(val)
     },
     model(val, prev) {
-      if(val.length === prev.length) return
+      if (val.length === prev.length) return
       let i = val.length
-      while(i--) {
-        if(typeof val[i] === "string") {
+      while (i--) {
+        if (typeof val[i] === "string") {
           val.splice(i, 1)
         }
       }
